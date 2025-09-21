@@ -61,6 +61,9 @@ private:
 	ImVec2 gameViewSize_;
 	ImVec2 debugViewSize_;
 
+	// editor
+	bool isShowDemoWindow_;
+
 	// console
 	std::unordered_map<DescriptorHeapType, const BaseDescriptor*> descriptors_;
 
@@ -74,6 +77,8 @@ private:
 
 	// renderTextureの描画
 	void MainWindow(SceneView* sceneView);
+	void SceneMenuBar();
+	void GameMenuBar();
 
 	// console
 	void Console();

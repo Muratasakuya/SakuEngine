@@ -62,6 +62,7 @@ void ImGuiManager::Init(HWND hwnd, UINT bufferCount, ID3D12Device* device, SRVDe
 	style.Colors[ImGuiCol_TabHovered] = ImVec4(0.04f, 0.04f, 0.04f, 1.0f);
 	style.Colors[ImGuiCol_TabSelected] = ImVec4(0.04f, 0.04f, 0.04f, 1.0f);
 	style.Colors[ImGuiCol_TabSelectedOverline] = ImVec4(0.04f, 0.04f, 0.04f, 1.0f);
+	style.Colors[ImGuiCol_MenuBarBg] = ImVec4(0.04f, 0.04f, 0.04f, 1.0f);
 
 	// 選ばれていないウィンドウののタイトル色
 	style.Colors[ImGuiCol_TabDimmed] = ImVec4(0.12f, 0.12f, 0.12f, 1.0f);

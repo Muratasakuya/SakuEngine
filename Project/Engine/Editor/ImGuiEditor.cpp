@@ -32,11 +32,12 @@ void ImGuiEditor::Init(const D3D12_GPU_DESCRIPTOR_HANDLE& renderTextureGPUHandle
 
 	// 初期状態は表示
 	displayEnable_ = true;
-	editMode_ = false;
 	isPlayGame_ = true;
+	editMode_ = false;
+	isShowDemoWindow_ = false;
 
-	gameViewSize_ = ImVec2(832.0f, 486.0f);
-	debugViewSize_ = ImVec2(832.0f, 486.0f);
+	gameViewSize_ = ImVec2(896.0f, 504.0f);
+	debugViewSize_ = ImVec2(768.0f, 432.0f);
 }
 
 void ImGuiEditor::SetConsoleViewDescriptor(
@@ -64,6 +65,11 @@ void ImGuiEditor::Display(SceneView* sceneView) {
 
 	if (!displayEnable_) {
 		return;
+	}
+
+	if (isShowDemoWindow_) {
+
+		ImGui::ShowDemoWindow();
 	}
 
 	MenuBar();
@@ -109,6 +115,8 @@ void ImGuiEditor::MenuBar() {
 		if (ImGui::BeginMenu("Menu")) {
 
 			ImGui::Checkbox("Play", &isPlayGame_);
+			ImGui::Checkbox("EditLayout", &editMode_);
+			ImGui::Checkbox("ShowDemo", &isShowDemoWindow_);
 			ImGui::EndMenu();
 		}
 		ImGui::EndMainMenuBar();
@@ -117,7 +125,24 @@ void ImGuiEditor::MenuBar() {
 
 void ImGuiEditor::MainWindow(SceneView* sceneView) {
 
-	ImGui::Begin("Scene", nullptr, ImGuiWindowFlags_NoMove);
+	ImGui::Begin("Game", nullptr,
+		ImGuiWindowFlags_NoTitleBar |
+		ImGuiWindowFlags_MenuBar|
+		ImGuiWindowFlags_NoInputs |
+		ImGuiWindowFlags_NoFocusOnAppearing);
+
+	GameMenuBar();
+
+	ImGui::Image(ImTextureID(renderTextureGPUHandle_.ptr), gameViewSize_);
+
+	SetInputArea(InputViewArea::Game, ImGui::GetItemRectMin(), ImGui::GetItemRectSize());
+	ImGui::End();
+
+	ImGui::Begin("Scene", nullptr,
+		ImGuiWindowFlags_NoTitleBar |
+		ImGuiWindowFlags_MenuBar);
+
+	SceneMenuBar();
 
 	ImGui::Image(ImTextureID(debugSceneRenderTextureGPUHandle_.ptr), debugViewSize_);
 
@@ -134,13 +159,28 @@ void ImGuiEditor::MainWindow(SceneView* sceneView) {
 	ImGuiObjectEditor::GetInstance()->DrawManipulateGizmo(gizmoContext);
 
 	ImGui::End();
+}
 
-	ImGui::Begin("Game", nullptr, windowFlag_);
+void ImGuiEditor::SceneMenuBar() {
 
-	ImGui::Image(ImTextureID(renderTextureGPUHandle_.ptr), gameViewSize_);
+	if (ImGui::BeginMenuBar()) {
+		if (ImGui::BeginMenu("Scene")) {
 
-	SetInputArea(InputViewArea::Game, ImGui::GetItemRectMin(), ImGui::GetItemRectSize());
-	ImGui::End();
+			ImGui::EndMenu();
+		}
+		ImGui::EndMenuBar();
+	}
+}
+
+void ImGuiEditor::GameMenuBar() {
+
+	if (ImGui::BeginMenuBar()) {
+		if (ImGui::BeginMenu("Game")) {
+
+			ImGui::EndMenu();
+		}
+		ImGui::EndMenuBar();
+	}
 }
 
 void ImGuiEditor::Console() {
