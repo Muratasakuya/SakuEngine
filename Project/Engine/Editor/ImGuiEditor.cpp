@@ -9,6 +9,7 @@
 
 // imgui表示
 #include <Engine/Asset/AssetEditor.h>
+#include <Engine/Asset/Asset.h>
 #include <Engine/Editor/ImGuiObjectEditor.h>
 #include <Engine/Editor/Manager/GameEditorManager.h>
 #include <Engine/Utility/GameTimer.h>
@@ -38,6 +39,24 @@ void ImGuiEditor::Init(const D3D12_GPU_DESCRIPTOR_HANDLE& renderTextureGPUHandle
 
 	gameViewSize_ = ImVec2(896.0f, 504.0f);
 	debugViewSize_ = ImVec2(768.0f, 432.0f);
+	sceneSidebarWidth_ = 66.0f;
+	gizmoIconSize_ = 40.0f;
+}
+
+void ImGuiEditor::LoadGizmoIconTextures(Asset* asset) {
+
+	// アイコン読み込み
+	asset->LoadTexture("manipulaterTranslate");
+	asset->LoadTexture("manipulaterRotate");
+	asset->LoadTexture("manipulaterScale");
+
+	// GPUHandleを設定
+	gizmoIconGPUHandles_.emplace(GizmoTransformEnum::Translate,
+		asset->GetGPUHandle("manipulaterTranslate"));
+	gizmoIconGPUHandles_.emplace(GizmoTransformEnum::Rotate,
+		asset->GetGPUHandle("manipulaterRotate"));
+	gizmoIconGPUHandles_.emplace(GizmoTransformEnum::Scale,
+		asset->GetGPUHandle("manipulaterScale"));
 }
 
 void ImGuiEditor::SetConsoleViewDescriptor(
@@ -105,6 +124,8 @@ void ImGuiEditor::EditLayout() {
 
 	ImGui::DragFloat2("gameViewSize", &gameViewSize_.x, 1.0f);
 	ImGui::DragFloat2("debugViewSize", &debugViewSize_.x, 1.0f);
+	ImGui::DragFloat("sceneSidebarWidth", &sceneSidebarWidth_, 0.1f);
+	ImGui::DragFloat("gizmoIconSize", &gizmoIconSize_, 0.1f);
 
 	ImGui::End();
 }
@@ -127,7 +148,7 @@ void ImGuiEditor::MainWindow(SceneView* sceneView) {
 
 	ImGui::Begin("Game", nullptr,
 		ImGuiWindowFlags_NoTitleBar |
-		ImGuiWindowFlags_MenuBar|
+		ImGuiWindowFlags_MenuBar |
 		ImGuiWindowFlags_NoInputs |
 		ImGuiWindowFlags_NoFocusOnAppearing);
 
@@ -140,9 +161,14 @@ void ImGuiEditor::MainWindow(SceneView* sceneView) {
 
 	ImGui::Begin("Scene", nullptr,
 		ImGuiWindowFlags_NoTitleBar |
-		ImGuiWindowFlags_MenuBar);
+		ImGuiWindowFlags_MenuBar |
+		ImGuiWindowFlags_NoMove);
 
+	// メニューバー
 	SceneMenuBar();
+	// 設定
+	SceneManipulate();
+	ImGui::SameLine();
 
 	ImGui::Image(ImTextureID(debugSceneRenderTextureGPUHandle_.ptr), debugViewSize_);
 
@@ -170,6 +196,24 @@ void ImGuiEditor::SceneMenuBar() {
 		}
 		ImGui::EndMenuBar();
 	}
+}
+
+void ImGuiEditor::SceneManipulate() {
+
+	ImGui::BeginChild("SceneManipulate",
+		ImVec2(sceneSidebarWidth_, debugViewSize_.y),
+		ImGuiChildFlags_Border);
+
+	// ギズモで使用するSRTをボタンで切り替える
+	// Gizmo
+	GizmoIcons icons{};
+	icons.translate = static_cast<ImTextureID>(gizmoIconGPUHandles_[GizmoTransformEnum::Translate].ptr);
+	icons.rotate = static_cast<ImTextureID>(gizmoIconGPUHandles_[GizmoTransformEnum::Rotate].ptr);
+	icons.scale = static_cast<ImTextureID>(gizmoIconGPUHandles_[GizmoTransformEnum::Scale].ptr);
+	icons.size = ImVec2(gizmoIconSize_, gizmoIconSize_);
+	ImGuiObjectEditor::GetInstance()->GizmoToolbar(icons);
+
+	ImGui::EndChild();
 }
 
 void ImGuiEditor::GameMenuBar() {
@@ -261,7 +305,7 @@ void ImGuiEditor::Inspector() {
 	ImGui::End();
 }
 
-void ImGuiEditor::Asset() {
+void ImGuiEditor::AssetEdit() {
 
 	//AssetEditor::GetInstance()->EditLayout();
 

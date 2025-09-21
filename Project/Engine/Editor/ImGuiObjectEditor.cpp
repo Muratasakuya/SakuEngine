@@ -187,15 +187,9 @@ void ImGuiObjectEditor::DrawManipulateGizmo(const GizmoContext& context) {
 		Math::ToColumnMajor(transform->matrix, model);
 	}
 
-	// 操作モード
-	ImGuizmo::OPERATION option = currentOption_; // TRANSLATE / ROTATE / SCALE
-	ImGuizmo::MODE mode = currentMode_;          // WORLD / LOCAL
-	float snap[3] = { snapMove_, snapRotate_, snapScale_ };
-
 	// 実行
-	isUsingGuizmo_ = ImGuizmo::Manipulate(context.view, context.projection, option, mode, model,
-		nullptr, useSnap_ ? snap : nullptr);
-
+	isUsingGuizmo_ = ImGuizmo::Manipulate(context.view, context.projection,
+		currentOption_, currentMode_, model, nullptr, nullptr);
 	// 変更があればSRTを書き戻す
 	if (isUsingGuizmo_ && ImGuizmo::IsUsing()) {
 
@@ -220,40 +214,29 @@ void ImGuiObjectEditor::DrawManipulateGizmo(const GizmoContext& context) {
 		}
 	}
 
-	// Guizmo状にマウスがあるかどうか
+	// Guizmo上にマウスがあるかどうか
 	isUsingGuizmo_ |= ImGuizmo::IsOver();
 }
 
-void ImGuiObjectEditor::GizmoToolbar() {
+void ImGuiObjectEditor::GizmoToolbar(const GizmoIcons& icons) {
 
-	ImGui::SeparatorText("Gizmo");
-	if (ImGui::RadioButton("Translate", currentOption_ == ImGuizmo::TRANSLATE)) {
-		currentOption_ = ImGuizmo::TRANSLATE;
-	}
-	ImGui::SameLine();
-	if (ImGui::RadioButton("Rotate", currentOption_ == ImGuizmo::ROTATE)) {
-		currentOption_ = ImGuizmo::ROTATE;
-	}
-	ImGui::SameLine();
-	if (ImGui::RadioButton("Scale", currentOption_ == ImGuizmo::SCALE)) {
-		currentOption_ = ImGuizmo::SCALE;
-	}
+	auto drawButton = [&](const char* fallbackLabel, ImTextureID tex, ImGuizmo::OPERATION option) {
 
-	if (ImGui::RadioButton("World", currentMode_ == ImGuizmo::WORLD)) {
-		currentMode_ = ImGuizmo::WORLD;
-	}
-	ImGui::SameLine();
-	if (ImGui::RadioButton("Local", currentMode_ == ImGuizmo::LOCAL)) {
-		currentMode_ = ImGuizmo::LOCAL;
-	}
+		// ボタンで切り替える
+		if (ImGui::ImageButton(fallbackLabel, tex, icons.size)) {
 
-	ImGui::Checkbox("Snap", &useSnap_);
-	if (useSnap_) {
+			currentOption_ = option;
+		}
+		if (currentOption_ == option) {
 
-		ImGui::DragFloat("Move##Snap", &snapMove_, 0.01f);
-		ImGui::DragFloat("Rotate##Snap", &snapRotate_, 0.5f * radian);
-		ImGui::DragFloat("Scale##Snap", &snapScale_, 0.01f);
-	}
+			ImGui::SetItemDefaultFocus();
+			ImGui::GetWindowDrawList()->AddRect(
+				ImGui::GetItemRectMin(), ImGui::GetItemRectMax(),
+				IM_COL32(255, 255, 0, 128), 6.0f, 0, 2.0f);
+		}};
+	drawButton("T", icons.translate, ImGuizmo::TRANSLATE);
+	drawButton("R", icons.rotate, ImGuizmo::ROTATE);
+	drawButton("S", icons.scale, ImGuizmo::SCALE);
 }
 
 void ImGuiObjectEditor::EditObjects() {

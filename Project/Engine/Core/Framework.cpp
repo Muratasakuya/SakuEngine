@@ -137,6 +137,7 @@ Framework::Framework() {
 	imguiEditor_ = std::make_unique<ImGuiEditor>();
 	imguiEditor_->Init(renderEngine_->GetRenderTextureGPUHandle(),
 		postProcessSystem->GetCopySRVGPUHandle());
+	imguiEditor_->LoadGizmoIconTextures(asset_.get());
 
 	// console表示用
 	imguiEditor_->SetConsoleViewDescriptor(DescriptorHeapType::SRV, srvDescriptor);

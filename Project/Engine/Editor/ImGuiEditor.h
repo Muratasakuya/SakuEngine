@@ -14,6 +14,7 @@
 #include <unordered_map>
 // front
 class SceneView;
+class Asset;
 
 //============================================================================
 //	ImGuiEditor class
@@ -29,6 +30,7 @@ public:
 
 	void Init(const D3D12_GPU_DESCRIPTOR_HANDLE& renderTextureGPUHandle,
 		const D3D12_GPU_DESCRIPTOR_HANDLE& debugSceneRenderTextureGPUHandle);
+	void LoadGizmoIconTextures(Asset* asset);
 
 	void Display(SceneView* sceneView);
 
@@ -43,11 +45,22 @@ private:
 	//	private Methods
 	//========================================================================
 
+	//--------- structure ----------------------------------------------------
+
+	enum class GizmoTransformEnum {
+
+		Translate,
+		Rotate,
+		Scale
+	};
+
 	//--------- variables ----------------------------------------------------
 
+	// GPUHandles
 	D3D12_GPU_DESCRIPTOR_HANDLE renderTextureGPUHandle_;
 	D3D12_GPU_DESCRIPTOR_HANDLE debugSceneRenderTextureGPUHandle_;
 	D3D12_GPU_DESCRIPTOR_HANDLE shadowTextureGPUHandle_;
+	std::unordered_map<GizmoTransformEnum, D3D12_GPU_DESCRIPTOR_HANDLE> gizmoIconGPUHandles_;
 
 	ImGuiWindowFlags windowFlag_;
 
@@ -60,6 +73,8 @@ private:
 	bool editMode_;
 	ImVec2 gameViewSize_;
 	ImVec2 debugViewSize_;
+	float sceneSidebarWidth_;
+	float gizmoIconSize_;
 
 	// editor
 	bool isShowDemoWindow_;
@@ -78,6 +93,7 @@ private:
 	// renderTextureの描画
 	void MainWindow(SceneView* sceneView);
 	void SceneMenuBar();
+	void SceneManipulate();
 	void GameMenuBar();
 
 	// console
@@ -90,7 +106,7 @@ private:
 	void Inspector();
 
 	// asset
-	void Asset();
+	void AssetEdit();
 
 	// helper
 	void SetInputArea(InputViewArea viewArea, const ImVec2& imMin, const ImVec2& imSize);
