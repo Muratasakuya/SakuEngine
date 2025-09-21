@@ -656,7 +656,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="Game\Editor\GameObjectEditor.cpp">
+    <ClCompile Include="Game\Editor\CameraEditor\3D\Camera3DEditor.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="Game\Editor\GameObjectEditor\GameObjectEditor.cpp">
       <SubType>
       </SubType>
     </ClCompile>
@@ -1511,7 +1515,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Game\Editor\GameObjectEditor.h">
+    <ClInclude Include="Game\Editor\CameraEditor\3D\Camera3DEditor.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Game\Editor\GameObjectEditor\GameObjectEditor.h">
       <SubType>
       </SubType>
     </ClInclude>

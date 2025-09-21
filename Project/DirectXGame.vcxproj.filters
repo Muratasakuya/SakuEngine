@@ -287,7 +287,7 @@
     <ClCompile Include="Engine\Object\Base\GameObject3D.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Editor\GameObjectEditor.cpp">
+    <ClCompile Include="Game\Editor\GameObjectEditor\GameObjectEditor.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Core\Graphics\Raytracing\RaytracingPipeline.cpp">
@@ -704,6 +704,9 @@
     <ClCompile Include="Engine\Core\Graphics\GPUObject\GPUPixelPicker.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Game\Editor\CameraEditor\3D\Camera3DEditor.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Asset\AnimationManager.h" />
@@ -809,7 +812,7 @@
     <ClInclude Include="Engine\Object\Base\Interface\IGameObject.h" />
     <ClInclude Include="Engine\Object\Base\GameObject3D.h" />
     <ClInclude Include="Engine\Object\Base\GameObject2D.h" />
-    <ClInclude Include="Game\Editor\GameObjectEditor.h" />
+    <ClInclude Include="Game\Editor\GameObjectEditor\GameObjectEditor.h" />
     <ClInclude Include="Engine\Core\Graphics\Raytracing\RaytracingPipeline.h" />
     <ClInclude Include="Engine\Core\Graphics\Raytracing\AccelerationStructureBuffer.h" />
     <ClInclude Include="Engine\Core\Graphics\Raytracing\BottomLevelAS.h" />
@@ -979,6 +982,7 @@
     <ClInclude Include="Engine\Core\Graphics\PostProcess\PostProcessConfig.h" />
     <ClInclude Include="Engine\Core\Graphics\GPUObject\GPUPixelPicker.h" />
     <ClInclude Include="Engine\Core\Graphics\GPUObject\DxReadbackBuffer.h" />
+    <ClInclude Include="Game\Editor\CameraEditor\3D\Camera3DEditor.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Engine\Shaders\PostProcess\Copy\CopyTexture.CS.hlsl" />
