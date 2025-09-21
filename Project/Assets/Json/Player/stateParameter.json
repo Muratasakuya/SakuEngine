@@ -235,21 +235,27 @@
         "parryLerp_.time": 0.800000011920929
     },
     "SkilAttack": {
-        "JumpAttack": {
-            "easeingType_": "EaseInBack",
-            "moveValue": -9.0,
+        "BackJump": {
+            "easeingType_": "EaseOutBack",
+            "moveValue": -32.0,
             "nextAnim": 0.019999999552965164,
-            "target_": 0.3199999928474426
+            "target_": 0.2800000011920929
         },
         "LookEnemy": {
             "easeingType_": "EaseInSine",
             "target_": 0.11999999731779099
         },
+        "MoveJump": {
+            "easeingType_": "EaseOutExpo",
+            "moveValue": -10.0,
+            "nextAnim": 0.0,
+            "target_": 0.30000001192092896
+        },
         "ReturnMove": {
-            "easeingType_": "EaseOutQuint",
+            "easeingType_": "EaseOutQuad",
             "moveValue": 60.0,
             "nextAnim": 0.0,
-            "target_": 0.4000000059604645
+            "target_": 0.41999998688697815
         },
         "RushMove": {
             "easeingType_": "EaseOutExpo",
@@ -263,6 +269,7 @@
         "attackPosLerpCircleRange_": 95.4000015258789,
         "attackPosLerpTime_": 0.4399999976158142,
         "exitTime_": 0.029999999329447746,
+        "jumpStrength_": 16.0,
         "lookStartProgress_": 0.5,
         "nextAnimDuration_": 0.029999999329447746,
         "rotationLerpRate_": 0.3199999928474426

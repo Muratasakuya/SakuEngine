@@ -17,11 +17,13 @@ PlayerSkilAttackState::PlayerSkilAttackState() {
 
 	rushMoveParam_.name = "RushMove";
 	returnMoveParam_.name = "ReturnMove";
-	jumpAttackMoveParam_.name = "JumpAttack";
+	backJumpParam_.name = "BackJump";
+	jumpMoveParam_.name = "MoveJump";
 
 	rushMoveParam_.timer.Reset();
 	returnMoveParam_.timer.Reset();
-	jumpAttackMoveParam_.timer.Reset();
+	backJumpParam_.timer.Reset();
+	jumpMoveParam_.timer.Reset();
 	canExit_ = false;
 	isStratLookEnemy_ = false;
 }
@@ -30,6 +32,7 @@ void PlayerSkilAttackState::Enter(Player& player) {
 
 	// 初期状態を設定
 	currentState_ = State::Rush;
+	jumpAttackState_ = JumpAttackState::Jump;
 
 	// 敵が攻撃可能範囲にいるかチェック
 	const Vector3 playerPos = player.GetTranslation();
@@ -153,11 +156,13 @@ void PlayerSkilAttackState::UpdateReturn(Player& player) {
 		Vector3 direction = Vector3(bossEnemyPos - playerPos).Normalize();
 
 		// 次の補間座標を設定
-		jumpAttackMoveParam_.start = returnMoveParam_.target;
-		jumpAttackMoveParam_.target = bossEnemyPos + direction * jumpAttackMoveParam_.moveValue;
+		backJumpParam_.start = returnMoveParam_.target;
+		backJumpParam_.target = playerPos + direction * backJumpParam_.moveValue;
+		// ジャンプ力を設定
+		backJumpParam_.target.y = jumpStrength_;
 
 		// アニメーションを設定
-		player.SetNextAnimation("player_skilAttack_3rd", false, jumpAttackMoveParam_.nextAnim);
+		player.SetNextAnimation("player_skilAttack_3rd", false, backJumpParam_.nextAnim);
 		// 敵の方を向ける
 		player.SetRotation(Quaternion::LookRotation(direction, Vector3(0.0f, 1.0f, 0.0f)));
 
@@ -168,17 +173,50 @@ void PlayerSkilAttackState::UpdateReturn(Player& player) {
 
 void PlayerSkilAttackState::UpdateJumpAttack(Player& player) {
 
-	// 座標を補間する
-	jumpAttackMoveParam_.timer.Update();
-	player.SetTranslation(Vector3::Lerp(jumpAttackMoveParam_.start,
-		jumpAttackMoveParam_.target, jumpAttackMoveParam_.timer.easedT_));
+	switch (jumpAttackState_) {
+	case PlayerSkilAttackState::JumpAttackState::Jump: {
 
-	// 補間終了後状態を閉じる
-	if (jumpAttackMoveParam_.timer.IsReached()) {
+		// 座標を補間する
+		backJumpParam_.timer.Update();
+		player.SetTranslation(Vector3::Lerp(backJumpParam_.start,
+			backJumpParam_.target, backJumpParam_.timer.easedT_));
 
-		canExit_ = true;
-		// 確実に終了するようにする
-		exitTimer_ = exitTime_ * 2.0f;
+		// 終了後次の状態に移す
+		if (backJumpParam_.timer.IsReached()) {
+
+			const Vector3 playerPos = player.GetTranslation();
+			const Vector3 bossEnemyPos = bossEnemy_->GetTranslation();
+			Vector3 direction = Vector3(bossEnemyPos - playerPos).Normalize();
+
+			// 次の補間座標を設定
+			jumpMoveParam_.start = backJumpParam_.target;
+			jumpMoveParam_.target = bossEnemyPos + direction * jumpMoveParam_.moveValue;
+			jumpMoveParam_.target.y = 0.0f;
+
+			// 敵の方を向ける
+			player.SetRotation(Quaternion::LookRotation(direction, Vector3(0.0f, 1.0f, 0.0f)));
+
+			// 次に進める
+			jumpAttackState_ = JumpAttackState::Attack;
+		}
+		break;
+	}
+	case PlayerSkilAttackState::JumpAttackState::Attack: {
+
+		// 座標を補間する
+		jumpMoveParam_.timer.Update();
+		player.SetTranslation(Vector3::Lerp(jumpMoveParam_.start,
+			jumpMoveParam_.target, jumpMoveParam_.timer.easedT_));
+
+		// 補間終了後状態を閉じる
+		if (jumpMoveParam_.timer.IsReached()) {
+
+			canExit_ = true;
+			// 確実に終了するようにする
+			exitTimer_ = exitTime_ * 2.0f;
+		}
+		break;
+	}
 	}
 }
 
@@ -190,12 +228,9 @@ void PlayerSkilAttackState::Exit(Player& player) {
 	exitTimer_ = 0.0f;
 	rushMoveParam_.timer.Reset();
 	returnMoveParam_.timer.Reset();
-	jumpAttackMoveParam_.timer.Reset();
+	backJumpParam_.timer.Reset();
+	jumpMoveParam_.timer.Reset();
 	lookEnemyTimer_.Reset();
-
-	// Y座標を元に戻す
-	player.SetTranslation(Vector3(player.GetTranslation().x, 0.0f,
-		player.GetTranslation().z));
 	if (assisted_) {
 
 		player.ResetAnimation();
@@ -221,7 +256,7 @@ void PlayerSkilAttackState::ImGui(const Player& player) {
 	switch (editState_) {
 	case PlayerSkilAttackState::State::Rush:
 
-		rushMoveParam_.ImGui(player, *bossEnemy_);
+		rushMoveParam_.ImGui(player, *bossEnemy_, true);
 		break;
 	case PlayerSkilAttackState::State::Return:
 
@@ -229,19 +264,24 @@ void PlayerSkilAttackState::ImGui(const Player& player) {
 
 		ImGui::SeparatorText("Move");
 
-		returnMoveParam_.ImGui(player, *bossEnemy_);
+		returnMoveParam_.ImGui(player, *bossEnemy_, true);
 
 		lookEnemyTimer_.ImGui("LookEnemy");
 		break;
 	case PlayerSkilAttackState::State::JumpAttack:
 
-		jumpAttackMoveParam_.ImGui(player, *bossEnemy_);
+		backJumpParam_.ImGui(player, *bossEnemy_, false);
+		ImGui::DragFloat("jumpStrength", &jumpStrength_, 0.1f);
+		ImGui::Separator();
+		jumpMoveParam_.ImGui(player, *bossEnemy_, true);
 		break;
 	}
 }
 
 void PlayerSkilAttackState::StateMoveParam::ImGui(
-	const Player& player, const BossEnemy& bossEnemy) {
+	const Player& player, const BossEnemy& bossEnemy, bool isBaseEnemy) {
+
+	ImGui::PushID(name.c_str());
 
 	timer.ImGui("MoveTimer");
 	ImGui::DragFloat("moveValue", &moveValue, 0.01f);
@@ -253,11 +293,18 @@ void PlayerSkilAttackState::StateMoveParam::ImGui(
 	Vector3 startPos = player.GetTranslation();
 	const Vector3 bossEnemyPos = bossEnemy.GetTranslation();
 	Vector3 direction = Vector3(bossEnemyPos - startPos).Normalize();
-	Vector3 targetPos = bossEnemyPos + direction * moveValue;
+	Vector3 basePos = startPos;
+	if (isBaseEnemy) {
+
+		basePos = bossEnemyPos;
+	}
+	Vector3 targetPos = basePos + direction * moveValue;
 	startPos.y = 2.0f;
 	targetPos.y = 2.0f;
 	renderer->DrawLine3D(startPos, targetPos, Color::Cyan());
 	renderer->DrawSphere(8, 4.0f, targetPos, Color::Cyan());
+
+	ImGui::PopID();
 }
 
 void PlayerSkilAttackState::JumpParam::ImGui() {
@@ -310,10 +357,12 @@ void PlayerSkilAttackState::ApplyJson(const Json& data) {
 
 	rushMoveParam_.ApplyJson(data);
 	returnMoveParam_.ApplyJson(data);
-	jumpAttackMoveParam_.ApplyJson(data);
+	backJumpParam_.ApplyJson(data);
+	jumpMoveParam_.ApplyJson(data);
 
 	lookEnemyTimer_.FromJson(data.value("LookEnemy", Json()));
 	lookStartProgress_ = data.value("lookStartProgress_", 0.8f);
+	jumpStrength_ = data.value("jumpStrength_", 0.8f);
 }
 
 void PlayerSkilAttackState::SaveJson(Json& data) {
@@ -326,10 +375,12 @@ void PlayerSkilAttackState::SaveJson(Json& data) {
 
 	rushMoveParam_.SaveJson(data);
 	returnMoveParam_.SaveJson(data);
-	jumpAttackMoveParam_.SaveJson(data);
+	backJumpParam_.SaveJson(data);
+	jumpMoveParam_.SaveJson(data);
 
 	lookEnemyTimer_.ToJson(data["LookEnemy"]);
 	data["lookStartProgress_"] = lookStartProgress_;
+	data["jumpStrength_"] = jumpStrength_;
 }
 
 bool PlayerSkilAttackState::GetCanExit() const {

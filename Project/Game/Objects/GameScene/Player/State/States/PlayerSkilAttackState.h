@@ -48,6 +48,11 @@ private:
 		Return,    // 戻る
 		JumpAttack // 戻った反動でジャンプして敵に攻撃
 	};
+	enum class JumpAttackState {
+
+		Jump,
+		Attack
+	};
 
 	// 各状態
 	struct StateMoveParam {
@@ -59,7 +64,7 @@ private:
 		float nextAnim;   // 次のアニメーションまでの時間
 		std::string name; // 名前
 
-		void ImGui(const Player& player, const BossEnemy& bossEnemy);
+		void ImGui(const Player& player, const BossEnemy& bossEnemy, bool isBaseEnemy);
 		void ApplyJson(const Json& data);
 		void SaveJson(Json& data);
 	};
@@ -80,6 +85,7 @@ private:
 
 	// 現在の状態
 	State currentState_;
+	JumpAttackState jumpAttackState_;
 	// 範囲内にいるか
 	bool assisted_;
 
@@ -95,7 +101,9 @@ private:
 	Quaternion yawLerpStart_; // 補間開始
 	Quaternion yawLerpEnd_;   // 補間目標
 	// JumpAttack
-	StateMoveParam jumpAttackMoveParam_;
+	StateMoveParam backJumpParam_;
+	float jumpStrength_;
+	StateMoveParam jumpMoveParam_;
 
 	// エディター
 	State editState_;
