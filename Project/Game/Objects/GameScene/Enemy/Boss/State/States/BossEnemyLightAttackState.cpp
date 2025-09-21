@@ -69,6 +69,7 @@ void BossEnemyLightAttackState::UpdateParrySign(BossEnemy& bossEnemy) {
 	const Vector3 playerPos = player_->GetTranslation();
 	Vector3 direction = (bossEnemy.GetTranslation() - playerPos).Normalize();
 	Vector3 target = playerPos - direction * attackOffsetTranslation_;
+	target.y = 0.0f;
 	LookTarget(bossEnemy, target);
 
 	// 座標補間

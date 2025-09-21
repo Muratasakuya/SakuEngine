@@ -70,6 +70,7 @@ void BossEnemyContinuousAttackState::UpdateParrySign(BossEnemy& bossEnemy) {
 	const Vector3 playerPos = player_->GetTranslation();
 	Vector3 direction = (bossEnemy.GetTranslation() - playerPos).Normalize();
 	Vector3 target = playerPos - direction * attackOffsetTranslation_;
+	target.y = 0.0f;
 	LookTarget(bossEnemy, target);
 
 	// 座標補間
@@ -99,6 +100,7 @@ void BossEnemyContinuousAttackState::UpdateAttack(BossEnemy& bossEnemy) {
 		const Vector3 playerPos = player_->GetTranslation();
 		Vector3 direction = (bossEnemy.GetTranslation() - playerPos).Normalize();
 		Vector3 target = playerPos - direction * attackOffsetTranslation_;
+		target.y = 0.0f;
 		LookTarget(bossEnemy, target);
 
 		// 補間
@@ -106,8 +108,8 @@ void BossEnemyContinuousAttackState::UpdateAttack(BossEnemy& bossEnemy) {
 		bossEnemy.SetTranslation(newPos);
 
 		// プレイヤーに十分近づいたら補間しない
-		float dist = (playerPos - newPos).Length();
-		if (dist <= std::abs(attackOffsetTranslation_)) {
+		float distance = (playerPos - newPos).Length();
+		if (distance <= std::abs(attackOffsetTranslation_)) {
 
 			reachedPlayer_ = true;
 			bossEnemy.SetTranslation(target);

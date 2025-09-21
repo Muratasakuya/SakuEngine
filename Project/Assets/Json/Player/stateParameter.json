@@ -247,7 +247,7 @@
         },
         "MoveJump": {
             "easeingType_": "EaseOutExpo",
-            "moveValue": -10.0,
+            "moveValue": 22.0,
             "nextAnim": 0.0,
             "target_": 0.30000001192092896
         },

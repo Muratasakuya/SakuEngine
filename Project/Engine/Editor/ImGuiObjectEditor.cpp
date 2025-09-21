@@ -158,9 +158,19 @@ void ImGuiObjectEditor::DrawManipulateGizmo(const GizmoContext& context) {
 	if (selected3D_) {
 		id = *selected3D_;
 		is3D = true;
+
+		// nullチェック
+		if (!objectManager_->GetData<Transform3D>(id)) {
+			return;
+		}
 	} else if (selected2D_) {
 		id = *selected2D_;
 		is2D = true;
+
+		// nullチェック
+		if (!objectManager_->GetData<Transform2D>(id)) {
+			return;
+		}
 	} else {
 		return;
 	}

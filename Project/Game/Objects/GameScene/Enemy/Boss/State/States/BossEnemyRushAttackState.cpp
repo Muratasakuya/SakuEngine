@@ -48,7 +48,8 @@ void BossEnemyRushAttackState::Enter(BossEnemy& bossEnemy) {
 	canExit_ = false;
 
 	// 座標設定
-	const Vector3 center = player_->GetTranslation();
+	Vector3 center = player_->GetTranslation();
+	center.y = 0.0f;
 	const Vector3 forward = followCamera_->GetTransform().GetForward();
 	startPos_ = bossEnemy.GetTranslation();
 	targetPos_ = Math::RandomPointOnArcInSquare(center, forward,
@@ -185,7 +186,8 @@ void BossEnemyRushAttackState::UpdateCooldown(BossEnemy& bossEnemy, float deltaT
 		bossEnemy.SetNextAnimation("bossEnemy_teleport", false, nextAnimDuration_);
 
 		// 座標設定
-		const Vector3 center = player_->GetTranslation();
+		Vector3 center = player_->GetTranslation();
+		center.y = 0.0f;
 		const Vector3 forward = followCamera_->GetTransform().GetForward();
 		startPos_ = bossEnemy.GetTranslation();
 		targetPos_ = Math::RandomPointOnArcInSquare(center, forward,

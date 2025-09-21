@@ -18,7 +18,8 @@ void BossEnemyTeleportationState::Enter(BossEnemy& bossEnemy) {
 	bossEnemy.SetNextAnimation("bossEnemy_teleport", true, nextAnimDuration_);
 
 	// 座標を設定
-	const Vector3 center = player_->GetTranslation();
+	Vector3 center = player_->GetTranslation();
+	center.y = 0.0f;
 	const Vector3 forward = followCamera_->GetTransform().GetForward();
 	startPos_ = bossEnemy.GetTranslation();
 	// 弧上の座標を取得
@@ -50,7 +51,9 @@ void BossEnemyTeleportationState::Update(BossEnemy& bossEnemy) {
 	bossEnemy.SetTranslation(Vector3::Lerp(startPos_, targetPos_, lerpT));
 
 	// playerの方を向かせる
-	LookTarget(bossEnemy, player_->GetTranslation());
+	Vector3 playerPos = player_->GetTranslation();
+	playerPos.y = 0.0f;
+	LookTarget(bossEnemy, playerPos);
 
 	const float disappearEnd = fadeOutTime_;           // 消え終わる時間
 	const float appearStart = lerpTime_ - fadeInTime_; // 現れ始める時間
