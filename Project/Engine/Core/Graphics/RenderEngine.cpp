@@ -219,6 +219,8 @@ void RenderEngine::EndPostProcess() {
 
 void RenderEngine::Renderers(ViewType type, bool enableMesh) {
 
+	bool isDebugEnable = static_cast<bool>(type);
+
 	// 再設定
 	// srvDescriptorHeap設定
 	dxCommand_->SetDescriptorHeaps({ srvDescriptor_->GetDescriptorHeap() });
@@ -228,19 +230,19 @@ void RenderEngine::Renderers(ViewType type, bool enableMesh) {
 	spriteRenderer_->ApplyPostProcessRendering(SpriteLayer::PreModel, sceneBuffer_.get(), dxCommand_);
 
 	// line描画実行
-	LineRenderer::GetInstance()->ExecuteLine(static_cast<bool>(type), LineType::None);
+	LineRenderer::GetInstance()->ExecuteLine(isDebugEnable, LineType::None);
 
 	// 通常描画処理(シーン遷移中は処理できないようにする)
 	if (enableMesh) {
 
-		meshRenderer_->Rendering(static_cast<bool>(type), sceneBuffer_.get(), dxCommand_);
+		meshRenderer_->Rendering(isDebugEnable, sceneBuffer_.get(), dxCommand_);
 	}
 
 	// particle描画
-	ParticleManager::GetInstance()->Rendering(static_cast<bool>(type), sceneBuffer_.get(), dxCommand_);
+	ParticleManager::GetInstance()->Rendering(isDebugEnable, sceneBuffer_.get(), dxCommand_);
 
 	// line描画実行、depth無効
-	LineRenderer::GetInstance()->ExecuteLine(static_cast<bool>(type), LineType::DepthIgnore);
+	LineRenderer::GetInstance()->ExecuteLine(isDebugEnable, LineType::DepthIgnore);
 
 	// sprite描画、postPrecess適用
 	// model描画後

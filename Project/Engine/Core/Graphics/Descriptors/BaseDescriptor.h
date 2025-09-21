@@ -20,6 +20,12 @@ struct DescriptorType {
 	D3D12_DESCRIPTOR_HEAP_TYPE heapType;
 	D3D12_DESCRIPTOR_HEAP_FLAGS heapFlags;
 };
+enum class DescriptorHeapType {
+
+	SRV,
+	RTV,
+	DSV
+};
 
 //============================================================================
 //	BaseDescriptor class
@@ -38,10 +44,12 @@ public:
 	//--------- accessor -----------------------------------------------------
 
 	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUHandle(uint32_t index) const;
-
 	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUHandle(uint32_t index) const;
 
 	ID3D12DescriptorHeap* GetDescriptorHeap() const { return descriptorHeap_.Get(); }
+
+	uint32_t GetUseDescriptorCount() const { return useIndex_; }
+	uint32_t GetMaxDescriptorCount() const { return maxDescriptorCount_; }
 private:
 	//========================================================================
 	//	private Methods

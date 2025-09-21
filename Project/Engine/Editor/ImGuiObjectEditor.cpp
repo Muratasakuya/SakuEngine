@@ -262,6 +262,9 @@ void ImGuiObjectEditor::EditObjects() {
 		return;
 	}
 	uint32_t id = selected3D_.value();
+	if (!objectManager_->GetData<ObjectTag>(id)) {
+		return;
+	}
 	const auto* tag = tagSystem_->Tags().at(id);
 	if (tag->name != "skybox" && Algorithm::Find(objectsMap_, id)) {
 
