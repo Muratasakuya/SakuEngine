@@ -178,7 +178,8 @@ namespace ImGuizmo
       BOUNDS           = (1u << 10),
       TRANSLATE = TRANSLATE_X | TRANSLATE_Y | TRANSLATE_Z,
       ROTATE = ROTATE_X | ROTATE_Y | ROTATE_Z | ROTATE_SCREEN,
-      SCALE = SCALE_X | SCALE_Y | SCALE_Z
+      SCALE = SCALE_X | SCALE_Y | SCALE_Z,
+      NONE
    };
 
    inline OPERATION operator|(OPERATION lhs, OPERATION rhs)

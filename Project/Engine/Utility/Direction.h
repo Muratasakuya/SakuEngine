@@ -1,0 +1,37 @@
+#pragma once
+
+//============================================================================
+//	include
+//============================================================================
+#include <Lib/MathUtils/Vector2.h>
+#include <Lib/MathUtils/Vector3.h>
+
+//============================================================================
+//	Direction
+//============================================================================
+
+// 3次元
+enum class Direction3D {
+
+	Forward,  // +Z
+	Backward, // -Z
+	Right,    // +X
+	Left,     // -X
+	Up,       // +Y
+	Bottom    // -Y
+};
+// 2次元
+enum class Direction2D {
+
+	Right, // +X
+	Left,  // -X
+	Up,    // +Y
+	Bottom // -Y
+};
+
+namespace Direction {
+
+	Vector3 Get(Direction3D direction);
+	Vector3 GetRotate(Direction3D direction);
+	Vector2 Get(Direction2D direction);
+}

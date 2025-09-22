@@ -175,6 +175,11 @@ void ImGuiObjectEditor::DrawManipulateGizmo(const GizmoContext& context) {
 		return;
 	}
 
+	// 選択のみ
+	if (currentOption_ == ImGuizmo::OPERATION::NONE) {
+		return;
+	}
+
 	// ワールド行列をcolumn-majorに
 	float model[16];
 	if (is3D) {
@@ -220,10 +225,10 @@ void ImGuiObjectEditor::DrawManipulateGizmo(const GizmoContext& context) {
 
 void ImGuiObjectEditor::GizmoToolbar(const GizmoIcons& icons) {
 
-	auto drawButton = [&](const char* fallbackLabel, ImTextureID tex, ImGuizmo::OPERATION option) {
+	auto drawButton = [&](const char* fallbackLabel, ImTextureID texture, ImGuizmo::OPERATION option) {
 
 		// ボタンで切り替える
-		if (ImGui::ImageButton(fallbackLabel, tex, icons.size)) {
+		if (ImGui::ImageButton(fallbackLabel, texture, icons.size)) {
 
 			currentOption_ = option;
 		}
@@ -234,9 +239,10 @@ void ImGuiObjectEditor::GizmoToolbar(const GizmoIcons& icons) {
 				ImGui::GetItemRectMin(), ImGui::GetItemRectMax(),
 				IM_COL32(255, 255, 0, 128), 6.0f, 0, 2.0f);
 		}};
-	drawButton("T", icons.translate, ImGuizmo::TRANSLATE);
-	drawButton("R", icons.rotate, ImGuizmo::ROTATE);
-	drawButton("S", icons.scale, ImGuizmo::SCALE);
+	drawButton("NONE", icons.none, ImGuizmo::OPERATION::NONE);
+	drawButton("T", icons.translate, ImGuizmo::OPERATION::TRANSLATE);
+	drawButton("R", icons.rotate, ImGuizmo::OPERATION::ROTATE);
+	drawButton("S", icons.scale, ImGuizmo::OPERATION::SCALE);
 }
 
 void ImGuiObjectEditor::EditObjects() {

@@ -514,6 +514,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <SubType>
       </SubType>
     </ClCompile>
+    <ClCompile Include="Engine\Utility\Direction.cpp" />
     <ClCompile Include="Engine\Utility\KeyframeAnimation.cpp">
       <SubType>
       </SubType>
@@ -1362,6 +1363,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="Engine\Utility\Direction.h" />
     <ClInclude Include="Engine\Utility\KeyframeAnimation.h">
       <SubType>
       </SubType>

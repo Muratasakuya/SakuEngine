@@ -36,6 +36,7 @@ struct GizmoContext {
 };
 struct GizmoIcons {
 
+	ImTextureID none;
 	ImTextureID translate;
 	ImTextureID rotate;
 	ImTextureID scale;
@@ -71,6 +72,7 @@ public:
 
 	// 外部からフォーカスするIDを設定
 	void SelectById(uint32_t id);
+	std::optional<uint32_t> GetSelected3D() const { return selected3D_; }
 
 	// singleton
 	static ImGuiObjectEditor* GetInstance();

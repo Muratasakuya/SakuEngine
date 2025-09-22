@@ -12,6 +12,7 @@
 #include <Engine/Asset/Asset.h>
 #include <Engine/Editor/ImGuiObjectEditor.h>
 #include <Engine/Editor/Manager/GameEditorManager.h>
+#include <Engine/Object/Core/ObjectManager.h>
 #include <Engine/Utility/GameTimer.h>
 #include <Engine/Utility/EnumAdapter.h>
 
@@ -36,6 +37,7 @@ void ImGuiEditor::Init(const D3D12_GPU_DESCRIPTOR_HANDLE& renderTextureGPUHandle
 	isPlayGame_ = true;
 	editMode_ = false;
 	isShowDemoWindow_ = false;
+	isCameraAutoFocus_ = false;
 
 	gameViewSize_ = ImVec2(896.0f, 504.0f);
 	debugViewSize_ = ImVec2(768.0f, 432.0f);
@@ -43,23 +45,25 @@ void ImGuiEditor::Init(const D3D12_GPU_DESCRIPTOR_HANDLE& renderTextureGPUHandle
 	gizmoIconSize_ = 40.0f;
 }
 
-void ImGuiEditor::LoadGizmoIconTextures(Asset* asset) {
+void ImGuiEditor::LoadIconTextures(Asset* asset) {
 
 	// アイコン読み込み
 	asset->LoadTexture("manipulaterTranslate", AssetLoadType::Synch);
 	asset->LoadTexture("manipulaterRotate", AssetLoadType::Synch);
 	asset->LoadTexture("manipulaterScale", AssetLoadType::Synch);
+	asset->LoadTexture("manipulaterNone", AssetLoadType::Synch);
+	asset->LoadTexture("manipulaterAutoFocus", AssetLoadType::Synch);
 
 	// GPUHandleを設定
-	gizmoIconGPUHandles_.emplace(GizmoTransformEnum::Translate,
+	gizmoIconGPUHandles_.emplace(GizmoEnum::None,
+		asset->GetGPUHandle("manipulaterNone"));
+	gizmoIconGPUHandles_.emplace(GizmoEnum::Translate,
 		asset->GetGPUHandle("manipulaterTranslate"));
-	gizmoIconGPUHandles_.emplace(GizmoTransformEnum::Rotate,
+	gizmoIconGPUHandles_.emplace(GizmoEnum::Rotate,
 		asset->GetGPUHandle("manipulaterRotate"));
-	gizmoIconGPUHandles_.emplace(GizmoTransformEnum::Scale,
+	gizmoIconGPUHandles_.emplace(GizmoEnum::Scale,
 		asset->GetGPUHandle("manipulaterScale"));
-
-	// 選択物への自動カメラフォーカス
-	// 各軸のカメラ固定回転
+	cameraAutoFocusGPUHandle_ = asset->GetGPUHandle("manipulaterAutoFocus");
 }
 
 void ImGuiEditor::SetConsoleViewDescriptor(
@@ -110,7 +114,7 @@ void ImGuiEditor::Display(SceneView* sceneView) {
 
 	Console();
 
-	Hierarchy();
+	Hierarchy(sceneView);
 
 	Inspector();
 
@@ -210,11 +214,29 @@ void ImGuiEditor::SceneManipulate() {
 	// ギズモで使用するSRTをボタンで切り替える
 	// Gizmo
 	GizmoIcons icons{};
-	icons.translate = static_cast<ImTextureID>(gizmoIconGPUHandles_[GizmoTransformEnum::Translate].ptr);
-	icons.rotate = static_cast<ImTextureID>(gizmoIconGPUHandles_[GizmoTransformEnum::Rotate].ptr);
-	icons.scale = static_cast<ImTextureID>(gizmoIconGPUHandles_[GizmoTransformEnum::Scale].ptr);
+	icons.none = static_cast<ImTextureID>(gizmoIconGPUHandles_[GizmoEnum::None].ptr);
+	icons.translate = static_cast<ImTextureID>(gizmoIconGPUHandles_[GizmoEnum::Translate].ptr);
+	icons.rotate = static_cast<ImTextureID>(gizmoIconGPUHandles_[GizmoEnum::Rotate].ptr);
+	icons.scale = static_cast<ImTextureID>(gizmoIconGPUHandles_[GizmoEnum::Scale].ptr);
 	icons.size = ImVec2(gizmoIconSize_, gizmoIconSize_);
 	ImGuiObjectEditor::GetInstance()->GizmoToolbar(icons);
+
+	ImGui::Separator();
+
+	// カメラフォーカス
+	if (ImGui::ImageButton("CameraAutoFocus",
+		static_cast<ImTextureID>(cameraAutoFocusGPUHandle_.ptr),
+		ImVec2(gizmoIconSize_, gizmoIconSize_))) {
+
+		isCameraAutoFocus_ = !isCameraAutoFocus_;
+	}
+	if (isCameraAutoFocus_) {
+
+		ImGui::SetItemDefaultFocus();
+		ImGui::GetWindowDrawList()->AddRect(
+			ImGui::GetItemRectMin(), ImGui::GetItemRectMax(),
+			IM_COL32(255, 255, 0, 128), 6.0f, 0, 2.0f);
+	}
 
 	ImGui::EndChild();
 }
@@ -256,7 +278,7 @@ void ImGuiEditor::Console() {
 	ImGui::End();
 }
 
-void ImGuiEditor::Hierarchy() {
+void ImGuiEditor::Hierarchy(SceneView* sceneView) {
 
 	ImGui::Begin("Hierarchy", nullptr, windowFlag_);
 
@@ -266,6 +288,21 @@ void ImGuiEditor::Hierarchy() {
 
 			// scene内のobject選択
 			ImGuiObjectEditor::GetInstance()->SelectObject();
+
+			// カメラにフォーカスさせる処理
+			if (isCameraAutoFocus_ && sceneView) {
+				if (auto select = ImGuiObjectEditor::GetInstance()->GetSelected3D()) {
+					// 新しいオブジェクトを選択したときにのみ処理
+					if (lastAutoFocusId_ != select) {
+						if (Transform3D* transform = ObjectManager::GetInstance()->GetData<Transform3D>(*select)) {
+
+							BaseCamera* camera = sceneView->GetSceneCamera();
+							camera->StartAutoFocus(true, transform->GetWorldPos());
+							lastAutoFocusId_ = select;
+						}
+					}
+				}
+			}
 			ImGui::EndTabItem();
 		}
 

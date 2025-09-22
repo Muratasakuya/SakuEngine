@@ -12,6 +12,7 @@
 #include <imgui.h>
 // c++
 #include <unordered_map>
+#include <optional>
 // front
 class SceneView;
 class Asset;
@@ -30,7 +31,7 @@ public:
 
 	void Init(const D3D12_GPU_DESCRIPTOR_HANDLE& renderTextureGPUHandle,
 		const D3D12_GPU_DESCRIPTOR_HANDLE& debugSceneRenderTextureGPUHandle);
-	void LoadGizmoIconTextures(Asset* asset);
+	void LoadIconTextures(Asset* asset);
 
 	void Display(SceneView* sceneView);
 
@@ -47,8 +48,9 @@ private:
 
 	//--------- structure ----------------------------------------------------
 
-	enum class GizmoTransformEnum {
+	enum class GizmoEnum {
 
+		None,
 		Translate,
 		Rotate,
 		Scale
@@ -60,7 +62,8 @@ private:
 	D3D12_GPU_DESCRIPTOR_HANDLE renderTextureGPUHandle_;
 	D3D12_GPU_DESCRIPTOR_HANDLE debugSceneRenderTextureGPUHandle_;
 	D3D12_GPU_DESCRIPTOR_HANDLE shadowTextureGPUHandle_;
-	std::unordered_map<GizmoTransformEnum, D3D12_GPU_DESCRIPTOR_HANDLE> gizmoIconGPUHandles_;
+	std::unordered_map<GizmoEnum, D3D12_GPU_DESCRIPTOR_HANDLE> gizmoIconGPUHandles_;
+	D3D12_GPU_DESCRIPTOR_HANDLE cameraAutoFocusGPUHandle_;
 
 	ImGuiWindowFlags windowFlag_;
 
@@ -78,6 +81,8 @@ private:
 
 	// editor
 	bool isShowDemoWindow_;
+	bool isCameraAutoFocus_;
+	std::optional<uint32_t> lastAutoFocusId_;
 
 	// console
 	std::unordered_map<DescriptorHeapType, const BaseDescriptor*> descriptors_;
@@ -100,7 +105,7 @@ private:
 	void Console();
 
 	// hierarchy
-	void Hierarchy();
+	void Hierarchy(SceneView* sceneView);
 
 	// inspector
 	void Inspector();
