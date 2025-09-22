@@ -94,10 +94,10 @@ void AssetEditor::Init(Asset* asset) {
 	asset_ = asset;
 
 	// editorに使う画像
-	asset_->LoadTexture("folder");
-	asset_->LoadTexture("texture"); // texture表示、読み込まれていなければこっち
-	asset_->LoadTexture("model");   // model表示
-	asset_->LoadTexture("file");    // file表示
+	asset_->LoadTexture("folder", AssetLoadType::Synch);
+	asset_->LoadTexture("texture", AssetLoadType::Synch); // texture表示、読み込まれていなければこっち
+	asset_->LoadTexture("model", AssetLoadType::Synch);   // model表示
+	asset_->LoadTexture("file", AssetLoadType::Synch);    // file表示
 	// GPUHandleを予め取得
 	folderIcon_ = asset_->GetGPUHandle("folder");
 	fileIcon_ = asset_->GetGPUHandle("file");
@@ -349,7 +349,7 @@ void AssetEditor::DrawLoadOverlay() {
 		std::string id = pendingPath_.stem().string();
 		if (pendingType_ == PendingType::Texture) {
 
-			asset_->LoadTexture(id);
+			asset_->LoadTexture(id, AssetLoadType::Synch);
 		} else if (pendingType_ == PendingType::Model) {
 
 			asset_->LoadModel(id);

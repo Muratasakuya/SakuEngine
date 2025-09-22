@@ -46,9 +46,9 @@ void ImGuiEditor::Init(const D3D12_GPU_DESCRIPTOR_HANDLE& renderTextureGPUHandle
 void ImGuiEditor::LoadGizmoIconTextures(Asset* asset) {
 
 	// アイコン読み込み
-	asset->LoadTexture("manipulaterTranslate");
-	asset->LoadTexture("manipulaterRotate");
-	asset->LoadTexture("manipulaterScale");
+	asset->LoadTexture("manipulaterTranslate", AssetLoadType::Synch);
+	asset->LoadTexture("manipulaterRotate", AssetLoadType::Synch);
+	asset->LoadTexture("manipulaterScale", AssetLoadType::Synch);
 
 	// GPUHandleを設定
 	gizmoIconGPUHandles_.emplace(GizmoTransformEnum::Translate,
@@ -57,6 +57,9 @@ void ImGuiEditor::LoadGizmoIconTextures(Asset* asset) {
 		asset->GetGPUHandle("manipulaterRotate"));
 	gizmoIconGPUHandles_.emplace(GizmoTransformEnum::Scale,
 		asset->GetGPUHandle("manipulaterScale"));
+
+	// 選択物への自動カメラフォーカス
+	// 各軸のカメラ固定回転
 }
 
 void ImGuiEditor::SetConsoleViewDescriptor(
@@ -111,7 +114,7 @@ void ImGuiEditor::Display(SceneView* sceneView) {
 
 	Inspector();
 
-	Asset();
+	AssetEdit();
 }
 
 void ImGuiEditor::EditLayout() {

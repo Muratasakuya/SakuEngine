@@ -40,7 +40,7 @@ public:
 	// 非同期読み込みの更新
 	void PumpAsyncLoads();
 
-	void LoadTexture(const std::string& textureName);
+	void LoadTexture(const std::string& textureName, AssetLoadType loadType);
 	void LoadModel(const std::string& modelName);
 	void LoadAnimation(const std::string& animationName, const std::string& modelName);
 	

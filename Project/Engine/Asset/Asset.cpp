@@ -207,8 +207,15 @@ void Asset::LoadSceneAsync(Scene scene, AssetLoadType loadType) {
 	}
 }
 
-void Asset::LoadTexture(const std::string& textureName) {
-	textureManager_->Load(textureName);
+void Asset::LoadTexture(const std::string& textureName, AssetLoadType loadType) {
+
+	if (loadType == AssetLoadType::Synch) {
+
+		textureManager_->LoadSynch(textureName);
+	} else if (loadType == AssetLoadType::Async) {
+
+		textureManager_->Load(textureName);
+	}
 }
 
 void Asset::LoadModel(const std::string& modelName) {
