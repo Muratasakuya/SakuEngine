@@ -31,9 +31,12 @@ float AnimationLoop::LoopedT(float rawT) {
 	return t;
 }
 
-void AnimationLoop::ImGuiLoopParam() {
+void AnimationLoop::ImGuiLoopParam(bool isSeparate) {
 
-	ImGui::SeparatorText("Loop");
+	if (isSeparate) {
+
+		ImGui::SeparatorText("Loop");
+	}
 
 	ImGui::DragInt("loopCount", &loopCount_, 1, 1, 64);
 	EnumAdapter<AnimationLoopType>::Combo("loopType", &loopType_);

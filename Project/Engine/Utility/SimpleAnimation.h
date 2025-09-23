@@ -154,45 +154,43 @@ template<typename T>
 inline void SimpleAnimation<T>::ImGui(const std::string& label) {
 
 	ImGui::PushItemWidth(itemSize_);
+	ImGui::PushID(label.c_str());
 
-	if (ImGui::BeginTabBar(("SimpleAnimation##" + label).c_str())) {
+	ImGuiTreeNodeFlags windowFlag = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Leaf;
+	if (ImGui::CollapsingHeader("AnimValue", windowFlag)) {
 
-		// 補間で動く値の操作
-		if (ImGui::BeginTabItem(("LerpValue##" + label).c_str())) {
+		if constexpr (std::is_same_v<T, float>) {
 
-			ImGui::SeparatorText("Time");
+			ImGui::DragFloat("start", &move_.start, 0.01f);
+			ImGui::DragFloat("end", &move_.end, 0.01f);
+		} else if constexpr (std::is_same_v<T, int>) {
 
-			timer_.ImGui("Time", false);
-			loop_.ImGuiLoopParam();
+			ImGui::DragInt("start", &move_.start, 1);
+			ImGui::DragInt("end", &move_.end, 1);
+		} else if constexpr (std::is_same_v<T, Vector2>) {
 
-			ImGui::SeparatorText("Move");
+			ImGui::DragFloat2("start", &move_.start.x, 0.01f);
+			ImGui::DragFloat2("end", &move_.end.x, 0.01f);
+		} else if constexpr (std::is_same_v<T, Vector3>) {
 
-			if constexpr (std::is_same_v<T, float>) {
+			ImGui::DragFloat3("start", &move_.start.x, 0.01f);
+			ImGui::DragFloat3("end", &move_.end.x, 0.01f);
+		} else if constexpr (std::is_same_v<T, Color>) {
 
-				ImGui::DragFloat(("start##Move" + label).c_str(), &move_.start, 0.01f);
-				ImGui::DragFloat(("end##Move" + label).c_str(), &move_.end, 0.01f);
-			} else if constexpr (std::is_same_v<T, int>) {
-
-				ImGui::DragInt(("start##Move" + label).c_str(), &move_.start, 1);
-				ImGui::DragInt(("end##Move" + label).c_str(), &move_.end, 1);
-			} else if constexpr (std::is_same_v<T, Vector2>) {
-
-				ImGui::DragFloat2(("start##Move" + label).c_str(), &move_.start.x, 0.01f);
-				ImGui::DragFloat2(("end##Move" + label).c_str(), &move_.end.x, 0.01f);
-			} else if constexpr (std::is_same_v<T, Vector3>) {
-
-				ImGui::DragFloat3(("start##Move" + label).c_str(), &move_.start.x, 0.01f);
-				ImGui::DragFloat3(("end##Move" + label).c_str(), &move_.end.x, 0.01f);
-			} else if constexpr (std::is_same_v<T, Color>) {
-
-				ImGui::ColorEdit4(("start##Move" + label).c_str(), &move_.start.a);
-				ImGui::ColorEdit4(("end##Move" + label).c_str(), &move_.end.a);
-			}
-			ImGui::EndTabItem();
+			ImGui::ColorEdit4("start", &move_.start.a);
+			ImGui::ColorEdit4("end", &move_.end.a);
 		}
-		ImGui::EndTabBar();
+	}
+	if (ImGui::CollapsingHeader("Timer", windowFlag)) {
+
+		timer_.ImGui("Time", false);
+	}
+	if (ImGui::CollapsingHeader("Loop", windowFlag)) {
+
+		loop_.ImGuiLoopParam(false);
 	}
 
+	ImGui::PopID();
 	ImGui::PopItemWidth();
 }
 

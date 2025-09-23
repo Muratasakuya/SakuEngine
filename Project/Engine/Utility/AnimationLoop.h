@@ -30,7 +30,7 @@ public:
 
 	float LoopedT(float rawT);
 
-	void ImGuiLoopParam();
+	void ImGuiLoopParam(bool isSeparate = true);
 
 	// json
 	void ToLoopJson(Json& data);
