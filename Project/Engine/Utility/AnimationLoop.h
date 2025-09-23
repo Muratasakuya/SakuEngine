@@ -30,11 +30,15 @@ public:
 
 	float LoopedT(float rawT);
 
-	void ImGuiLoopParam();
+	void ImGuiLoopParam(bool isSeparate = true);
 
 	// json
 	void ToLoopJson(Json& data);
 	void FromLoopJson(const Json& data);
+
+	//--------- accessor -----------------------------------------------------
+
+	int GetLoopCount() const { return loopCount_; }
 private:
 	//========================================================================
 	//	private Methods

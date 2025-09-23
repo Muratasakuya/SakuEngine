@@ -5,6 +5,7 @@
 //============================================================================
 #include <Engine/Config.h>
 #include <Engine/Utility/EnumAdapter.h>
+#include <Engine/Utility/JsonAdapter.h>
 #include <Game/Objects/Common/GameButtonBlinkingUpdater.h>
 
 // imgui
@@ -64,17 +65,17 @@ void GameFinishUI::InitAnimations() {
 void GameFinishUI::InitAnimationSize() {
 
 	// 補間サイズを設定
-	finishSizeAnimation_->move_.start = Vector2(askFinish_->GetSize().x, 0.0f);
-	finishSizeAnimation_->move_.end = askFinish_->GetSize();
+	finishSizeAnimation_->SetStart(Vector2(askFinish_->GetSize().x, 0.0f));
+	finishSizeAnimation_->SetEnd(askFinish_->GetSize());
 
-	finishBackgroundSizeAnimation_->move_.start = Vector2(askFinishBackground_->GetSize().x, 0.0f);
-	finishBackgroundSizeAnimation_->move_.end = askFinishBackground_->GetSize();
+	finishBackgroundSizeAnimation_->SetStart(Vector2(askFinishBackground_->GetSize().x, 0.0f));
+	finishBackgroundSizeAnimation_->SetEnd(askFinishBackground_->GetSize());
 
-	selectCancelSizeAnimation_->move_.start = Vector2(selectCancel_->GetSize().x, 0.0f);
-	selectCancelSizeAnimation_->move_.end = selectCancel_->GetSize();
+	selectCancelSizeAnimation_->SetStart(Vector2(selectCancel_->GetSize().x, 0.0f));
+	selectCancelSizeAnimation_->SetEnd(selectCancel_->GetSize());
 
-	selectOKSizeAnimation_->move_.start = Vector2(selectOK_->GetSize().x, 0.0f);
-	selectOKSizeAnimation_->move_.end = selectOK_->GetSize();
+	selectOKSizeAnimation_->SetStart(Vector2(selectOK_->GetSize().x, 0.0f));
+	selectOKSizeAnimation_->SetEnd(selectOK_->GetSize());
 }
 
 void GameFinishUI::SetSpritePos() {
@@ -113,7 +114,7 @@ void GameFinishUI::ConfirmCancelByPad() {
 	ForEachAnimations([](SimpleAnimation<Vector2>* animations) {
 		animations->Reset(); });
 	ForEachAnimations([](SimpleAnimation<Vector2>* animations) {
-		animations->type_ = SimpleAnimationType::Return; });
+		animations->SetAnimationType(SimpleAnimationType::Return); });
 }
 
 void GameFinishUI::ConfirmOKByPad() {
@@ -238,7 +239,7 @@ void GameFinishUI::CheckGameFinish() {
 
 		// 反対に補間させる
 		ForEachAnimations([](SimpleAnimation<Vector2>* animations) {
-			animations->type_ = SimpleAnimationType::Return; });
+			animations->SetAnimationType(SimpleAnimationType::Return); });
 		return;
 	}
 	// OK入力
@@ -280,7 +281,7 @@ void GameFinishUI::DisableSelectSprites() {
 
 	// 元通りに補間させる
 	ForEachAnimations([](SimpleAnimation<Vector2>* animations) {
-		animations->type_ = SimpleAnimationType::None; });
+		animations->SetAnimationType(SimpleAnimationType::None); });
 
 	// 表示を消す
 	askFinish_->SetSize({ askFinish_->GetSize().x, 0.0f });

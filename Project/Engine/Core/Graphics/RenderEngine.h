@@ -72,6 +72,8 @@ public:
 	//--------- accessor -----------------------------------------------------
 
 	SRVDescriptor* GetSRVDescriptor() const { return srvDescriptor_.get(); }
+	RTVDescriptor* GetRTVDescriptor() const { return rtvDescriptor_.get(); }
+	DSVDescriptor* GetDSVDescriptor() const { return dsvDescriptor_.get(); }
 
 	DxSwapChain* GetDxSwapChain() const { return dxSwapChain_.get(); }
 

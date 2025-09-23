@@ -5,6 +5,7 @@
 //============================================================================
 #include <Engine/Config.h>
 #include <Engine/Core/Graphics/Renderer/LineRenderer.h>
+#include <Engine/Utility/Direction.h>
 #include <Lib/MathUtils/MathUtils.h>
 
 //============================================================================
@@ -27,9 +28,31 @@ BaseCamera::BaseCamera() {
 	transform_.scale = Vector3::AnyInit(1.0f);
 	transform_.rotation = Quaternion::EulerToQuaternion(transform_.eulerRotate);
 	transform_.translation = Vector3(0.0f, 1.8f, -24.0f);
+	autoFucusTimer_.target_ = 0.32f;
+	autoFucusTimer_.easeingType_ = EasingType::EaseOutExpo;
+}
+
+void BaseCamera::StartAutoFocus(bool isFocus, const Vector3& target) {
+
+	isStartFocus_ = isFocus;
+	autoFucusTimer_.Reset();
+	startFocusTranslation_ = transform_.translation;
+	startFocusRotation_ = transform_.rotation;
+
+	Vector3 direction = startFocusTranslation_ - target;
+	direction = direction.Normalize();
+
+	// 目標座標から一定距離離す
+	const float targetOffset = 160.0f;
+	targetFocusTranslation_ = target + direction * targetOffset;
+	targetFocusRotation_ = Quaternion::LookRotation(Vector3(target - startFocusTranslation_).Normalize(),
+		Direction::Get(Direction3D::Up));
 }
 
 void BaseCamera::UpdateView() {
+
+	// 自動フォーカス設定
+	UpdateAutoFocus();
 
 	// eulerを設定して更新する
 	transform_.rotation = Quaternion::EulerToQuaternion(transform_.eulerRotate);
@@ -43,6 +66,31 @@ void BaseCamera::UpdateView() {
 
 	// billboardMatrixを計算
 	CalBillboardMatrix();
+}
+
+void BaseCamera::UpdateAutoFocus() {
+
+	if (!isStartFocus_) {
+		return;
+	}
+
+	// 座標補間処理
+	autoFucusTimer_.Update();
+	transform_.translation = Vector3::Lerp(startFocusTranslation_,
+		targetFocusTranslation_, autoFucusTimer_.easedT_);
+	// 回転補間処理
+	transform_.rotation = Quaternion::Slerp(startFocusRotation_,
+		targetFocusRotation_, autoFucusTimer_.easedT_);
+	transform_.eulerRotate = Quaternion::ToEulerAngles(Quaternion::Normalize(transform_.rotation));
+
+	if (autoFucusTimer_.IsReached()) {
+
+		// 補間終了
+		transform_.translation = targetFocusTranslation_;
+		transform_.rotation = targetFocusRotation_;
+		transform_.eulerRotate = Quaternion::ToEulerAngles(Quaternion::Normalize(targetFocusRotation_));
+		isStartFocus_ = false;
+	}
 }
 
 void BaseCamera::ImGui() {

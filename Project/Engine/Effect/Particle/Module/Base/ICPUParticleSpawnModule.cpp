@@ -178,7 +178,7 @@ void ICPUParticleSpawnModule::DragAndDropTexture() {
 	ImGuiHelper::ImageButtonWithLabel("texture", textureName_,
 		(ImTextureID)asset_->GetGPUHandle(textureName_).ptr, { imageSize, imageSize });
 	if (const auto* payload = ImGuiHelper::DragDropPayload(PendingType::Texture)) {
-		
+
 		// textureを設定
 		textureName_ = payload->name;
 		// indexを設定
@@ -282,10 +282,10 @@ void ICPUParticleSpawnModule::FromCommonJson(const Json& data) {
 
 	// 存在していなければ読み込む
 	if (!asset_->SearchTexture(textureName_)) {
-		asset_->LoadTexture(textureName_);
+		asset_->LoadTexture(textureName_, AssetLoadType::Async);
 	}
 	if (!asset_->SearchTexture(noiseTextureName_)) {
-		asset_->LoadTexture(noiseTextureName_);
+		asset_->LoadTexture(noiseTextureName_, AssetLoadType::Async);
 	}
 
 	textureInfo_.colorTextureIndex = asset_->GetTextureGPUIndex(textureName_);

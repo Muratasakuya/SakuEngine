@@ -2,88 +2,84 @@
     "FinishUI": {
         "Animations": {
             "finishBackgroundSizeAnimation_": {
-                "loop_.interval": 0.0,
-                "loop_.isLoop": false,
-                "loop_.maxCount": 0,
-                "move_.easingType": 14,
+                "Loop": {
+                    "loop": {
+                        "loopCount": 1,
+                        "type": "Repeat"
+                    }
+                },
+                "Timer": {
+                    "easeingType_": "EaseOutExpo",
+                    "target_": 0.4000000059604645
+                },
                 "move_.end": {
                     "x": 1920.0,
                     "y": 160.0
                 },
-                "move_.moveValue": {
-                    "x": 0.0,
-                    "y": 0.0
-                },
                 "move_.start": {
                     "x": 1920.0,
                     "y": 0.0
-                },
-                "time_.end": 0.1599999964237213,
-                "time_.movedValueInterval": 0.0,
-                "time_.useScaledDeltaTime": false
+                }
             },
             "finishSizeAnimation_": {
-                "loop_.interval": 0.0,
-                "loop_.isLoop": false,
-                "loop_.maxCount": 0,
-                "move_.easingType": 14,
+                "Loop": {
+                    "loop": {
+                        "loopCount": 1,
+                        "type": "Repeat"
+                    }
+                },
+                "Timer": {
+                    "easeingType_": "EaseOutExpo",
+                    "target_": 0.3199999928474426
+                },
                 "move_.end": {
                     "x": 480.0,
                     "y": 72.0
                 },
-                "move_.moveValue": {
-                    "x": 0.0,
-                    "y": 0.0
-                },
                 "move_.start": {
                     "x": 480.0,
                     "y": 0.0
-                },
-                "time_.end": 0.1599999964237213,
-                "time_.movedValueInterval": 0.0,
-                "time_.useScaledDeltaTime": false
+                }
             },
             "selectCancelSizeAnimation_": {
-                "loop_.interval": 0.0,
-                "loop_.isLoop": false,
-                "loop_.maxCount": 0,
-                "move_.easingType": 14,
+                "Loop": {
+                    "loop": {
+                        "loopCount": 1,
+                        "type": "Repeat"
+                    }
+                },
+                "Timer": {
+                    "easeingType_": "EaseOutExpo",
+                    "target_": 0.4000000059604645
+                },
                 "move_.end": {
                     "x": 210.0,
                     "y": 54.0
                 },
-                "move_.moveValue": {
-                    "x": 0.0,
-                    "y": 0.0
-                },
                 "move_.start": {
                     "x": 210.0,
                     "y": 0.0
-                },
-                "time_.end": 0.3199999928474426,
-                "time_.movedValueInterval": 0.0,
-                "time_.useScaledDeltaTime": false
+                }
             },
             "selectOKSizeAnimation_": {
-                "loop_.interval": 0.0,
-                "loop_.isLoop": false,
-                "loop_.maxCount": 0,
-                "move_.easingType": 14,
+                "Loop": {
+                    "loop": {
+                        "loopCount": 1,
+                        "type": "Repeat"
+                    }
+                },
+                "Timer": {
+                    "easeingType_": "EaseOutExpo",
+                    "target_": 0.4000000059604645
+                },
                 "move_.end": {
                     "x": 210.0,
                     "y": 54.0
                 },
-                "move_.moveValue": {
-                    "x": 0.0,
-                    "y": 0.0
-                },
                 "move_.start": {
                     "x": 210.0,
                     "y": 0.0
-                },
-                "time_.end": 0.3199999928474426,
-                "time_.movedValueInterval": 0.0,
-                "time_.useScaledDeltaTime": false
+                }
             }
         },
         "askFinishBackground_Size": {

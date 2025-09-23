@@ -137,6 +137,12 @@ Framework::Framework() {
 	imguiEditor_ = std::make_unique<ImGuiEditor>();
 	imguiEditor_->Init(renderEngine_->GetRenderTextureGPUHandle(),
 		postProcessSystem->GetCopySRVGPUHandle());
+	imguiEditor_->LoadIconTextures(asset_.get());
+
+	// console表示用
+	imguiEditor_->SetConsoleViewDescriptor(DescriptorHeapType::SRV, srvDescriptor);
+	imguiEditor_->SetConsoleViewDescriptor(DescriptorHeapType::RTV, renderEngine_->GetRTVDescriptor());
+	imguiEditor_->SetConsoleViewDescriptor(DescriptorHeapType::DSV, renderEngine_->GetDSVDescriptor());
 #endif
 }
 
@@ -161,12 +167,18 @@ void Framework::Update() {
 	}
 
 	// imgui表示更新
+	bool playGame = true;
 #if defined(_DEBUG) || defined(_DEVELOPBUILD)
 	imguiEditor_->Display(sceneView_.get());
+	playGame = imguiEditor_->IsPlayGame();
 #endif
-	// scene更新
-	UpdateScene();
 
+	// falseなら処理しない
+	if (playGame) {
+
+		// scene更新
+		UpdateScene();
+	}
 	GameTimer::EndUpdateCount();
 }
 void Framework::UpdateScene() {

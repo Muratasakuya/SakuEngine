@@ -116,9 +116,6 @@ void BaseTransform::ImGui(float itemSize) {
 	}
 
 	ImGui::PopItemWidth();
-
-	// Gizmo
-	ImGuiObjectEditor::GetInstance()->GizmoToolbar();
 }
 
 void BaseTransform::ToJson(Json& data) {

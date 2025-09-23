@@ -4,6 +4,7 @@
 //	include
 //============================================================================
 #include <Engine/Object/Data/Transform.h>
+#include <Engine/Utility/StateTimer.h>
 
 // imgui
 #include <imgui.h>
@@ -28,6 +29,8 @@ public:
 	virtual void ImGui();
 	void EditFrustum();
 	void RenderFrustum();
+
+	void StartAutoFocus(bool isFocus, const Vector3& target);
 
 	//--------- accessor -----------------------------------------------------
 
@@ -64,10 +67,16 @@ protected:
 
 	Matrix4x4 viewMatrix_;
 	Matrix4x4 projectionMatrix_;
-
 	Matrix4x4 viewProjectionMatrix_;
-
 	Matrix4x4 billboardMatrix_;
+
+	// 選択したオブジェクトへの自動フォーカス
+	bool isStartFocus_ = false;
+	StateTimer autoFucusTimer_;
+	Vector3 startFocusTranslation_;
+	Vector3 targetFocusTranslation_;
+	Quaternion startFocusRotation_;
+	Quaternion targetFocusRotation_;
 
 	// debug
 	float frustumScale_;
@@ -76,5 +85,9 @@ protected:
 
 	//--------- functions ----------------------------------------------------
 
+	// update
+	void UpdateAutoFocus();
+
+	// helper
 	void CalBillboardMatrix();
 };

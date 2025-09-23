@@ -34,6 +34,14 @@ struct GizmoContext {
 	float projection[16];
 	bool orthographic;
 };
+struct GizmoIcons {
+
+	ImTextureID none;
+	ImTextureID translate;
+	ImTextureID rotate;
+	ImTextureID scale;
+	ImVec2 size;
+};
 
 //============================================================================
 //	ImGuiObjectEditor class
@@ -57,13 +65,14 @@ public:
 
 	// ギズモ呼び出し
 	void DrawManipulateGizmo(const GizmoContext& context);
-	void GizmoToolbar();
+	void GizmoToolbar(const GizmoIcons& icons);
 	bool IsUsingGuizmo() const { return isUsingGuizmo_; }
 
 	//--------- accessor -----------------------------------------------------
 
 	// 外部からフォーカスするIDを設定
 	void SelectById(uint32_t id);
+	std::optional<uint32_t> GetSelected3D() const { return selected3D_; }
 
 	// singleton
 	static ImGuiObjectEditor* GetInstance();
@@ -103,11 +112,6 @@ private:
 	ImGuizmo::OPERATION currentOption_ = ImGuizmo::TRANSLATE;
 	ImGuizmo::MODE currentMode_ = ImGuizmo::WORLD;
 	bool isUsingGuizmo_ = false;
-	// 操作感度
-	bool useSnap_ = false;
-	float snapMove_ = 0.1f;
-	float snapRotate_ = 0.01f;
-	float snapScale_ = 0.1f;
 
 	const float itemWidth_ = 192.0f;
 

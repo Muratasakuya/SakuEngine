@@ -42,7 +42,11 @@ void DebugCamera::Update() {
 	// 移動処理
 	Move();
 
+	// 自動フォーカス処理
+	BaseCamera::UpdateAutoFocus();
+
 	// 行列更新
+	transform_.rotation = Quaternion::EulerToQuaternion(transform_.eulerRotate);
 	rotateMatrix_ = Matrix4x4::MakeRotateMatrix(transform_.eulerRotate);
 	transform_.matrix.world = Matrix4x4::MakeIdentity4x4();
 

@@ -15,7 +15,7 @@ public:
 	//	public Methods
 	//========================================================================
 
-	SRVDescriptor() :BaseDescriptor(512) {};
+	SRVDescriptor() :BaseDescriptor(256) {};
 	~SRVDescriptor() = default;
 
 	void CreateSRV(uint32_t& srvIndex, ID3D12Resource* resource,

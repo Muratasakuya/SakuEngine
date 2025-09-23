@@ -5,6 +5,7 @@
 //============================================================================
 #include <Engine/Config.h>
 #include <Engine/Utility/EnumAdapter.h>
+#include <Engine/Utility/JsonAdapter.h>
 
 //============================================================================
 //	FadeSprite classMethods

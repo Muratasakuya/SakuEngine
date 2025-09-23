@@ -9,9 +9,12 @@
 
 // imgui表示
 #include <Engine/Asset/AssetEditor.h>
+#include <Engine/Asset/Asset.h>
 #include <Engine/Editor/ImGuiObjectEditor.h>
 #include <Engine/Editor/Manager/GameEditorManager.h>
+#include <Engine/Object/Core/ObjectManager.h>
 #include <Engine/Utility/GameTimer.h>
+#include <Engine/Utility/EnumAdapter.h>
 
 // imgui
 #include <ImGuizmo.h>
@@ -31,10 +34,42 @@ void ImGuiEditor::Init(const D3D12_GPU_DESCRIPTOR_HANDLE& renderTextureGPUHandle
 
 	// 初期状態は表示
 	displayEnable_ = true;
+	isPlayGame_ = true;
 	editMode_ = false;
+	isShowDemoWindow_ = false;
+	isCameraAutoFocus_ = false;
 
-	gameViewSize_ = ImVec2(832.0f, 486.0f);
-	debugViewSize_ = ImVec2(832.0f, 486.0f);
+	gameViewSize_ = ImVec2(896.0f, 504.0f);
+	debugViewSize_ = ImVec2(768.0f, 432.0f);
+	sceneSidebarWidth_ = 66.0f;
+	gizmoIconSize_ = 40.0f;
+}
+
+void ImGuiEditor::LoadIconTextures(Asset* asset) {
+
+	// アイコン読み込み
+	asset->LoadTexture("manipulaterTranslate", AssetLoadType::Synch);
+	asset->LoadTexture("manipulaterRotate", AssetLoadType::Synch);
+	asset->LoadTexture("manipulaterScale", AssetLoadType::Synch);
+	asset->LoadTexture("manipulaterNone", AssetLoadType::Synch);
+	asset->LoadTexture("manipulaterAutoFocus", AssetLoadType::Synch);
+
+	// GPUHandleを設定
+	gizmoIconGPUHandles_.emplace(GizmoEnum::None,
+		asset->GetGPUHandle("manipulaterNone"));
+	gizmoIconGPUHandles_.emplace(GizmoEnum::Translate,
+		asset->GetGPUHandle("manipulaterTranslate"));
+	gizmoIconGPUHandles_.emplace(GizmoEnum::Rotate,
+		asset->GetGPUHandle("manipulaterRotate"));
+	gizmoIconGPUHandles_.emplace(GizmoEnum::Scale,
+		asset->GetGPUHandle("manipulaterScale"));
+	cameraAutoFocusGPUHandle_ = asset->GetGPUHandle("manipulaterAutoFocus");
+}
+
+void ImGuiEditor::SetConsoleViewDescriptor(
+	DescriptorHeapType type, const BaseDescriptor* descriptor) {
+
+	descriptors_[type] = descriptor;
 }
 
 void ImGuiEditor::Display(SceneView* sceneView) {
@@ -58,6 +93,13 @@ void ImGuiEditor::Display(SceneView* sceneView) {
 		return;
 	}
 
+	if (isShowDemoWindow_) {
+
+		ImGui::ShowDemoWindow();
+	}
+
+	MenuBar();
+
 	// ドッキング設定
 	ImGui::DockSpaceOverViewport
 	(ImGui::GetMainViewport()->ID, ImGui::GetMainViewport(), ImGuiDockNodeFlags_None);
@@ -72,11 +114,11 @@ void ImGuiEditor::Display(SceneView* sceneView) {
 
 	Console();
 
-	Hierarchy();
+	Hierarchy(sceneView);
 
 	Inspector();
 
-	Asset();
+	AssetEdit();
 }
 
 void ImGuiEditor::EditLayout() {
@@ -89,13 +131,51 @@ void ImGuiEditor::EditLayout() {
 
 	ImGui::DragFloat2("gameViewSize", &gameViewSize_.x, 1.0f);
 	ImGui::DragFloat2("debugViewSize", &debugViewSize_.x, 1.0f);
+	ImGui::DragFloat("sceneSidebarWidth", &sceneSidebarWidth_, 0.1f);
+	ImGui::DragFloat("gizmoIconSize", &gizmoIconSize_, 0.1f);
 
 	ImGui::End();
 }
 
+void ImGuiEditor::MenuBar() {
+
+	if (ImGui::BeginMainMenuBar()) {
+		if (ImGui::BeginMenu("Menu")) {
+
+			ImGui::Checkbox("Play", &isPlayGame_);
+			ImGui::Checkbox("EditLayout", &editMode_);
+			ImGui::Checkbox("ShowDemo", &isShowDemoWindow_);
+			ImGui::EndMenu();
+		}
+		ImGui::EndMainMenuBar();
+	}
+}
+
 void ImGuiEditor::MainWindow(SceneView* sceneView) {
 
-	ImGui::Begin("Scene", nullptr, ImGuiWindowFlags_NoMove);
+	ImGui::Begin("Game", nullptr,
+		ImGuiWindowFlags_NoTitleBar |
+		ImGuiWindowFlags_MenuBar |
+		ImGuiWindowFlags_NoInputs |
+		ImGuiWindowFlags_NoFocusOnAppearing);
+
+	GameMenuBar();
+
+	ImGui::Image(ImTextureID(renderTextureGPUHandle_.ptr), gameViewSize_);
+
+	SetInputArea(InputViewArea::Game, ImGui::GetItemRectMin(), ImGui::GetItemRectSize());
+	ImGui::End();
+
+	ImGui::Begin("Scene", nullptr,
+		ImGuiWindowFlags_NoTitleBar |
+		ImGuiWindowFlags_MenuBar |
+		ImGuiWindowFlags_NoMove);
+
+	// メニューバー
+	SceneMenuBar();
+	// 設定
+	SceneManipulate();
+	ImGui::SameLine();
 
 	ImGui::Image(ImTextureID(debugSceneRenderTextureGPUHandle_.ptr), debugViewSize_);
 
@@ -112,25 +192,93 @@ void ImGuiEditor::MainWindow(SceneView* sceneView) {
 	ImGuiObjectEditor::GetInstance()->DrawManipulateGizmo(gizmoContext);
 
 	ImGui::End();
+}
 
-	ImGui::Begin("Game", nullptr, windowFlag_);
+void ImGuiEditor::SceneMenuBar() {
 
-	ImGui::Image(ImTextureID(renderTextureGPUHandle_.ptr), gameViewSize_);
+	if (ImGui::BeginMenuBar()) {
+		if (ImGui::BeginMenu("Scene")) {
 
-	SetInputArea(InputViewArea::Game, ImGui::GetItemRectMin(), ImGui::GetItemRectSize());
-	ImGui::End();
+			ImGui::EndMenu();
+		}
+		ImGui::EndMenuBar();
+	}
+}
+
+void ImGuiEditor::SceneManipulate() {
+
+	ImGui::BeginChild("SceneManipulate",
+		ImVec2(sceneSidebarWidth_, debugViewSize_.y),
+		ImGuiChildFlags_Border);
+
+	// ギズモで使用するSRTをボタンで切り替える
+	// Gizmo
+	GizmoIcons icons{};
+	icons.none = static_cast<ImTextureID>(gizmoIconGPUHandles_[GizmoEnum::None].ptr);
+	icons.translate = static_cast<ImTextureID>(gizmoIconGPUHandles_[GizmoEnum::Translate].ptr);
+	icons.rotate = static_cast<ImTextureID>(gizmoIconGPUHandles_[GizmoEnum::Rotate].ptr);
+	icons.scale = static_cast<ImTextureID>(gizmoIconGPUHandles_[GizmoEnum::Scale].ptr);
+	icons.size = ImVec2(gizmoIconSize_, gizmoIconSize_);
+	ImGuiObjectEditor::GetInstance()->GizmoToolbar(icons);
+
+	ImGui::Separator();
+
+	// カメラフォーカス
+	if (ImGui::ImageButton("CameraAutoFocus",
+		static_cast<ImTextureID>(cameraAutoFocusGPUHandle_.ptr),
+		ImVec2(gizmoIconSize_, gizmoIconSize_))) {
+
+		isCameraAutoFocus_ = !isCameraAutoFocus_;
+	}
+	if (isCameraAutoFocus_) {
+
+		ImGui::SetItemDefaultFocus();
+		ImGui::GetWindowDrawList()->AddRect(
+			ImGui::GetItemRectMin(), ImGui::GetItemRectMax(),
+			IM_COL32(255, 255, 0, 128), 6.0f, 0, 2.0f);
+	}
+
+	ImGui::EndChild();
+}
+
+void ImGuiEditor::GameMenuBar() {
+
+	if (ImGui::BeginMenuBar()) {
+		if (ImGui::BeginMenu("Game")) {
+
+			ImGui::EndMenu();
+		}
+		ImGui::EndMenuBar();
+	}
 }
 
 void ImGuiEditor::Console() {
 
 	ImGui::Begin("Console");
 
-	GameTimer::ImGui();
+	if (ImGui::BeginTabBar("ConsoleTabBar")) {
+
+		if (ImGui::BeginTabItem("GameObject")) {
+
+			GameTimer::ImGui();
+			ImGui::EndTabItem();
+		}
+		if (ImGui::BeginTabItem("ResourceView")) {
+
+			for (const auto& [type, ptr] : descriptors_) {
+
+				ImGui::SeparatorText(EnumAdapter<DescriptorHeapType>::ToString(type));
+				DrawDescriptorUsageBar(nullptr, ptr);
+			}
+			ImGui::EndTabItem();
+		}
+		ImGui::EndTabBar();
+	}
 
 	ImGui::End();
 }
 
-void ImGuiEditor::Hierarchy() {
+void ImGuiEditor::Hierarchy(SceneView* sceneView) {
 
 	ImGui::Begin("Hierarchy", nullptr, windowFlag_);
 
@@ -140,6 +288,21 @@ void ImGuiEditor::Hierarchy() {
 
 			// scene内のobject選択
 			ImGuiObjectEditor::GetInstance()->SelectObject();
+
+			// カメラにフォーカスさせる処理
+			if (isCameraAutoFocus_ && sceneView) {
+				if (auto select = ImGuiObjectEditor::GetInstance()->GetSelected3D()) {
+					// 新しいオブジェクトを選択したときにのみ処理
+					if (lastAutoFocusId_ != select) {
+						if (Transform3D* transform = ObjectManager::GetInstance()->GetData<Transform3D>(*select)) {
+
+							BaseCamera* camera = sceneView->GetSceneCamera();
+							camera->StartAutoFocus(true, transform->GetWorldPos());
+							lastAutoFocusId_ = select;
+						}
+					}
+				}
+			}
 			ImGui::EndTabItem();
 		}
 
@@ -149,7 +312,6 @@ void ImGuiEditor::Hierarchy() {
 			GameEditorManager::GetInstance()->SelectEditor();
 			ImGui::EndTabItem();
 		}
-
 		ImGui::EndTabBar();
 	}
 
@@ -183,7 +345,7 @@ void ImGuiEditor::Inspector() {
 	ImGui::End();
 }
 
-void ImGuiEditor::Asset() {
+void ImGuiEditor::AssetEdit() {
 
 	//AssetEditor::GetInstance()->EditLayout();
 
@@ -201,4 +363,21 @@ void ImGuiEditor::SetInputArea(InputViewArea viewArea, const ImVec2& imMin, cons
 	Vector2 min = Vector2(imMin.x, imMin.y);
 	Vector2 size = Vector2(imSize.x, imSize.y);
 	input->SetViewRect(viewArea, min, size);
+}
+
+void ImGuiEditor::DrawDescriptorUsageBar(const char* label, const BaseDescriptor* descriptor) {
+
+	const uint32_t used = descriptor->GetUseDescriptorCount();
+	const uint32_t max = descriptor->GetMaxDescriptorCount();
+	const float useRate = (0 < max) ? std::clamp(
+		static_cast<float>(used) / static_cast<float>(max), 0.0f, 1.0f) : 0.0f;
+	char overlay[64]{};
+	std::snprintf(overlay, sizeof(overlay), "%u / %u", used, max);
+
+	// ラベル表示
+	if (label && *label) {
+		ImGui::TextUnformatted(label);
+	}
+	// 幅はウィンドウに合わせる
+	ImGui::ProgressBar(useRate, ImVec2(320.0f, 24.0f), overlay);
 }
