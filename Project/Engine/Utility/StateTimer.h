@@ -28,7 +28,7 @@ public:
 	bool IsReached() const;
 
 	// editor
-	void ImGui(const std::string& name);
+	void ImGui(const std::string& name, bool isSeparate = true);
 
 	// json
 	void FromJson(const Json& data);

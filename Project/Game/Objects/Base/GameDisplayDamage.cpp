@@ -5,6 +5,7 @@
 //============================================================================
 #include <Engine/Object/Base/GameObject3D.h>
 #include <Engine/Utility/GameTimer.h>
+#include <Engine/Utility/JsonAdapter.h>
 #include <Lib/Adapter/RandomGenerator.h>
 
 //============================================================================

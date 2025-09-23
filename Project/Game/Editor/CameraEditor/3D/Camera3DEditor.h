@@ -3,6 +3,7 @@
 //============================================================================
 //	include
 //============================================================================
+#include <Engine/Scene/Camera/BaseCamera.h>
 
 //============================================================================
 //	Camera3DEditor class
@@ -13,20 +14,26 @@ public:
 	//	public Methods
 	//========================================================================
 
-	Camera3DEditor() = default;
-	~Camera3DEditor() = default;
-
 	//--------- accessor -----------------------------------------------------
 
+	// singleton
+	static Camera3DEditor* GetInstance();
+	static void Finalize();
 private:
 	//========================================================================
 	//	private Methods
 	//========================================================================
 
+	//--------- structure ----------------------------------------------------
+
 	//--------- variables ----------------------------------------------------
 
-
+	static Camera3DEditor* instance_;
 
 	//--------- functions ----------------------------------------------------
 
+	Camera3DEditor() = default;
+	~Camera3DEditor() = default;
+	Camera3DEditor(const Camera3DEditor&) = delete;
+	Camera3DEditor& operator=(const Camera3DEditor&) = delete;
 };

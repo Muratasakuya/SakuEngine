@@ -193,28 +193,32 @@
     },
     "Dash": {
         "accelLerp_": {
-            "loop_.interval": 0.0,
-            "loop_.isLoop": false,
-            "loop_.maxCount": 0,
-            "move_.easingType": 14,
+            "Loop": {
+                "loop": {
+                    "loopCount": 1,
+                    "type": "Repeat"
+                }
+            },
+            "Timer": {
+                "easeingType_": "EaseOutCubic",
+                "target_": 0.18000000715255737
+            },
             "move_.end": 1.600000023841858,
-            "move_.moveValue": 0.0,
-            "move_.start": 0.6399999856948853,
-            "time_.end": 0.11999999731779099,
-            "time_.movedValueInterval": 0.0,
-            "time_.useScaledDeltaTime": true
+            "move_.start": 0.6399999856948853
         },
         "decelLerp_": {
-            "loop_.interval": 0.0,
-            "loop_.isLoop": false,
-            "loop_.maxCount": 0,
-            "move_.easingType": 1,
+            "Loop": {
+                "loop": {
+                    "loopCount": 1,
+                    "type": "Repeat"
+                }
+            },
+            "Timer": {
+                "easeingType_": "EaseInSine",
+                "target_": 0.18000000715255737
+            },
             "move_.end": 0.8600000143051147,
-            "move_.moveValue": 0.0,
-            "move_.start": 1.600000023841858,
-            "time_.end": 0.23999999463558197,
-            "time_.movedValueInterval": 0.0,
-            "time_.useScaledDeltaTime": true
+            "move_.start": 1.600000023841858
         },
         "nextAnimDuration_": 0.017999999225139618,
         "rotationLerpRate_": 0.18000000715255737

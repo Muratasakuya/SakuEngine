@@ -233,7 +233,7 @@ void GameResultDisplay::UpdateResult() {
 		Vector2 lerpPos{};
 		clearTimePosAnim_->LerpValue(lerpPos);
 		resultTime_->SetTranslation(lerpPos);
-		resultTime_->SetAlpha(EasedValue(EasingType::EaseInExpo, clearTimePosAnim_->time_.currentT));
+		resultTime_->SetAlpha(EasedValue(EasingType::EaseInExpo, clearTimePosAnim_->GetProgress()));
 	}
 
 	// ボタン
@@ -242,11 +242,11 @@ void GameResultDisplay::UpdateResult() {
 		Vector2 lerpPos{};
 		leftButtonAnim_->LerpValue(lerpPos);
 		leftButton_->SetTranslation(lerpPos);
-		leftButton_->SetAlpha(EasedValue(EasingType::EaseInExpo, leftButtonAnim_->time_.currentT));
+		leftButton_->SetAlpha(EasedValue(EasingType::EaseInExpo, leftButtonAnim_->GetProgress()));
 		// 右
 		rightButtonAnim_->LerpValue(lerpPos);
 		rightButton_->SetTranslation(lerpPos);
-		rightButton_->SetAlpha(EasedValue(EasingType::EaseInExpo, rightButtonAnim_->time_.currentT));
+		rightButton_->SetAlpha(EasedValue(EasingType::EaseInExpo, rightButtonAnim_->GetProgress()));
 	}
 
 	// 補間終了後

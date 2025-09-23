@@ -33,9 +33,12 @@ bool StateTimer::IsReached() const {
 	return current_ > target_;
 }
 
-void StateTimer::ImGui(const std::string& name) {
+void StateTimer::ImGui(const std::string& name, bool isSeparate) {
 
-	ImGui::SeparatorText(name.c_str());
+	if (isSeparate) {
+
+		ImGui::SeparatorText(name.c_str());
+	}
 	ImGui::PushID(name.c_str());
 
 	ImGui::Text(std::format("currentT: {}", t_).c_str());
@@ -48,6 +51,8 @@ void StateTimer::ImGui(const std::string& name) {
 void StateTimer::FromJson(const Json& data) {
 
 	if (data.empty()) {
+
+		target_ = 0.8f;
 		return;
 	}
 

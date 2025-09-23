@@ -35,6 +35,10 @@ public:
 	// json
 	void ToLoopJson(Json& data);
 	void FromLoopJson(const Json& data);
+
+	//--------- accessor -----------------------------------------------------
+
+	int GetLoopCount() const { return loopCount_; }
 private:
 	//========================================================================
 	//	private Methods
