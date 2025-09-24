@@ -28,6 +28,9 @@ SceneManager::SceneManager(Scene scene, Asset* asset, SceneView* sceneView) :IGa
 
 	// 最初のシーンファイルを読みこみ
 	asset->LoadSceneAsync(scene, AssetLoadType::Synch);
+	// メッシュの構築
+	const auto& system = ObjectManager::GetInstance()->GetSystem<InstancedMeshSystem>();
+	system->BuildForSceneSynch(scene);
 	// 最初のシーン以外を非同期で読み込む
 	for (uint32_t index = 0; index < EnumAdapter<Scene>::GetEnumCount(); ++index) {
 

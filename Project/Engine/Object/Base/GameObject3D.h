@@ -34,6 +34,9 @@ public:
 	virtual void DerivedImGui() override {}
 
 	// json
+	// transform
+	void ApplyTransform(const Json& data);
+	void SaveTransform(Json& data);
 	// material
 	void ApplyMaterial(const Json& data);
 	void SaveMaterial(Json& data);
@@ -60,6 +63,7 @@ public:
 	void SetTextureName(const std::string& textureName, std::optional<uint32_t> meshIndex = std::nullopt);
 
 	// animation
+	void AddCameraEditSubject();
 	void SetNextAnimation(const std::string& nextAnimationName, bool loopAnimation, float transitionDuration);
 	void SetDebugViewBone(bool enable) { animation_->SetDebugViewBone(enable); }
 	void SetPlaybackSpeed(float playbackSpeed) { animation_->SetPlaybackSpeed(playbackSpeed); }

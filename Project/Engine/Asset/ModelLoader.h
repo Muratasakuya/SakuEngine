@@ -29,6 +29,7 @@ public:
 	void Init(TextureManager* textureManager);
 
 	// 読み込み処理
+	void LoadSynch(const std::string& modelName);
 	void Load(const std::string& modelName);
 	void RequestLoadAsync(const std::string& modelName);
 
@@ -66,5 +67,5 @@ private:
 	Node ReadNode(aiNode* node);
 
 	// 非同期処理
-	void LoadAsync(std::string name);
+	void LoadAsync(std::string modelName);
 };

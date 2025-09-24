@@ -26,6 +26,38 @@ void ModelLoader::Init(TextureManager* textureManager) {
 		this->LoadAsync(std::move(name)); });
 }
 
+void ModelLoader::LoadSynch(const std::string& modelName) {
+
+	// すでにロード済みなら何もしない
+	{
+		std::scoped_lock lk(modelMutex_);
+		if (models_.contains(modelName)) {
+			return;
+		}
+	}
+
+	// 読み込み開始
+	SpdLogger::Log("[Model][Begin] " + modelName);
+
+	std::filesystem::path path;
+	// 見つからなければ処理しない
+	if (!Filesystem::FindByStem(baseDirectoryPath_, modelName, { ".obj", ".gltf" }, path)) {
+		SpdLogger::Log("[Model][Missing] " + modelName);
+		return;
+	}
+
+	// モデル読み込み処理
+	ModelData modelData = LoadModelFile(path.string());
+	SpdLogger::Log("[Model][Loaded] " + modelName);
+
+	// 読み込みデータを設定
+	{
+		std::scoped_lock lk(modelMutex_);
+		models_[modelName] = std::move(modelData);
+		isCacheValid_ = false;
+	}
+}
+
 void ModelLoader::Load(const std::string& modelName) {
 
 	RequestLoadAsync(modelName);
@@ -67,34 +99,34 @@ void ModelLoader::WaitAll() {
 	}
 }
 
-void ModelLoader::LoadAsync(std::string name) {
+void ModelLoader::LoadAsync(std::string modelName) {
 
 	// 重複読み込みを行わないようにチェック
 	{
 		std::scoped_lock lock(modelMutex_);
-		if (models_.contains(name)) {
+		if (models_.contains(modelName)) {
 			return;
 		}
 	}
 
 	// 読み込み開始
-	SpdLogger::Log("[Model][Begin] " + name);
+	SpdLogger::Log("[Model][Begin] " + modelName);
 
 	std::filesystem::path path;
 	// 見つからなければ処理しない
-	if (!Filesystem::FindByStem(baseDirectoryPath_, name, { ".obj", ".gltf" }, path)) {
-		SpdLogger::Log("[Model][Missing] " + name);
+	if (!Filesystem::FindByStem(baseDirectoryPath_, modelName, { ".obj", ".gltf" }, path)) {
+		SpdLogger::Log("[Model][Missing] " + modelName);
 		return;
 	}
 
 	// モデル読み込み処理
 	ModelData modelData = LoadModelFile(path.string());
-	SpdLogger::Log("[Model][Loaded] " + name);
+	SpdLogger::Log("[Model][Loaded] " + modelName);
 
 	// 読み込みデータを設定
 	{
 		std::scoped_lock lk(modelMutex_);
-		models_[name] = std::move(modelData);
+		models_[modelName] = std::move(modelData);
 		isCacheValid_ = false;
 	}
 }

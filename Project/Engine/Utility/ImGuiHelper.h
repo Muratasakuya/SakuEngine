@@ -7,6 +7,9 @@
 
 // c++
 #include <string>
+#include <string_view>
+#include <vector>
+#include <type_traits>
 // imgui
 #include <imgui.h>
 
@@ -26,4 +29,73 @@ public:
 		const std::string& label, ImTextureID textureId, const ImVec2& size);
 
 	static const DragPayload* DragDropPayload(PendingType expectedType);
+
+	// 配列のstringをComboで表示する
+	static bool ComboFromStrings(const char* label, int* currentIndex,
+		const std::vector<std::string>& items, int popupMaxHeightInItems = -1);
+	template <typename T>
+	static bool ComboFromKeys(const char* label, int* currentIndex,
+		const T& container, std::string* outSelectedKey = nullptr,
+		int popupMaxHeightInItems = -1);
+	// 配列のstringをSelectableで表示する
+	static bool SelectableListFromStrings(const char* label, int* currentIndex,
+		const std::vector<std::string>& items, int heightInItems = 8);
+	template <typename T>
+	static bool SelectableListFromKeys(const char* label, int* currentIndex,
+		const T& container, std::string* outSelectedKey = nullptr, int heightInItems = 8);
+
+	// 枠
+	static bool BeginFramedChild(const char* id, const char* title,
+		const ImVec2& size, ImGuiWindowFlags flags = 0);
+	static void EndFramedChild();
 };
+
+//============================================================================
+//	ImGuiHelper templateMethods
+//============================================================================
+
+template<typename T>
+inline bool ImGuiHelper::ComboFromKeys(const char* label, int* currentIndex,
+	const T& container, std::string* outSelectedKey, int popupMaxHeightInItems) {
+
+	std::vector<const char*> itemNames;
+	std::vector<const std::string*> refs;
+	itemNames.reserve(container.size());
+	refs.reserve(container.size());
+	for (const auto& item : container) {
+
+		refs.push_back(&item.first);
+		itemNames.push_back(item.first.c_str());
+	}
+	if (itemNames.empty()) {
+
+		return ImGui::Combo(label, currentIndex, nullptr, 0, popupMaxHeightInItems);
+	}
+
+	int before = *currentIndex;
+	bool changed = ImGui::Combo(label, currentIndex, itemNames.data(),
+		static_cast<int>(itemNames.size()), popupMaxHeightInItems);
+	if (outSelectedKey && *currentIndex >= 0 && *currentIndex < static_cast<int>(refs.size())) {
+
+		*outSelectedKey = *refs[*currentIndex];
+	}
+	return changed || (before != *currentIndex);
+}
+
+template<typename T>
+inline bool ImGuiHelper::SelectableListFromKeys(const char* label, int* currentIndex,
+	const T& container, std::string* outSelectedKey, int heightInItems) {
+
+	std::vector<std::string> keys;
+	keys.reserve(container.size());
+	for (const auto& item : container) {
+
+		keys.push_back(item.first);
+	}
+	const bool changed = SelectableListFromStrings(label, currentIndex, keys, heightInItems);
+	if (changed && outSelectedKey && *currentIndex >= 0 && *currentIndex < static_cast<int>(keys.size())) {
+
+		*outSelectedKey = keys[*currentIndex];
+	}
+	return changed;
+}

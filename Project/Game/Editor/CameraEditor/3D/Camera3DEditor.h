@@ -4,15 +4,29 @@
 //	include
 //============================================================================
 #include <Engine/Scene/Camera/BaseCamera.h>
+#include <Engine/Object/Base/GameObject3D.h>
+#include <Engine/Utility/StateTimer.h>
+#include <Engine/Editor/Base/IGameEditor.h>
+
+// front
+class SceneView;
 
 //============================================================================
 //	Camera3DEditor class
 //============================================================================
-class Camera3DEditor {
+class Camera3DEditor :
+	public IGameEditor {
 public:
 	//========================================================================
 	//	public Methods
 	//========================================================================
+
+	void Init(SceneView* sceneView);
+
+	// 調整を行えるアニメーションの追加
+	void AddAnimation(const std::string& name, const SkinnedAnimation* animation);
+
+	void ImGui() override;
 
 	//--------- accessor -----------------------------------------------------
 
@@ -26,13 +40,64 @@ private:
 
 	//--------- structure ----------------------------------------------------
 
+	// キーフレームごとの調整値
+	struct KeyframeParam {
+
+		float fovY;          // 画角
+		Vector3 translation; // 座標
+		Vector3 rotation;    // 回転
+
+		// このフレームまでの補間時間
+		StateTimer timer;
+
+		// 場所、回転を可視化するオブジェクト
+		std::unique_ptr<GameObject3D> demoObject;
+
+		// init
+		void Init();
+
+		// json
+		void FromJson(const Json& data);
+		void ToJson(Json& data);
+	};
+
+	// 調整項目をまとめた構造体
+	struct CameraParam {
+
+		// キーフレームs
+		std::vector<KeyframeParam> keyframes;
+	};
+
 	//--------- variables ----------------------------------------------------
 
 	static Camera3DEditor* instance_;
+	SceneView* sceneView_;
+
+	// jsonのパス
+	static inline const std::string demoCameraJsonPath_ = "CameraEditor/demoCamera.json";
+
+	// カメラ調整項目データ
+	std::unordered_map<std::string, CameraParam> params_;
+	// 対象アニメーション
+	std::unordered_map<std::string, const SkinnedAnimation*> skinnedAnimations_;
+
+	// editor
+	std::string selectedSkinnedKey_; // 選択中の骨アニメーション
+	std::string selectedAnimName_;   // 骨アニメーションが所持しているアニメーション
+	std::string selectedParamKey_;   // 操作対象のカメラ
 
 	//--------- functions ----------------------------------------------------
 
-	Camera3DEditor() = default;
+	// json
+	void SaveDemoCamera();
+
+	// editor
+	void SelectAnimationSubject();
+	void AddCameraParam();
+	void SelectCameraParam();
+	void EditCameraParam();
+
+	Camera3DEditor() :IGameEditor("Camera3DEditor") {}
 	~Camera3DEditor() = default;
 	Camera3DEditor(const Camera3DEditor&) = delete;
 	Camera3DEditor& operator=(const Camera3DEditor&) = delete;

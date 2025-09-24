@@ -87,6 +87,28 @@ void InstancedMeshSystem::RequestBuild(const std::string& modelName,
 	pendingJobs_.fetch_add(1, std::memory_order_relaxed);
 }
 
+void InstancedMeshSystem::BuildForSceneSynch(Scene scene) {
+
+	// 読み込み済みのモデルを取得
+	const auto& modelNames = asset_->GetPreloadModels(scene);
+	for (const auto& modelName : modelNames) {
+		
+		// 作成済みなら処理しない
+		if (IsReady(modelName)) {
+			continue;
+		}
+
+		// メッシュの構築
+		if (!asset_->GetModelData(modelName).skinClusterData.empty()) {
+
+			CreateSkinnedMesh(modelName);
+		} else {
+
+			CreateStaticMesh(modelName);
+		}
+	}
+}
+
 void InstancedMeshSystem::RequestBuildForScene(Scene scene) {
 
 	// シーンファイルから作成するメッシュのリストを取得する

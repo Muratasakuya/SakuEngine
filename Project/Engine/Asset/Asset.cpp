@@ -107,13 +107,12 @@ std::vector<std::function<void()>> Asset::SetTask(const Json& data, AssetLoadTyp
 		if (data.contains("Textures") && data["Textures"].is_array()) {
 			for (auto& name : data["Textures"]) {
 
+				std::string texture = name.get<std::string>();
 				if (loadType == AssetLoadType::Synch) {
 
-					std::string texture = name.get<std::string>();
 					tasks.emplace_back([this, texture]() { this->textureManager_->LoadSynch(texture); });
 				} else if (loadType == AssetLoadType::Async) {
 
-					std::string texture = name.get<std::string>();
 					tasks.emplace_back([this, texture]() { this->textureManager_->RequestLoadAsync(texture); });
 				}
 			}
@@ -125,7 +124,13 @@ std::vector<std::function<void()>> Asset::SetTask(const Json& data, AssetLoadTyp
 			for (auto& name : data["Models"]) {
 
 				std::string model = name.get<std::string>();
-				tasks.emplace_back([this, model]() { this->modelLoader_->RequestLoadAsync(model); });
+				if (loadType == AssetLoadType::Synch) {
+
+					tasks.emplace_back([this, model]() { this->modelLoader_->LoadSynch(model); });
+				} else if (loadType == AssetLoadType::Async) {
+
+					tasks.emplace_back([this, model]() { this->modelLoader_->RequestLoadAsync(model); });
+				}
 			}
 		}
 	}
@@ -218,8 +223,15 @@ void Asset::LoadTexture(const std::string& textureName, AssetLoadType loadType) 
 	}
 }
 
-void Asset::LoadModel(const std::string& modelName) {
-	modelLoader_->Load(modelName);
+void Asset::LoadModel(const std::string& modelName, AssetLoadType loadType) {
+
+	if (loadType == AssetLoadType::Synch) {
+
+		modelLoader_->LoadSynch(modelName);
+	} else if (loadType == AssetLoadType::Async) {
+
+		modelLoader_->Load(modelName);
+	}
 }
 
 void Asset::LoadAnimation(const std::string& animationName, const std::string& modelName) {

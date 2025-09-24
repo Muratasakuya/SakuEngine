@@ -61,6 +61,7 @@ public:
 
 	const std::string& GetCurrentAnimationName() const { return currentAnimationName_; }
 	const std::vector<WellForGPU>& GetWellForGPU() const { return skinCluster_.mappedPalette; }
+	std::vector<std::string> GetAnimationNames() const;
 	const Skeleton& GetSkeleton() const { return skeleton_; }
 	const Transform3D* FindJointTransform(const std::string& name) const;
 private:

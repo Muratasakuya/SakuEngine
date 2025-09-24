@@ -38,21 +38,23 @@ void TextureManager::Init(ID3D12Device* device, DxCommand* dxCommand,
 		this->LoadAsync(std::move(name)); });
 }
 
-void TextureManager::LoadSynch(const std::string& name) {
+void TextureManager::LoadSynch(const std::string& textureName) {
 
 	// すでにロード済みなら何もしない
 	{
 		std::scoped_lock lk(gpuMutex_);
-		if (textures_.contains(name)) { return; }
+		if (textures_.contains(textureName)) { 
+			return;
+		}
 	}
 
 	// 読み込み開始
-	SpdLogger::Log("[Texture][Begin] " + name);
+	SpdLogger::Log("[Texture][Begin] " + textureName);
 
 	std::filesystem::path path;
 	// 見つからなければ処理しない
-	if (!Filesystem::FindByStem(baseDirectoryPath_, name, { ".png",".jpg",".dds" }, path)) {
-		SpdLogger::Log("[Texture][Missing] " + name);
+	if (!Filesystem::FindByStem(baseDirectoryPath_, textureName, { ".png",".jpg",".dds" }, path)) {
+		SpdLogger::Log("[Texture][Missing] " + textureName);
 		return;
 	}
 	// 識別名取得

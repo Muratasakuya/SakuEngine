@@ -41,6 +41,7 @@ public:
 	void RequestBuild(const std::string& modelName,
 		uint32_t maxInstStatic = Config::kMaxInstanceNum,
 		uint32_t maxInstSkinned = 16);
+	void BuildForSceneSynch(Scene scene);
 	void RequestBuildForScene(Scene scene);
 
 	// createBuffer

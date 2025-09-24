@@ -363,7 +363,7 @@ void SkinnedAnimation::BlendAnimation(Skeleton& skeleton, const AnimationData& o
 int SkinnedAnimation::CurrentFrameIndex() const {
 
 	// blenderの再生FPS
-	constexpr float kFps = 30.0f;
+	constexpr float kFps = 24.0f;
 	return static_cast<int>((std::max)(0.0f, currentAnimationTimer_ * kFps + 0.5f));
 }
 
@@ -512,9 +512,7 @@ void SkinnedAnimation::SetKeyframeEvent(const std::string& fileName) {
 				std::sort(frames.begin(), frames.end());
 				frames.erase(std::unique(frames.begin(), frames.end()), frames.end());
 				kindMap[it.key()] = std::move(frames);
-
 			}
-
 		}
 	}
 }
@@ -612,6 +610,18 @@ float SkinnedAnimation::GetAnimationDuration(const std::string& animationName) c
 	// animationの再生時間を取得
 	float duration = animationData_.at(animationName).duration;
 	return duration;
+}
+
+std::vector<std::string> SkinnedAnimation::GetAnimationNames() const {
+
+	std::vector<std::string> names;
+	names.reserve(animationData_.size());
+	for (const auto& data : animationData_) {
+
+		names.push_back(data.first);
+	}
+	std::sort(names.begin(), names.end());
+	return names;
 }
 
 const Transform3D* SkinnedAnimation::FindJointTransform(const std::string& name) const {
