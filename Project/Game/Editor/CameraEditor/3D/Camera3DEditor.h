@@ -51,10 +51,6 @@ private:
 		Vector3 eulerRotation; // オイラー回転
 		// このフレームまでの補間時間
 		StateTimer timer;
-		// 追従先の設定
-		bool followTarget;
-		const Transform3D* target;
-		std::string targetName;
 
 		// 場所、回転を可視化するオブジェクト
 		std::unique_ptr<GameObject3D> demoObject;
@@ -72,6 +68,11 @@ private:
 
 		// キーフレームs
 		std::vector<KeyframeParam> keyframes;
+
+		// 追従先の設定
+		bool followTarget;
+		const Transform3D* target;
+		std::string targetName;
 	};
 
 	//--------- variables ----------------------------------------------------
@@ -105,11 +106,14 @@ private:
 	void SelectAnimationSubject();
 	void AddCameraParam();
 	void SelectCameraParam();
+
 	void EditCameraParam();
+	void EditKeyframe(CameraParam& param);
 	void EditMainParam(KeyframeParam& keyframeParam);
-	void SelectTarget(KeyframeParam& keyframeParam);
+	void SelectTarget(CameraParam& param);
 
 	// helper
+	void SynchMainParam(KeyframeParam& keyframeParam);
 	void SelectKeyframe(const CameraParam& param);
 
 	Camera3DEditor() :IGameEditor("Camera3DEditor") {}

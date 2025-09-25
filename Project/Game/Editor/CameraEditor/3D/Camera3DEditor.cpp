@@ -6,6 +6,7 @@
 #include <Engine/Asset/Asset.h>
 #include <Engine/Scene/SceneView.h>
 #include <Engine/Utility/ImGuiHelper.h>
+#include <Engine/Editor/ImGuiObjectEditor.h>
 #include <Engine/Object/Core/ObjectManager.h>
 #include <Engine/Object/System/Systems/InstancedMeshSystem.h>
 #include <Engine/Object/System/Systems/TagSystem.h>
@@ -62,10 +63,13 @@ void Camera3DEditor::UpdateFollowTarget() {
 		for (const auto& keyframe : param.keyframes) {
 
 			// trueなら更新
-			if (keyframe.followTarget && keyframe.target != nullptr) {
+			if (param.followTarget && param.target != nullptr) {
 
-				keyframe.demoObject->SetOffsetTranslation(
-					keyframe.target->GetWorldPos());
+				keyframe.demoObject->SetOffsetTranslation(param.target->GetWorldPos());
+
+				// 回転を考慮した位置
+				const Vector3 rotatedTranslation = param.target->rotation * keyframe.translation;
+				keyframe.demoObject->SetTranslation(rotatedTranslation);
 			} else {
 
 				keyframe.demoObject->SetOffsetTranslation(Vector3::AnyInit(0.0f));
@@ -83,8 +87,6 @@ void Camera3DEditor::KeyframeParam::Init() {
 	eulerRotation = Vector3::AnyInit(0.0f);
 	timer.target_ = 0.4f;
 	timer.Reset();
-	followTarget = false;
-	target = nullptr;
 
 	// デモ用オブジェクトを作成
 	demoObject = std::make_unique<GameObject3D>();
@@ -276,18 +278,108 @@ void Camera3DEditor::EditCameraParam() {
 
 	// 選択されたものの操作
 	if (ImGui::BeginTabBar("EditCameraParam")) {
+		if (ImGui::BeginTabItem("Keyframe")) {
+
+			EditKeyframe(param);
+			ImGui::EndTabItem();
+		}
 		if (ImGui::BeginTabItem("Main")) {
 
 			EditMainParam(keyframeParam);
 			ImGui::EndTabItem();
 		}
-
 		if (ImGui::BeginTabItem("Target")) {
 
-			SelectTarget(keyframeParam);
+			SelectTarget(param);
 			ImGui::EndTabItem();
 		}
 		ImGui::EndTabBar();
+	}
+
+	if (ImGuiObjectEditor::GetInstance()->IsUsingGuizmo()) {
+
+		// 値の同期
+		SynchMainParam(keyframeParam);
+	}
+}
+
+void Camera3DEditor::EditKeyframe(CameraParam& param) {
+
+	auto& keyframes = param.keyframes;
+	int keyframeSize = static_cast<int>(keyframes.size());
+	if (keyframes.empty()) {
+		return;
+	}
+	// 選択中のキーフレーム
+	ImGui::Text("selected Keyframe: %d / %d", selectedKeyIndex_ + 1, keyframeSize);
+
+	// キーフレームの追加
+	if (ImGui::Button("Add Keyframe")) {
+
+		// 選択中のキーフレームの情報をコピー
+		const KeyframeParam& sourceKeyframe = keyframes[selectedKeyIndex_];
+		KeyframeParam dstKeyframe{};
+		dstKeyframe.fovY = sourceKeyframe.fovY;
+		dstKeyframe.translation = sourceKeyframe.translation;
+		dstKeyframe.rotation = sourceKeyframe.rotation;
+		dstKeyframe.eulerRotation = sourceKeyframe.eulerRotation;
+		dstKeyframe.timer = sourceKeyframe.timer;
+		// デモ用オブジェクトを作成
+		dstKeyframe.demoObject = std::make_unique<GameObject3D>();
+		dstKeyframe.demoObject->Init("demoCamera", "demoCamera", "Editor");
+
+		Json data;
+		if (!JsonAdapter::LoadCheck(demoCameraJsonPath_, data)) {
+			return;
+		}
+		// 見た目を設定
+		dstKeyframe.demoObject->ApplyTransform(data);
+		dstKeyframe.demoObject->ApplyMaterial(data);
+
+		// 追加
+		keyframes.insert(keyframes.begin() + (selectedKeyIndex_ + 1), std::move(dstKeyframe));
+		selectedKeyIndex_ += 1;
+	}
+	ImGui::SameLine();
+
+	// キーフレームの削除
+	if (ImGui::Button("Remove Keyframe")) {
+
+		keyframes.erase(keyframes.begin() + selectedKeyIndex_);
+		if (keyframeSize <= selectedKeyIndex_) {
+			selectedKeyIndex_ = keyframeSize - 1;
+		}
+	}
+	// キーフレームの順番入れ替え
+	ImGui::Separator();
+	ImGui::TextUnformatted("Reorder");
+	bool canUp = (selectedKeyIndex_ > 0);
+	bool canDown = (selectedKeyIndex_ + 1 < keyframeSize);
+
+	if (!canUp) {
+		ImGui::BeginDisabled();
+	}
+	if (ImGui::Button("Move Up")) {
+
+		std::swap(keyframes[selectedKeyIndex_ - 1], keyframes[selectedKeyIndex_]);
+		selectedKeyIndex_ -= 1;
+	}
+	if (!canUp) {
+		ImGui::EndDisabled();
+	}
+
+	ImGui::SameLine();
+
+	if (!canDown) {
+		ImGui::BeginDisabled();
+	}
+	if (ImGui::Button("Move Down")) {
+
+		std::swap(keyframes[selectedKeyIndex_], keyframes[selectedKeyIndex_ + 1]);
+		selectedKeyIndex_ += 1;
+	}
+	if (!canDown) {
+		ImGui::EndDisabled();
 	}
 }
 
@@ -298,6 +390,7 @@ void Camera3DEditor::EditMainParam(KeyframeParam& keyframeParam) {
 	bool isEdit = false;
 	isEdit |= ImGui::DragFloat3("translation", &keyframeParam.translation.x, 0.1f);
 	isEdit |= ImGui::DragFloat3("eulerRotation", &keyframeParam.eulerRotation.x, 0.01f);
+	ImGui::DragFloat("fovY", &keyframeParam.fovY, 0.01f);
 
 	// 値を反映
 	if (isEdit) {
@@ -310,14 +403,14 @@ void Camera3DEditor::EditMainParam(KeyframeParam& keyframeParam) {
 	ImGui::PopItemWidth();
 }
 
-void Camera3DEditor::SelectTarget(KeyframeParam& keyframeParam) {
+void Camera3DEditor::SelectTarget(CameraParam& param) {
 
-	ImGui::Text("currentTarget: %s", keyframeParam.targetName.c_str());
-	ImGui::Checkbox("followTarget", &keyframeParam.followTarget);
+	ImGui::Text("currentTarget: %s", param.targetName.c_str());
+	ImGui::Checkbox("followTarget", &param.followTarget);
 	if (ImGui::Button("Remove Target")) {
 
-		keyframeParam.target = nullptr;
-		keyframeParam.targetName = "";
+		param.target = nullptr;
+		param.targetName = "";
 	}
 	ImGui::Separator();
 
@@ -326,20 +419,28 @@ void Camera3DEditor::SelectTarget(KeyframeParam& keyframeParam) {
 	TagSystem* tagSystem = objectManager->GetSystem<TagSystem>();
 	// 現在選択されているオブジェクトIDを設定
 	for (const auto& [id, tagPtr] : tagSystem->Tags()) {
-		if (objectManager->GetData<Transform3D>(id) == keyframeParam.target) {
+		if (objectManager->GetData<Transform3D>(id) == param.target) {
 
 			currentId = id;
 			break;
 		}
 	}
 
-	std::string selectedName = keyframeParam.targetName;
+	std::string selectedName = param.targetName;
 	if (ImGuiHelper::SelectTagTarget("Select Follow Target", &currentId, &selectedName)) {
 
 		// Transformと名前を更新
-		keyframeParam.target = objectManager->GetData<Transform3D>(currentId);
-		keyframeParam.targetName = selectedName;
+		param.target = objectManager->GetData<Transform3D>(currentId);
+		param.targetName = selectedName;
 	}
+}
+
+void Camera3DEditor::SynchMainParam(KeyframeParam& keyframeParam) {
+
+	// ギズモで動かした値の同期
+	keyframeParam.translation = keyframeParam.demoObject->GetTranslation();
+	keyframeParam.rotation = keyframeParam.demoObject->GetRotation();
+	keyframeParam.eulerRotation = keyframeParam.demoObject->GetTransform().eulerRotate;
 }
 
 void Camera3DEditor::SelectKeyframe(const CameraParam& param) {
@@ -364,15 +465,14 @@ void Camera3DEditor::SelectKeyframe(const CameraParam& param) {
 
 void Camera3DEditor::SaveDemoCamera() {
 
-	Json data;
-	for (const auto& keyframes : std::views::values(params_)) {
-		for (const auto& keyframe : keyframes.keyframes) {
-
-			keyframe.demoObject->SaveTransform(data);
-			keyframe.demoObject->SaveMaterial(data);
-			break;
-		}
-		break;
+	if (params_.empty()) {
+		return;
 	}
+
+	Json data;
+	const auto& firstParam = params_.begin()->second;
+	const auto& keyframe = firstParam.keyframes.front();
+	keyframe.demoObject->SaveTransform(data);
+	keyframe.demoObject->SaveMaterial(data);
 	JsonAdapter::Save(demoCameraJsonPath_, data);
 }
