@@ -23,6 +23,8 @@ public:
 
 	void Init(SceneView* sceneView);
 
+	void Update();
+
 	// 調整を行えるアニメーションの追加
 	void AddAnimation(const std::string& name, const SkinnedAnimation* animation);
 
@@ -43,12 +45,14 @@ private:
 	// キーフレームごとの調整値
 	struct KeyframeParam {
 
-		float fovY;          // 画角
-		Vector3 translation; // 座標
-		Vector3 rotation;    // 回転
+		float fovY;            // 画角
+		Vector3 translation;   // 座標
+		Quaternion rotation;   // 回転
+		Vector3 eulerRotation; // オイラー回転
 		// このフレームまでの補間時間
 		StateTimer timer;
 		// 追従先の設定
+		bool followTarget;
 		const Transform3D* target;
 		std::string targetName;
 
@@ -94,15 +98,19 @@ private:
 	// json
 	void SaveDemoCamera();
 
+	// update
+	void UpdateFollowTarget();
+
 	// editor
 	void SelectAnimationSubject();
 	void AddCameraParam();
 	void SelectCameraParam();
 	void EditCameraParam();
+	void EditMainParam(KeyframeParam& keyframeParam);
+	void SelectTarget(KeyframeParam& keyframeParam);
 
 	// helper
 	void SelectKeyframe(const CameraParam& param);
-	void SelectTarget(KeyframeParam& keyframeParam);
 
 	Camera3DEditor() :IGameEditor("Camera3DEditor") {}
 	~Camera3DEditor() = default;

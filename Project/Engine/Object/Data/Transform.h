@@ -54,15 +54,19 @@ public:
 
 	//--------- variables ----------------------------------------------------
 
+	// 拡縮
 	Vector3 scale;
+
+	// 回転
 	Quaternion rotation;
+	Vector3 eulerRotate;
+
+	// 座標
 	Vector3 translation;
+	Vector3 offsetTranslation;
 
 	TransformationMatrix matrix;
-
 	const BaseTransform* parent = nullptr;
-
-	Vector3 eulerRotate;
 private:
 	//========================================================================
 	//	private Methods
@@ -73,6 +77,7 @@ private:
 	Vector3 prevScale;
 	Quaternion prevRotation;
 	Vector3 prevTranslation;
+	Vector3 prevOffsetTranslation;
 
 	// 変更があったかどうかのフラグ
 	bool isDirty_;

@@ -62,7 +62,7 @@ namespace CollisionShape {
 			OBB obb = {
 				.center = Vector3::AnyInit(0.0f),
 				.size = Vector3::AnyInit(1.0f),
-				.rotate = Quaternion::IdobjectQuaternion()
+				.rotate = Quaternion::IdentityQuaternion()
 			};
 			return obb;
 		};

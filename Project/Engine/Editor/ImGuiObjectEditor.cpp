@@ -184,11 +184,11 @@ void ImGuiObjectEditor::DrawManipulateGizmo(const GizmoContext& context) {
 	float model[16];
 	if (is3D) {
 
-		auto* transform = objectManager_->GetData<Transform3D>(id);
+		Transform3D* transform = objectManager_->GetData<Transform3D>(id);
 		Math::ToColumnMajor(Matrix4x4::Transpose(transform->matrix.world), model);
 	} else {
 
-		auto* transform = objectManager_->GetData<Transform2D>(id);
+		Transform2D* transform = objectManager_->GetData<Transform2D>(id);
 		Math::ToColumnMajor(transform->matrix, model);
 	}
 
@@ -204,15 +204,41 @@ void ImGuiObjectEditor::DrawManipulateGizmo(const GizmoContext& context) {
 		ImGuizmo::DecomposeMatrixToComponents(model, translate, rotate, scale);
 		if (is3D) {
 
-			auto* transform = objectManager_->GetData<Transform3D>(id);
-			transform->translation = Vector3(translate[0], translate[1], translate[2]);
-			transform->eulerRotate = Vector3(rotate[0] * radian, rotate[1] * radian, rotate[2] * radian);
+			Transform3D* transform = objectManager_->GetData<Transform3D>(id);
+
+			// 親行列
+			Matrix4x4 parentWorld = Matrix4x4::MakeIdentity4x4();
+			if (transform->parent) {
+				parentWorld = transform->parent->matrix.world;
+			}
+			Matrix4x4 parentInverse = Matrix4x4::Inverse(parentWorld);
+			Matrix4x4 worldMatrix = Matrix4x4::MakeIdentity4x4();
+			Math::FromColumnMajor(model, worldMatrix);
+			Matrix4x4 localMatrix = worldMatrix * parentInverse;
+
+			// ローカルの各値を取得する
+			float localScale[3]{}, localRotate[3]{}, localTranslate[3]{};
+			float localModel[16]{};
+			Math::ToColumnMajor(localMatrix, localModel);
+			ImGuizmo::DecomposeMatrixToComponents(localModel,
+				localTranslate, localRotate, localScale);
+
+			// オフセット分引いた座標を設定
+			Vector3 offset = transform->offsetTranslation;
+			transform->translation = Vector3(localTranslate[0] - offset.x,
+				localTranslate[1] - offset.y, localTranslate[2] - offset.z);
+
+			// 回転を設定
+			transform->eulerRotate = Vector3(localRotate[0] * radian,
+				localRotate[1] * radian, localRotate[2] * radian);
 			transform->rotation = Quaternion::Normalize(Quaternion::EulerToQuaternion(transform->eulerRotate));
-			transform->scale = Vector3(scale[0], scale[1], scale[2]);
+
+			// スケールを設定
+			transform->scale = Vector3(localScale[0], localScale[1], localScale[2]);
 			transform->SetIsDirty(true);
 		} else {
 
-			auto* transform = objectManager_->GetData<Transform2D>(id);
+			Transform2D* transform = objectManager_->GetData<Transform2D>(id);
 			transform->translation = Vector2(translate[0], translate[1]);
 			transform->rotation = rotate[2];
 			transform->size = Vector2(scale[0], scale[1]);

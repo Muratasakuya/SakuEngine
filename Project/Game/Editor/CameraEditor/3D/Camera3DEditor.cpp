@@ -38,6 +38,40 @@ void Camera3DEditor::Init(SceneView* sceneView) {
 
 	sceneView_ = nullptr;
 	sceneView_ = sceneView;
+
+	// リセット
+	selectedSkinnedKey_.clear();
+	selectedAnimName_.clear();
+	selectedParamKey_.clear();
+}
+
+void Camera3DEditor::Update() {
+
+	// 追従先のオフセットを更新
+	UpdateFollowTarget();
+}
+
+void Camera3DEditor::UpdateFollowTarget() {
+
+	if (params_.empty()) {
+		return;
+	}
+
+	// 追従先があるならオフセットを更新する
+	for (const auto& param : std::views::values(params_)) {
+		for (const auto& keyframe : param.keyframes) {
+
+			// trueなら更新
+			if (keyframe.followTarget && keyframe.target != nullptr) {
+
+				keyframe.demoObject->SetOffsetTranslation(
+					keyframe.target->GetWorldPos());
+			} else {
+
+				keyframe.demoObject->SetOffsetTranslation(Vector3::AnyInit(0.0f));
+			}
+		}
+	}
 }
 
 void Camera3DEditor::KeyframeParam::Init() {
@@ -45,9 +79,12 @@ void Camera3DEditor::KeyframeParam::Init() {
 	// キーフレーム初期値
 	fovY = 0.54f;
 	translation = Vector3::AnyInit(0.0f);
-	rotation = Vector3::AnyInit(0.0f);
+	rotation = Quaternion::IdentityQuaternion();
+	eulerRotation = Vector3::AnyInit(0.0f);
 	timer.target_ = 0.4f;
 	timer.Reset();
+	followTarget = false;
+	target = nullptr;
 
 	// デモ用オブジェクトを作成
 	demoObject = std::make_unique<GameObject3D>();
@@ -158,6 +195,11 @@ void Camera3DEditor::SelectAnimationSubject() {
 
 void Camera3DEditor::AddCameraParam() {
 
+	// 何も設定されていなければ追加できない
+	if (selectedAnimName_.empty()) {
+		return;
+	}
+
 	if (ImGui::Button("Add EditData", ImVec2(itemWidth_, 24.0f))) {
 
 		// 同じアニメーションは追加できないようにする
@@ -234,6 +276,12 @@ void Camera3DEditor::EditCameraParam() {
 
 	// 選択されたものの操作
 	if (ImGui::BeginTabBar("EditCameraParam")) {
+		if (ImGui::BeginTabItem("Main")) {
+
+			EditMainParam(keyframeParam);
+			ImGui::EndTabItem();
+		}
+
 		if (ImGui::BeginTabItem("Target")) {
 
 			SelectTarget(keyframeParam);
@@ -243,29 +291,29 @@ void Camera3DEditor::EditCameraParam() {
 	}
 }
 
-void Camera3DEditor::SelectKeyframe(const CameraParam& param) {
+void Camera3DEditor::EditMainParam(KeyframeParam& keyframeParam) {
 
-	// 範囲内に制限
-	if (selectedKeyIndex_ < 0 || static_cast<int>(param.keyframes.size()) <= selectedKeyIndex_) {
-		selectedKeyIndex_ = 0;
+	ImGui::PushItemWidth(itemWidth_);
+
+	bool isEdit = false;
+	isEdit |= ImGui::DragFloat3("translation", &keyframeParam.translation.x, 0.1f);
+	isEdit |= ImGui::DragFloat3("eulerRotation", &keyframeParam.eulerRotation.x, 0.01f);
+
+	// 値を反映
+	if (isEdit) {
+
+		keyframeParam.demoObject->SetTranslation(keyframeParam.translation);
+		keyframeParam.rotation = Quaternion::Normalize(
+			Quaternion::EulerToQuaternion(keyframeParam.eulerRotation));
+		keyframeParam.demoObject->SetRotation(keyframeParam.rotation);
 	}
-	// 選択するキーフレームを更新
-	if (selectObjectID_ != 0) {
-		for (int i = 0; i < static_cast<int>(param.keyframes.size()); ++i) {
-
-			const auto& keyframe = param.keyframes[i];
-			if (keyframe.demoObject && keyframe.demoObject->GetObjectID() == selectObjectID_) {
-
-				selectedKeyIndex_ = i;
-				break;
-			}
-		}
-	}
+	ImGui::PopItemWidth();
 }
 
 void Camera3DEditor::SelectTarget(KeyframeParam& keyframeParam) {
 
 	ImGui::Text("currentTarget: %s", keyframeParam.targetName.c_str());
+	ImGui::Checkbox("followTarget", &keyframeParam.followTarget);
 	if (ImGui::Button("Remove Target")) {
 
 		keyframeParam.target = nullptr;
@@ -294,10 +342,29 @@ void Camera3DEditor::SelectTarget(KeyframeParam& keyframeParam) {
 	}
 }
 
+void Camera3DEditor::SelectKeyframe(const CameraParam& param) {
+
+	// 範囲内に制限
+	if (selectedKeyIndex_ < 0 || static_cast<int>(param.keyframes.size()) <= selectedKeyIndex_) {
+		selectedKeyIndex_ = 0;
+	}
+	// 選択するキーフレームを更新
+	if (selectObjectID_ != 0) {
+		for (int i = 0; i < static_cast<int>(param.keyframes.size()); ++i) {
+
+			const auto& keyframe = param.keyframes[i];
+			if (keyframe.demoObject && keyframe.demoObject->GetObjectID() == selectObjectID_) {
+
+				selectedKeyIndex_ = i;
+				break;
+			}
+		}
+	}
+}
+
 void Camera3DEditor::SaveDemoCamera() {
 
 	Json data;
-
 	for (const auto& keyframes : std::views::values(params_)) {
 		for (const auto& keyframe : keyframes.keyframes) {
 

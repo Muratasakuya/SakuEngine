@@ -34,7 +34,8 @@ void BaseTransform::UpdateMatrix() {
 	bool selfUnchanged =
 		(scale == prevScale &&
 			rotation == prevRotation &&
-			translation == prevTranslation);
+			translation == prevTranslation &&
+			offsetTranslation == prevOffsetTranslation);
 
 	// 親と自分の値が変わっていなければ更新しない
 	if (selfUnchanged && (!parent || !parent->IsDirty())) {
@@ -46,12 +47,13 @@ void BaseTransform::UpdateMatrix() {
 	isDirty_ = true;
 
 	// 行列を更新
-	matrix.Update(parent, scale, rotation, translation);
+	matrix.Update(parent, scale, rotation, offsetTranslation + translation);
 
 	// 値を保存
 	prevScale = scale;
 	prevRotation = rotation;
 	prevTranslation = translation;
+	prevOffsetTranslation = offsetTranslation;
 }
 
 void BaseTransform::ImGui(float itemSize) {

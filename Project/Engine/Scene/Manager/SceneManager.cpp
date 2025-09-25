@@ -8,6 +8,7 @@
 #include <Engine/Object/Core/ObjectManager.h>
 #include <Engine/Object/System/Systems/InstancedMeshSystem.h>
 #include <Engine/Utility/EnumAdapter.h>
+#include <Game/Editor/CameraEditor/3D/Camera3DEditor.h>
 
 //============================================================================
 //	SceneManager classMethods
@@ -50,6 +51,9 @@ void SceneManager::Update() {
 
 	currentScene_->Update();
 	sceneTransition_->Update();
+
+	// cameraEditor更新
+	Camera3DEditor::GetInstance()->Update();
 }
 
 void SceneManager::SwitchScene() {

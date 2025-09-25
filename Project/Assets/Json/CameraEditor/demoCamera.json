@@ -12,7 +12,7 @@
             "y": 1.0,
             "z": 1.0
         },
-        "emissiveIntensity": 0.10000000149011612,
+        "emissiveIntensity": 0.07999999821186066,
         "enableBlinnPhongReflection": 0,
         "enableDithering": 0,
         "enableHalfLambert": 1,
@@ -20,7 +20,7 @@
         "enableLighting": 1,
         "environmentCoefficient": 0.25,
         "phongRefShininess": 1.0,
-        "shadowRate": 0.0,
+        "shadowRate": 1.0,
         "specularColor": {
             "x": 1.0,
             "y": 1.0,
@@ -46,17 +46,17 @@
         "rotation": {
             "w": 1.0,
             "x": 0.0,
-            "y": -0.0,
+            "y": 0.0,
             "z": 0.0
         },
         "scale": {
-            "x": 5.241600036621094,
-            "y": 5.241600036621094,
-            "z": 5.241600036621094
+            "x": 4.0,
+            "y": 4.0,
+            "z": 4.0
         },
         "translation": {
             "x": 0.0,
-            "y": 12.0,
+            "y": 14.0,
             "z": 0.0
         }
     }
