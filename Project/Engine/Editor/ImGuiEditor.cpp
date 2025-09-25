@@ -291,7 +291,7 @@ void ImGuiEditor::Hierarchy(SceneView* sceneView) {
 
 			// カメラにフォーカスさせる処理
 			if (isCameraAutoFocus_ && sceneView) {
-				if (auto select = ImGuiObjectEditor::GetInstance()->GetSelected3D()) {
+				if (const auto& select = ImGuiObjectEditor::GetInstance()->GetSelected3D()) {
 					// 新しいオブジェクトを選択したときにのみ処理
 					if (lastAutoFocusId_ != select) {
 						if (Transform3D* transform = ObjectManager::GetInstance()->GetData<Transform3D>(*select)) {
@@ -310,6 +310,14 @@ void ImGuiEditor::Hierarchy(SceneView* sceneView) {
 
 			// editorの選択
 			GameEditorManager::GetInstance()->SelectEditor();
+
+			// 選択中のオブジェクトIDを設定
+			if (lastAutoFocusId_.has_value()) {
+				if (lastAutoFocusId_ != ImGuiObjectEditor::GetInstance()->GetSelected3D()) {
+
+					GameEditorManager::GetInstance()->SetSelectObjectID(*lastAutoFocusId_);
+				}
+			}
 			ImGui::EndTabItem();
 		}
 		ImGui::EndTabBar();

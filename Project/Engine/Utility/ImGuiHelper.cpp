@@ -4,6 +4,9 @@
 //	include
 //============================================================================
 #include <Engine/Asset/AssetEditor.h>
+#include <Engine/Object/Core/ObjectManager.h>
+#include <Engine/Object/System/Systems/TagSystem.h>
+#include <Engine/Object/Data/Transform.h>
 
 //============================================================================
 //	ImGuiHelper classMethods
@@ -128,4 +131,52 @@ bool ImGuiHelper::BeginFramedChild(const char* id, const char* title,
 void ImGuiHelper::EndFramedChild() {
 
 	ImGui::EndChild();
+}
+
+bool ImGuiHelper::SelectTagTarget(const char* label, uint32_t* ioSelectedId,
+	std::string* outName, const char* groupFilter) {
+
+	ObjectManager* objectManager = ObjectManager::GetInstance();
+	TagSystem* tagSystem = objectManager->GetSystem<TagSystem>();
+	const auto& groups = tagSystem->Groups();
+	const auto& tags = tagSystem->Tags();
+
+	if (label && *label) {
+
+		ImGui::TextUnformatted(label);
+	}
+	bool changed = false;
+	for (const auto& [group, ids] : groups) {
+
+		if (group.empty()) {
+			continue;
+		}
+		if (groupFilter && *groupFilter && group != groupFilter) {
+			continue;
+		}
+		if (ImGui::TreeNode(group.c_str())) {
+			for (uint32_t id : ids) {
+
+				// 追従先を設定できるオブジェクトのみ
+				if (!objectManager->GetData<Transform3D>(id)) {
+					continue;
+				}
+
+				const std::string& name = tags.at(id)->name;
+				bool isSel = (ioSelectedId && *ioSelectedId == id);
+				std::string labelId = name + "##" + std::to_string(id);
+				if (ImGui::Selectable(labelId.c_str(), isSel)) {
+					if (ioSelectedId) {
+						*ioSelectedId = id;
+					}
+					if (outName) {
+						*outName = name;
+					}
+					changed = true;
+				}
+			}
+			ImGui::TreePop();
+		}
+	}
+	return changed;
 }

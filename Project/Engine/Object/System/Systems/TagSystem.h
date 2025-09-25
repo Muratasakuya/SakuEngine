@@ -32,7 +32,7 @@ public:
 	//--------- accessor -----------------------------------------------------
 
 	const std::unordered_map<std::string, std::vector<uint32_t>>& Groups() const { return groups_; }
-	const std::unordered_map<uint32_t, const ObjectTag*>& Tags()   const { return idToTag_; }
+	const std::unordered_map<uint32_t, const ObjectTag*>& Tags() const { return idToTag_; }
 private:
 	//========================================================================
 	//	private Methods

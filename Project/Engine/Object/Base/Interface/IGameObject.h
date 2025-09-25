@@ -43,8 +43,8 @@ public:
 	/*---------- getter ----------*/
 
 	const ObjectTag& GetTag() const { return *tag_; }
-
 	const std::string& GetIdentifier() const { return identifier_; }
+	uint32_t GetObjectID() const { return objectId_; }
 protected:
 	//========================================================================
 	//	protected Methods

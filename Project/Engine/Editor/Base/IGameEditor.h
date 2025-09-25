@@ -26,6 +26,8 @@ public:
 
 	//--------- accessor -----------------------------------------------------
 
+	void SetSelectObjectID(uint32_t id) { selectObjectID_ = id; }
+
 	const std::string& GetName() const { return name_; }
 protected:
 	//========================================================================
@@ -34,6 +36,10 @@ protected:
 
 	//--------- variables ----------------------------------------------------
 
+	// 選択されているオブジェクトのID
+	uint32_t selectObjectID_;
+
+	// imgui
 	static constexpr const float itemWidth_ = 224.0f;
 private:
 	//========================================================================

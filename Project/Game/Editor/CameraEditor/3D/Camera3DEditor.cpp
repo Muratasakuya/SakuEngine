@@ -8,6 +8,7 @@
 #include <Engine/Utility/ImGuiHelper.h>
 #include <Engine/Object/Core/ObjectManager.h>
 #include <Engine/Object/System/Systems/InstancedMeshSystem.h>
+#include <Engine/Object/System/Systems/TagSystem.h>
 #include <Lib/MathUtils/Algorithm.h>
 
 //============================================================================
@@ -214,9 +215,82 @@ void Camera3DEditor::SelectCameraParam() {
 
 void Camera3DEditor::EditCameraParam() {
 
+	if (selectedParamKey_.empty()) {
+
+		ImGui::TextDisabled("not selected param");
+		return;
+	}
+
 	if (ImGui::Button("Save DemoCamera")) {
 
 		SaveDemoCamera();
+	}
+	ImGui::Separator();
+
+	CameraParam& param = params_[selectedParamKey_];
+	// 選択するキーフレームを更新
+	SelectKeyframe(param);
+	KeyframeParam& keyframeParam = param.keyframes[selectedKeyIndex_];
+
+	// 選択されたものの操作
+	if (ImGui::BeginTabBar("EditCameraParam")) {
+		if (ImGui::BeginTabItem("Target")) {
+
+			SelectTarget(keyframeParam);
+			ImGui::EndTabItem();
+		}
+		ImGui::EndTabBar();
+	}
+}
+
+void Camera3DEditor::SelectKeyframe(const CameraParam& param) {
+
+	// 範囲内に制限
+	if (selectedKeyIndex_ < 0 || static_cast<int>(param.keyframes.size()) <= selectedKeyIndex_) {
+		selectedKeyIndex_ = 0;
+	}
+	// 選択するキーフレームを更新
+	if (selectObjectID_ != 0) {
+		for (int i = 0; i < static_cast<int>(param.keyframes.size()); ++i) {
+
+			const auto& keyframe = param.keyframes[i];
+			if (keyframe.demoObject && keyframe.demoObject->GetObjectID() == selectObjectID_) {
+
+				selectedKeyIndex_ = i;
+				break;
+			}
+		}
+	}
+}
+
+void Camera3DEditor::SelectTarget(KeyframeParam& keyframeParam) {
+
+	ImGui::Text("currentTarget: %s", keyframeParam.targetName.c_str());
+	if (ImGui::Button("Remove Target")) {
+
+		keyframeParam.target = nullptr;
+		keyframeParam.targetName = "";
+	}
+	ImGui::Separator();
+
+	uint32_t currentId = 0;
+	ObjectManager* objectManager = ObjectManager::GetInstance();
+	TagSystem* tagSystem = objectManager->GetSystem<TagSystem>();
+	// 現在選択されているオブジェクトIDを設定
+	for (const auto& [id, tagPtr] : tagSystem->Tags()) {
+		if (objectManager->GetData<Transform3D>(id) == keyframeParam.target) {
+
+			currentId = id;
+			break;
+		}
+	}
+
+	std::string selectedName = keyframeParam.targetName;
+	if (ImGuiHelper::SelectTagTarget("Select Follow Target", &currentId, &selectedName)) {
+
+		// Transformと名前を更新
+		keyframeParam.target = objectManager->GetData<Transform3D>(currentId);
+		keyframeParam.targetName = selectedName;
 	}
 }
 

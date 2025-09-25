@@ -46,9 +46,11 @@ private:
 		float fovY;          // 画角
 		Vector3 translation; // 座標
 		Vector3 rotation;    // 回転
-
 		// このフレームまでの補間時間
 		StateTimer timer;
+		// 追従先の設定
+		const Transform3D* target;
+		std::string targetName;
 
 		// 場所、回転を可視化するオブジェクト
 		std::unique_ptr<GameObject3D> demoObject;
@@ -85,6 +87,7 @@ private:
 	std::string selectedSkinnedKey_; // 選択中の骨アニメーション
 	std::string selectedAnimName_;   // 骨アニメーションが所持しているアニメーション
 	std::string selectedParamKey_;   // 操作対象のカメラ
+	int selectedKeyIndex_ = 0;       // 選択中のキーフレーム
 
 	//--------- functions ----------------------------------------------------
 
@@ -96,6 +99,10 @@ private:
 	void AddCameraParam();
 	void SelectCameraParam();
 	void EditCameraParam();
+
+	// helper
+	void SelectKeyframe(const CameraParam& param);
+	void SelectTarget(KeyframeParam& keyframeParam);
 
 	Camera3DEditor() :IGameEditor("Camera3DEditor") {}
 	~Camera3DEditor() = default;

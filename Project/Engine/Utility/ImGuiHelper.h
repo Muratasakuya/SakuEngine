@@ -48,6 +48,10 @@ public:
 	static bool BeginFramedChild(const char* id, const char* title,
 		const ImVec2& size, ImGuiWindowFlags flags = 0);
 	static void EndFramedChild();
+
+	// TagSystemから名前の取得をする
+	static bool SelectTagTarget(const char* label, uint32_t* ioSelectedId,
+		std::string* outName = nullptr, const char* groupFilter = nullptr);
 };
 
 //============================================================================
