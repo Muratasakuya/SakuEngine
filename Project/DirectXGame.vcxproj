@@ -209,6 +209,26 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <SubType>
       </SubType>
     </ClCompile>
+    <ClCompile Include="Engine\Editor\Camera\3D\Camera3DEditorPanel.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="Engine\Editor\Camera\3D\CameraPathController.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="Engine\Editor\Camera\3D\CameraPathData.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="Engine\Editor\Camera\3D\CameraPathGizmoSynch.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="Engine\Editor\Camera\3D\CameraPathRenderer.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="Engine\Effect\Game\GameEffect.cpp">
       <SubType>
       </SubType>
@@ -979,6 +999,26 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       </SubType>
     </ClInclude>
     <ClInclude Include="Engine\Core\Graphics\PostProcess\PostProcessConfig.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Engine\Editor\Camera\3D\Camera3DEditorPanel.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Engine\Editor\Camera\3D\CameraPathController.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Engine\Editor\Camera\3D\CameraPathData.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Engine\Editor\Camera\3D\CameraPathGizmoSynch.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Engine\Editor\Camera\3D\CameraPathRenderer.h">
       <SubType>
       </SubType>
     </ClInclude>

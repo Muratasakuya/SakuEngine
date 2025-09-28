@@ -710,6 +710,21 @@
     <ClCompile Include="Engine\Utility\Animation\LerpKeyframe.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Editor\Camera\3D\CameraPathData.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Editor\Camera\3D\CameraPathController.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Editor\Camera\3D\CameraPathGizmoSynch.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Editor\Camera\3D\CameraPathRenderer.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Editor\Camera\3D\Camera3DEditorPanel.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Asset\AnimationManager.h" />
@@ -987,6 +1002,11 @@
     <ClInclude Include="Engine\Editor\Camera\3D\Camera3DEditor.h" />
     <ClInclude Include="Engine\Utility\Enum\Direction.h" />
     <ClInclude Include="Engine\Utility\Animation\LerpKeyframe.h" />
+    <ClInclude Include="Engine\Editor\Camera\3D\CameraPathData.h" />
+    <ClInclude Include="Engine\Editor\Camera\3D\CameraPathController.h" />
+    <ClInclude Include="Engine\Editor\Camera\3D\CameraPathGizmoSynch.h" />
+    <ClInclude Include="Engine\Editor\Camera\3D\CameraPathRenderer.h" />
+    <ClInclude Include="Engine\Editor\Camera\3D\Camera3DEditorPanel.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Engine\Shaders\PostProcess\Copy\CopyTexture.CS.hlsl" />
