@@ -523,6 +523,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <SubType>
       </SubType>
     </ClCompile>
+    <ClCompile Include="Engine\Utility\LerpKeyframe.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="Engine\Utility\SimpleAnimation.cpp">
       <SubType>
       </SubType>
@@ -1369,6 +1373,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       </SubType>
     </ClInclude>
     <ClInclude Include="Engine\Utility\AnimationLoop.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Engine\Utility\LerpKeyframe.h">
       <SubType>
       </SubType>
     </ClInclude>

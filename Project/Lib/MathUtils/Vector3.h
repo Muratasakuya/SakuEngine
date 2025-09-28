@@ -53,6 +53,8 @@ public:
 
 	Vector3& operator*=(float scalar);
 
+	Vector3 operator-() const;
+
 	bool operator==(const Vector3& other) const;
 	bool operator!=(const Vector3& other) const;
 
@@ -92,9 +94,4 @@ public:
 	static Vector3 Transform(const Vector3& v, const Matrix4x4& matrix);
 
 	static Vector3 TransferNormal(const Vector3& v, const Matrix4x4& m);
-
-	// catmullRom
-	static Vector3 CatmullRomInterpolation(const Vector3& p0, const Vector3& p1,
-		const Vector3& p2, const Vector3& p3, float t);
-	static Vector3 CatmullRomValue(const std::vector<Vector3>& points, float t);
 };

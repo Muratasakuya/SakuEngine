@@ -5,11 +5,13 @@
 //============================================================================
 #include <Engine/Asset/Asset.h>
 #include <Engine/Scene/SceneView.h>
-#include <Engine/Utility/ImGuiHelper.h>
 #include <Engine/Editor/ImGuiObjectEditor.h>
+#include <Engine/Core/Graphics/Renderer/LineRenderer.h>
 #include <Engine/Object/Core/ObjectManager.h>
 #include <Engine/Object/System/Systems/InstancedMeshSystem.h>
 #include <Engine/Object/System/Systems/TagSystem.h>
+#include <Engine/Utility/ImGuiHelper.h>
+#include <Engine/Utility/EnumAdapter.h>
 #include <Lib/MathUtils/Algorithm.h>
 
 //============================================================================
@@ -75,6 +77,9 @@ void Camera3DEditor::UpdateFollowTarget() {
 				keyframe.demoObject->SetOffsetTranslation(Vector3::AnyInit(0.0f));
 			}
 		}
+
+		// デバッグ表示の線
+		DrawKeyframeLine(param);
 	}
 }
 
@@ -85,8 +90,6 @@ void Camera3DEditor::KeyframeParam::Init() {
 	translation = Vector3::AnyInit(0.0f);
 	rotation = Quaternion::IdentityQuaternion();
 	eulerRotation = Vector3::AnyInit(0.0f);
-	timer.target_ = 0.4f;
-	timer.Reset();
 
 	// デモ用オブジェクトを作成
 	demoObject = std::make_unique<GameObject3D>();
@@ -278,6 +281,11 @@ void Camera3DEditor::EditCameraParam() {
 
 	// 選択されたものの操作
 	if (ImGui::BeginTabBar("EditCameraParam")) {
+		if (ImGui::BeginTabItem("Lerp")) {
+
+			EditLerp(param);
+			ImGui::EndTabItem();
+		}
 		if (ImGui::BeginTabItem("Keyframe")) {
 
 			EditKeyframe(param);
@@ -303,6 +311,30 @@ void Camera3DEditor::EditCameraParam() {
 	}
 }
 
+void Camera3DEditor::EditLerp(CameraParam& param) {
+
+	EnumAdapter<LerpKeyframe::Type>::Combo("LerpType", &param.lerpType);
+
+	bool preUseAveraging = param.useAveraging;
+	ImGui::Checkbox("averagingPoints", &param.useAveraging);
+	ImGui::DragInt("divisionCount", &param.divisionCount, 1, 4, 512);
+	if (preUseAveraging != param.useAveraging) {
+		if (param.useAveraging) {
+
+			param.averagedT = LerpKeyframe::AveragingPoints<Vector3>(
+				CollectTranslationPoints(param), param.divisionCount, param.lerpType);
+		} else {
+
+			param.averagedT.clear();
+		}
+	}
+	param.timer.ImGui("Timer");
+
+	ImGui::SeparatorText("Debug");
+
+	ImGui::Checkbox("isDrawLine3D", &param.isDrawLine3D);
+}
+
 void Camera3DEditor::EditKeyframe(CameraParam& param) {
 
 	auto& keyframes = param.keyframes;
@@ -323,7 +355,6 @@ void Camera3DEditor::EditKeyframe(CameraParam& param) {
 		dstKeyframe.translation = sourceKeyframe.translation;
 		dstKeyframe.rotation = sourceKeyframe.rotation;
 		dstKeyframe.eulerRotation = sourceKeyframe.eulerRotation;
-		dstKeyframe.timer = sourceKeyframe.timer;
 		// デモ用オブジェクトを作成
 		dstKeyframe.demoObject = std::make_unique<GameObject3D>();
 		dstKeyframe.demoObject->Init("demoCamera", "demoCamera", "Editor");
@@ -460,6 +491,39 @@ void Camera3DEditor::SelectKeyframe(const CameraParam& param) {
 				break;
 			}
 		}
+	}
+}
+
+std::vector<Vector3> Camera3DEditor::CollectTranslationPoints(const CameraParam& param) const {
+
+	// 補間座標の取得
+	std::vector<Vector3> points;
+	points.reserve(param.keyframes.size());
+	for (auto& keyframe : param.keyframes) {
+
+		points.push_back(keyframe.translation);
+	}
+	return points;
+}
+
+void Camera3DEditor::DrawKeyframeLine(const CameraParam& param) {
+
+	if (!param.isDrawLine3D) {
+		return;
+	}
+	const auto points = CollectTranslationPoints(param);
+	Vector3 prev{};
+	bool hasPrev = false;
+	for (int i = 0; i <= param.divisionCount; ++i) {
+
+		float t = static_cast<float>(i) / static_cast<float>(param.divisionCount);
+		Vector3 point = LerpKeyframe::GetValue<Vector3>(points, t, param.lerpType);
+		if (hasPrev) {
+
+			LineRenderer::GetInstance()->DrawLine3D(prev, point, Color::Green());
+		}
+		prev = point;
+		hasPrev = true;
 	}
 }
 

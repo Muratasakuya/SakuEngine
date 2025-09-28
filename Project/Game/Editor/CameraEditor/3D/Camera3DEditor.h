@@ -6,6 +6,7 @@
 #include <Engine/Scene/Camera/BaseCamera.h>
 #include <Engine/Object/Base/GameObject3D.h>
 #include <Engine/Utility/StateTimer.h>
+#include <Engine/Utility/LerpKeyframe.h>
 #include <Engine/Editor/Base/IGameEditor.h>
 
 // front
@@ -49,8 +50,6 @@ private:
 		Vector3 translation;   // 座標
 		Quaternion rotation;   // 回転
 		Vector3 eulerRotation; // オイラー回転
-		// このフレームまでの補間時間
-		StateTimer timer;
 
 		// 場所、回転を可視化するオブジェクト
 		std::unique_ptr<GameObject3D> demoObject;
@@ -66,13 +65,23 @@ private:
 	// 調整項目をまとめた構造体
 	struct CameraParam {
 
-		// キーフレームs
-		std::vector<KeyframeParam> keyframes;
-
 		// 追従先の設定
 		bool followTarget;
 		const Transform3D* target;
 		std::string targetName;
+
+		// キーフレームs
+		std::vector<KeyframeParam> keyframes;
+
+		// 補間の仕方
+		LerpKeyframe::Type lerpType = LerpKeyframe::Type::Spline;
+		// 補間時間
+		StateTimer timer;
+
+		bool isDrawLine3D = true;     // デバッグ表示の線を描画するかどうか
+		int  divisionCount = 64;      // 曲線の分割数
+		bool useAveraging = false;    // 平均化を行うか
+		std::vector<float> averagedT; // 平均化されたt値
 	};
 
 	//--------- variables ----------------------------------------------------
@@ -108,6 +117,7 @@ private:
 	void SelectCameraParam();
 
 	void EditCameraParam();
+	void EditLerp(CameraParam& param);
 	void EditKeyframe(CameraParam& param);
 	void EditMainParam(KeyframeParam& keyframeParam);
 	void SelectTarget(CameraParam& param);
@@ -115,6 +125,8 @@ private:
 	// helper
 	void SynchMainParam(KeyframeParam& keyframeParam);
 	void SelectKeyframe(const CameraParam& param);
+	std::vector<Vector3> CollectTranslationPoints(const CameraParam& param) const;
+	void DrawKeyframeLine(const CameraParam& param);
 
 	Camera3DEditor() :IGameEditor("Camera3DEditor") {}
 	~Camera3DEditor() = default;
