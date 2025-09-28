@@ -5,6 +5,7 @@
 //============================================================================
 #include <Engine/Config.h>
 #include <Engine/Utility/Json/JsonAdapter.h>
+#include <Engine/Utility/Helper/ImGuiHelper.h>
 #include <Engine/Editor/GameObject/ImGuiObjectEditor.h>
 
 // imgui
@@ -77,6 +78,10 @@ void BaseTransform::ImGui(float itemSize) {
 	ImGui::Text("quaternion(%4.3f, %4.3f, %4.3f, %4.3f)",
 		rotation.x, rotation.y, rotation.z, rotation.w);
 	ImGui::DragFloat3("scale", &scale.x, 0.01f);
+
+	ImGui::SeparatorText("Offset");
+
+	ImGuiHelper::ValueText<Vector3>("translation", offsetTranslation);
 
 	ImGui::SeparatorText("World Matrix");
 	if (ImGui::BeginTable("WorldMatrix", 4,

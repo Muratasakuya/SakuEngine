@@ -246,7 +246,7 @@ void ImGuiObjectEditor::DrawManipulateGizmo(const GizmoContext& context) {
 	}
 
 	// Guizmo上にマウスがあるかどうか
-	isUsingGuizmo_ |= ImGuizmo::IsOver();
+	isUsingGuizmo_ = ImGuizmo::IsUsing();
 }
 
 void ImGuiObjectEditor::GizmoToolbar(const GizmoIcons& icons) {

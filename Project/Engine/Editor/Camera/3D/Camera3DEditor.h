@@ -46,10 +46,8 @@ private:
 	// キーフレームごとの調整値
 	struct KeyframeParam {
 
-		float fovY;            // 画角
-		Vector3 translation;   // 座標
-		Quaternion rotation;   // 回転
-		Vector3 eulerRotation; // オイラー回転
+		float fovY;          // 画角
+		Vector3 translation; // 座標の保持
 
 		// 場所、回転を可視化するオブジェクト
 		std::unique_ptr<GameObject3D> demoObject;
@@ -123,10 +121,10 @@ private:
 	void SelectTarget(CameraParam& param);
 
 	// helper
-	void SynchMainParam(KeyframeParam& keyframeParam);
 	void SelectKeyframe(const CameraParam& param);
 	std::vector<Vector3> CollectTranslationPoints(const CameraParam& param) const;
 	void DrawKeyframeLine(const CameraParam& param);
+	void SyncSelectedKeyIndexFromGizmo();
 
 	Camera3DEditor() :IGameEditor("Camera3DEditor") {}
 	~Camera3DEditor() = default;

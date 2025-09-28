@@ -81,15 +81,17 @@ namespace LerpKeyframe {
 
 			const size_t division = points.size() - 1;
 			const float  area = 1.0f / static_cast<float>(division);
-			float localT = std::clamp(std::fmod((std::max)(t, 0.0f), 1.0f) / area - std::floor(t / area), 0.0f, 1.0f);
+
+			// 区間のインデックス
 			size_t index = static_cast<size_t>(t / area);
 			index = (std::min)(index, division - 1);
+			// 区間内のt地点を求める
+			const float localT = (t - index * area) / area;
 
-			size_t i0 = (index == 0) ? index : index - 1;
-			size_t i1 = index;
-			size_t i2 = (std::min)(index + 1, division);
-			size_t i3 = (std::min)(index + 2, division);
-
+			const size_t i0 = (index == 0) ? index : index - 1;
+			const size_t i1 = index;
+			const size_t i2 = (std::min)(index + 1, division);
+			const size_t i3 = (std::min)(index + 2, division);
 			return LerpKeyframe::CatmullRomInterpolation(points[i0], points[i1], points[i2], points[i3], localT);
 		}
 		// 1点の時

@@ -4,14 +4,48 @@
 //	include
 //============================================================================
 #include <Engine/Asset/AssetEditorPayloadData.h>
+#include <Engine/MathLib/MathUtils.h>
 
 // c++
 #include <string>
 #include <string_view>
 #include <vector>
+#include <format>
 #include <type_traits>
 // imgui
 #include <imgui.h>
+
+namespace detail {
+
+	template<class T>
+	concept Arithmetic = std::is_arithmetic_v<T>;
+
+	template<class T>
+	concept HasXY = requires(const T & v) { v.x; v.y; };
+	template<class T>
+	concept HasXYZ = requires(const T & v) { v.x; v.y; v.z; };
+
+	template<Arithmetic T>
+	inline std::string format_value(const T& v, int precision) {
+		if constexpr (std::is_floating_point_v<T>) {
+
+			return std::format("{:.{}f}", v, precision);
+		} else {
+
+			return std::format("{}", v);
+		}
+	}
+
+	inline std::string format_value(const Vector2& v, int precision) {
+
+		return std::format("({:.{}f}, {:.{}f})", v.x, precision, v.y, precision);
+	}
+	inline std::string format_value(const Vector3& v, int precision) {
+
+		return std::format("({:.{}f}, {:.{}f}, {:.{}f})",
+			v.x, precision, v.y, precision, v.z, precision);
+	}
+}
 
 //============================================================================
 //	ImGuiHelper class
@@ -52,6 +86,10 @@ public:
 	// TagSystemから名前の取得をする
 	static bool SelectTagTarget(const char* label, uint32_t* ioSelectedId,
 		std::string* outName = nullptr, const char* groupFilter = nullptr);
+
+	// 値の表示
+	template <typename T>
+	static void ValueText(const char* label, const T& value, int precision = 3);
 };
 
 //============================================================================
@@ -102,4 +140,12 @@ inline bool ImGuiHelper::SelectableListFromKeys(const char* label, int* currentI
 		*outSelectedKey = keys[*currentIndex];
 	}
 	return changed;
+}
+
+template<typename T>
+inline void ImGuiHelper::ValueText(const char* label, const T& value, int precision) {
+
+	using detail::format_value;
+	const std::string stringValue = format_value(value, precision);
+	ImGui::TextUnformatted(std::format("{}: {}", label, stringValue).c_str());
 }

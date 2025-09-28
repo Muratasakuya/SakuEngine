@@ -105,7 +105,7 @@ private:
 	void Console();
 
 	// hierarchy
-	void Hierarchy(SceneView* sceneView);
+	void Hierarchy();
 
 	// inspector
 	void Inspector();
@@ -114,6 +114,7 @@ private:
 	void AssetEdit();
 
 	// helper
+	void SelectObjectFocus(SceneView* sceneView);
 	void SetInputArea(InputViewArea viewArea, const ImVec2& imMin, const ImVec2& imSize);
 	void DrawDescriptorUsageBar(const char* label, const BaseDescriptor* descriptor);
 };

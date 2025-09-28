@@ -114,11 +114,13 @@ void ImGuiEditor::Display(SceneView* sceneView) {
 
 	Console();
 
-	Hierarchy(sceneView);
+	Hierarchy();
 
 	Inspector();
 
 	AssetEdit();
+
+	SelectObjectFocus(sceneView);
 }
 
 void ImGuiEditor::EditLayout() {
@@ -278,7 +280,7 @@ void ImGuiEditor::Console() {
 	ImGui::End();
 }
 
-void ImGuiEditor::Hierarchy(SceneView* sceneView) {
+void ImGuiEditor::Hierarchy() {
 
 	ImGui::Begin("Hierarchy", nullptr, windowFlag_);
 
@@ -288,21 +290,6 @@ void ImGuiEditor::Hierarchy(SceneView* sceneView) {
 
 			// scene内のobject選択
 			ImGuiObjectEditor::GetInstance()->SelectObject();
-
-			// カメラにフォーカスさせる処理
-			if (isCameraAutoFocus_ && sceneView) {
-				if (const auto& select = ImGuiObjectEditor::GetInstance()->GetSelected3D()) {
-					// 新しいオブジェクトを選択したときにのみ処理
-					if (lastAutoFocusId_ != select) {
-						if (Transform3D* transform = ObjectManager::GetInstance()->GetData<Transform3D>(*select)) {
-
-							BaseCamera* camera = sceneView->GetSceneCamera();
-							camera->StartAutoFocus(true, transform->GetWorldPos());
-							lastAutoFocusId_ = select;
-						}
-					}
-				}
-			}
 			ImGui::EndTabItem();
 		}
 
@@ -310,14 +297,6 @@ void ImGuiEditor::Hierarchy(SceneView* sceneView) {
 
 			// editorの選択
 			GameEditorManager::GetInstance()->SelectEditor();
-
-			// 選択中のオブジェクトIDを設定
-			if (lastAutoFocusId_.has_value()) {
-				if (lastAutoFocusId_ != ImGuiObjectEditor::GetInstance()->GetSelected3D()) {
-
-					GameEditorManager::GetInstance()->SetSelectObjectID(*lastAutoFocusId_);
-				}
-			}
 			ImGui::EndTabItem();
 		}
 		ImGui::EndTabBar();
@@ -362,6 +341,30 @@ void ImGuiEditor::AssetEdit() {
 	AssetEditor::GetInstance()->ImGui();
 
 	ImGui::End();
+}
+
+void ImGuiEditor::SelectObjectFocus(SceneView* sceneView) {
+
+	// カメラにフォーカスさせる処理
+	if (isCameraAutoFocus_ && sceneView) {
+		if (const auto& select = ImGuiObjectEditor::GetInstance()->GetSelected3D()) {
+			// 新しいオブジェクトを選択したときにのみ処理
+			if (lastAutoFocusId_ != select) {
+				if (Transform3D* transform = ObjectManager::GetInstance()->GetData<Transform3D>(*select)) {
+
+					BaseCamera* camera = sceneView->GetSceneCamera();
+					camera->StartAutoFocus(true, transform->GetWorldPos());
+					lastAutoFocusId_ = select;
+				}
+			}
+		}
+	}
+
+	// 選択中のオブジェクトIDを設定
+	if (lastAutoFocusId_.has_value()) {
+		
+		GameEditorManager::GetInstance()->SetSelectObjectID(*lastAutoFocusId_);
+	}
 }
 
 void ImGuiEditor::SetInputArea(InputViewArea viewArea, const ImVec2& imMin, const ImVec2& imSize) {

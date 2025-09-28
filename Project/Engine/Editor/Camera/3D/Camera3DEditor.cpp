@@ -19,7 +19,6 @@
 //============================================================================
 
 Camera3DEditor* Camera3DEditor::instance_ = nullptr;
-
 Camera3DEditor* Camera3DEditor::GetInstance() {
 
 	if (instance_ == nullptr) {
@@ -50,6 +49,9 @@ void Camera3DEditor::Init(SceneView* sceneView) {
 
 void Camera3DEditor::Update() {
 
+	// 選択キーフレームのインデックスを更新
+	SyncSelectedKeyIndexFromGizmo();
+
 	// 追従先のオフセットを更新
 	UpdateFollowTarget();
 }
@@ -60,24 +62,35 @@ void Camera3DEditor::UpdateFollowTarget() {
 		return;
 	}
 
+	ImGuiObjectEditor* objectEditor = ImGuiObjectEditor::GetInstance();
+	const bool usingGizmo = objectEditor->IsUsingGuizmo();
+	const std::optional<uint32_t> selectId = objectEditor->GetSelected3D();
+
 	// 追従先があるならオフセットを更新する
-	for (const auto& param : std::views::values(params_)) {
-		for (const auto& keyframe : param.keyframes) {
+	for (auto& param : std::views::values(params_)) {
+		for (auto& keyframe : param.keyframes) {
 
-			// trueなら更新
-			if (param.followTarget && param.target != nullptr) {
-
-				keyframe.demoObject->SetOffsetTranslation(param.target->GetWorldPos());
-
-				// 回転を考慮した位置
-				const Vector3 rotatedTranslation = param.target->rotation * keyframe.translation;
-				keyframe.demoObject->SetTranslation(rotatedTranslation);
-			} else {
+			// falseの場合は常に0.0f
+			if (!(param.followTarget && param.target)) {
 
 				keyframe.demoObject->SetOffsetTranslation(Vector3::AnyInit(0.0f));
+				continue;
 			}
-		}
 
+			// 追従先のワールド座標に設定
+			keyframe.demoObject->SetOffsetTranslation(param.target->GetWorldPos());
+
+			// ギズモ操作中は更新できないようにする
+			if (usingGizmo && selectId && (*selectId == keyframe.demoObject->GetObjectID())) {
+
+				// 回転前のローカル座標を設定
+				const Quaternion inverse = Quaternion::Conjugate(param.target->rotation);
+				keyframe.translation = inverse * keyframe.demoObject->GetTranslation();
+				continue;
+			}
+			// 回転を考慮した座標を設定
+			keyframe.demoObject->SetTranslation(param.target->rotation * keyframe.translation);
+		}
 		// デバッグ表示の線
 		DrawKeyframeLine(param);
 	}
@@ -87,9 +100,6 @@ void Camera3DEditor::KeyframeParam::Init() {
 
 	// キーフレーム初期値
 	fovY = 0.54f;
-	translation = Vector3::AnyInit(0.0f);
-	rotation = Quaternion::IdentityQuaternion();
-	eulerRotation = Vector3::AnyInit(0.0f);
 
 	// デモ用オブジェクトを作成
 	demoObject = std::make_unique<GameObject3D>();
@@ -303,12 +313,6 @@ void Camera3DEditor::EditCameraParam() {
 		}
 		ImGui::EndTabBar();
 	}
-
-	if (ImGuiObjectEditor::GetInstance()->IsUsingGuizmo()) {
-
-		// 値の同期
-		SynchMainParam(keyframeParam);
-	}
 }
 
 void Camera3DEditor::EditLerp(CameraParam& param) {
@@ -328,7 +332,16 @@ void Camera3DEditor::EditLerp(CameraParam& param) {
 			param.averagedT.clear();
 		}
 	}
-	param.timer.ImGui("Timer");
+
+	ImGui::SeparatorText("Timer");
+
+	if (ImGui::Button("Match AnimDuration")) {
+
+		// アニメーションの再生時間と合わせる
+		param.timer.target_ = skinnedAnimations_[selectedParamKey_]->GetAnimationDuration(selectedParamKey_);
+	}
+
+	param.timer.ImGui("Timer", false);
 
 	ImGui::SeparatorText("Debug");
 
@@ -352,9 +365,7 @@ void Camera3DEditor::EditKeyframe(CameraParam& param) {
 		const KeyframeParam& sourceKeyframe = keyframes[selectedKeyIndex_];
 		KeyframeParam dstKeyframe{};
 		dstKeyframe.fovY = sourceKeyframe.fovY;
-		dstKeyframe.translation = sourceKeyframe.translation;
-		dstKeyframe.rotation = sourceKeyframe.rotation;
-		dstKeyframe.eulerRotation = sourceKeyframe.eulerRotation;
+
 		// デモ用オブジェクトを作成
 		dstKeyframe.demoObject = std::make_unique<GameObject3D>();
 		dstKeyframe.demoObject->Init("demoCamera", "demoCamera", "Editor");
@@ -418,19 +429,8 @@ void Camera3DEditor::EditMainParam(KeyframeParam& keyframeParam) {
 
 	ImGui::PushItemWidth(itemWidth_);
 
-	bool isEdit = false;
-	isEdit |= ImGui::DragFloat3("translation", &keyframeParam.translation.x, 0.1f);
-	isEdit |= ImGui::DragFloat3("eulerRotation", &keyframeParam.eulerRotation.x, 0.01f);
 	ImGui::DragFloat("fovY", &keyframeParam.fovY, 0.01f);
 
-	// 値を反映
-	if (isEdit) {
-
-		keyframeParam.demoObject->SetTranslation(keyframeParam.translation);
-		keyframeParam.rotation = Quaternion::Normalize(
-			Quaternion::EulerToQuaternion(keyframeParam.eulerRotation));
-		keyframeParam.demoObject->SetRotation(keyframeParam.rotation);
-	}
 	ImGui::PopItemWidth();
 }
 
@@ -464,14 +464,6 @@ void Camera3DEditor::SelectTarget(CameraParam& param) {
 		param.target = objectManager->GetData<Transform3D>(currentId);
 		param.targetName = selectedName;
 	}
-}
-
-void Camera3DEditor::SynchMainParam(KeyframeParam& keyframeParam) {
-
-	// ギズモで動かした値の同期
-	keyframeParam.translation = keyframeParam.demoObject->GetTranslation();
-	keyframeParam.rotation = keyframeParam.demoObject->GetRotation();
-	keyframeParam.eulerRotation = keyframeParam.demoObject->GetTransform().eulerRotate;
 }
 
 void Camera3DEditor::SelectKeyframe(const CameraParam& param) {
@@ -520,10 +512,33 @@ void Camera3DEditor::DrawKeyframeLine(const CameraParam& param) {
 		Vector3 point = LerpKeyframe::GetValue<Vector3>(points, t, param.lerpType);
 		if (hasPrev) {
 
-			LineRenderer::GetInstance()->DrawLine3D(prev, point, Color::Green());
+			LineRenderer::GetInstance()->DrawLine3D(prev, point, Color::Yellow());
 		}
 		prev = point;
 		hasPrev = true;
+	}
+}
+
+void Camera3DEditor::SyncSelectedKeyIndexFromGizmo() {
+
+	auto selected = ImGuiObjectEditor::GetInstance()->GetSelected3D();
+	if (!selected) {
+		return;
+	}
+	if (selectedParamKey_.empty()) {
+		return;
+	}
+
+	auto& kfs = params_[selectedParamKey_].keyframes;
+	for (int i = 0; i < static_cast<int>(kfs.size()); ++i) {
+
+		const auto& kf = kfs[i];
+		if (kf.demoObject && kf.demoObject->GetObjectID() == *selected) {
+
+			selectedKeyIndex_ = i;
+			selectObjectID_ = *selected;
+			break;
+		}
 	}
 }
 
