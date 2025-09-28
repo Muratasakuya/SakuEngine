@@ -34,6 +34,9 @@ public:
 	virtual void DerivedImGui() override {}
 
 	// json
+	// transform
+	void ApplyTransform(const Json& data);
+	void SaveTransform(Json& data);
 	// material
 	void ApplyMaterial(const Json& data);
 	void SaveMaterial(Json& data);
@@ -47,6 +50,7 @@ public:
 	void SetScale(const Vector3& scale) { transform_->scale = scale; }
 	void SetRotation(const Quaternion& rotation) { transform_->rotation = rotation; }
 	void SetTranslation(const Vector3& translation) { transform_->translation = translation; }
+	void SetOffsetTranslation(const Vector3& translation) { transform_->offsetTranslation = translation; }
 	// 親
 	void SetParent(const Transform3D& parent, bool isNull = false);
 	const Transform3D* GetJointTransform(const std::string& jointName) const;
@@ -60,6 +64,7 @@ public:
 	void SetTextureName(const std::string& textureName, std::optional<uint32_t> meshIndex = std::nullopt);
 
 	// animation
+	void AddCameraEditSubject();
 	void SetNextAnimation(const std::string& nextAnimationName, bool loopAnimation, float transitionDuration);
 	void SetDebugViewBone(bool enable) { animation_->SetDebugViewBone(enable); }
 	void SetPlaybackSpeed(float playbackSpeed) { animation_->SetPlaybackSpeed(playbackSpeed); }

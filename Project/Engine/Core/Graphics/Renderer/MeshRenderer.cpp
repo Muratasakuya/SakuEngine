@@ -112,6 +112,9 @@ void MeshRenderer::Rendering(bool debugEnable, SceneConstBuffer* sceneBuffer, Dx
 	if (meshes.empty()) {
 		return;
 	}
+	if (!rayScene_->GetTLASResource()) {
+		return;
+	}
 
 	// renderTextureへの描画処理
 	// pipeline設定

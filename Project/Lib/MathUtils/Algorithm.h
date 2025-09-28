@@ -76,7 +76,6 @@ namespace Algorithm {
 		if (!found && assertionEnable) {
 			ASSERT(false, "not found this object");
 		}
-
 		return found;
 	}
 	template <typename TA, typename TB>

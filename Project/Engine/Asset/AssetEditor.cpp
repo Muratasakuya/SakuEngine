@@ -4,6 +4,8 @@
 //	include
 //============================================================================
 #include <Engine/Asset/Asset.h>
+#include <Engine/Object/Core/ObjectManager.h>
+#include <Engine/Object/System/Systems/InstancedMeshSystem.h>
 #include <Engine/Utility/JsonAdapter.h>
 
 //============================================================================
@@ -352,7 +354,9 @@ void AssetEditor::DrawLoadOverlay() {
 			asset_->LoadTexture(id, AssetLoadType::Synch);
 		} else if (pendingType_ == PendingType::Model) {
 
-			asset_->LoadModel(id);
+			asset_->LoadModel(id, AssetLoadType::Synch);
+			const auto& system = ObjectManager::GetInstance()->GetSystem<InstancedMeshSystem>();
+			system->RequestBuild("demoCamera");
 		}
 
 		showLoadButton_ = false;

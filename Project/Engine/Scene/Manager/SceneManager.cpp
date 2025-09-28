@@ -8,6 +8,7 @@
 #include <Engine/Object/Core/ObjectManager.h>
 #include <Engine/Object/System/Systems/InstancedMeshSystem.h>
 #include <Engine/Utility/EnumAdapter.h>
+#include <Game/Editor/CameraEditor/3D/Camera3DEditor.h>
 
 //============================================================================
 //	SceneManager classMethods
@@ -28,6 +29,9 @@ SceneManager::SceneManager(Scene scene, Asset* asset, SceneView* sceneView) :IGa
 
 	// 最初のシーンファイルを読みこみ
 	asset->LoadSceneAsync(scene, AssetLoadType::Synch);
+	// メッシュの構築
+	const auto& system = ObjectManager::GetInstance()->GetSystem<InstancedMeshSystem>();
+	system->BuildForSceneSynch(scene);
 	// 最初のシーン以外を非同期で読み込む
 	for (uint32_t index = 0; index < EnumAdapter<Scene>::GetEnumCount(); ++index) {
 
@@ -47,6 +51,9 @@ void SceneManager::Update() {
 
 	currentScene_->Update();
 	sceneTransition_->Update();
+
+	// cameraEditor更新
+	Camera3DEditor::GetInstance()->Update();
 }
 
 void SceneManager::SwitchScene() {

@@ -58,7 +58,7 @@ public:
 
 	static Quaternion Multiply(const Quaternion& lhs, const Quaternion& rhs);
 
-	static Quaternion IdobjectQuaternion();
+	static Quaternion IdentityQuaternion();
 
 	static Quaternion Conjugate(const Quaternion& quaternion);
 

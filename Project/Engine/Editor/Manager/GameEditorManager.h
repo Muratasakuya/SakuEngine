@@ -31,6 +31,8 @@ public:
 
 	//--------- accessor -----------------------------------------------------
 
+	void SetSelectObjectID(uint32_t id);
+
 	// singleton
 	static GameEditorManager* GetInstance();
 	static void Finalize();

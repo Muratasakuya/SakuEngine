@@ -46,6 +46,10 @@ void RaytracingScene::BuildBLASes(ID3D12GraphicsCommandList6* commandList, const
 void RaytracingScene::BuildTLAS(ID3D12GraphicsCommandList6* commandList,
 	const std::vector<RayTracingInstance>& instances) {
 
+	// インスタンスがない場合は処理しない
+	if (instances.empty()) {
+		return;
+	}
 	if (first_) {
 
 		tlas_.Build(device_, commandList, instances, true);

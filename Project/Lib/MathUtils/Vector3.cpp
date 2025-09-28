@@ -69,6 +69,11 @@ Vector3& Vector3::operator*=(float scalar) {
 	return *this;
 }
 
+Vector3 Vector3::operator-() const {
+
+	return Vector3(-x, -y, -z);
+}
+
 bool Vector3::operator==(const Vector3& other) const {
 	return x == other.x && y == other.y && z == other.z;
 }
@@ -230,69 +235,4 @@ Vector3 Vector3::TransferNormal(const Vector3& v, const Matrix4x4& m) {
 	vector.z = v.x * m.m[0][2] + v.y * m.m[1][2] + v.z * m.m[2][2];
 
 	return vector;
-}
-
-Vector3 Vector3::CatmullRomInterpolation(const Vector3& p0, const Vector3& p1,
-	const Vector3& p2, const Vector3& p3, float t) {
-
-	const float s = 0.5f;
-
-	float t2 = t * t;
-	float t3 = t2 * t;
-
-	// 各項の計算
-	Vector3 e3 = 3.0f * p1 - 3.0f * p2 + p3 - p0;
-	Vector3 e2 = 2.0f * p0 - 5.0f * p1 + 4.0f * p2 - p3;
-	Vector3 e1 = -1.0f * p0 + p2;
-	Vector3 e0 = 2.0f * p1;
-
-	// 補間結果の計算
-	Vector3 result = t3 * e3 + t2 * e2 + t * e1 + e0;
-
-	return (s * result);
-}
-
-Vector3 Vector3::CatmullRomValue(const std::vector<Vector3>& points, float t) {
-
-	assert(points.size() >= 4 && "制御点が足りません");
-
-	// 区間数は制御点の数 - 1
-	size_t division = points.size() - 1;
-	// 1区間の長さ (全体を 1.0 とした割合)
-	float areaWidth = 1.0f / division;
-
-	// 区間内の始点を 0.0f、終点を 1.0f とした時の現在位置
-	float t_2 = std::fmod(t, areaWidth) * division;
-	// 下限(0.0f)と上限(1.0f)の範囲に収める
-	t_2 = std::clamp(t_2, 0.0f, 1.0f);
-
-	// 区間番号
-	size_t index = static_cast<size_t>(t / areaWidth);
-	// 区間番号が上限を超えないための計算
-	index = (std::min)(index, division - 1);
-
-	// 4点分のインデックス
-	size_t index0 = index - 1;
-	size_t index1 = index;
-	size_t index2 = index + 1;
-	size_t index3 = index + 2;
-
-	// 最初の区間のp0はp1を重複使用する
-	if (index == 0) {
-
-		index0 = index1;
-	}
-	// 最後の区間のp3はp2を重複使用する
-	if (points.size() <= index3) {
-
-		index3 = index2;
-	}
-
-	// 4点の座標
-	const Vector3& p0 = points[index0];
-	const Vector3& p1 = points[index1];
-	const Vector3& p2 = points[index2];
-	const Vector3& p3 = points[index3];
-
-	return CatmullRomInterpolation(p0, p1, p2, p3, t_2);
 }

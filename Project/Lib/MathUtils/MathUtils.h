@@ -11,6 +11,8 @@
 
 // c++
 #include <numbers>
+#include <vector>
+#include <algorithm>
 
 constexpr float pi = std::numbers::pi_v<float>;
 constexpr float radian = pi / 180.0f;

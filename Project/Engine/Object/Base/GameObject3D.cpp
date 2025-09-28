@@ -5,6 +5,7 @@
 //============================================================================
 #include <Engine/Object/Core/ObjectManager.h>
 #include <Engine/Editor/ImGuiObjectEditor.h>
+#include <Game/Editor/CameraEditor/3D/Camera3DEditor.h>
 
 //============================================================================
 //	GameObject3D classMethods
@@ -83,6 +84,16 @@ void GameObject3D::ImGui() {
 	ImGui::PopItemWidth();
 }
 
+void GameObject3D::ApplyTransform(const Json& data) {
+
+	transform_->FromJson(data["Transform"]);
+}
+
+void GameObject3D::SaveTransform(Json& data) {
+
+	transform_->ToJson(data["Transform"]);
+}
+
 void GameObject3D::ApplyMaterial(const Json& data) {
 
 	for (uint32_t meshIndex = 0; meshIndex < static_cast<uint32_t>((*materials_).size()); ++meshIndex) {
@@ -145,6 +156,14 @@ void GameObject3D::AnimationImGui() {
 	}
 
 	animation_->ImGui(itemWidth_);
+}
+
+void GameObject3D::AddCameraEditSubject() {
+
+	if (animation_) {
+
+		Camera3DEditor::GetInstance()->AddAnimation(tag_->name, animation_);
+	}
 }
 
 void GameObject3D::SetNextAnimation(const std::string& nextAnimationName,

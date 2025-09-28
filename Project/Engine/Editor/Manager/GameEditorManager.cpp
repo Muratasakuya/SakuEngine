@@ -48,6 +48,15 @@ void GameEditorManager::RemoveEditor(IGameEditor* editor) {
 	editors_.erase(std::remove(editors_.begin(), editors_.end(), editor), editors_.end());
 }
 
+void GameEditorManager::SetSelectObjectID(uint32_t id) {
+
+	// 選択されていなければ早期リターン
+	if (!selectedIndex_.has_value()) {
+		return;
+	}
+	editors_[*selectedIndex_]->SetSelectObjectID(id);
+}
+
 void GameEditorManager::SelectEditor() {
 
 	ImGui::SetWindowFontScale(0.84f);

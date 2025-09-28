@@ -11,5 +11,8 @@
     "white",
     "gamePadOrMouse",
     "noise"
+  ],
+  "Models": [
+    "demoCamera"
   ]
 }

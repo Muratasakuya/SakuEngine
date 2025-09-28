@@ -12,6 +12,7 @@
 #include <Engine/Core/Graphics/Renderer/LineRenderer.h>
 #include <Engine/Utility/GameTimer.h>
 #include <Engine/Config.h>
+#include <Game/Editor/CameraEditor/3D/Camera3DEditor.h>
 
 //============================================================================
 //	Framework classMethods
@@ -129,6 +130,7 @@ Framework::Framework() {
 	LineRenderer::GetInstance()->Init(device, dxCommand->GetCommandList(),
 		srvDescriptor, shaderCompiler, sceneView_.get());
 	AssetEditor::GetInstance()->Init(asset_.get());
+	Camera3DEditor::GetInstance()->Init(sceneView_.get());
 
 	//------------------------------------------------------------------------
 	// imgui機能初期化
