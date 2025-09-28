@@ -52,6 +52,10 @@ Json Quaternion::ToJson() const {
 
 Quaternion Quaternion::FromJson(const Json& data) {
 
+	if (data.empty()) {
+		return Quaternion::IdentityQuaternion();
+	}
+
 	Quaternion quaternion{};
 	if (data.is_array() && data.size() == 4) {
 		quaternion.x = data[1].get<float>();

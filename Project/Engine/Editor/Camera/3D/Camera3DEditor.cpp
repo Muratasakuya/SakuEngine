@@ -10,7 +10,6 @@
 #include <Engine/Object/Core/ObjectManager.h>
 #include <Engine/Object/System/Systems/InstancedMeshSystem.h>
 #include <Engine/Object/System/Systems/TagSystem.h>
-#include <Engine/Utility/Helper/ImGuiHelper.h>
 #include <Engine/Utility/Enum/EnumAdapter.h>
 #include <Engine/Utility/Helper/Algorithm.h>
 
@@ -122,6 +121,115 @@ void Camera3DEditor::KeyframeParam::Init() {
 	// 見た目を設定
 	demoObject->ApplyTransform(data);
 	demoObject->ApplyMaterial(data);
+}
+
+void Camera3DEditor::KeyframeParam::FromJson(const Json& data) {
+
+	fovY = data.value("fovY", 54.0f);
+
+	translation = Vector3::FromJson(data.value("translation", Json()));
+	rotation = Quaternion::FromJson(data.value("rotation", Json()));
+
+	demoObject->SetTranslation(translation);
+	demoObject->SetRotation(rotation);
+}
+
+void Camera3DEditor::KeyframeParam::ToJson(Json& data) {
+
+	data["fovY"] = fovY;
+
+	// demoObjectから渡す
+	data["translation"] = demoObject->GetTranslation().ToJson();
+	data["rotation"] = demoObject->GetRotation().ToJson();
+}
+
+void Camera3DEditor::CameraParam::ApplyJson(const std::string& fileName) {
+
+	Json data;
+	// 読み込めなければ処理しない
+	if (!JsonAdapter::LoadCheck(fileName, data)) {
+		return;
+	}
+
+	followTarget = data.value("followTarget", false);
+	targetName = data.value("targetName", "");
+	divisionCount = data.value("divisionCount", 64);
+	useAveraging = data.value("useAveraging", false);
+
+	lerpType = EnumAdapter<LerpKeyframe::Type>::FromString(data.value("lerpType", "None")).value();
+	timer.FromJson(data["Timer"]);
+
+	// 追従先の設定が必要なら設定
+	target = nullptr;
+	if (followTarget && !targetName.empty()) {
+		ObjectManager* objectManager = ObjectManager::GetInstance();
+		TagSystem* tagSystem = objectManager->GetSystem<TagSystem>();
+		for (const auto& [id, tagPtr] : tagSystem->Tags()) {
+			if (tagPtr && tagPtr->name == targetName) {
+
+				target = objectManager->GetData<Transform3D>(id);
+				break;
+			}
+		}
+	}
+
+	// キーフレームを構築
+	keyframes.clear();
+	const Json& kfs = data["Keyframes"];
+
+	std::vector<uint32_t> indices;
+	indices.reserve(kfs.size());
+	for (auto it = kfs.begin(); it != kfs.end(); ++it) {
+
+		indices.push_back(std::stoi(it.key()));
+	}
+	// indexを0から順になるようにソート
+	std::sort(indices.begin(), indices.end());
+
+	// キーフレーム設定
+	for (uint32_t index : indices) {
+
+		const std::string key = std::to_string(index);
+		KeyframeParam keyframe;
+		keyframe.Init();
+		keyframe.FromJson(kfs[key]);
+		keyframes.emplace_back(std::move(keyframe));
+	}
+
+	// 平均化処理
+	averagedT.clear();
+	if (useAveraging) {
+
+		std::vector<Vector3> points;
+		points.reserve(keyframes.size());
+		for (const auto& keyframe : keyframes) {
+
+			points.emplace_back(keyframe.demoObject->GetTransform().GetWorldPos());
+		}
+		averagedT = LerpKeyframe::AveragingPoints<Vector3>(points, divisionCount, lerpType);
+	}
+}
+
+void Camera3DEditor::CameraParam::SaveJson(const std::string& fileName) {
+
+	Json data;
+
+	data["followTarget"] = followTarget;
+	data["targetName"] = targetName;
+	data["divisionCount"] = divisionCount;
+	data["useAveraging"] = useAveraging;
+
+	data["lerpType"] = EnumAdapter<LerpKeyframe::Type>::ToString(lerpType);
+	timer.ToJson(data["Timer"]);
+
+	// 全てのキーフレームを保存
+	uint32_t index = 0;
+	for (auto& keyframe : keyframes) {
+
+		keyframe.ToJson(data["Keyframes"][std::to_string(index)]);
+		++index;
+	}
+	JsonAdapter::Save(cameraParamJsonPath_ + fileName, data);
 }
 
 void Camera3DEditor::AddAnimation(const std::string& name, const SkinnedAnimation* animation) {
@@ -295,6 +403,10 @@ void Camera3DEditor::EditCameraParam() {
 	ImGui::Separator();
 
 	CameraParam& param = params_[selectedParamKey_];
+
+	// 保存と読み込み処理
+	SaveAndLoadParam(param);
+
 	// 選択するキーフレームを更新
 	SelectKeyframe(param);
 
@@ -464,6 +576,39 @@ void Camera3DEditor::SelectTarget(CameraParam& param) {
 		// Transformと名前を更新
 		param.target = objectManager->GetData<Transform3D>(currentId);
 		param.targetName = selectedName;
+	}
+}
+
+void Camera3DEditor::SaveAndLoadParam(CameraParam& param) {
+
+	if (ImGui::Button("Save Param")) {
+
+		paramSaveState_.showPopup = true;
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Load Param")) {
+
+		std::string relPath;
+		if (ImGuiHelper::OpenJsonDialog(relPath)) {
+
+			param.ApplyJson(relPath);
+			strncpy_s(lastLoaded_, sizeof(lastLoaded_), relPath.c_str(), _TRUNCATE);
+		}
+	}
+	if (lastLoaded_[0] != '\0') {
+
+		ImGui::SameLine();
+		ImGui::TextDisabled("Loaded: %s", lastLoaded_);
+	}
+
+	// 保存処理
+	{
+		std::string outRelPath;
+		if (ImGuiHelper::SaveJsonModal("Save CameraParam", cameraParamJsonPath_.c_str(),
+			cameraParamJsonPath_.c_str(), paramSaveState_, outRelPath)) {
+
+			param.SaveJson(outRelPath);
+		}
 	}
 }
 

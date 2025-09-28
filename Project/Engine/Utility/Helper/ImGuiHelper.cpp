@@ -3,10 +3,16 @@
 //============================================================================
 //	include
 //============================================================================
+#include <Engine/Core/Window/WinApp.h>
 #include <Engine/Asset/AssetEditor.h>
 #include <Engine/Object/Core/ObjectManager.h>
 #include <Engine/Object/System/Systems/TagSystem.h>
 #include <Engine/Object/Data/Transform.h>
+#include <Engine/Utility/Json/JsonAdapter.h>
+
+// windows
+#include <commdlg.h>
+#include <windows.h>
 
 //============================================================================
 //	ImGuiHelper classMethods
@@ -179,4 +185,74 @@ bool ImGuiHelper::SelectTagTarget(const char* label, uint32_t* ioSelectedId,
 		}
 	}
 	return changed;
+}
+
+bool ImGuiHelper::SaveJsonModal(const char* popupTitle, const char* baseDirLabelEx,
+	const char* prefixOnSave, JsonSaveState& ioState, std::string& outRelPath) {
+
+	if (ioState.showPopup) {
+		ImGui::OpenPopup(popupTitle);
+	}
+
+	bool decided = false;
+	if (ImGui::BeginPopupModal(popupTitle, nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+
+		// 保存先の表示
+		ImGui::Text("%s%s", baseDirLabelEx ? baseDirLabelEx : "", ioState.input);
+
+		// 入力テキスト
+		ImGui::InputText("##JsonFilename", ioState.input, JsonSaveState::kBuffer);
+
+		// Save ボタン
+		if (ImGui::Button("Save")) {
+
+			std::string input = ioState.input;
+			if (!input.empty()) {
+
+				outRelPath = std::string(prefixOnSave ? prefixOnSave : "") + input;
+				decided = true;
+				ioState.showPopup = false;
+				ImGui::CloseCurrentPopup();
+			}
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Cancel")) {
+
+			ioState.showPopup = false;
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::EndPopup();
+	}
+	return decided;
+}
+
+bool ImGuiHelper::OpenJsonDialog(std::string& outRelPath) {
+
+	char szFile[MAX_PATH] = {};
+	OPENFILENAMEA ofn{};
+	ofn.lStructSize = sizeof(ofn);
+	ofn.hwndOwner = WinApp::GetHwnd();
+	ofn.lpstrFile = szFile;
+	ofn.nMaxFile = MAX_PATH;
+	ofn.lpstrFilter = "JSON (*.json)\0*.json\0All\0*.*\0";
+
+	static const std::string kInitDir =
+		std::filesystem::absolute(JsonAdapter::baseDirectoryFilePath_).string();
+	ofn.lpstrInitialDir = kInitDir.c_str();
+	ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
+
+	if (GetOpenFileNameA(&ofn)) {
+
+		namespace fs = std::filesystem;
+		fs::path base = fs::weakly_canonical(JsonAdapter::baseDirectoryFilePath_);
+		fs::path full = fs::weakly_canonical(ofn.lpstrFile);
+		try {
+			outRelPath = fs::relative(full, base).generic_string();
+		}
+		catch (...) {
+			outRelPath = full.filename().generic_string();
+		}
+		return true;
+	}
+	return false;
 }

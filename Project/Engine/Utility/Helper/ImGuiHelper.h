@@ -12,8 +12,13 @@
 #include <vector>
 #include <format>
 #include <type_traits>
+#include <filesystem>
 // imgui
 #include <imgui.h>
+
+//============================================================================
+//	ImGuiHelper structures
+//============================================================================
 
 namespace detail {
 
@@ -46,6 +51,13 @@ namespace detail {
 			v.x, precision, v.y, precision, v.z, precision);
 	}
 }
+
+struct JsonSaveState {
+
+	bool showPopup = false;
+	static constexpr int kBuffer = 128;
+	char input[kBuffer] = {};
+};
 
 //============================================================================
 //	ImGuiHelper class
@@ -90,6 +102,12 @@ public:
 	// 値の表示
 	template <typename T>
 	static void ValueText(const char* label, const T& value, int precision = 3);
+
+	// jsonの保存
+	static bool SaveJsonModal(const char* popupTitle, const char* baseDirLabelEx,
+		const char* prefixOnSave, JsonSaveState& ioState, std::string& outRelPath);
+	// jsonの読み込みファイルダイアログ
+	static bool OpenJsonDialog(std::string& outRelPath);
 };
 
 //============================================================================

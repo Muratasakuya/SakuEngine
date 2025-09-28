@@ -7,6 +7,7 @@
 #include <Engine/Object/Base/GameObject3D.h>
 #include <Engine/Utility/Timer/StateTimer.h>
 #include <Engine/Utility/Animation/LerpKeyframe.h>
+#include <Engine/Utility/Helper/ImGuiHelper.h>
 #include <Engine/Editor/Base/IGameEditor.h>
 
 // front
@@ -48,6 +49,7 @@ private:
 
 		float fovY;          // 画角
 		Vector3 translation; // 座標の保持
+		Quaternion rotation; // 回転の保持
 
 		// 場所、回転を可視化するオブジェクト
 		std::unique_ptr<GameObject3D> demoObject;
@@ -80,6 +82,10 @@ private:
 		int  divisionCount = 64;      // 曲線の分割数
 		bool useAveraging = false;    // 平均化を行うか
 		std::vector<float> averagedT; // 平均化されたt値
+
+		// json
+		void ApplyJson(const std::string& fileName);
+		void SaveJson(const std::string& fileName);
 	};
 
 	//--------- variables ----------------------------------------------------
@@ -89,6 +95,7 @@ private:
 
 	// jsonのパス
 	static inline const std::string demoCameraJsonPath_ = "CameraEditor/demoCamera.json";
+	static inline const std::string cameraParamJsonPath_ = "CameraEditor/CameraParams/";
 
 	// カメラ調整項目データ
 	std::unordered_map<std::string, CameraParam> params_;
@@ -101,6 +108,8 @@ private:
 	std::string selectedParamKey_;   // 操作対象のカメラ
 	int selectedKeyIndex_ = 0;       // 選択中のキーフレーム
 	bool isDebugViewGameCamera_ = false;
+	JsonSaveState paramSaveState_;
+	char lastLoaded_[128] = {};
 
 	//--------- functions ----------------------------------------------------
 
@@ -122,6 +131,7 @@ private:
 	void SelectTarget(CameraParam& param);
 
 	// helper
+	void SaveAndLoadParam(CameraParam& param);
 	void SelectKeyframe(const CameraParam& param);
 	std::vector<Vector3> CollectTranslationPoints(const CameraParam& param) const;
 	void DrawKeyframeLine(const CameraParam& param);
