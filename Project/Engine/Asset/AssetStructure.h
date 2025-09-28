@@ -5,7 +5,7 @@
 //============================================================================
 #include <Engine/Object/Data/Transform.h>
 #include <Engine/Core/Graphics/Mesh/MeshletStructures.h>
-#include <Engine/Core/Graphics/Lib/ComPtr.h>
+#include <Engine/Core/Graphics/DxLib/ComPtr.h>
 
 // assimp
 #include <assimp/scene.h>

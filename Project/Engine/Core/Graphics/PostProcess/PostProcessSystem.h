@@ -8,7 +8,7 @@
 #include <Engine/Core/Graphics/PostProcess/ComputePostProcessor.h>
 #include <Engine/Core/Graphics/PostProcess/PostProcessPipeline.h>
 #include <Engine/Editor/Base/IGameEditor.h>
-#include <Lib/MathUtils/Algorithm.h>
+#include <Engine/Utility/Helper/Algorithm.h>
 
 // c++
 #include <vector>

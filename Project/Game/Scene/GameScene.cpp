@@ -3,7 +3,7 @@
 //============================================================================
 //	include
 //============================================================================
-#include <Engine/Utility/EnumAdapter.h>
+#include <Engine/Utility/Enum/EnumAdapter.h>
 #include <Engine/Scene/Manager/SceneManager.h>
 
 // scene

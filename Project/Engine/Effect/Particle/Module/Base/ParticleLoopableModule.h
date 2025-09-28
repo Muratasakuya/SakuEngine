@@ -4,7 +4,7 @@
 //	include
 //============================================================================
 #include <Engine/Effect/Particle/Structures/ParticleLoop.h>
-#include <Lib/MathUtils/Vector2.h>
+#include <Engine/MathLib/Vector2.h>
 
 //============================================================================
 //	ParticleLoopableModule class

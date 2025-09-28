@@ -9,7 +9,7 @@
 #include <Engine/Core/Graphics/Pipeline/DxInputLayout.h>
 #include <Engine/Core/Graphics/Pipeline/DxDepthRaster.h>
 #include <Engine/Core/Graphics/Pipeline/DxBlendState.h>
-#include <Lib/MathUtils/Algorithm.h>
+#include <Engine/Utility/Helper/Algorithm.h>
 
 //============================================================================
 //	PipelineState classMethods

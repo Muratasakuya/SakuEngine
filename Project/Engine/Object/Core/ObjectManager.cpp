@@ -5,7 +5,7 @@
 //============================================================================
 #include <Engine/Asset/Asset.h>
 #include <Engine/Core/Debug/SpdLogger.h>
-#include <Engine/Editor/ImGuiObjectEditor.h>
+#include <Engine/Editor/GameObject/ImGuiObjectEditor.h>
 
 // data
 #include <Engine/Object/Data/Transform.h>

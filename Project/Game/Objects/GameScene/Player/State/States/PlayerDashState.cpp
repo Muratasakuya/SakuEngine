@@ -4,7 +4,7 @@
 //	include
 //============================================================================
 #include <Engine/Core/Graphics/Renderer/LineRenderer.h>
-#include <Engine/Utility/GameTimer.h>
+#include <Engine/Utility/Timer/GameTimer.h>
 #include <Game/Objects/GameScene/Player/Entity/Player.h>
 #include <Game/Camera/Follow/FollowCamera.h>
 

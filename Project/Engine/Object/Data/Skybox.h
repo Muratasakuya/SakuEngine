@@ -8,7 +8,7 @@
 #include <Engine/Core/Graphics/GPUObject/IndexBuffer.h>
 #include <Engine/Object/Data/Transform.h>
 #include <Engine/Object/Data/Material.h>
-#include <Lib/MathUtils/MathUtils.h>
+#include <Engine/MathLib/MathUtils.h>
 
 //============================================================================
 //	Skybox class

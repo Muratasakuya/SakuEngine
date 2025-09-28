@@ -5,10 +5,10 @@
 //============================================================================
 #include <Engine/Core/Graphics/Renderer/LineRenderer.h>
 #include <Game/Objects/GameScene/Player/Entity/Player.h>
-#include <Engine/Utility/JsonAdapter.h>
-#include <Engine/Utility/EnumAdapter.h>
+#include <Engine/Utility/Json/JsonAdapter.h>
+#include <Engine/Utility/Enum/EnumAdapter.h>
 #include <Engine/Input/Input.h>
-#include <Lib/Adapter/RandomGenerator.h>
+#include <Engine/Utility/Random/RandomGenerator.h>
 
 //============================================================================
 //	BossEnemy classMethods

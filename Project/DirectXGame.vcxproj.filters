@@ -74,7 +74,7 @@
     <ClCompile Include="Engine\Core\Graphics\GPUObject\CBufferStructures.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Core\Graphics\Lib\DxUtils.cpp">
+    <ClCompile Include="Engine\Core\Graphics\DxLib\DxUtils.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Asset\Filesystem.cpp">
@@ -92,25 +92,25 @@
     <ClCompile Include="Engine\main.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Lib\Adapter\Easing.cpp">
+    <ClCompile Include="Engine\Utility\Enum\Easing.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Utility\JsonAdapter.cpp">
+    <ClCompile Include="Engine\Utility\Json\JsonAdapter.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Lib\MathUtils\Matrix4x4.cpp">
+    <ClCompile Include="Engine\MathLib\Matrix4x4.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Lib\MathUtils\Quaternion.cpp">
+    <ClCompile Include="Engine\MathLib\Quaternion.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Lib\MathUtils\Vector2.cpp">
+    <ClCompile Include="Engine\MathLib\Vector2.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Lib\MathUtils\Vector3.cpp">
+    <ClCompile Include="Engine\MathLib\Vector3.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Lib\MathUtils\Vector4.cpp">
+    <ClCompile Include="Engine\MathLib\Vector4.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Collision\Collider.cpp">
@@ -131,7 +131,7 @@
     <ClCompile Include="Engine\Scene\Methods\SceneFactory.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Utility\GameTimer.cpp">
+    <ClCompile Include="Engine\Utility\Timer\GameTimer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Engine\External\ImGuiManager.cpp">
@@ -149,7 +149,7 @@
     <ClCompile Include="Engine\Core\Graphics\Renderer\LineRenderer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Editor\ImGuiObjectEditor.cpp">
+    <ClCompile Include="Engine\Editor\GameObject\ImGuiObjectEditor.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Collision\CollisionBody.cpp">
@@ -161,7 +161,7 @@
     <ClCompile Include="Engine\Collision\CollisionManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Lib\MathUtils\Algorithm.cpp">
+    <ClCompile Include="Engine\Utility\Helper\Algorithm.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Core\Graphics\Renderer\SpriteRenderer.cpp">
@@ -236,13 +236,10 @@
     <ClCompile Include="Engine\Scene\Light\PunctualLight.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Utility\SimpleAnimation.cpp">
+    <ClCompile Include="Engine\Utility\Animation\SimpleAnimation.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Game\Camera\Follow\FollowCamera.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Utility\KeyframeAnimation.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Asset\AssetEditor.cpp">
@@ -269,10 +266,10 @@
     <ClCompile Include="Engine\Object\System\Systems\TagSystem.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Lib\Adapter\RandomGenerator.cpp">
+    <ClCompile Include="Engine\Utility\Random\RandomGenerator.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Core\Graphics\Lib\DxStructures.cpp">
+    <ClCompile Include="Engine\Core\Graphics\DxLib\DxStructures.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Object\System\Systems\SpriteBufferSystem.cpp">
@@ -287,7 +284,7 @@
     <ClCompile Include="Engine\Object\Base\GameObject3D.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Editor\GameObjectEditor\GameObjectEditor.cpp">
+    <ClCompile Include="Engine\Editor\GameObject\GameObjectEditor.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Core\Graphics\Raytracing\RaytracingPipeline.cpp">
@@ -323,10 +320,10 @@
     <ClCompile Include="Engine\Object\System\Systems\SkyboxRenderSystem.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Editor\LevelEditor\LevelEditor.cpp">
+    <ClCompile Include="Engine\Editor\Level\LevelEditor.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Editor\LevelEditor\SceneBuilder.cpp">
+    <ClCompile Include="Engine\Editor\Level\SceneBuilder.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Game\Objects\SceneTransition\FadeTransition.cpp">
@@ -440,7 +437,7 @@
     <ClCompile Include="Game\Objects\GameScene\Player\Entity\PlayerWeapon.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Lib\MathUtils\MathUtils.cpp">
+    <ClCompile Include="Engine\MathLib\MathUtils.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Game\Objects\GameScene\Player\Collision\PlayerAttackCollision.cpp">
@@ -605,7 +602,7 @@
     <ClCompile Include="Engine\Effect\Particle\Module\Spawner\ParticleSpawnPolygonVertexModule.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Utility\ImGuiHelper.cpp">
+    <ClCompile Include="Engine\Utility\Helper\ImGuiHelper.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Core\Graphics\DxObject\DxUploadCommand.cpp">
@@ -629,13 +626,13 @@
     <ClCompile Include="Game\Objects\Common\GameButtonBlinkingUpdater.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Utility\AnimationLoop.cpp">
+    <ClCompile Include="Engine\Utility\Animation\AnimationLoop.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Game\Objects\Base\GamecButtonFocusNavigator.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Utility\StateTimer.cpp">
+    <ClCompile Include="Engine\Utility\Timer\StateTimer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Game\Scene\GameState\States\StartGameState.cpp">
@@ -704,13 +701,13 @@
     <ClCompile Include="Engine\Core\Graphics\GPUObject\GPUPixelPicker.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Editor\CameraEditor\3D\Camera3DEditor.cpp">
+    <ClCompile Include="Engine\Editor\Camera\3D\Camera3DEditor.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Utility\Direction.cpp">
+    <ClCompile Include="Engine\Utility\Enum\Direction.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Utility\LerpKeyframe.cpp">
+    <ClCompile Include="Engine\Utility\Animation\LerpKeyframe.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -738,21 +735,21 @@
     <ClInclude Include="Engine\Core\Graphics\PostProcess\RenderTexture.h" />
     <ClInclude Include="Engine\Core\Graphics\PostProcess\ShadowMap.h" />
     <ClInclude Include="Engine\Core\Graphics\GPUObject\CBufferStructures.h" />
-    <ClInclude Include="Engine\Core\Graphics\Lib\ComPtr.h" />
-    <ClInclude Include="Engine\Core\Graphics\Lib\DxStructures.h" />
-    <ClInclude Include="Engine\Core\Graphics\Lib\DxUtils.h" />
+    <ClInclude Include="Engine\Core\Graphics\DxLib\ComPtr.h" />
+    <ClInclude Include="Engine\Core\Graphics\DxLib\DxStructures.h" />
+    <ClInclude Include="Engine\Core\Graphics\DxLib\DxUtils.h" />
     <ClInclude Include="Engine\Asset\Filesystem.h" />
     <ClInclude Include="Engine\Core\Window\WinApp.h" />
     <ClInclude Include="Engine\Core\Framework.h" />
     <ClInclude Include="Engine\Core\Graphics\Renderer\MeshRenderer.h" />
-    <ClInclude Include="Lib\Adapter\Easing.h" />
-    <ClInclude Include="Engine\Utility\JsonAdapter.h" />
-    <ClInclude Include="Lib\Adapter\RandomGenerator.h" />
-    <ClInclude Include="Lib\MathUtils\Matrix4x4.h" />
-    <ClInclude Include="Lib\MathUtils\Quaternion.h" />
-    <ClInclude Include="Lib\MathUtils\Vector2.h" />
-    <ClInclude Include="Lib\MathUtils\Vector3.h" />
-    <ClInclude Include="Lib\MathUtils\Vector4.h" />
+    <ClInclude Include="Engine\Utility\Enum\Easing.h" />
+    <ClInclude Include="Engine\Utility\Json\JsonAdapter.h" />
+    <ClInclude Include="Engine\Utility\Random\RandomGenerator.h" />
+    <ClInclude Include="Engine\MathLib\Matrix4x4.h" />
+    <ClInclude Include="Engine\MathLib\Quaternion.h" />
+    <ClInclude Include="Engine\MathLib\Vector2.h" />
+    <ClInclude Include="Engine\MathLib\Vector3.h" />
+    <ClInclude Include="Engine\MathLib\Vector4.h" />
     <ClInclude Include="Engine\Collision\Collider.h" />
     <ClInclude Include="Engine\Scene\Camera\BaseCamera.h" />
     <ClInclude Include="Engine\Scene\Camera\LightViewCamera.h" />
@@ -760,18 +757,18 @@
     <ClInclude Include="Engine\Scene\Manager\SceneManager.h" />
     <ClInclude Include="Engine\Scene\Methods\IScene.h" />
     <ClInclude Include="Engine\Scene\Methods\SceneFactory.h" />
-    <ClInclude Include="Engine\Utility\GameTimer.h" />
+    <ClInclude Include="Engine\Utility\Timer\GameTimer.h" />
     <ClInclude Include="Engine\External\ImGuiManager.h" />
     <ClInclude Include="Engine\Editor\ImGuiEditor.h" />
     <ClInclude Include="Engine\Input\Input.h" />
     <ClInclude Include="Engine\Scene\Camera\DebugCamera.h" />
     <ClInclude Include="Engine\Core\Graphics\Renderer\LineRenderer.h" />
-    <ClInclude Include="Lib\MathUtils\MathUtils.h" />
-    <ClInclude Include="Engine\Editor\ImGuiObjectEditor.h" />
+    <ClInclude Include="Engine\MathLib\MathUtils.h" />
+    <ClInclude Include="Engine\Editor\GameObject\ImGuiObjectEditor.h" />
     <ClInclude Include="Engine\Collision\CollisionBody.h" />
     <ClInclude Include="Engine\Collision\CollisionManager.h" />
     <ClInclude Include="Engine\Collision\CollisionGeometry.h" />
-    <ClInclude Include="Lib\MathUtils\Algorithm.h" />
+    <ClInclude Include="Engine\Utility\Helper\Algorithm.h" />
     <ClInclude Include="Engine\Core\Graphics\Renderer\SpriteRenderer.h" />
     <ClInclude Include="Engine\Object\Data\Animation.h" />
     <ClInclude Include="Engine\Core\Graphics\Context\MeshCommandContext.h" />
@@ -797,9 +794,8 @@
     <ClInclude Include="Engine\Object\Data\Material.h" />
     <ClInclude Include="Engine\Core\Graphics\Descriptors\BaseDescriptor.h" />
     <ClInclude Include="Engine\Core\Graphics\GPUObject\SceneConstBuffer.h" />
-    <ClInclude Include="Engine\Utility\SimpleAnimation.h" />
+    <ClInclude Include="Engine\Utility\Animation\SimpleAnimation.h" />
     <ClInclude Include="Game\Camera\Follow\FollowCamera.h" />
-    <ClInclude Include="Engine\Utility\KeyframeAnimation.h" />
     <ClInclude Include="Engine\Asset\AssetEditor.h" />
     <ClInclude Include="Engine\Object\Core\ObjectPool.h" />
     <ClInclude Include="Engine\Object\Core\ObjectPoolManager.h" />
@@ -818,7 +814,7 @@
     <ClInclude Include="Engine\Object\Base\Interface\IGameObject.h" />
     <ClInclude Include="Engine\Object\Base\GameObject3D.h" />
     <ClInclude Include="Engine\Object\Base\GameObject2D.h" />
-    <ClInclude Include="Game\Editor\GameObjectEditor\GameObjectEditor.h" />
+    <ClInclude Include="Engine\Editor\GameObject\GameObjectEditor.h" />
     <ClInclude Include="Engine\Core\Graphics\Raytracing\RaytracingPipeline.h" />
     <ClInclude Include="Engine\Core\Graphics\Raytracing\AccelerationStructureBuffer.h" />
     <ClInclude Include="Engine\Core\Graphics\Raytracing\BottomLevelAS.h" />
@@ -831,9 +827,9 @@
     <ClInclude Include="Engine\Core\Graphics\GraphicsPlatform.h" />
     <ClInclude Include="Engine\Object\Data\Skybox.h" />
     <ClInclude Include="Engine\Object\System\Systems\SkyboxRenderSystem.h" />
-    <ClInclude Include="Game\Editor\LevelEditor\LevelEditor.h" />
-    <ClInclude Include="Game\Editor\LevelEditor\LevelStructures.h" />
-    <ClInclude Include="Game\Editor\LevelEditor\SceneBuilder.h" />
+    <ClInclude Include="Engine\Editor\Level\LevelEditor.h" />
+    <ClInclude Include="Engine\Editor\Level\LevelStructures.h" />
+    <ClInclude Include="Engine\Editor\Level\SceneBuilder.h" />
     <ClInclude Include="Game\Objects\Base\ITransition.h" />
     <ClInclude Include="Game\Objects\SceneTransition\FadeTransition.h" />
     <ClInclude Include="Game\Objects\GameScene\Enemy\Boss\Entity\BossEnemy.h" />
@@ -911,7 +907,7 @@
     <ClInclude Include="Engine\Effect\Trail\Core\GPUTrailEffectUpdater.h" />
     <ClInclude Include="Engine\Effect\Game\GameEffect.h" />
     <ClInclude Include="Engine\Effect\Particle\ParticleConfig.h" />
-    <ClInclude Include="Engine\Utility\EnumAdapter.h" />
+    <ClInclude Include="Engine\Utility\Enum\EnumAdapter.h" />
     <ClInclude Include="Engine\Effect\Particle\Structures\ParticleStructures.h" />
     <ClInclude Include="Engine\Effect\Particle\System\ParticleSystem.h" />
     <ClInclude Include="Engine\Effect\Particle\Structures\ParticleValue.h" />
@@ -943,7 +939,7 @@
     <ClInclude Include="Engine\Effect\Particle\Module\Spawner\ParticleSpawnPolygonVertexModule.h" />
     <ClInclude Include="Engine\Effect\Particle\Command\ParticleCommand.h" />
     <ClInclude Include="Engine\Effect\Particle\Module\ParticleModuleID.h" />
-    <ClInclude Include="Engine\Utility\ImGuiHelper.h" />
+    <ClInclude Include="Engine\Utility\Helper\ImGuiHelper.h" />
     <ClInclude Include="Engine\Asset\AssetEditorPayloadData.h" />
     <ClInclude Include="Engine\Core\Graphics\DxObject\DxUploadCommand.h" />
     <ClInclude Include="Engine\Asset\Async\AssetAsyncQueue.h" />
@@ -958,9 +954,9 @@
     <ClInclude Include="Game\Objects\Base\GameButton.h" />
     <ClInclude Include="Game\Objects\Base\IGameButtonResponseUpdater.h" />
     <ClInclude Include="Game\Objects\Common\GameButtonBlinkingUpdater.h" />
-    <ClInclude Include="Engine\Utility\AnimationLoop.h" />
+    <ClInclude Include="Engine\Utility\Animation\AnimationLoop.h" />
     <ClInclude Include="Game\Objects\Base\GamecButtonFocusNavigator.h" />
-    <ClInclude Include="Engine\Utility\StateTimer.h" />
+    <ClInclude Include="Engine\Utility\Timer\StateTimer.h" />
     <ClInclude Include="Game\Scene\GameState\Interface\IGameSceneState.h" />
     <ClInclude Include="Game\Scene\GameState\GameContext.h" />
     <ClInclude Include="Game\Scene\GameState\States\StartGameState.h" />
@@ -988,9 +984,9 @@
     <ClInclude Include="Engine\Core\Graphics\PostProcess\PostProcessConfig.h" />
     <ClInclude Include="Engine\Core\Graphics\GPUObject\GPUPixelPicker.h" />
     <ClInclude Include="Engine\Core\Graphics\GPUObject\DxReadbackBuffer.h" />
-    <ClInclude Include="Game\Editor\CameraEditor\3D\Camera3DEditor.h" />
-    <ClInclude Include="Engine\Utility\Direction.h" />
-    <ClInclude Include="Engine\Utility\LerpKeyframe.h" />
+    <ClInclude Include="Engine\Editor\Camera\3D\Camera3DEditor.h" />
+    <ClInclude Include="Engine\Utility\Enum\Direction.h" />
+    <ClInclude Include="Engine\Utility\Animation\LerpKeyframe.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Engine\Shaders\PostProcess\Copy\CopyTexture.CS.hlsl" />

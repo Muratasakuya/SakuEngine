@@ -4,8 +4,8 @@
 //	include
 //============================================================================
 #include <Engine/Object/Core/ObjectManager.h>
-#include <Engine/Editor/ImGuiObjectEditor.h>
-#include <Game/Editor/CameraEditor/3D/Camera3DEditor.h>
+#include <Engine/Editor/GameObject/ImGuiObjectEditor.h>
+#include <Engine/Editor/Camera/3D/Camera3DEditor.h>
 
 //============================================================================
 //	GameObject3D classMethods

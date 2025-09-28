@@ -3,9 +3,9 @@
 //============================================================================
 //	include
 //============================================================================
-#include <Engine/Utility/StateTimer.h>
-#include <Lib/Adapter/Easing.h>
-#include <Lib/MathUtils/Vector3.h>
+#include <Engine/Utility/Timer/StateTimer.h>
+#include <Engine/Utility/Enum/Easing.h>
+#include <Engine/MathLib/Vector3.h>
 
 //============================================================================
 //	ParticleSpawnModuleUpdater

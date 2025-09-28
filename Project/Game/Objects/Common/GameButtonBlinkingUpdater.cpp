@@ -3,8 +3,8 @@
 //============================================================================
 //	include
 //============================================================================
-#include <Engine/Utility/GameTimer.h>
-#include <Engine/Utility/EnumAdapter.h>
+#include <Engine/Utility/Timer/GameTimer.h>
+#include <Engine/Utility/Enum/EnumAdapter.h>
 
 //============================================================================
 //	GameButtonBlinkingUpdater classMethods

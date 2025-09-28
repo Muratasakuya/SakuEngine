@@ -11,7 +11,7 @@
 #include <Engine/Scene/SceneView.h>
 #include <Engine/Asset/Asset.h>
 #include <Engine/Config.h>
-#include <Engine/Utility/EnumAdapter.h>
+#include <Engine/Utility/Enum/EnumAdapter.h>
 
 //============================================================================
 //	PostProcessSystem classMethods

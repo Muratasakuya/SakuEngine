@@ -4,7 +4,7 @@
 //	include
 //============================================================================
 #include <Engine/Core/Graphics/Renderer/LineRenderer.h>
-#include <Lib/MathUtils/Algorithm.h>
+#include <Engine/Utility/Helper/Algorithm.h>
 
 //============================================================================
 //	SceneView classMethods

@@ -4,11 +4,11 @@
 //	include
 //============================================================================
 #include <Engine/Input/Input.h>
-#include <Engine/Utility/JsonAdapter.h>
-#include <Engine/Utility/EnumAdapter.h>
+#include <Engine/Utility/Json/JsonAdapter.h>
+#include <Engine/Utility/Enum/EnumAdapter.h>
 #include <Engine/Config.h>
 #include <Game/Objects/Common/GameButtonBlinkingUpdater.h>
-#include <Lib/Adapter/RandomGenerator.h>
+#include <Engine/Utility/Random/RandomGenerator.h>
 
 //============================================================================
 //	GameResultDisplay classMethods

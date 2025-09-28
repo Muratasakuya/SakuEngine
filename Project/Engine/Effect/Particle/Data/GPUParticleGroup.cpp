@@ -7,9 +7,9 @@
 #include <Engine/Asset/Asset.h>
 #include <Engine/Effect/Particle/ParticleConfig.h>
 #include <Engine/Core/Debug/Assert.h>
-#include <Engine/Utility/GameTimer.h>
-#include <Engine/Utility/EnumAdapter.h>
-#include <Engine/Utility/ImGuiHelper.h>
+#include <Engine/Utility/Timer/GameTimer.h>
+#include <Engine/Utility/Enum/EnumAdapter.h>
+#include <Engine/Utility/Helper/ImGuiHelper.h>
 
 // imgui
 #include <imgui.h>

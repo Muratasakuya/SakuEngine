@@ -5,7 +5,7 @@
 //============================================================================
 #include <Engine/Effect/Particle/Module/Base/ICPUParticleUpdateModule.h>
 #include <Engine/Effect/Particle/Structures/ParticleStructures.h>
-#include <Lib/Adapter/Easing.h>
+#include <Engine/Utility/Enum/Easing.h>
 
 //============================================================================
 //	ParticleUpdatePrimitiveModule class

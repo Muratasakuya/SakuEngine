@@ -5,9 +5,9 @@
 //============================================================================
 #include <Engine/Core/Graphics/GPUObject/CBufferStructures.h>
 #include <Engine/Core/Graphics/GPUObject/DxConstBuffer.h>
-#include <Lib/MathUtils/Vector2.h>
-#include <Lib/MathUtils/Vector3.h>
-#include <Lib/MathUtils/Quaternion.h>
+#include <Engine/MathLib/Vector2.h>
+#include <Engine/MathLib/Vector3.h>
+#include <Engine/MathLib/Quaternion.h>
 
 // c++
 #include <format>

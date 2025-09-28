@@ -418,7 +418,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="Engine\Core\Graphics\Lib\DxStructures.cpp">
+    <ClCompile Include="Engine\Core\Graphics\DxLib\DxStructures.cpp">
       <SubType>
       </SubType>
     </ClCompile>
@@ -514,20 +514,16 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="Engine\Utility\Direction.cpp" />
-    <ClCompile Include="Engine\Utility\KeyframeAnimation.cpp">
+    <ClCompile Include="Engine\Utility\Enum\Direction.cpp" />
+    <ClCompile Include="Engine\Utility\Animation\AnimationLoop.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="Engine\Utility\AnimationLoop.cpp">
+    <ClCompile Include="Engine\Utility\Animation\LerpKeyframe.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="Engine\Utility\LerpKeyframe.cpp">
-      <SubType>
-      </SubType>
-    </ClCompile>
-    <ClCompile Include="Engine\Utility\SimpleAnimation.cpp">
+    <ClCompile Include="Engine\Utility\Animation\SimpleAnimation.cpp">
       <SubType>
       </SubType>
     </ClCompile>
@@ -557,10 +553,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="Engine\Core\Graphics\Lib\DxUtils.cpp" />
+    <ClCompile Include="Engine\Core\Graphics\DxLib\DxUtils.cpp" />
     <ClCompile Include="Engine\Asset\Filesystem.cpp" />
     <ClCompile Include="Engine\Core\Window\WinApp.cpp" />
-    <ClCompile Include="Engine\Editor\ImGuiObjectEditor.cpp">
+    <ClCompile Include="Engine\Editor\GameObject\ImGuiObjectEditor.cpp">
       <SubType>
       </SubType>
     </ClCompile>
@@ -592,7 +588,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="Engine\Utility\StateTimer.cpp">
+    <ClCompile Include="Engine\Utility\Timer\StateTimer.cpp">
       <SubType>
       </SubType>
     </ClCompile>
@@ -661,16 +657,16 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="Game\Editor\CameraEditor\3D\Camera3DEditor.cpp">
+    <ClCompile Include="Engine\Editor\Camera\3D\Camera3DEditor.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="Game\Editor\GameObjectEditor\GameObjectEditor.cpp">
+    <ClCompile Include="Engine\Editor\GameObject\GameObjectEditor.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="Game\Editor\LevelEditor\LevelEditor.cpp" />
-    <ClCompile Include="Game\Editor\LevelEditor\SceneBuilder.cpp" />
+    <ClCompile Include="Engine\Editor\Level\LevelEditor.cpp" />
+    <ClCompile Include="Engine\Editor\Level\SceneBuilder.cpp" />
     <ClCompile Include="Game\Objects\Base\GamecButtonFocusNavigator.cpp">
       <SubType>
       </SubType>
@@ -899,30 +895,30 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="Engine\Utility\GameTimer.cpp" />
-    <ClCompile Include="Lib\Adapter\Easing.cpp" />
-    <ClCompile Include="Engine\Utility\ImGuiHelper.cpp">
+    <ClCompile Include="Engine\Utility\Timer\GameTimer.cpp" />
+    <ClCompile Include="Engine\Utility\Enum\Easing.cpp" />
+    <ClCompile Include="Engine\Utility\Helper\ImGuiHelper.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="Engine\Utility\JsonAdapter.cpp" />
-    <ClCompile Include="Lib\Adapter\RandomGenerator.cpp">
+    <ClCompile Include="Engine\Utility\Json\JsonAdapter.cpp" />
+    <ClCompile Include="Engine\Utility\Random\RandomGenerator.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="Lib\MathUtils\Algorithm.cpp">
+    <ClCompile Include="Engine\Utility\Helper\Algorithm.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="Lib\MathUtils\MathUtils.cpp">
+    <ClCompile Include="Engine\MathLib\MathUtils.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="Lib\MathUtils\Matrix4x4.cpp" />
-    <ClCompile Include="Lib\MathUtils\Quaternion.cpp" />
-    <ClCompile Include="Lib\MathUtils\Vector2.cpp" />
-    <ClCompile Include="Lib\MathUtils\Vector3.cpp" />
-    <ClCompile Include="Lib\MathUtils\Vector4.cpp" />
+    <ClCompile Include="Engine\MathLib\Matrix4x4.cpp" />
+    <ClCompile Include="Engine\MathLib\Quaternion.cpp" />
+    <ClCompile Include="Engine\MathLib\Vector2.cpp" />
+    <ClCompile Include="Engine\MathLib\Vector3.cpp" />
+    <ClCompile Include="Engine\MathLib\Vector4.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Asset\AnimationManager.h" />
@@ -1367,20 +1363,16 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Engine\Utility\Direction.h" />
-    <ClInclude Include="Engine\Utility\KeyframeAnimation.h">
+    <ClInclude Include="Engine\Utility\Enum\Direction.h" />
+    <ClInclude Include="Engine\Utility\Animation\AnimationLoop.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Engine\Utility\AnimationLoop.h">
+    <ClInclude Include="Engine\Utility\Animation\LerpKeyframe.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Engine\Utility\LerpKeyframe.h">
-      <SubType>
-      </SubType>
-    </ClInclude>
-    <ClInclude Include="Engine\Utility\SimpleAnimation.h">
+    <ClInclude Include="Engine\Utility\Animation\SimpleAnimation.h">
       <SubType>
       </SubType>
     </ClInclude>
@@ -1411,12 +1403,12 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Engine\Core\Graphics\Lib\ComPtr.h" />
-    <ClInclude Include="Engine\Core\Graphics\Lib\DxStructures.h" />
-    <ClInclude Include="Engine\Core\Graphics\Lib\DxUtils.h" />
+    <ClInclude Include="Engine\Core\Graphics\DxLib\ComPtr.h" />
+    <ClInclude Include="Engine\Core\Graphics\DxLib\DxStructures.h" />
+    <ClInclude Include="Engine\Core\Graphics\DxLib\DxUtils.h" />
     <ClInclude Include="Engine\Asset\Filesystem.h" />
     <ClInclude Include="Engine\Core\Window\WinApp.h" />
-    <ClInclude Include="Engine\Editor\ImGuiObjectEditor.h">
+    <ClInclude Include="Engine\Editor\GameObject\ImGuiObjectEditor.h">
       <SubType>
       </SubType>
     </ClInclude>
@@ -1447,7 +1439,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Engine\Utility\StateTimer.h">
+    <ClInclude Include="Engine\Utility\Timer\StateTimer.h">
       <SubType>
       </SubType>
     </ClInclude>
@@ -1525,17 +1517,17 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Game\Editor\CameraEditor\3D\Camera3DEditor.h">
+    <ClInclude Include="Engine\Editor\Camera\3D\Camera3DEditor.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Game\Editor\GameObjectEditor\GameObjectEditor.h">
+    <ClInclude Include="Engine\Editor\GameObject\GameObjectEditor.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Game\Editor\LevelEditor\LevelEditor.h" />
-    <ClInclude Include="Game\Editor\LevelEditor\LevelStructures.h" />
-    <ClInclude Include="Game\Editor\LevelEditor\SceneBuilder.h" />
+    <ClInclude Include="Engine\Editor\Level\LevelEditor.h" />
+    <ClInclude Include="Engine\Editor\Level\LevelStructures.h" />
+    <ClInclude Include="Engine\Editor\Level\SceneBuilder.h" />
     <ClInclude Include="Game\Objects\Base\GamecButtonFocusNavigator.h">
       <SubType>
       </SubType>
@@ -1782,31 +1774,31 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Engine\Utility\GameTimer.h" />
-    <ClInclude Include="Lib\Adapter\Easing.h" />
-    <ClInclude Include="Engine\Utility\EnumAdapter.h">
+    <ClInclude Include="Engine\Utility\Timer\GameTimer.h" />
+    <ClInclude Include="Engine\Utility\Enum\Easing.h" />
+    <ClInclude Include="Engine\Utility\Enum\EnumAdapter.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Engine\Utility\ImGuiHelper.h">
+    <ClInclude Include="Engine\Utility\Helper\ImGuiHelper.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Engine\Utility\JsonAdapter.h" />
-    <ClInclude Include="Lib\Adapter\RandomGenerator.h" />
-    <ClInclude Include="Lib\MathUtils\Algorithm.h">
+    <ClInclude Include="Engine\Utility\Json\JsonAdapter.h" />
+    <ClInclude Include="Engine\Utility\Random\RandomGenerator.h" />
+    <ClInclude Include="Engine\Utility\Helper\Algorithm.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Lib\MathUtils\MathUtils.h">
+    <ClInclude Include="Engine\MathLib\MathUtils.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Lib\MathUtils\Matrix4x4.h" />
-    <ClInclude Include="Lib\MathUtils\Quaternion.h" />
-    <ClInclude Include="Lib\MathUtils\Vector2.h" />
-    <ClInclude Include="Lib\MathUtils\Vector3.h" />
-    <ClInclude Include="Lib\MathUtils\Vector4.h" />
+    <ClInclude Include="Engine\MathLib\Matrix4x4.h" />
+    <ClInclude Include="Engine\MathLib\Quaternion.h" />
+    <ClInclude Include="Engine\MathLib\Vector2.h" />
+    <ClInclude Include="Engine\MathLib\Vector3.h" />
+    <ClInclude Include="Engine\MathLib\Vector4.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Engine\Shaders\Mesh\CS\PickMeshInstance.CS.hlsl">

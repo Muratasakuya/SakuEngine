@@ -5,8 +5,8 @@
 //============================================================================
 #include <Engine/Asset/Asset.h>
 #include <Engine/Asset/AssetEditor.h>
-#include <Engine/Utility/EnumAdapter.h>
-#include <Engine/Utility/ImGuiHelper.h>
+#include <Engine/Utility/Enum/EnumAdapter.h>
+#include <Engine/Utility/Helper/ImGuiHelper.h>
 
 //============================================================================
 //	ICPUParticleSpawnModule classMethods

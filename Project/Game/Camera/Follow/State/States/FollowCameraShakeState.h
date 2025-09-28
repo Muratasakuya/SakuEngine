@@ -4,7 +4,7 @@
 //	include
 //============================================================================
 #include <Game/Camera/Follow/State/Interface/FollowCameraIState.h>
-#include <Lib/Adapter/Easing.h>
+#include <Engine/Utility/Enum/Easing.h>
 
 //============================================================================
 //	FollowCameraShakeState class

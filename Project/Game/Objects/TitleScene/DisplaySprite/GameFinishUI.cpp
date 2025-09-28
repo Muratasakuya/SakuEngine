@@ -4,8 +4,8 @@
 //	include
 //============================================================================
 #include <Engine/Config.h>
-#include <Engine/Utility/EnumAdapter.h>
-#include <Engine/Utility/JsonAdapter.h>
+#include <Engine/Utility/Enum/EnumAdapter.h>
+#include <Engine/Utility/Json/JsonAdapter.h>
 #include <Game/Objects/Common/GameButtonBlinkingUpdater.h>
 
 // imgui

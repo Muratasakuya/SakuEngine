@@ -4,7 +4,7 @@
 //	include
 //============================================================================
 #include <Engine/Config.h>
-#include <Lib/MathUtils/MathUtils.h>
+#include <Engine/MathLib/MathUtils.h>
 
 //============================================================================
 //	DerivedBuffer class

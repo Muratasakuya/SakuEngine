@@ -6,7 +6,7 @@
 #include <Engine/Asset/Asset.h>
 #include <Engine/Object/Core/ObjectManager.h>
 #include <Engine/Object/System/Systems/InstancedMeshSystem.h>
-#include <Engine/Utility/JsonAdapter.h>
+#include <Engine/Utility/Json/JsonAdapter.h>
 
 //============================================================================
 //	AssetEditor classMethods

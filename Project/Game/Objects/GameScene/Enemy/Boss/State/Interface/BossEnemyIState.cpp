@@ -3,7 +3,7 @@
 //============================================================================
 //	include
 //============================================================================
-#include <Engine/Utility/GameTimer.h>
+#include <Engine/Utility/Timer/GameTimer.h>
 #include <Engine/Config.h>
 #include <Engine/Core/Graphics/Renderer/LineRenderer.h>
 #include <Game/Camera/Follow/FollowCamera.h>

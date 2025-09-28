@@ -5,7 +5,7 @@
 //============================================================================
 #include <Engine/Asset/Asset.h>
 #include <Engine/Core/Graphics/Mesh/MeshletBuilder.h>
-#include <Lib/MathUtils/Algorithm.h>
+#include <Engine/Utility/Helper/Algorithm.h>
 
 //============================================================================
 //	MeshRegistry classMethods

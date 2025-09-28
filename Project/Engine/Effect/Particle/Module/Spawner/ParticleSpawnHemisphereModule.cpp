@@ -4,7 +4,7 @@
 //	include
 //============================================================================
 #include <Engine/Core/Graphics/Renderer/LineRenderer.h>
-#include <Lib/Adapter/RandomGenerator.h>
+#include <Engine/Utility/Random/RandomGenerator.h>
 
 //============================================================================
 //	ParticleSpawnHemisphereModule classMethods

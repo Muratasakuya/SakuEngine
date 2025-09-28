@@ -4,7 +4,7 @@
 //	include
 //============================================================================
 #include <Engine/Effect/Particle/ParticleConfig.h>
-#include <Engine/Utility/GameTimer.h>
+#include <Engine/Utility/Timer/GameTimer.h>
 
 //============================================================================
 //	CPUParticleGroup classMethods

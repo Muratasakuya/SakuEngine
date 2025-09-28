@@ -5,8 +5,8 @@
 //============================================================================
 #include <Engine/Config.h>
 #include <Engine/Core/Graphics/Renderer/LineRenderer.h>
-#include <Engine/Utility/Direction.h>
-#include <Lib/MathUtils/MathUtils.h>
+#include <Engine/Utility/Enum/Direction.h>
+#include <Engine/MathLib/MathUtils.h>
 
 //============================================================================
 //	BaseCamera classMethods

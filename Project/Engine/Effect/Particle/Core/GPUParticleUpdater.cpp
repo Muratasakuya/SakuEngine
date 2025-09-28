@@ -7,8 +7,8 @@
 #include <Engine/Core/Graphics/DxObject/DxCommand.h>
 #include <Engine/Effect/Particle/Data/GPUParticleGroup.h>
 #include <Engine/Effect/Particle/ParticleConfig.h>
-#include <Engine/Utility/GameTimer.h>
-#include <Engine/Utility/EnumAdapter.h>
+#include <Engine/Utility/Timer/GameTimer.h>
+#include <Engine/Utility/Enum/EnumAdapter.h>
 
 //============================================================================
 //	GPUParticleUpdater classMethods

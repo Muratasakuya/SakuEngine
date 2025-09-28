@@ -4,7 +4,7 @@
 //	include
 //============================================================================
 #include <Engine/Editor/Manager/GameEditorManager.h>
-#include <Lib/MathUtils/Algorithm.h>
+#include <Engine/Utility/Helper/Algorithm.h>
 
 //============================================================================
 //	IGameEditor classMethods

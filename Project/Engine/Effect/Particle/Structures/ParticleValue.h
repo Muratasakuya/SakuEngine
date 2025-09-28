@@ -3,9 +3,9 @@
 //============================================================================
 //	include
 //============================================================================
-#include <Lib/Adapter/RandomGenerator.h>
-#include <Engine/Utility/JsonAdapter.h>
-#include <Lib/MathUtils/MathUtils.h>
+#include <Engine/Utility/Random/RandomGenerator.h>
+#include <Engine/Utility/Json/JsonAdapter.h>
+#include <Engine/MathLib/MathUtils.h>
 
 // imgui
 #include <imgui.h>

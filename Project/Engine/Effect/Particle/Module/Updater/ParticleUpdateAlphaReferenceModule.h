@@ -4,7 +4,7 @@
 //	include
 //============================================================================
 #include <Engine/Effect/Particle/Module/Base/ICPUParticleUpdateModule.h>
-#include <Lib/Adapter/Easing.h>
+#include <Engine/Utility/Enum/Easing.h>
 
 //============================================================================
 //	ParticleUpdateAlphaReferenceModule class

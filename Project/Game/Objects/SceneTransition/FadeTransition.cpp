@@ -4,7 +4,7 @@
 //	include
 //============================================================================
 #include <Engine/Config.h>
-#include <Engine/Utility/JsonAdapter.h>
+#include <Engine/Utility/Json/JsonAdapter.h>
 
 //============================================================================
 //	FadeTransition classMethods

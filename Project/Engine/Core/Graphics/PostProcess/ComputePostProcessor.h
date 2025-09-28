@@ -3,8 +3,8 @@
 //============================================================================
 //	include
 //============================================================================
-#include <Engine/Core/Graphics/Lib/ComPtr.h>
-#include <Lib/MathUtils/Vector2.h>
+#include <Engine/Core/Graphics/DxLib/ComPtr.h>
+#include <Engine/MathLib/Vector2.h>
 
 // directX
 #include <d3d12.h>

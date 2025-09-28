@@ -5,7 +5,7 @@
 //============================================================================
 #include <Game/Objects/GameScene/Player/State/Interface/PlayerIState.h>
 #include <Engine/Effect/Game/GameEffect.h>
-#include <Lib/Adapter/Easing.h>
+#include <Engine/Utility/Enum/Easing.h>
 
 //============================================================================
 //	PlayerParryState class

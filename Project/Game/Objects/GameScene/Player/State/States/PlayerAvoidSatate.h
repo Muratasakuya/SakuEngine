@@ -4,7 +4,7 @@
 //	include
 //============================================================================
 #include <Game/Objects/GameScene/Player/State/Interface/PlayerIState.h>
-#include <Lib/Adapter/Easing.h>
+#include <Engine/Utility/Enum/Easing.h>
 
 //============================================================================
 //	PlayerAvoidSatate class

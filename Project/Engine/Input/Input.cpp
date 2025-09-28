@@ -5,7 +5,7 @@
 //============================================================================
 #include <Engine/Core/Window/WinApp.h>
 #include <Engine/Core/Debug/SpdLogger.h>
-#include <Engine/Utility/EnumAdapter.h>
+#include <Engine/Utility/Enum/EnumAdapter.h>
 #include <Engine/Config.h>
 
 #pragma comment(lib,"dInput8.lib")

@@ -4,8 +4,8 @@
 //	include
 //============================================================================
 #include <Engine/Config.h>
-#include <Engine/Utility/JsonAdapter.h>
-#include <Engine/Editor/ImGuiObjectEditor.h>
+#include <Engine/Utility/Json/JsonAdapter.h>
+#include <Engine/Editor/GameObject/ImGuiObjectEditor.h>
 
 // imgui
 #include <imgui.h>

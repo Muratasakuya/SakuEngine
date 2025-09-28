@@ -5,8 +5,8 @@
 //============================================================================
 #include <Engine/Core/Graphics/GPUObject/CBufferStructures.h>
 #include <Engine/Core/Graphics/GPUObject/DxConstBuffer.h>
-#include <Engine/Utility/SimpleAnimation.h>
-#include <Lib/MathUtils/MathUtils.h>
+#include <Engine/Utility/Animation/SimpleAnimation.h>
+#include <Engine/MathLib/MathUtils.h>
 
 // front
 class Asset;

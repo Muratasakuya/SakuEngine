@@ -9,7 +9,7 @@
 #include <Engine/Core/Graphics/PostProcess/DepthTexture.h>
 #include <Engine/Core/Graphics/GPUObject/SceneConstBuffer.h>
 #include <Engine/Core/Graphics/Context/MeshCommandContext.h>
-#include <Engine/Core/Graphics/Lib/DxUtils.h>
+#include <Engine/Core/Graphics/DxLib/DxUtils.h>
 #include <Engine/Object/Core/ObjectManager.h>
 #include <Engine/Object/System/Systems/InstancedMeshSystem.h>
 #include <Engine/Object/System/Systems/SkyboxRenderSystem.h>

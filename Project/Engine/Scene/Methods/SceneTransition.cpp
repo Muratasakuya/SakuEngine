@@ -4,7 +4,7 @@
 //	include
 //============================================================================
 #include <Engine/Core/Debug/Assert.h>
-#include <Engine/Utility/EnumAdapter.h>
+#include <Engine/Utility/Enum/EnumAdapter.h>
 
 //============================================================================
 //	SceneTransition classMethods

@@ -4,8 +4,8 @@
 //	include
 //============================================================================
 #include <Engine/Effect/Game/Helper/GameEffectCommandHelper.h>
-#include <Engine/Utility/JsonAdapter.h>
-#include <Engine/Utility/EnumAdapter.h>
+#include <Engine/Utility/Json/JsonAdapter.h>
+#include <Engine/Utility/Enum/EnumAdapter.h>
 
 // imgui
 #include <imgui.h>

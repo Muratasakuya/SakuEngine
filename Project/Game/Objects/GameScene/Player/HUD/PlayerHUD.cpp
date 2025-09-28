@@ -6,7 +6,7 @@
 #include <Engine/Input/Input.h>
 #include <Game/Camera/Follow/FollowCamera.h>
 #include <Game/Objects/GameScene/Player/Entity/Player.h>
-#include <Engine/Utility/JsonAdapter.h>
+#include <Engine/Utility/Json/JsonAdapter.h>
 
 //============================================================================
 //	PlayerHUD classMethods

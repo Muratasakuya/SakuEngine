@@ -4,8 +4,8 @@
 //	include
 //============================================================================
 #include <Game/Objects/GameScene/Enemy/Boss/Entity/BossEnemy.h>
-#include <Lib/Adapter/RandomGenerator.h>
-#include <Engine/Utility/EnumAdapter.h>
+#include <Engine/Utility/Random/RandomGenerator.h>
+#include <Engine/Utility/Enum/EnumAdapter.h>
 
 //============================================================================
 //	Player classMethods

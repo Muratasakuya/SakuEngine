@@ -3,10 +3,10 @@
 //============================================================================
 //	include
 //============================================================================
-#include <Lib/MathUtils/Vector3.h>
-#include <Lib/MathUtils/Vector4.h>
-#include <Lib/MathUtils/Quaternion.h>
-#include <Lib/MathUtils/Matrix4x4.h>
+#include <Engine/MathLib/Vector3.h>
+#include <Engine/MathLib/Vector4.h>
+#include <Engine/MathLib/Quaternion.h>
+#include <Engine/MathLib/Matrix4x4.h>
 
 // c++
 #include <cstdint>

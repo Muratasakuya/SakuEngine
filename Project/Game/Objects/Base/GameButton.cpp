@@ -5,7 +5,7 @@
 //============================================================================
 #include <Engine/Collision/CollisionGeometry.h>
 #include <Engine/Input/Input.h>
-#include <Engine/Utility/EnumAdapter.h>
+#include <Engine/Utility/Enum/EnumAdapter.h>
 
 //============================================================================
 //	GameButton classMethods

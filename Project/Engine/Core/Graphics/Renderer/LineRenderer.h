@@ -7,7 +7,7 @@
 #include <Engine/Core/Graphics/GPUObject/DxConstBuffer.h>
 #include <Engine/Core/Graphics/GPUObject/VertexBuffer.h>
 #include <Engine/Collision/CollisionGeometry.h>
-#include <Lib/MathUtils/MathUtils.h>
+#include <Engine/MathLib/MathUtils.h>
 
 // c++
 #include <memory>

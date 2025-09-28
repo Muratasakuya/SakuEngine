@@ -4,7 +4,7 @@
 //	include
 //============================================================================
 #include <Engine/Core/Graphics/Pipeline/DxShaderCompiler.h>
-#include <Lib/MathUtils/Vector3.h>
+#include <Engine/MathLib/Vector3.h>
 
 //============================================================================
 //	RaytracingPipeline classMethods

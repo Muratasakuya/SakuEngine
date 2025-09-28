@@ -3,9 +3,9 @@
 //============================================================================
 //	include
 //============================================================================
-#include <Engine/Core/Graphics/Lib/ComPtr.h>
+#include <Engine/Core/Graphics/DxLib/ComPtr.h>
 #include <Engine/Input/InputStructures.h>
-#include <Lib/MathUtils/Vector2.h>
+#include <Engine/MathLib/Vector2.h>
 
 // directInput
 #define DIRECTINPUT_VERSION 0x0800

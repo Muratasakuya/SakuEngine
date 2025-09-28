@@ -7,7 +7,7 @@
 #include <Engine/Object/Data/Transform.h>
 #include <Engine/Core/Graphics/GPUObject/VertexBuffer.h>
 #include <Engine/Core/Graphics/GPUObject/IndexBuffer.h>
-#include <Engine/Core/Graphics/Lib/DxStructures.h>
+#include <Engine/Core/Graphics/DxLib/DxStructures.h>
 
 // directX
 #include <Externals/DirectXTex/DirectXTex.h>

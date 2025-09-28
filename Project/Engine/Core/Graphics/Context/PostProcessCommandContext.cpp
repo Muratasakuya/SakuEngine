@@ -5,7 +5,7 @@
 //============================================================================
 #include <Engine/Core/Graphics/PostProcess/ComputePostProcessor.h>
 #include <Engine/Core/Graphics/PostProcess/PostProcessConfig.h>
-#include <Engine/Core/Graphics/Lib/DxUtils.h>
+#include <Engine/Core/Graphics/DxLib/DxUtils.h>
 
 //============================================================================
 //	PostProcessCommandContext classMethods

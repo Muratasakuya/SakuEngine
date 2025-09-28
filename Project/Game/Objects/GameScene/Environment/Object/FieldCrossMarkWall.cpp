@@ -3,8 +3,8 @@
 //============================================================================
 //	include
 //============================================================================
-#include <Engine/Utility/GameTimer.h>
-#include <Engine/Utility/JsonAdapter.h>
+#include <Engine/Utility/Timer/GameTimer.h>
+#include <Engine/Utility/Json/JsonAdapter.h>
 
 //============================================================================
 //	FieldCrossMarkWall classMethods

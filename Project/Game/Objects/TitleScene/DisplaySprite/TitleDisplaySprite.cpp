@@ -6,7 +6,7 @@
 #include <Engine/Config.h>
 #include <Engine/Input/Input.h>
 #include <Engine/Collision/CollisionGeometry.h>
-#include <Engine/Utility/JsonAdapter.h>
+#include <Engine/Utility/Json/JsonAdapter.h>
 #include <Game/Objects/Common/GameButtonBlinkingUpdater.h>
 
 //============================================================================

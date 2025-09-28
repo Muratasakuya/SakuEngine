@@ -3,9 +3,9 @@
 //============================================================================
 //	include
 //============================================================================
-#include <Engine/Utility/AnimationLoop.h>
+#include <Engine/Utility/Animation/AnimationLoop.h>
 #include <Game/Objects/Base/IGameButtonResponseUpdater.h>
-#include <Lib/Adapter/Easing.h>
+#include <Engine/Utility/Enum/Easing.h>
 
 //============================================================================
 //	GameButtonBlinkingUpdater class

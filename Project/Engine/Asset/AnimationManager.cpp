@@ -6,10 +6,10 @@
 #include <Engine/Core/Debug/Assert.h>
 #include <Engine/Core/Debug/SpdLogger.h>
 #include <Engine/Core/Graphics/Descriptors/SRVDescriptor.h>
-#include <Engine/Core/Graphics/Lib/DxUtils.h>
+#include <Engine/Core/Graphics/DxLib/DxUtils.h>
 #include <Engine/Asset/ModelLoader.h>
 #include <Engine/Asset/Filesystem.h>
-#include <Lib/MathUtils/Algorithm.h>
+#include <Engine/Utility/Helper/Algorithm.h>
 
 //============================================================================
 //	AnimationManager classMethods

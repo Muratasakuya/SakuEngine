@@ -4,8 +4,8 @@
 //	include
 //============================================================================
 #include <Engine/Editor/Base/IGameEditor.h>
-#include <Engine/Utility/StateTimer.h>
-#include <Engine/Utility/SimpleAnimation.h>
+#include <Engine/Utility/Timer/StateTimer.h>
+#include <Engine/Utility/Animation/SimpleAnimation.h>
 #include <Game/Objects/Base/GamecButtonFocusNavigator.h>
 #include <Game/Objects/Base/GameTimerDisplay.h>
 #include <Game/Objects/Base/GameButton.h>

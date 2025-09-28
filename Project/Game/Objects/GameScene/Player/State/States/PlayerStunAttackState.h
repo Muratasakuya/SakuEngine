@@ -6,7 +6,7 @@
 #include <Engine/Core/Graphics/PostProcess/Buffer/PostProcessBufferSize.h>
 #include <Engine/Object/Base/GameObject3D.h>
 #include <Game/Objects/GameScene/Player/State/Interface/PlayerBaseAttackState.h>
-#include <Lib/Adapter/Easing.h>
+#include <Engine/Utility/Enum/Easing.h>
 
 //============================================================================
 //	PlayerStunAttackState class

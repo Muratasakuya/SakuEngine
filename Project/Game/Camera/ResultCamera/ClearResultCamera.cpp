@@ -4,9 +4,9 @@
 //	include
 //============================================================================
 #include <Engine/Core/Graphics/Renderer/LineRenderer.h>
-#include <Engine/Utility/JsonAdapter.h>
-#include <Engine/Utility/EnumAdapter.h>
-#include <Engine/Utility/GameTimer.h>
+#include <Engine/Utility/Json/JsonAdapter.h>
+#include <Engine/Utility/Enum/EnumAdapter.h>
+#include <Engine/Utility/Timer/GameTimer.h>
 
 //============================================================================
 //	ClearResultCamera classMethods

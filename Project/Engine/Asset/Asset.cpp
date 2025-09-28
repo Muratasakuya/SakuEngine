@@ -5,8 +5,8 @@
 //============================================================================
 #include <Engine/Core/Debug/Assert.h>
 #include <Engine/Core/Debug/SpdLogger.h>
-#include <Engine/Utility/JsonAdapter.h>
-#include <Engine/Utility/EnumAdapter.h>
+#include <Engine/Utility/Json/JsonAdapter.h>
+#include <Engine/Utility/Enum/EnumAdapter.h>
 
 //============================================================================
 //	Asset classMethods

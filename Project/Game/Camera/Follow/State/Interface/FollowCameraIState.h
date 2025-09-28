@@ -6,7 +6,7 @@
 #include <Engine/Input/Base/InputMapper.h>
 #include <Game/Camera/Follow/Structures/FollowCameraStructures.h>
 #include <Game/Camera/Follow/Input/FollowCameraInputAction.h>
-#include <Lib/MathUtils/MathUtils.h>
+#include <Engine/MathLib/MathUtils.h>
 
 // front
 class FollowCamera;

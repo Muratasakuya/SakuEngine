@@ -5,7 +5,7 @@
 //============================================================================
 #include <Engine/Config.h>
 #include <Engine/Object/Core/ObjectManager.h>
-#include <Engine/Editor/ImGuiObjectEditor.h>
+#include <Engine/Editor/GameObject/ImGuiObjectEditor.h>
 #include <Engine/Scene/Camera/BaseCamera.h>
 
 //============================================================================

@@ -3,8 +3,8 @@
 //============================================================================
 //	include
 //============================================================================
-#include <Engine/Utility/EnumAdapter.h>
-#include <Lib/MathUtils/Algorithm.h>
+#include <Engine/Utility/Enum/EnumAdapter.h>
+#include <Engine/Utility/Helper/Algorithm.h>
 
 //============================================================================
 //	ParticleUpdatePrimitiveModule classMethods

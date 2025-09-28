@@ -3,9 +3,9 @@
 //============================================================================
 //	include
 //============================================================================
-#include <Engine/Utility/StateTimer.h>
+#include <Engine/Utility/Timer/StateTimer.h>
 #include <Game/Objects/GameScene/Player/State/Interface/PlayerIState.h>
-#include <Lib/Adapter/Easing.h>
+#include <Engine/Utility/Enum/Easing.h>
 
 //============================================================================
 //	PlayerBaseAttackState class

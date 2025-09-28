@@ -4,7 +4,7 @@
 //	include
 //============================================================================
 #include <Engine/Effect/Particle/Module/ParticleModuleID.h>
-#include <Lib/MathUtils/MathUtils.h>
+#include <Engine/MathLib/MathUtils.h>
 
 // c++
 #include <string>

@@ -8,8 +8,8 @@
 #include <Engine/Core/Graphics/GPUObject/DitherStructures.h>
 #include <Engine/Effect/Particle/Structures/ParticleStructures.h>
 #include <Engine/Scene/Light/PunctualLight.h>
-#include <Lib/MathUtils/Vector3.h>
-#include <Lib/MathUtils/Matrix4x4.h>
+#include <Engine/MathLib/Vector3.h>
+#include <Engine/MathLib/Matrix4x4.h>
 
 //============================================================================
 //	SceneConstBuffer class

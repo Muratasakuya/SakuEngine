@@ -4,8 +4,8 @@
 //	include
 //============================================================================
 #include <Engine/Core/Graphics/DxObject/DxCommand.h>
-#include <Engine/Core/Graphics/Lib/DxUtils.h>
-#include <Engine/Editor/ImGuiObjectEditor.h>
+#include <Engine/Core/Graphics/DxLib/DxUtils.h>
+#include <Engine/Editor/GameObject/ImGuiObjectEditor.h>
 #include <Engine/Scene/SceneView.h>
 
 //============================================================================

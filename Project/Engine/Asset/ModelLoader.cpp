@@ -7,7 +7,7 @@
 #include <Engine/Core/Debug/SpdLogger.h>
 #include <Engine/Asset/TextureManager.h>
 #include <Engine/Asset/Filesystem.h>
-#include <Lib/MathUtils/Algorithm.h>
+#include <Engine/Utility/Helper/Algorithm.h>
 
 //============================================================================
 //	ModelLoader classMethods

@@ -3,7 +3,7 @@
 //============================================================================
 //	include
 //============================================================================
-#include <Engine/Core/Graphics/Lib/DxUtils.h>
+#include <Engine/Core/Graphics/DxLib/DxUtils.h>
 
 // c++
 #include <vector>

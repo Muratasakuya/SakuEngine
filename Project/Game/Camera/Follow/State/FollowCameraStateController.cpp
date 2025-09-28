@@ -5,8 +5,8 @@
 //============================================================================
 #include <Engine/Input/Input.h>
 #include <Game/Camera/Follow/FollowCamera.h>
-#include <Engine/Utility/JsonAdapter.h>
-#include <Engine/Utility/EnumAdapter.h>
+#include <Engine/Utility/Json/JsonAdapter.h>
+#include <Engine/Utility/Enum/EnumAdapter.h>
 
 // inputDevice
 #include <Game/Camera/Follow/Input/Device/FollowCameraKeyInput.h>

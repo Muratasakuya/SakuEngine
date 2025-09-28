@@ -3,7 +3,7 @@
 //============================================================================
 //	include
 //============================================================================
-#include <Lib/MathUtils/Algorithm.h>
+#include <Engine/Utility/Helper/Algorithm.h>
 
 // data
 #include <Engine/Object/Data/Transform.h>

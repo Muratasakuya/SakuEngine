@@ -18,7 +18,7 @@
 #include <Game/Objects/GameScene/SpriteEffect/FadeSprite.h>
 
 // editor
-#include <Game/Editor/LevelEditor/LevelEditor.h>
+#include <Engine/Editor/Level/LevelEditor.h>
 
 //============================================================================
 //	GameContext

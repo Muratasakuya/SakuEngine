@@ -5,7 +5,7 @@
 //============================================================================
 #include <Engine/Core/Graphics/PostProcess/Buffer/PostProcessBufferSize.h>
 #include <Game/Objects/GameScene/Player/State/Interface/PlayerIState.h>
-#include <Lib/Adapter/Easing.h>
+#include <Engine/Utility/Enum/Easing.h>
 
 //============================================================================
 //	PlayerIdleState class

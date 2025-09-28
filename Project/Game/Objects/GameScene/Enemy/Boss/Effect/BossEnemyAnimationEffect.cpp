@@ -3,8 +3,8 @@
 //============================================================================
 //	include
 //============================================================================
-#include <Engine/Utility/JsonAdapter.h>
-#include <Engine/Utility/EnumAdapter.h>
+#include <Engine/Utility/Json/JsonAdapter.h>
+#include <Engine/Utility/Enum/EnumAdapter.h>
 #include <Engine/Effect/Game/Helper/GameEffectCommandHelper.h>
 #include <Game/Camera/Follow/FollowCamera.h>
 #include <Game/Objects/GameScene/Enemy/Boss/Entity/BossEnemy.h>

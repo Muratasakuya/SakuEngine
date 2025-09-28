@@ -3,7 +3,7 @@
 //============================================================================
 //	include
 //============================================================================
-#include <Engine/Core/Graphics/Lib/DxStructures.h>
+#include <Engine/Core/Graphics/DxLib/DxStructures.h>
 
 // directX
 #include <d3d12.h>

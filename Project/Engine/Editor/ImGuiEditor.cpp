@@ -5,16 +5,16 @@
 //============================================================================
 #include <Engine/Input/Input.h>
 #include <Engine/Scene/SceneView.h>
-#include <Lib/MathUtils/MathUtils.h>
+#include <Engine/MathLib/MathUtils.h>
 
 // imgui表示
 #include <Engine/Asset/AssetEditor.h>
 #include <Engine/Asset/Asset.h>
-#include <Engine/Editor/ImGuiObjectEditor.h>
+#include <Engine/Editor/GameObject/ImGuiObjectEditor.h>
 #include <Engine/Editor/Manager/GameEditorManager.h>
 #include <Engine/Object/Core/ObjectManager.h>
-#include <Engine/Utility/GameTimer.h>
-#include <Engine/Utility/EnumAdapter.h>
+#include <Engine/Utility/Timer/GameTimer.h>
+#include <Engine/Utility/Enum/EnumAdapter.h>
 
 // imgui
 #include <ImGuizmo.h>

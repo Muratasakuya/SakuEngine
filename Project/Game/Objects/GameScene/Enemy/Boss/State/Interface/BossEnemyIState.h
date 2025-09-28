@@ -4,8 +4,8 @@
 //	include
 //============================================================================
 #include <Game/Objects/GameScene/Enemy/Boss/Structures/BossEnemyStructures.h>
-#include <Lib/Adapter/Easing.h>
-#include <Lib/MathUtils/MathUtils.h>
+#include <Engine/Utility/Enum/Easing.h>
+#include <Engine/MathLib/MathUtils.h>
 
 // front
 class BossEnemy;

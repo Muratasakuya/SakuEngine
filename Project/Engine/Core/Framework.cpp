@@ -10,9 +10,9 @@
 #include <Engine/Collision/CollisionManager.h>
 #include <Engine/Effect/Particle/Core/ParticleManager.h>
 #include <Engine/Core/Graphics/Renderer/LineRenderer.h>
-#include <Engine/Utility/GameTimer.h>
+#include <Engine/Utility/Timer/GameTimer.h>
 #include <Engine/Config.h>
-#include <Game/Editor/CameraEditor/3D/Camera3DEditor.h>
+#include <Engine/Editor/Camera/3D/Camera3DEditor.h>
 
 //============================================================================
 //	Framework classMethods

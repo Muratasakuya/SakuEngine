@@ -8,7 +8,7 @@
 //============================================================================
 //	include
 //============================================================================
-#include <Engine/Core/Graphics/Lib/ComPtr.h>
+#include <Engine/Core/Graphics/DxLib/ComPtr.h>
 
 // directX
 #include <d3d12.h>
