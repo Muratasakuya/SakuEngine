@@ -501,7 +501,7 @@ std::vector<Vector3> Camera3DEditor::CollectTranslationPoints(const CameraParam&
 	points.reserve(param.keyframes.size());
 	for (auto& keyframe : param.keyframes) {
 
-		points.push_back(keyframe.translation);
+		points.push_back(keyframe.demoObject->GetTransform().GetWorldPos());
 	}
 	return points;
 }
