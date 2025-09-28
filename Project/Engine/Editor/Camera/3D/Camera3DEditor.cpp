@@ -54,6 +54,9 @@ void Camera3DEditor::Update() {
 
 	// 追従先のオフセットを更新
 	UpdateFollowTarget();
+
+	// ゲーム画面のカメラを更新
+	UpdateDebugViewGameCamera();
 }
 
 void Camera3DEditor::UpdateFollowTarget() {
@@ -96,6 +99,13 @@ void Camera3DEditor::UpdateFollowTarget() {
 	}
 }
 
+void Camera3DEditor::UpdateDebugViewGameCamera() {
+
+	if (!isDebugViewGameCamera_) {
+		return;
+	}
+}
+
 void Camera3DEditor::KeyframeParam::Init() {
 
 	// キーフレーム初期値
@@ -121,7 +131,7 @@ void Camera3DEditor::AddAnimation(const std::string& name, const SkinnedAnimatio
 		return;
 	}
 	// アニメーションを追加
-	skinnedAnimations_.emplace(name, animation);
+	skinnedAnimations_[name] = animation;
 }
 
 void Camera3DEditor::ImGui() {
@@ -287,10 +297,15 @@ void Camera3DEditor::EditCameraParam() {
 	CameraParam& param = params_[selectedParamKey_];
 	// 選択するキーフレームを更新
 	SelectKeyframe(param);
-	KeyframeParam& keyframeParam = param.keyframes[selectedKeyIndex_];
 
 	// 選択されたものの操作
 	if (ImGui::BeginTabBar("EditCameraParam")) {
+		if (ImGui::BeginTabItem("GameView")) {
+
+			ImGui::Checkbox("debugViewGame", &isDebugViewGameCamera_);
+			ImGui::Checkbox("isDrawLine3D", &param.isDrawLine3D);
+			ImGui::EndTabItem();
+		}
 		if (ImGui::BeginTabItem("Lerp")) {
 
 			EditLerp(param);
@@ -299,11 +314,6 @@ void Camera3DEditor::EditCameraParam() {
 		if (ImGui::BeginTabItem("Keyframe")) {
 
 			EditKeyframe(param);
-			ImGui::EndTabItem();
-		}
-		if (ImGui::BeginTabItem("Main")) {
-
-			EditMainParam(keyframeParam);
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem("Target")) {
@@ -316,6 +326,8 @@ void Camera3DEditor::EditCameraParam() {
 }
 
 void Camera3DEditor::EditLerp(CameraParam& param) {
+
+	ImGui::PushItemWidth(itemWidth_);
 
 	EnumAdapter<LerpKeyframe::Type>::Combo("LerpType", &param.lerpType);
 
@@ -338,14 +350,12 @@ void Camera3DEditor::EditLerp(CameraParam& param) {
 	if (ImGui::Button("Match AnimDuration")) {
 
 		// アニメーションの再生時間と合わせる
-		param.timer.target_ = skinnedAnimations_[selectedParamKey_]->GetAnimationDuration(selectedParamKey_);
+		param.timer.target_ = skinnedAnimations_[selectedSkinnedKey_]->GetAnimationDuration(selectedParamKey_);
 	}
 
 	param.timer.ImGui("Timer", false);
 
-	ImGui::SeparatorText("Debug");
-
-	ImGui::Checkbox("isDrawLine3D", &param.isDrawLine3D);
+	ImGui::PopItemWidth();
 }
 
 void Camera3DEditor::EditKeyframe(CameraParam& param) {
@@ -423,15 +433,6 @@ void Camera3DEditor::EditKeyframe(CameraParam& param) {
 	if (!canDown) {
 		ImGui::EndDisabled();
 	}
-}
-
-void Camera3DEditor::EditMainParam(KeyframeParam& keyframeParam) {
-
-	ImGui::PushItemWidth(itemWidth_);
-
-	ImGui::DragFloat("fovY", &keyframeParam.fovY, 0.01f);
-
-	ImGui::PopItemWidth();
 }
 
 void Camera3DEditor::SelectTarget(CameraParam& param) {

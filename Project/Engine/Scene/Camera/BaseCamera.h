@@ -37,6 +37,7 @@ public:
 	void SetParent(const Transform3D* parent) { transform_.parent = parent; };
 	void SetTranslation(const Vector3& translation) { transform_.translation = translation; }
 	void SetEulerRotation(const Vector3& eulerRotation) { transform_.eulerRotate = eulerRotation; }
+	void SetFovY(float fovY) { fovY_ = fovY; }
 
 	float GetFovY() const { return fovY_; }
 	float GetNearClip() const { return nearClip_; }

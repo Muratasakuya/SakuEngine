@@ -229,9 +229,31 @@ void ImGuiObjectEditor::DrawManipulateGizmo(const GizmoContext& context) {
 				localTranslate[1] - offset.y, localTranslate[2] - offset.z);
 
 			// 回転を設定
-			transform->eulerRotate = Vector3(localRotate[0] * radian,
-				localRotate[1] * radian, localRotate[2] * radian);
-			transform->rotation = Quaternion::Normalize(Quaternion::EulerToQuaternion(transform->eulerRotate));
+			Matrix4x4 R = localMatrix;
+			{
+				// 列ベクトルを取り出してスケールで正規化
+				Vector3 cx(R.m[0][0], R.m[1][0], R.m[2][0]);
+				Vector3 cy(R.m[0][1], R.m[1][1], R.m[2][1]);
+				Vector3 cz(R.m[0][2], R.m[1][2], R.m[2][2]);
+				if (localScale[0] != 0) {
+					cx = cx / localScale[0];
+				}
+				if (localScale[1] != 0) {
+					cy = cy / localScale[1];
+				}
+				if (localScale[2] != 0) {
+					cz = cz / localScale[2];
+				}
+				cx = cx.Normalize();
+				cy = (cy - cx * Vector3::Dot(cx, cy)).Normalize();
+				cz = Vector3::Cross(cx, cy);
+
+				R.m[0][0] = cx.x; R.m[1][0] = cx.y; R.m[2][0] = cx.z;
+				R.m[0][1] = cy.x; R.m[1][1] = cy.y; R.m[2][1] = cy.z;
+				R.m[0][2] = cz.x; R.m[1][2] = cz.y; R.m[2][2] = cz.z;
+			}
+			transform->rotation = Quaternion::Normalize(Quaternion::FromRotationMatrix(R));
+			transform->eulerRotate = Quaternion::ToEulerAngles(transform->rotation);
 
 			// スケールを設定
 			transform->scale = Vector3(localScale[0], localScale[1], localScale[2]);

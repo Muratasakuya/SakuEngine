@@ -100,6 +100,7 @@ private:
 	std::string selectedAnimName_;   // 骨アニメーションが所持しているアニメーション
 	std::string selectedParamKey_;   // 操作対象のカメラ
 	int selectedKeyIndex_ = 0;       // 選択中のキーフレーム
+	bool isDebugViewGameCamera_ = false;
 
 	//--------- functions ----------------------------------------------------
 
@@ -108,6 +109,7 @@ private:
 
 	// update
 	void UpdateFollowTarget();
+	void UpdateDebugViewGameCamera();
 
 	// editor
 	void SelectAnimationSubject();
@@ -117,7 +119,6 @@ private:
 	void EditCameraParam();
 	void EditLerp(CameraParam& param);
 	void EditKeyframe(CameraParam& param);
-	void EditMainParam(KeyframeParam& keyframeParam);
 	void SelectTarget(CameraParam& param);
 
 	// helper

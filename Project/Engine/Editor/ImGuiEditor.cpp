@@ -332,6 +332,7 @@ void ImGuiEditor::Inspector() {
 	ImGui::End();
 }
 
+
 void ImGuiEditor::AssetEdit() {
 
 	//AssetEditor::GetInstance()->EditLayout();
