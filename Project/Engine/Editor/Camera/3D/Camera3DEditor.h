@@ -4,7 +4,6 @@
 //	include
 //============================================================================
 #include <Engine/Editor/Camera/3D/Camera3DEditorPanel.h>
-#include <Engine/Editor/Camera/3D/CameraPathController.h>
 #include <Engine/Editor/Base/IGameEditor.h>
 
 // front
@@ -61,7 +60,7 @@ private:
 	std::string selectedAnimName_;   // 骨アニメーションが所持しているアニメーション
 	std::string selectedParamKey_;   // 操作対象のカメラ
 	int selectedKeyIndex_ = 0;       // 選択中のキーフレーム
-	bool isDebugViewGameCamera_ = false;
+	CameraPathController::PlaybackState playbackCamera_;
 	JsonSaveState paramSaveState_;
 	char lastLoaded_[128] = {};
 

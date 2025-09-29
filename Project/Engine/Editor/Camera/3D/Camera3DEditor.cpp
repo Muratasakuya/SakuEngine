@@ -82,11 +82,11 @@ void Camera3DEditor::Update() {
 	}
 
 	// ゲーム画面のカメラを更新する
-	/*if (isDebugViewGameCamera_ && !selectedParamKey_.empty()) {
+	if (playbackCamera_.isActive && !selectedParamKey_.empty()) {
 
-		auto& path = params_[selectedParamKey_];
-		controller_->Update(path);
-	}*/
+		auto& param = params_[selectedParamKey_];
+		controller_->Update(playbackCamera_, param);
+	}
 }
 
 void Camera3DEditor::ImGui() {
@@ -96,7 +96,7 @@ void Camera3DEditor::ImGui() {
 	// エディター、UIの更新
 	panel_->Edit(params_, skinnedAnimations_,
 		selectedSkinnedKey_, selectedAnimName_, selectedParamKey_,
-		selectedKeyIndex_, paramSaveState_, lastLoaded_);
+		selectedKeyIndex_, paramSaveState_, lastLoaded_, playbackCamera_);
 
 	ImGui::PopItemWidth();
 }

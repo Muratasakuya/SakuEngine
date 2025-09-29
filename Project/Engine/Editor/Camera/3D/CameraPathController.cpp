@@ -1,6 +1,11 @@
 #include "CameraPathController.h"
 
 //============================================================================
+//	include
+//============================================================================
+#include <Engine/Scene/SceneView.h>
+
+//============================================================================
 //	CameraPathController classMethods
 //============================================================================
 
@@ -9,20 +14,128 @@ CameraPathController::CameraPathController(SceneView* sceneView) {
 	sceneView_ = nullptr;
 	sceneView_ = sceneView;
 }
-//
-//void CameraPathController::Update(CameraPathData& data) {
-//
-//
-//}
-//
-//void CameraPathController::Evaluate(const CameraPathData& data, float t, Vector3& outTranslation,
-//	Quaternion& outRotation, float& outFovY) const {
-//
-//
-//}
-//
-//void CameraPathController::ApplyToCamera(BaseCamera& camera, const Vector3& translation,
-//	const Quaternion& rotation, float fovY) const {
-//
-//
-//}
+
+void CameraPathController::Update(const PlaybackState& state, CameraPathData& data) {
+
+	if (!state.isActive || data.keyframes.empty()) {
+		return;
+	}
+
+	// 更新対象のカメラ
+	BaseCamera* camera = sceneView_->GetCamera();
+	// 補間値
+	Vector3 translation{};
+	Quaternion rotation{};
+	float fovY{};
+
+	switch (state.mode) {
+	case PreviewMode::Keyframe: {
+
+		int index = std::clamp(state.selectedKeyIndex, 0, static_cast<int>(data.keyframes.size()) - 1);
+		EvaluateAtKey(data, index, translation, rotation, fovY);
+		break;
+	}
+	case PreviewMode::Manual: {
+
+		float rawT = std::clamp(state.time, 0.0f, 1.0f);
+		float easedT = EasedValue(data.timer.easeingType_, rawT);
+
+		// 平均化された値を使用するか
+		float t = 0.0f;
+		if (data.useAveraging && !data.averagedT.empty()) {
+
+			t = LerpKeyframe::GetReparameterizedT(easedT, data.averagedT);
+		} else {
+
+			t = easedT;
+		}
+		Evaluate(data, t, translation, rotation, fovY);
+		break;
+	}
+	case PreviewMode::Play: {
+
+		// 時間の更新
+		data.timer.Update();
+
+		// 終了後タイマーをリセットするか固定する
+		if (data.timer.IsReached()) {
+			if (state.isLoop) {
+
+				data.timer.Reset();
+			} else {
+
+				data.timer.current_ = data.timer.target_;
+			}
+		}
+		float t = 0.0f;
+		if (data.useAveraging && !data.averagedT.empty()) {
+
+			t = LerpKeyframe::GetReparameterizedT(data.timer.easedT_, data.averagedT);
+		} else {
+
+			t = data.timer.easedT_;
+		}
+		Evaluate(data, t, translation, rotation, fovY);
+		break;
+	}
+	}
+
+	// カメラに適応
+	ApplyToCamera(*camera, translation, rotation, fovY);
+}
+
+void CameraPathController::Evaluate(const CameraPathData& data, float t,
+	Vector3& outTranslation, Quaternion& outRotation, float& outFovY) const {
+
+	// 座標の補間
+	std::vector<Vector3> points;
+	points.reserve(data.keyframes.size());
+	for (auto& keyframe : data.keyframes) {
+
+		points.emplace_back(keyframe.demoObject->GetTransform().GetWorldPos());
+	}
+	outTranslation = LerpKeyframe::GetValue<Vector3>(points, t, data.lerpType);
+
+	// 画角の補間
+	std::vector<float> fovs;
+	fovs.reserve(data.keyframes.size());
+	for (auto& keyframe : data.keyframes) {
+
+		fovs.emplace_back(keyframe.fovY);
+	}
+	outFovY = LerpKeyframe::GetValue<float>(fovs, t, LerpKeyframe::Type::None);
+
+	// 回転の補間
+	// キーフレームが1個なら最初の値を返す
+	if (data.keyframes.size() < 2) {
+		outRotation = data.keyframes.front().demoObject->GetRotation();
+		return;
+	}
+	const int n = static_cast<int>(data.keyframes.size());
+	const float division = 1.0f / (n - 1);
+	int index = static_cast<int>(std::floor(t / division));
+	index = std::clamp(index, 0, n - 2);
+	float lt = (t - index * division) / division;
+
+	const Quaternion& rotation = data.keyframes[index].demoObject->GetRotation();
+	const Quaternion& nextRotation = data.keyframes[index + 1].demoObject->GetRotation();
+	outRotation = Quaternion::Slerp(rotation, nextRotation, lt);
+}
+
+void CameraPathController::EvaluateAtKey(const CameraPathData& data, int keyIndex,
+	Vector3& outTranslation, Quaternion& outRotation, float& outFovY) const {
+
+	const auto& keyframe = data.keyframes[keyIndex];
+	outTranslation = keyframe.demoObject->GetTransform().GetWorldPos();
+	outRotation = keyframe.demoObject->GetRotation();
+	outFovY = keyframe.fovY;
+}
+
+void CameraPathController::ApplyToCamera(BaseCamera& camera, const Vector3& translation,
+	const Quaternion& rotation, float fovY) const {
+
+	camera.SetTranslation(translation);
+	camera.SetEulerRotation(Quaternion::ToEulerAngles(rotation));
+	camera.SetFovY(fovY);
+	camera.UpdateView();
+}

@@ -15,7 +15,8 @@
 void Camera3DEditorPanel::Edit(std::unordered_map<std::string, CameraPathData>& params,
 	std::unordered_map<std::string, const SkinnedAnimation*>& skinnedAnimations,
 	std::string& selectedSkinnedKey, std::string& selectedAnimName, std::string& selectedParamKey,
-	int& selectedKeyIndex, JsonSaveState& paramSaveState, char lastLoaded[128]) {
+	int& selectedKeyIndex, JsonSaveState& paramSaveState, char lastLoaded[128],
+	CameraPathController::PlaybackState& playbackCamera) {
 
 	float avail = ImGui::GetContentRegionAvail().x;
 	float leftChild = avail * 0.5f - ImGui::GetStyle().ItemSpacing.x * 0.5f;
@@ -51,7 +52,7 @@ void Camera3DEditorPanel::Edit(std::unordered_map<std::string, CameraPathData>& 
 		if (!params.empty() && !selectedParamKey.empty()) {
 
 			EditCameraParam(params.at(selectedParamKey), skinnedAnimations, selectedSkinnedKey, selectedParamKey,
-				selectedKeyIndex, paramSaveState, lastLoaded);
+				selectedKeyIndex, paramSaveState, lastLoaded, playbackCamera);
 		}
 	}
 	ImGuiHelper::EndFramedChild();
@@ -169,7 +170,7 @@ void Camera3DEditorPanel::SelectCameraParam(std::unordered_map<std::string, Came
 void Camera3DEditorPanel::EditCameraParam(
 	CameraPathData& param, std::unordered_map<std::string, const SkinnedAnimation*>& skinnedAnimations,
 	std::string& selectedSkinnedKey, std::string& selectedParamKey, int& selectedKeyIndex,
-	JsonSaveState& paramSaveState, char lastLoaded[128]) {
+	JsonSaveState& paramSaveState, char lastLoaded[128], CameraPathController::PlaybackState& playbackCamera) {
 
 	if (selectedParamKey.empty()) {
 		ImGui::TextDisabled("not selected param");
@@ -185,6 +186,11 @@ void Camera3DEditorPanel::EditCameraParam(
 	}
 
 	if (ImGui::BeginTabBar("EditCameraParam")) {
+		if (ImGui::BeginTabItem("Playback")) {
+
+			EditPlayback(playbackCamera);
+			ImGui::EndTabItem();
+		}
 		if (ImGui::BeginTabItem("Lerp")) {
 
 			EditLerp(param, skinnedAnimations, selectedSkinnedKey, selectedParamKey);
@@ -235,11 +241,34 @@ void Camera3DEditorPanel::SaveAndLoad(CameraPathData& param, JsonSaveState& para
 			param.SaveJson(outRelPath);
 		}
 	}
+
+	ImGui::Separator();
+}
+
+void Camera3DEditorPanel::EditPlayback(CameraPathController::PlaybackState& playbackCamera) {
+
+	ImGui::PushItemWidth(192.0f);
+
+	ImGui::Checkbox("isActive", &playbackCamera.isActive);
+
+	if (!playbackCamera.isActive) {
+		return;
+	}
+	ImGui::Separator();
+	ImGui::Spacing();
+
+	EnumAdapter<CameraPathController::PreviewMode>::Combo("previewMode", &playbackCamera.mode);
+	ImGui::Checkbox("isLoop", &playbackCamera.isLoop);
+	ImGui::DragFloat("time", &playbackCamera.time, 0.01f);
+
+	ImGui::PopItemWidth();
 }
 
 void Camera3DEditorPanel::EditLerp(CameraPathData& param,
 	std::unordered_map<std::string, const SkinnedAnimation*>& skinnedAnimations,
 	std::string& selectedSkinnedKey, std::string& selectedParamKey) {
+
+	ImGui::PushItemWidth(192.0f);
 
 	EnumAdapter<LerpKeyframe::Type>::Combo("LerpType", &param.lerpType);
 
@@ -265,6 +294,8 @@ void Camera3DEditorPanel::EditLerp(CameraPathData& param,
 		param.timer.target_ = skinnedAnimations[selectedSkinnedKey]->GetAnimationDuration(selectedParamKey);
 	}
 	param.timer.ImGui("Timer", false);
+
+	ImGui::PopItemWidth();
 }
 
 void Camera3DEditorPanel::EditKeyframe(CameraPathData& param, int& selectedKeyIndex) {

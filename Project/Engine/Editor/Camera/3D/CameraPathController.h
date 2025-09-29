@@ -18,15 +18,44 @@ public:
 	//	public Methods
 	//========================================================================
 
+	//--------- structure ----------------------------------------------------
+
+	// 再生状態
+	enum class PreviewMode {
+
+		Keyframe, // 操作しているキーフレームで表示
+		Manual,   // 手動で動かす
+		Play      // 再生
+	};
+	struct PlaybackState {
+
+		bool isActive = false;
+		PreviewMode mode = PreviewMode::Keyframe;
+
+		bool isLoop = false;    // ループ再生
+		float time;             // 現在の時間
+
+		// 現在のキーフレーム
+		int selectedKeyIndex = 0;
+	};
+public:
+	//========================================================================
+	//	public Methods
+	//========================================================================
+
 	explicit CameraPathController(SceneView* sceneView);
 	~CameraPathController() = default;
 
-	void Update(CameraPathData& data);
+	void Update(const PlaybackState& state, CameraPathData& data);
 
 	void Evaluate(const CameraPathData& data, float t,
 		Vector3& outTranslation, Quaternion& outRotation, float& outFovY) const;
+	void EvaluateAtKey(const CameraPathData& data, int keyIndex,
+		Vector3& outTranslation, Quaternion& outRotation, float& outFovY) const;
 
-	void ApplyToCamera(BaseCamera& camera, const Vector3& translation, const Quaternion& rotation, float fovY) const;
+	// カメラ適応
+	void ApplyToCamera(BaseCamera& camera,
+		const Vector3& translation, const Quaternion& rotation, float fovY) const;
 
 	//--------- accessor -----------------------------------------------------
 
