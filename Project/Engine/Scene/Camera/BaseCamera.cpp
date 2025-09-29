@@ -49,13 +49,16 @@ void BaseCamera::StartAutoFocus(bool isFocus, const Vector3& target) {
 		Direction::Get(Direction3D::Up));
 }
 
-void BaseCamera::UpdateView() {
+void BaseCamera::UpdateView(UpdateMode updateMode) {
 
 	// 自動フォーカス設定
 	UpdateAutoFocus();
 
 	// eulerを設定して更新する
-	transform_.rotation = Quaternion::EulerToQuaternion(transform_.eulerRotate);
+	if (updateMode == UpdateMode::Euler) {
+
+		transform_.rotation = Quaternion::EulerToQuaternion(transform_.eulerRotate);
+	}
 	// 行列更新
 	transform_.UpdateMatrix();
 

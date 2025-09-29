@@ -4,6 +4,7 @@
 //	include
 //============================================================================
 #include <Engine/Scene/SceneView.h>
+#include <Engine/Core/Graphics/Renderer/LineRenderer.h>
 
 //============================================================================
 //	CameraPathController classMethods
@@ -134,8 +135,11 @@ void CameraPathController::EvaluateAtKey(const CameraPathData& data, int keyInde
 void CameraPathController::ApplyToCamera(BaseCamera& camera, const Vector3& translation,
 	const Quaternion& rotation, float fovY) const {
 
+	LineRenderer::GetInstance()->DrawOBB(translation, Vector3::AnyInit(2.4f), rotation, Color::Cyan());
+
 	camera.SetTranslation(translation);
-	camera.SetEulerRotation(Quaternion::ToEulerAngles(rotation));
+	camera.SetRotation(rotation);
 	camera.SetFovY(fovY);
-	camera.UpdateView();
+	// quaternionで更新
+	camera.UpdateView(BaseCamera::UpdateMode::Quaternion);
 }

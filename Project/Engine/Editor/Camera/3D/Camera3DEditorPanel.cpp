@@ -259,7 +259,7 @@ void Camera3DEditorPanel::EditPlayback(CameraPathController::PlaybackState& play
 
 	EnumAdapter<CameraPathController::PreviewMode>::Combo("previewMode", &playbackCamera.mode);
 	ImGui::Checkbox("isLoop", &playbackCamera.isLoop);
-	ImGui::DragFloat("time", &playbackCamera.time, 0.01f);
+	ImGui::DragFloat("time", &playbackCamera.time, 0.01f, 0.0f, 1.0f);
 
 	ImGui::PopItemWidth();
 }
@@ -327,6 +327,7 @@ void Camera3DEditorPanel::EditKeyframe(CameraPathData& param, int& selectedKeyIn
 		// 見た目を設定
 		dstKeyframe.demoObject->ApplyTransform(data);
 		dstKeyframe.demoObject->ApplyMaterial(data);
+		dstKeyframe.demoObject->SetMeshRenderView(MeshRenderView::Scene);
 
 		// 追加
 		keyframes.insert(keyframes.begin() + (selectedKeyIndex + 1), std::move(dstKeyframe));

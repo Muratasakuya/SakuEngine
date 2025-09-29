@@ -18,13 +18,26 @@ public:
 	//	public Methods
 	//========================================================================
 
+	//--------- structure ----------------------------------------------------
+
+	// 更新のモード
+	enum class UpdateMode {
+
+		Euler,
+		Quaternion
+	};
+public:
+	//========================================================================
+	//	public Methods
+	//========================================================================
+
 	BaseCamera();
 	virtual ~BaseCamera() = default;
 
 	virtual void Init() {};
 
 	virtual void Update() {};
-	void UpdateView();
+	void UpdateView(UpdateMode updateMode = UpdateMode::Euler);
 
 	virtual void ImGui();
 	void EditFrustum();
@@ -36,6 +49,7 @@ public:
 
 	void SetParent(const Transform3D* parent) { transform_.parent = parent; };
 	void SetTranslation(const Vector3& translation) { transform_.translation = translation; }
+	void SetRotation(const Quaternion& rotation) { transform_.rotation = rotation; }
 	void SetEulerRotation(const Vector3& eulerRotation) { transform_.eulerRotate = eulerRotation; }
 	void SetFovY(float fovY) { fovY_ = fovY; }
 
