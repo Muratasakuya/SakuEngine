@@ -11,6 +11,7 @@
 #include <Engine/Object/Data/Animation.h>
 #include <Engine/Object/Data/ObjectTag.h>
 #include <Engine/Object/Data/Sprite.h>
+#include <Engine/Object/Data/MeshRender.h>
 
 //============================================================================
 //	ObjectPoolManager classMethods
@@ -102,6 +103,7 @@ template void ObjectPoolManager::SetBit<class SpriteMaterial>(uint32_t, bool);
 template void ObjectPoolManager::SetBit<class SkinnedAnimation>(uint32_t, bool);
 template void ObjectPoolManager::SetBit<class Sprite>(uint32_t, bool);
 template void ObjectPoolManager::SetBit<class Skybox>(uint32_t, bool);
+template void ObjectPoolManager::SetBit<class MeshRender>(uint32_t, bool);
 template void ObjectPoolManager::SetBit<struct ObjectTag>(uint32_t, bool);
 
 uint32_t ObjectPoolManager::PopAlive() {

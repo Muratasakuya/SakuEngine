@@ -5,6 +5,7 @@
 //============================================================================
 #include <Engine/Asset/Async/AssetLoadWorker.h>
 #include <Engine/Object/System/Base/ISystem.h>
+#include <Engine/Object/Data/MeshRenderStructure.h>
 #include <Engine/Core/Graphics/Mesh/MeshRegistry.h>
 #include <Engine/Core/Graphics/GPUObject/InstancedMeshBuffer.h>
 #include <Engine/Core/Graphics/Raytracing/RaytracingStructures.h>
@@ -55,6 +56,7 @@ public:
 
 	const std::unordered_map<std::string, std::unique_ptr<IMesh>>& GetMeshes() const { return meshRegistry_->GetMeshes(); }
 	const std::unordered_map<std::string, MeshInstancingData>& GetInstancingData() const { return instancedBuffer_->GetInstancingData(); }
+	const std::unordered_map<std::string, MeshRenderView>& GetRenderViewPerModel() const { return renderViewPerModel_; }
 	std::vector<RayTracingInstance> CollectRTInstances(const RaytracingScene* scene) const;
 
 	bool IsReady(const std::string& name) const;
@@ -82,7 +84,10 @@ private:
 
 	std::unique_ptr<MeshRegistry> meshRegistry_;
 	std::unique_ptr<InstancedMeshBuffer> instancedBuffer_;
+
+	// モデルとオブジェクトIDの紐づけ
 	std::unordered_map<std::string, std::vector<uint32_t>> objectIDsPerModel_;
+	std::unordered_map<std::string, MeshRenderView> renderViewPerModel_;
 
 	AssetLoadWorker<MeshBuildJob> buildWorker_;
 	// 重複処理回避用

@@ -20,6 +20,7 @@ void GameObject3D::Init(const std::string& modelName, const std::string& name,
 	// data取得
 	transform_ = objectManager_->GetData<Transform3D>(objectId_);
 	materials_ = objectManager_->GetData<Material, true>(objectId_);
+	meshRender_ = objectManager_->GetData<MeshRender>(objectId_);
 	tag_ = objectManager_->GetData<ObjectTag>(objectId_);
 
 	// animationが存在する場合のみ処理する
@@ -40,13 +41,6 @@ void GameObject3D::ImGui() {
 	ImGui::PushItemWidth(itemWidth_);
 
 	if (ImGui::BeginTabBar("GameObject3DTab")) {
-
-		if (ImGui::BeginTabItem("Information")) {
-
-			InformationImGui();
-			ImGui::EndTabItem();
-		}
-
 		if (ImGui::BeginTabItem("Transform")) {
 
 			TransformImGui();
@@ -56,6 +50,12 @@ void GameObject3D::ImGui() {
 		if (ImGui::BeginTabItem("Material")) {
 
 			MaterialImGui();
+			ImGui::EndTabItem();
+		}
+
+		if (ImGui::BeginTabItem("MeshRender")) {
+
+			MeshRenderImGui();
 			ImGui::EndTabItem();
 		}
 
@@ -110,11 +110,6 @@ void GameObject3D::SaveMaterial(Json& data) {
 	}
 }
 
-void GameObject3D::InformationImGui() {
-
-	ImGui::Text("objectID: %d", objectId_);
-}
-
 void GameObject3D::TransformImGui() {
 
 	transform_->ImGui(itemWidth_);
@@ -145,6 +140,15 @@ void GameObject3D::MaterialImGui() {
 
 		(*materials_)[selectedMaterialIndex_].ImGui(itemWidth_);
 	}
+}
+
+void GameObject3D::MeshRenderImGui() {
+
+	std::string text = "id: " + std::to_string(objectId_);
+	ImGui::SeparatorText(text.c_str());
+	ImGui::Spacing();
+
+	meshRender_->ImGui(itemWidth_);
 }
 
 void GameObject3D::AnimationImGui() {

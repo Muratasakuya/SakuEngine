@@ -8,6 +8,7 @@
 
 // data
 #include <Engine/Object/Data/Animation.h>
+#include <Engine/Object/Data/MeshRender.h>
 
 //============================================================================
 //	GameObject3D class
@@ -98,6 +99,8 @@ protected:
 	Transform3D* transform_;
 	// material
 	std::vector<Material>* materials_;
+	// meshRender
+	MeshRender* meshRender_;
 	// animation
 	SkinnedAnimation* animation_;
 private:
@@ -113,8 +116,8 @@ private:
 	//--------- functions ----------------------------------------------------
 
 	// imgui
-	void InformationImGui();
 	void TransformImGui();
 	void MaterialImGui();
+	void MeshRenderImGui();
 	void AnimationImGui();
 };

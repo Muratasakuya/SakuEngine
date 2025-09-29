@@ -12,6 +12,7 @@
 #include <Engine/Object/Data/Material.h>
 #include <Engine/Object/Data/Animation.h>
 #include <Engine/Object/Data/ObjectTag.h>
+#include <Engine/Object/Data/MeshRender.h>
 // systems
 #include <Engine/Object/System/Systems/TransformSystem.h>
 #include <Engine/Object/System/Systems/MaterialSystem.h>
@@ -91,6 +92,7 @@ uint32_t ObjectManager::CreateObjects(const std::string& modelName,
 	// 必要なdataを作成
 	auto* transform = objectPoolManager_->AddData<Transform3D>(object);
 	auto* materialsPtr = objectPoolManager_->AddData<Material, true>(object);
+	auto* meshRender = objectPoolManager_->AddData<MeshRender>(object);
 
 	// 各dataを初期化
 	// transform
@@ -103,6 +105,9 @@ uint32_t ObjectManager::CreateObjects(const std::string& modelName,
 	auto& materials = *materialsPtr;
 	systemManager_->GetSystem<MaterialSystem>()->Init(
 		materials, modelData, asset_);
+
+	// meshRender
+	meshRender->Init(modelName);
 
 	if (animationName.has_value()) {
 

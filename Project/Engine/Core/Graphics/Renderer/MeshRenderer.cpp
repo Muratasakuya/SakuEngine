@@ -108,6 +108,7 @@ void MeshRenderer::Rendering(bool debugEnable, SceneConstBuffer* sceneBuffer, Dx
 
 	const auto& meshes = system->GetMeshes();
 	auto instancingBuffers = system->GetInstancingData();
+	const auto& viewMap = system->GetRenderViewPerModel();
 
 	if (meshes.empty()) {
 		return;
@@ -146,6 +147,17 @@ void MeshRenderer::Rendering(bool debugEnable, SceneConstBuffer* sceneBuffer, Dx
 		if (!system->IsReady(name)) {
 			 continue;
 		}
+		// 描画先のビットが立っていなければ描画しない
+		if (auto it = viewMap.find(name); it != viewMap.end()) {
+
+			const uint8_t mask = static_cast<uint8_t>(it->second);
+			const uint8_t want = static_cast<uint8_t>(debugEnable ? MeshRenderView::Scene : MeshRenderView::Game);
+			if ((mask & want) == 0) {
+				continue;
+			}
+		} else {
+			continue;
+		}
 
 		// meshごとのmatrix設定
 		commandList->SetGraphicsRootShaderResourceView(4,
@@ -172,7 +184,6 @@ void MeshRenderer::Rendering(bool debugEnable, SceneConstBuffer* sceneBuffer, Dx
 }
 
 void MeshRenderer::BeginSkinnedTransition(bool debugEnable, uint32_t meshIndex, IMesh* mesh, DxCommand* dxCommand) {
-
 
 #if defined(_DEBUG) || defined(_DEVELOPBUILD)
 	if (!debugEnable) {

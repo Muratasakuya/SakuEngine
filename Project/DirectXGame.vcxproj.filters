@@ -725,6 +725,9 @@
     <ClCompile Include="Engine\Editor\Camera\3D\Camera3DEditorPanel.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Object\Data\MeshRender.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Asset\AnimationManager.h" />
@@ -1007,6 +1010,8 @@
     <ClInclude Include="Engine\Editor\Camera\3D\CameraPathGizmoSynch.h" />
     <ClInclude Include="Engine\Editor\Camera\3D\CameraPathRenderer.h" />
     <ClInclude Include="Engine\Editor\Camera\3D\Camera3DEditorPanel.h" />
+    <ClInclude Include="Engine\Object\Data\MeshRender.h" />
+    <ClInclude Include="Engine\Object\Data\MeshRenderStructure.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Engine\Shaders\PostProcess\Copy\CopyTexture.CS.hlsl" />

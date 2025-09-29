@@ -6,6 +6,7 @@
 #include <Engine/Asset/Asset.h>
 #include <Engine/Core/Debug/SpdLogger.h>
 #include <Engine/Object/Core/ObjectPoolManager.h>
+#include <Engine/Object/Data/MeshRender.h>
 #include <Engine/Core/Graphics/Raytracing/RaytracingScene.h>
 #include <Engine/Core/Graphics/Renderer/LineRenderer.h>
 #include <Engine/Config.h>
@@ -180,6 +181,7 @@ Archetype InstancedMeshSystem::Signature() const {
 	Archetype arch{};
 	arch.set(ObjectPoolManager::GetTypeID<Transform3D>());
 	arch.set(ObjectPoolManager::GetTypeID<Material>());
+	arch.set(ObjectPoolManager::GetTypeID<MeshRender>());
 	return arch;
 }
 
@@ -188,6 +190,7 @@ void InstancedMeshSystem::Update(ObjectPoolManager& ObjectPoolManager) {
 	// bufferクリア
 	instancedBuffer_->Reset();
 	objectIDsPerModel_.clear();
+	renderViewPerModel_.clear();
 
 	const auto& view = ObjectPoolManager.View(Signature());
 
@@ -195,6 +198,7 @@ void InstancedMeshSystem::Update(ObjectPoolManager& ObjectPoolManager) {
 
 		auto* transform = ObjectPoolManager.GetData<Transform3D>(object);
 		auto* materials = ObjectPoolManager.GetData<Material, true>(object);
+		auto* meshRender = ObjectPoolManager.GetData<MeshRender>(object);
 		auto* animation = ObjectPoolManager.GetData<SkinnedAnimation>(object);
 
 		// 未作成の場合スキップ
@@ -205,6 +209,11 @@ void InstancedMeshSystem::Update(ObjectPoolManager& ObjectPoolManager) {
 		instancedBuffer_->SetUploadData(
 			instancingName, transform->matrix, *materials, *animation);
 		objectIDsPerModel_[instancingName].emplace_back(object);
+
+		auto& mask = renderViewPerModel_[instancingName];
+		const uint8_t current = static_cast<uint8_t>(mask);
+		const uint8_t add = static_cast<uint8_t>(meshRender->renderView);
+		mask = static_cast<MeshRenderView>(current | add);
 	}
 
 	// buffer転送
