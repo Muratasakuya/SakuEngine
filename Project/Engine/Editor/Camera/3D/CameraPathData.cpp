@@ -137,7 +137,7 @@ void CameraPathData::SaveJson(const std::string& fileName) {
 		keyframe.ToJson(data["Keyframes"][std::to_string(index)]);
 		++index;
 	}
-	JsonAdapter::Save(cameraParamJsonPath + fileName, data);
+	JsonAdapter::Save(fileName, data);
 }
 
 std::vector<Vector3> CameraPathData::CollectTranslationPoints() const {
