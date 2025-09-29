@@ -28,6 +28,7 @@ void CameraPathData::KeyframeParam::Init() {
 	// 見た目を設定
 	demoObject->ApplyTransform(data);
 	demoObject->ApplyMaterial(data);
+	demoObject->SetMeshRenderView(MeshRenderView::Scene);
 }
 
 void CameraPathData::KeyframeParam::FromJson(const Json& data) {

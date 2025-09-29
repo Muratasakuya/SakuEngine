@@ -229,8 +229,11 @@ void RenderEngine::Renderers(ViewType type, bool enableMesh) {
 	// model描画前
 	spriteRenderer_->ApplyPostProcessRendering(SpriteLayer::PreModel, sceneBuffer_.get(), dxCommand_);
 
-	// line描画実行
-	LineRenderer::GetInstance()->ExecuteLine(isDebugEnable, LineType::None);
+	if (isDebugEnable) {
+
+		// line描画実行
+		LineRenderer::GetInstance()->ExecuteLine(isDebugEnable, LineType::None);
+	}
 
 	// 通常描画処理(シーン遷移中は処理できないようにする)
 	if (enableMesh) {
@@ -241,8 +244,11 @@ void RenderEngine::Renderers(ViewType type, bool enableMesh) {
 	// particle描画
 	ParticleManager::GetInstance()->Rendering(isDebugEnable, sceneBuffer_.get(), dxCommand_);
 
-	// line描画実行、depth無効
-	LineRenderer::GetInstance()->ExecuteLine(isDebugEnable, LineType::DepthIgnore);
+	if (isDebugEnable) {
+
+		// line描画実行、depth無効
+		LineRenderer::GetInstance()->ExecuteLine(isDebugEnable, LineType::DepthIgnore);
+	}
 
 	// sprite描画、postPrecess適用
 	// model描画後

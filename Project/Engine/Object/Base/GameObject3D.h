@@ -64,6 +64,9 @@ public:
 	// texture
 	void SetTextureName(const std::string& textureName, std::optional<uint32_t> meshIndex = std::nullopt);
 
+	// meshRender
+	void SetMeshRenderView(MeshRenderView renderView) { meshRender_->renderView = renderView; }
+
 	// animation
 	void AddCameraEditSubject();
 	void SetNextAnimation(const std::string& nextAnimationName, bool loopAnimation, float transitionDuration);
