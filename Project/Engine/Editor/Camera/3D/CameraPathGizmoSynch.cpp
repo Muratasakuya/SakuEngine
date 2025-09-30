@@ -20,7 +20,7 @@ int CameraPathGizmoSynch::SynchSelectedKeyIndex(const CameraPathData& data, int 
 	for (int i = 0; i < static_cast<int>(keyframes.size()); ++i) {
 
 		const auto& keyframe = keyframes[i];
-		if (keyframe.demoObject && keyframe.demoObject->GetObjectID() == *selected) {
+		if (keyframe.demoObject->GetObjectID() == *selected) {
 
 			return i;
 		}

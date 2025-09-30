@@ -67,6 +67,7 @@ void Camera3DEditor::Update() {
 
 		auto& path = params_[selectedParamKey_];
 		selectedKeyIndex_ = gizmoSynch_->SynchSelectedKeyIndex(path, selectedKeyIndex_);
+		playbackCamera_.selectedKeyIndex = selectedKeyIndex_;
 	}
 
 	for (auto& param : std::views::values(params_)) {

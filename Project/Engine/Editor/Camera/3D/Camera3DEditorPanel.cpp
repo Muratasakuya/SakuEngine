@@ -259,7 +259,11 @@ void Camera3DEditorPanel::EditPlayback(CameraPathData& param, CameraPathControll
 
 	EnumAdapter<CameraPathController::PreviewMode>::Combo("previewMode", &playbackCamera.mode);
 	ImGui::Checkbox("isLoop", &playbackCamera.isLoop);
-	ImGui::DragFloat("time", &playbackCamera.time, 0.01f, 0.0f, 1.0f);
+	ImGui::DragFloat("time", &playbackCamera.time, 0.001f, 0.0f, 1.0f);
+
+	ImGui::SeparatorText("Param");
+
+	ImGui::DragFloat("fovY", &param.keyframes[playbackCamera.selectedKeyIndex].fovY, 0.01f);
 
 	if (playbackCamera.mode == CameraPathController::PreviewMode::Manual) {
 
