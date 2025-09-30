@@ -188,7 +188,7 @@ void Camera3DEditorPanel::EditCameraParam(
 	if (ImGui::BeginTabBar("EditCameraParam")) {
 		if (ImGui::BeginTabItem("Playback")) {
 
-			EditPlayback(playbackCamera);
+			EditPlayback(param, playbackCamera);
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem("Lerp")) {
@@ -245,7 +245,7 @@ void Camera3DEditorPanel::SaveAndLoad(CameraPathData& param, JsonSaveState& para
 	ImGui::Separator();
 }
 
-void Camera3DEditorPanel::EditPlayback(CameraPathController::PlaybackState& playbackCamera) {
+void Camera3DEditorPanel::EditPlayback(CameraPathData& param, CameraPathController::PlaybackState& playbackCamera) {
 
 	ImGui::PushItemWidth(192.0f);
 
@@ -260,6 +260,68 @@ void Camera3DEditorPanel::EditPlayback(CameraPathController::PlaybackState& play
 	EnumAdapter<CameraPathController::PreviewMode>::Combo("previewMode", &playbackCamera.mode);
 	ImGui::Checkbox("isLoop", &playbackCamera.isLoop);
 	ImGui::DragFloat("time", &playbackCamera.time, 0.01f, 0.0f, 1.0f);
+
+	if (playbackCamera.mode == CameraPathController::PreviewMode::Manual) {
+
+		ImGui::SeparatorText("Keyframe");
+
+		// 現在の位置にキーフレームを追加する
+		if (ImGui::Button("Add CurrentCamera Keyframe")) {
+
+			// 現在の区間を取得してその位置にキーフレームを追加する
+			auto& keyframes = param.keyframes;
+			const int keyCount = static_cast<int>(keyframes.size());
+			// 現在の区間を取得
+			float rawT = std::clamp(playbackCamera.time, 0.0f, 1.0f);
+			float easedT = EasedValue(param.timer.easeingType_, rawT);
+			float t = 0.0f;
+			if (param.useAveraging && !param.averagedT.empty()) {
+
+				t = LerpKeyframe::GetReparameterizedT(easedT, param.averagedT);
+			} else {
+
+				t = easedT;
+			}
+			// 区間インデックスを算出
+			const float division = 1.0f / (std::max)(1, keyCount - 1);
+			int segment = static_cast<int>(std::floor(t / division));
+			segment = std::clamp(segment, 0, (std::max)(0, keyCount - 2));
+
+			// 区間の値を取得
+			Vector3 translation;
+			Quaternion rotation;
+			float fovY;
+			{
+				// 適応後のカメラ情報を取得する
+				CameraPathController dummy(nullptr);
+				dummy.Evaluate(param, t, translation, rotation, fovY);
+			}
+			// オフセットがあれば設定
+			Vector3 offsetTranslation{};
+			if (param.followTarget) {
+
+				offsetTranslation = param.target->translation;
+			}
+			translation = translation - offsetTranslation;
+			// キーフレームを初期化
+			CameraPathData::KeyframeParam keyframe{};
+			keyframe.Init();
+			keyframe.demoObject->SetTranslation(translation);
+			keyframe.demoObject->SetRotation(rotation);
+			keyframe.translation = translation;
+			keyframe.rotation = rotation;
+			keyframe.fovY = fovY;
+			// 追加
+			keyframes.insert(keyframes.begin() + (segment + 1), std::move(keyframe));
+
+			// キーフレームの平均値Tを再計算
+			if (param.useAveraging) {
+
+				param.averagedT = LerpKeyframe::AveragingPoints<Vector3>(
+					param.CollectTranslationPoints(), param.divisionCount, param.lerpType);
+			}
+		}
+	}
 
 	ImGui::PopItemWidth();
 }

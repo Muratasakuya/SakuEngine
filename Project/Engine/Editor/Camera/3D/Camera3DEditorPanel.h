@@ -47,7 +47,7 @@ private:
 
 	// edit
 	void SaveAndLoad(CameraPathData& param, JsonSaveState& paramSaveState, char lastLoaded[128]);
-	void EditPlayback(CameraPathController::PlaybackState& playbackCamera);
+	void EditPlayback(CameraPathData& param, CameraPathController::PlaybackState& playbackCamera);
 	void EditLerp(CameraPathData& param, std::unordered_map<std::string, const SkinnedAnimation*>& skinnedAnimations,
 		std::string& selectedSkinnedKey, std::string& selectedParamKey);
 	void EditKeyframe(CameraPathData& param, int& selectedKeyIndex);
