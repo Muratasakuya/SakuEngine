@@ -22,7 +22,7 @@ void PlayerWalkState::Update(Player& player) {
 	// 歩き更新
 	UpdateWalk(player);
 	// 回転、進行方向に向かせる
-	SetRotateToDirection(player, move_);
+	SetRotateToDirection(player, move_.Normalize());
 }
 
 void PlayerWalkState::UpdateWalk(Player& player) {

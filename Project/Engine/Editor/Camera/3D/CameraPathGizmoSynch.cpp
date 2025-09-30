@@ -31,31 +31,40 @@ int CameraPathGizmoSynch::SynchSelectedKeyIndex(const CameraPathData& data, int 
 void CameraPathGizmoSynch::UpdateFollowTarget(CameraPathData& data) const {
 
 	ImGuiObjectEditor* objectEditor = ImGuiObjectEditor::GetInstance();
-	const bool usingGizmo = objectEditor->IsUsingGuizmo();
 	const std::optional<uint32_t> selectId = objectEditor->GetSelected3D();
 
 	// 追従先があるならオフセットを更新する
 	for (auto& keyframe : data.keyframes) {
 
-		// falseの場合は常に0.0f
+		// 追従先がない場合はデフォルトを設定
 		if (!(data.followTarget && data.target)) {
-
 			keyframe.demoObject->SetOffsetTranslation(Vector3::AnyInit(0.0f));
+			keyframe.demoObject->SetRotation(keyframe.rotation);
 			continue;
 		}
 
-		// 追従先のワールド座標に設定
+		// ワールド座標でオフセットを設定
 		keyframe.demoObject->SetOffsetTranslation(data.target->GetWorldPos());
 
-		// ギズモ操作中は更新できないようにする
-		if (usingGizmo && selectId && (*selectId == keyframe.demoObject->GetObjectID())) {
+		// ローカル回転を設定
+		const Quaternion targetRotation = Quaternion::Normalize(data.target->rotation);
+		const Quaternion inverseTarget = Quaternion::Conjugate(targetRotation);
 
-			// 回転前のローカル座標を設定
-			const Quaternion inverse = Quaternion::Conjugate(data.target->rotation);
-			keyframe.translation = inverse * keyframe.demoObject->GetTranslation();
-			continue;
+		const Vector3 worldTranslate = keyframe.demoObject->GetTranslation();
+		const Quaternion worldRotation = keyframe.demoObject->GetRotation();
+
+		// ターゲット空間に変換
+		keyframe.translation = inverseTarget * worldTranslate;
+		if (data.followRotation) {
+
+			keyframe.rotation = Quaternion::Normalize(inverseTarget * worldRotation);
+		} else {
+
+			keyframe.rotation = worldRotation;
 		}
-		// 回転を考慮した座標を設定
-		keyframe.demoObject->SetTranslation(data.target->rotation * keyframe.translation);
+		keyframe.demoObject->SetTranslation(targetRotation * keyframe.translation);
+		keyframe.demoObject->SetRotation(data.followRotation ?
+			Quaternion::Normalize(targetRotation * keyframe.rotation) :
+			keyframe.rotation);
 	}
 }

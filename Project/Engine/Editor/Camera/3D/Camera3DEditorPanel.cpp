@@ -442,6 +442,7 @@ void Camera3DEditorPanel::SelectTarget(CameraPathData& param) {
 
 	ImGui::Text("currentTarget: %s", param.targetName.c_str());
 	ImGui::Checkbox("followTarget", &param.followTarget);
+	ImGui::Checkbox("followRotation", &param.followRotation);
 	if (ImGui::Button("Remove Target")) {
 
 		param.target = nullptr;

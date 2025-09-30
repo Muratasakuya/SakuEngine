@@ -52,11 +52,13 @@ public:
 	void SetRotation(const Quaternion& rotation) { transform_.rotation = rotation; }
 	void SetEulerRotation(const Vector3& eulerRotation) { transform_.eulerRotate = eulerRotation; }
 	void SetFovY(float fovY) { fovY_ = fovY; }
+	void SetIsUpdateEditor(bool isUpdateEditor) { isUpdateEditor_ = isUpdateEditor; }
 
 	float GetFovY() const { return fovY_; }
 	float GetNearClip() const { return nearClip_; }
 	float GetFarClip() const { return farClip_; }
 	bool IsUpdateDebugView() const { return updateDebugView_; }
+	bool IsUpdateEditor() const { return isUpdateEditor_; }
 
 	const Transform3D& GetTransform() const { return transform_; }
 
@@ -97,6 +99,7 @@ protected:
 	float frustumScale_;
 	bool displayFrustum_;
 	bool updateDebugView_;
+	bool isUpdateEditor_ = false;
 
 	//--------- functions ----------------------------------------------------
 

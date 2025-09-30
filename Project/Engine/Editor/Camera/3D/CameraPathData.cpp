@@ -60,6 +60,7 @@ void CameraPathData::ApplyJson(const std::string& fileName) {
 	}
 
 	followTarget = data.value("followTarget", false);
+	followRotation = data.value("followRotation", true);
 	targetName = data.value("targetName", "");
 	divisionCount = data.value("divisionCount", 64);
 	useAveraging = data.value("useAveraging", false);
@@ -124,6 +125,7 @@ void CameraPathData::SaveJson(const std::string& fileName) {
 	Json data;
 
 	data["followTarget"] = followTarget;
+	data["followRotation"] = followRotation;
 	data["targetName"] = targetName;
 	data["divisionCount"] = divisionCount;
 	data["useAveraging"] = useAveraging;

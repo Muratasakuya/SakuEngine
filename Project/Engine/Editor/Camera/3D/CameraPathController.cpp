@@ -18,12 +18,15 @@ CameraPathController::CameraPathController(SceneView* sceneView) {
 
 void CameraPathController::Update(const PlaybackState& state, CameraPathData& data) {
 
+	// 更新対象のカメラ
+	BaseCamera* camera = sceneView_->GetCamera();
 	if (!state.isActive || data.keyframes.empty()) {
+		camera->SetIsUpdateEditor(false);
 		return;
 	}
 
-	// 更新対象のカメラ
-	BaseCamera* camera = sceneView_->GetCamera();
+	// エディターで更新中
+	camera->SetIsUpdateEditor(true);
 	// 補間値
 	Vector3 translation{};
 	Quaternion rotation{};

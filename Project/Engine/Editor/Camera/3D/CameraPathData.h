@@ -53,7 +53,8 @@ public:
 	static inline const std::string cameraParamJsonPath = "CameraEditor/CameraParams/";
 
 	// 追従先の設定
-	bool followTarget;
+	bool followTarget = false;
+	bool followRotation = true;
 	const Transform3D* target;
 	std::string targetName;
 

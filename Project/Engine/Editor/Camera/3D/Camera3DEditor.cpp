@@ -82,7 +82,7 @@ void Camera3DEditor::Update() {
 	}
 
 	// ゲーム画面のカメラを更新する
-	if (playbackCamera_.isActive && !selectedParamKey_.empty()) {
+	if (!selectedParamKey_.empty()) {
 
 		auto& param = params_[selectedParamKey_];
 		controller_->Update(playbackCamera_, param);
