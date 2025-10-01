@@ -81,6 +81,8 @@ private:
 	// エディター
 	int selectedObject_ = -1;
 	int selectedMetric_ = -1;
+	bool scrubProgressEnabled_ = false;
+	float scrubOverall_ = 0.0f;
 
 	//--------- functions ----------------------------------------------------
 

@@ -158,7 +158,25 @@ void ActionProgressMonitor::ImGui() {
 
 				// 進捗バーの高さ
 				const float bigHeight = 24.0f;
-				float overall = Algorithm::Clamp(object.metrics[selectedMetric_].getter());
+				float overallRaw = Algorithm::Clamp(object.metrics[selectedMetric_].getter());
+				float overallShown = scrubProgressEnabled_ ? scrubOverall_ : overallRaw;
+
+				// 手動進捗
+				{
+					ImGui::SeparatorText("Drag");
+					ImGui::PushItemWidth(160.0f);
+					if (ImGui::DragFloat("Overall", &scrubOverall_, 0.001f, 0.0f, 1.0f)) {
+
+						scrubProgressEnabled_ = true;
+					}
+					if (ImGui::Button("Reset##Overall")) {
+
+						scrubProgressEnabled_ = false;
+						scrubOverall_ = overallRaw;
+					}
+					ImGui::PopItemWidth();
+					ImGui::Separator();
+				}
 
 				// 全体進捗表示
 				{
@@ -167,10 +185,10 @@ void ActionProgressMonitor::ImGui() {
 
 					// オブジェクト、進捗名
 					ImGui::Text("Object : %s", object.name.c_str());
-					ImGui::Text("Overall: %s  (%5.2f %%)", object.metrics[selectedMetric_].name.c_str(), overall * 100.0f);
+					ImGui::Text("Overall: %s  (%5.2f %%)", object.metrics[selectedMetric_].name.c_str(), overallShown * 100.0f);
 
 					// 進捗率
-					ImGui::ProgressBar(overall, ImVec2(-FLT_MIN, bigHeight), "");
+					ImGui::ProgressBar(overallShown, ImVec2(-FLT_MIN, bigHeight), "");
 
 					ImGui::Dummy(ImVec2(0, 8.0f));
 					ImGui::SetWindowFontScale(1.0f);
@@ -203,17 +221,27 @@ void ActionProgressMonitor::ImGui() {
 						}
 						// 進捗の長さ
 						float width = (std::max)(0.0f, end - start);
-						float local = Algorithm::Clamp(metric.local());
+
+						// ローカルの進捗率
+						float localFromOverall = 0.0f;
+						if (0.0f < width) {
+
+							float t = (overallShown - start) / width;
+							localFromOverall = Algorithm::Clamp(t);
+						}
+						float localShown = scrubProgressEnabled_ ? localFromOverall
+							: Algorithm::Clamp(metric.local());
 
 						const float rowY = rowOrigin.y + row * (labelHeight + bigHeight + rowGap);
 						const float posX = rowOrigin.x + fullWidth * start;
 
 						// 進捗名
 						ImGui::SetCursorScreenPos(ImVec2(posX, rowY));
-						ImGui::Text("ProgressName: %s", metric.name.c_str());
+						ImGui::Text("ProgressName: %s [%.2f -> %.2f] local: %5.1f%%",
+							metric.name.c_str(), start, end, localShown * 100.0f);
 						// 進捗率
 						ImGui::SetCursorScreenPos(ImVec2(posX, rowY + labelHeight));
-						ImGui::ProgressBar(local, ImVec2(fullWidth * width, bigHeight), "");
+						ImGui::ProgressBar(localShown, ImVec2(fullWidth * width, bigHeight), "");
 						++row;
 					}
 					ImGui::SetWindowFontScale(1.0f);
