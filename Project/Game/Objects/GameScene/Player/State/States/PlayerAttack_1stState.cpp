@@ -91,41 +91,7 @@ void PlayerAttack_1stState::ApplyJson(const Json& data) {
 	moveTimer_.FromJson(data.value("MoveTimer", Json()));
 	moveValue_ = data.value("moveValue_", 1.0f);
 
-	ActionProgressMonitor* monitor = ActionProgressMonitor::GetInstance();
-	int objectID = monitor->AddObject("PlayerAttack_1stState");
-
-	// 全体進捗
-	monitor->AddOverall(objectID, "Attack Progress", [this]() -> float {
-
-		float progress = 0.0f;
-		if (player_->GetCurrentAnimationName() == "player_attack_1st") {
-
-			progress = player_->GetAnimationProgress();
-		}
-		return progress; });
-
-	// 攻撃骨アニメーション
-	monitor->AddSpan(objectID, "Skinned Animation",
-		[]() { return 0.0f; },
-		[]() { return 1.0f; },
-		[this]() {
-
-			float progress = 0.0f;
-			if (player_->GetCurrentAnimationName() == "player_attack_1st") {
-
-				progress = player_->GetAnimationProgress();
-			}
-			return progress; });
-	// 移動アニメーション
-	monitor->AddSpan(objectID, "Move Animation",
-		[]() { return 0.0f; },
-		[this]() {
-			float duration = player_->GetAnimationDuration("player_attack_1st");
-			return this->moveTimer_.target_ / duration;
-		},
-		[this]() {
-			return moveTimer_.t_;
-		});
+	SetActionProgress();
 }
 
 void PlayerAttack_1stState::SaveJson(Json& data) {
@@ -145,4 +111,40 @@ bool PlayerAttack_1stState::GetCanExit() const {
 	// 経過時間が過ぎたら
 	bool canExit = exitTimer_ > exitTime_;
 	return canExit;
+}
+
+void PlayerAttack_1stState::SetActionProgress() {
+
+	ActionProgressMonitor* monitor = ActionProgressMonitor::GetInstance();
+	int objectID = monitor->AddObject("PlayerAttack_1stState");
+
+	// 全体進捗
+	monitor->AddOverall(objectID, "Attack Progress", [this]() -> float {
+		float progress = 0.0f;
+		if (player_->GetCurrentAnimationName() == "player_attack_1st") {
+			progress = player_->GetAnimationProgress();
+		}
+		return progress; });
+
+	// 攻撃骨アニメーション
+	monitor->AddSpan(objectID, "Skinned Animation",
+		[]() { return 0.0f; },
+		[]() { return 1.0f; },
+		[this]() {
+			float progress = 0.0f;
+			if (player_->GetCurrentAnimationName() == "player_attack_1st") {
+
+				progress = player_->GetAnimationProgress();
+			}
+			return progress; });
+	// 移動アニメーション
+	monitor->AddSpan(objectID, "Move Animation",
+		[]() { return 0.0f; },
+		[this]() {
+			float duration = player_->GetAnimationDuration("player_attack_1st");
+			return this->moveTimer_.target_ / duration;
+		},
+		[this]() {
+			return moveTimer_.t_;
+		});
 }

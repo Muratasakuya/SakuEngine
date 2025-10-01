@@ -3,6 +3,7 @@
 //============================================================================
 //	include
 //============================================================================
+#include <Engine/Editor/ActionProgress/ActionProgressMonitor.h>
 #include <Engine/Core/Graphics/Renderer/LineRenderer.h>
 #include <Engine/Utility/Timer/GameTimer.h>
 #include <Game/Objects/GameScene/Enemy/Boss/Entity/BossEnemy.h>
@@ -12,7 +13,10 @@
 //	PlayerAttack_2ndState classMethods
 //============================================================================
 
-PlayerAttack_2ndState::PlayerAttack_2ndState() {
+PlayerAttack_2ndState::PlayerAttack_2ndState(Player* player) {
+
+	player_ = nullptr;
+	player_ = player;
 }
 
 void PlayerAttack_2ndState::Enter(Player& player) {
@@ -238,6 +242,8 @@ void PlayerAttack_2ndState::ApplyJson(const Json& data) {
 	approachRightPointAngle_ = data.value("approachRightPointAngle_", approachRightPointAngle_);
 
 	PlayerBaseAttackState::ApplyJson(data);
+
+	SetActionProgress();
 }
 
 void PlayerAttack_2ndState::SaveJson(Json& data) {
@@ -262,4 +268,43 @@ bool PlayerAttack_2ndState::GetCanExit() const {
 	// 経過時間が過ぎたら
 	bool canExit = exitTimer_ > exitTime_;
 	return canExit;
+}
+
+void PlayerAttack_2ndState::SetActionProgress() {
+
+	ActionProgressMonitor* monitor = ActionProgressMonitor::GetInstance();
+	int objectID = monitor->AddObject("PlayerAttack_2ndState");
+
+	// 全体進捗
+	monitor->AddOverall(objectID, "Attack Progress", [this]() -> float {
+		float progress = 0.0f;
+		if (player_->GetCurrentAnimationName() == "player_attack_2nd") {
+			progress = player_->GetAnimationProgress();
+		}
+		return progress; });
+
+	// 攻撃骨アニメーション
+	monitor->AddSpan(objectID, "Skinned Animation",
+		[]() { return 0.0f; },
+		[]() { return 1.0f; },
+		[this]() {
+			float progress = 0.0f;
+			if (player_->GetCurrentAnimationName() == "player_attack_2nd") {
+
+				progress = player_->GetAnimationProgress();
+			}
+			return progress; });
+
+	// 経路補間の全体内進捗
+	monitor->AddSpan(objectID, "Move Path",
+		[]() { return 0.0f; },
+		[]() { return 1.0f; },
+		[this]() {
+			float segmentLocal = 0.0f;
+			if (segmentTime_ > 0.0f) {
+				segmentLocal = std::clamp(segmentTimer_ / segmentTime_, 0.0f, 1.0f);
+			}
+			float done = (currentIndex_ >= kNumSegments) ? kNumSegments : static_cast<float>(currentIndex_);
+			float overall = (done + segmentLocal) / kNumSegments;
+			return overall; });
 }

@@ -15,7 +15,7 @@ public:
 	//	public Methods
 	//========================================================================
 
-	PlayerAttack_3rdState();
+	PlayerAttack_3rdState(Player* player);
 	~PlayerAttack_3rdState() = default;
 
 	void Enter(Player& player) override;
@@ -100,4 +100,6 @@ private:
 	// helper
 	void StartMoveWeapon(Player& player, PlayerWeaponType type);
 	Vector3 RotateYOffset(const Vector3& direction, float offsetRotationY);
+
+	void SetActionProgress();
 };

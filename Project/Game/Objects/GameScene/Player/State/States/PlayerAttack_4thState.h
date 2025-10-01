@@ -15,7 +15,7 @@ public:
 	//	public Methods
 	//========================================================================
 
-	PlayerAttack_4thState() = default;
+	PlayerAttack_4thState(Player* player);
 	~PlayerAttack_4thState() = default;
 
 	void Enter(Player& player) override;
@@ -49,4 +49,8 @@ private:
 	float moveValue_;   // 移動量
 	Vector3 startPos_;  // 開始座標
 	Vector3 targetPos_; // 目標座標
+
+	//--------- functions ----------------------------------------------------
+
+	void SetActionProgress();
 };

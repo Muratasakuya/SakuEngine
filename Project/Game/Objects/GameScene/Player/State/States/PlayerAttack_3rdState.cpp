@@ -3,6 +3,7 @@
 //============================================================================
 //	include
 //============================================================================
+#include <Engine/Editor/ActionProgress/ActionProgressMonitor.h>
 #include <Engine/Utility/Timer/GameTimer.h>
 #include <Engine/Utility/Enum/EnumAdapter.h>
 #include <Game/Camera/Follow/FollowCamera.h>
@@ -13,7 +14,10 @@
 //	PlayerAttack_3rdState classMethods
 //============================================================================
 
-PlayerAttack_3rdState::PlayerAttack_3rdState() {
+PlayerAttack_3rdState::PlayerAttack_3rdState(Player* player) {
+
+	player_ = nullptr;
+	player_ = player;
 
 	// debug
 	debugForward_.emplace(PlayerWeaponType::Left, Vector3::AnyInit(0.0f));
@@ -339,6 +343,8 @@ void PlayerAttack_3rdState::ApplyJson(const Json& data) {
 			param.offsetRotationY = data["Weapon"][key]["offsetRotationY"];
 		}
 	}
+
+	SetActionProgress();
 }
 
 void PlayerAttack_3rdState::SaveJson(Json& data) {
@@ -371,4 +377,71 @@ bool PlayerAttack_3rdState::GetCanExit() const {
 	// 経過時間が過ぎたら
 	bool canExit = exitTimer_ > exitTime_;
 	return canExit;
+}
+
+void PlayerAttack_3rdState::SetActionProgress() {
+
+	ActionProgressMonitor* monitor = ActionProgressMonitor::GetInstance();
+	int objectID = monitor->AddObject("PlayerAttack_3rdState");
+
+	// 全体進捗
+	monitor->AddOverall(objectID, "Attack Progress", [this]() -> float {
+
+		float progress = 0.0f;
+		if (player_->GetCurrentAnimationName() == "player_attack_3rd") {
+			progress = player_->GetAnimationProgress();
+		}
+		return progress; });
+
+	// 攻撃骨アニメーション
+	monitor->AddSpan(objectID, "Skinned Animation",
+		[]() { return 0.0f; },
+		[]() { return 1.0f; },
+		[this]() {
+
+			float progress = 0.0f;
+			if (player_->GetCurrentAnimationName() == "player_attack_3rd") {
+
+				progress = player_->GetAnimationProgress();
+			}
+			return progress; });
+
+	// 後ずさり剣投げ
+	monitor->AddSpan(objectID, "Back Move",
+		[]() { return 0.0f; },
+		[this]() {
+			float duration = player_->GetAnimationDuration("player_attack_3rd");
+			return backMoveTimer_.target_ / duration;
+		},
+		[this]() { return backMoveTimer_.t_; });
+
+	// 剣を取りに行く
+	monitor->AddSpan(objectID, "Catch Move",
+		[this]() {
+			float duration = player_->GetAnimationDuration("player_attack_3rd");
+			return backMoveTimer_.target_ / duration;
+		},
+		[this]() {
+			float duration = player_->GetAnimationDuration("player_attack_3rd");
+			float start = std::clamp(backMoveTimer_.target_ / duration, 0.0f, 1.0f);
+			float end = start + std::clamp(catchSwordTimer_.target_ / duration, 0.0f, 1.0f);
+			return std::clamp(end, 0.0f, 1.0f);
+		},
+		[this]() { return catchSwordTimer_.t_; });
+
+	// 武器移動
+	monitor->AddSpan(objectID, "LeftWeapon Move",
+		[]() { return 0.0f; },
+		[this]() {
+			float duration = player_->GetAnimationDuration("player_attack_3rd");
+			return weaponMoveTimer_.target_ / duration;
+		},
+		[this]() { return weaponParams_[PlayerWeaponType::Left].moveTimer.t_; });
+	monitor->AddSpan(objectID, "RightWeapon Move",
+		[]() { return 0.0f; },
+		[this]() {
+			float duration = player_->GetAnimationDuration("player_attack_3rd");
+			return weaponMoveTimer_.target_ / duration;
+		},
+		[this]() { return weaponParams_[PlayerWeaponType::Right].moveTimer.t_; });
 }

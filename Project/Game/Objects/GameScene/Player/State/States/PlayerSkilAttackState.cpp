@@ -3,6 +3,7 @@
 //============================================================================
 //	include
 //============================================================================
+#include <Engine/Editor/ActionProgress/ActionProgressMonitor.h>
 #include <Engine/Core/Graphics/Renderer/LineRenderer.h>
 #include <Engine/Utility/Timer/GameTimer.h>
 #include <Engine/Utility/Enum/EnumAdapter.h>
@@ -13,7 +14,10 @@
 //	PlayerSkilAttackState classMethods
 //============================================================================
 
-PlayerSkilAttackState::PlayerSkilAttackState() {
+PlayerSkilAttackState::PlayerSkilAttackState(Player* player) {
+
+	player_ = nullptr;
+	player_ = player;
 
 	rushMoveParam_.name = "RushMove";
 	returnMoveParam_.name = "ReturnMove";
@@ -363,6 +367,8 @@ void PlayerSkilAttackState::ApplyJson(const Json& data) {
 	lookEnemyTimer_.FromJson(data.value("LookEnemy", Json()));
 	lookStartProgress_ = data.value("lookStartProgress_", 0.8f);
 	jumpStrength_ = data.value("jumpStrength_", 0.8f);
+
+	SetActionProgress();
 }
 
 void PlayerSkilAttackState::SaveJson(Json& data) {
@@ -388,4 +394,51 @@ bool PlayerSkilAttackState::GetCanExit() const {
 	// 経過時間が過ぎたら
 	bool canExit = exitTimer_ > exitTime_;
 	return canExit;
+}
+
+void PlayerSkilAttackState::SetActionProgress() {
+
+	ActionProgressMonitor* monitor = ActionProgressMonitor::GetInstance();
+	int objectID = monitor->AddObject("PlayerSkilAttackState");
+
+	// 全体進捗
+	monitor->AddOverall(objectID, "Attack Progress", [this]() -> float {
+		return player_->GetAnimationProgress(); });
+
+	// RushState
+	monitor->AddSpan(objectID, "Rush Move",
+		[]() { return 0.0f; },
+		[this]() {
+			float duration = player_->GetAnimationDuration("player_skilAttack_1st");
+			return rushMoveParam_.timer.target_ / duration;
+		},
+		[this]() { return rushMoveParam_.timer.t_; });
+
+	// ReturnState
+	monitor->AddSpan(objectID, "Return Move",
+		[]() { return 0.0f; },
+		[this]() {
+			float duration = player_->GetAnimationDuration("player_skilAttack_2nd");
+			return returnMoveParam_.timer.target_ / duration;
+		},
+		[this]() { return returnMoveParam_.timer.t_; });
+
+	// BackJumpState
+	monitor->AddSpan(objectID, "Back Jump",
+		[]() { return 0.0f; },
+		[this]() {
+			float duration = player_->GetAnimationDuration("player_skilAttack_3rd");
+			return backJumpParam_.timer.target_ / duration;
+		},
+		[this]() { return backJumpParam_.timer.t_; });
+
+	// JumpAttackState
+	monitor->AddSpan(objectID, "Jump Move",
+		[]() { return 0.0f; },
+		[this]() {
+			float duration = player_->GetAnimationDuration("player_skilAttack_3rd");
+			return std::clamp(jumpMoveParam_.timer.target_ / duration, 0.0f, 1.0f);
+		},
+		[this]() { return jumpMoveParam_.timer.t_; });
+
 }

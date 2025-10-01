@@ -3,6 +3,7 @@
 //============================================================================
 //	include
 //============================================================================
+#include <Engine/Editor/ActionProgress/ActionProgressMonitor.h>
 #include <Engine/Core/Graphics/Renderer/LineRenderer.h>
 #include <Engine/Utility/Timer/GameTimer.h>
 #include <Game/Camera/Follow/FollowCamera.h>
@@ -12,6 +13,12 @@
 //============================================================================
 //	PlayerAttack_4thState classMethods
 //============================================================================
+
+PlayerAttack_4thState::PlayerAttack_4thState(Player* player) {
+
+	player_ = nullptr;
+	player_ = player;
+}
 
 void PlayerAttack_4thState::Enter(Player& player) {
 
@@ -87,6 +94,8 @@ void PlayerAttack_4thState::ApplyJson(const Json& data) {
 
 	moveTimer_.FromJson(data.value("MoveTimer", Json()));
 	moveValue_ = data.value("moveValue_", 1.0f);
+
+	SetActionProgress();
 }
 
 void PlayerAttack_4thState::SaveJson(Json& data) {
@@ -106,4 +115,39 @@ bool PlayerAttack_4thState::GetCanExit() const {
 	// 経過時間が過ぎたら
 	bool canExit = exitTimer_ > exitTime_;
 	return canExit;
+}
+
+void PlayerAttack_4thState::SetActionProgress() {
+
+	ActionProgressMonitor* monitor = ActionProgressMonitor::GetInstance();
+	int objectID = monitor->AddObject("PlayerAttack_4thState");
+
+	// 全体進捗
+	monitor->AddOverall(objectID, "Attack Progress", [this]() -> float {
+		float progress = 0.0f;
+		if (player_->GetCurrentAnimationName() == "player_attack_4th") {
+			progress = player_->GetAnimationProgress();
+		}
+		return progress; });
+
+	// 骨アニメーション（0→1 全域）
+	monitor->AddSpan(objectID, "Skinned Animation",
+		[]() { return 0.0f; },
+		[]() { return 1.0f; },
+		[this]() {
+			float progress = 0.0f;
+			if (player_->GetCurrentAnimationName() == "player_attack_4th") {
+
+				progress = player_->GetAnimationProgress();
+			}
+			return progress; });
+
+	// 移動アニメーション
+	monitor->AddSpan(objectID, "Move Animation",
+		[]() { return 0.0f; },
+		[this]() {
+			float duration = player_->GetAnimationDuration("player_attack_4th");
+			return moveTimer_.target_ / duration;
+		},
+		[this]() { return moveTimer_.t_; });
 }
