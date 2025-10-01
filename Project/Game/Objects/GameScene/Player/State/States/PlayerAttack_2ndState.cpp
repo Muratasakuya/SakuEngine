@@ -54,7 +54,7 @@ void PlayerAttack_2ndState::Update(Player& player) {
 
 	// 区間補間処理
 	const bool finished = LerpAlongSegments(player);
-	if (!finished) { 
+	if (!finished) {
 		return;
 	}
 
@@ -109,8 +109,7 @@ void PlayerAttack_2ndState::CalcWayPoints(const Player& player, std::array<Vecto
 
 	// 補間先を設定する
 	CalcWayPointsToTarget(startTranslation_, *targetTranslation_,
-		leftPointAngle_, rightPointAngle_, swayLength,
-		dstWayPoints);
+		leftPointAngle_, rightPointAngle_, swayLength, dstWayPoints);
 }
 
 void PlayerAttack_2ndState::CalcWayPointsToTarget(const Vector3& start, const Vector3& target,
