@@ -728,6 +728,9 @@
     <ClCompile Include="Engine\Object\Data\SkinnedAnimation.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Editor\ActionProgress\ActionProgressMonitor.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Asset\AnimationManager.h" />
@@ -1012,6 +1015,7 @@
     <ClInclude Include="Engine\Object\Data\MeshRender.h" />
     <ClInclude Include="Engine\Object\Data\MeshRenderStructure.h" />
     <ClInclude Include="Engine\Object\Data\SkinnedAnimation.h" />
+    <ClInclude Include="Engine\Editor\ActionProgress\ActionProgressMonitor.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Engine\Shaders\PostProcess\Copy\CopyTexture.CS.hlsl" />

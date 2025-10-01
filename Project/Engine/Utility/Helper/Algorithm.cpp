@@ -52,3 +52,8 @@ int Algorithm::LerpInt(int a, int b, float t) {
 	// 四捨五入して返す
 	return static_cast<int>(std::lround(v));
 }
+
+float Algorithm::Clamp(float value) {
+
+	return value < 0.0f ? 0.0f : (value > 1.0f ? 1.0f : value);
+}

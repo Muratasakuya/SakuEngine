@@ -15,7 +15,7 @@ public:
 	//	public Methods
 	//========================================================================
 
-	PlayerAttack_1stState();
+	PlayerAttack_1stState(Player* player);
 	~PlayerAttack_1stState() = default;
 
 	void Enter(Player& player) override;
