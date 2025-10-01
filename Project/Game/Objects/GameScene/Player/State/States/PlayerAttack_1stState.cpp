@@ -96,19 +96,31 @@ void PlayerAttack_1stState::ApplyJson(const Json& data) {
 
 	// 全体進捗
 	monitor->AddOverall(objectID, "Attack Progress", [this]() -> float {
-		float progress = player_->GetAnimationProgress();
-		return std::clamp(progress, 0.0f, 1.0f); });
+
+		float progress = 0.0f;
+		if (player_->GetCurrentAnimationName() == "player_attack_1st") {
+
+			progress = player_->GetAnimationProgress();
+		}
+		return progress; });
 
 	// 攻撃骨アニメーション
 	monitor->AddSpan(objectID, "Skinned Animation",
 		[]() { return 0.0f; },
 		[]() { return 1.0f; },
-		[this]() { return player_->GetAnimationProgress(); });
+		[this]() {
+
+			float progress = 0.0f;
+			if (player_->GetCurrentAnimationName() == "player_attack_1st") {
+
+				progress = player_->GetAnimationProgress();
+			}
+			return progress; });
 	// 移動アニメーション
 	monitor->AddSpan(objectID, "Move Animation",
 		[]() { return 0.0f; },
 		[this]() {
-			float duration = player_->GetAnimationDuration(player_->GetCurrentAnimationName());
+			float duration = player_->GetAnimationDuration("player_attack_1st");
 			return this->moveTimer_.target_ / duration;
 		},
 		[this]() {
