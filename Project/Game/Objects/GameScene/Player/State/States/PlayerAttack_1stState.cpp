@@ -91,41 +91,29 @@ void PlayerAttack_1stState::ApplyJson(const Json& data) {
 	moveTimer_.FromJson(data.value("MoveTimer", Json()));
 	moveValue_ = data.value("moveValue_", 1.0f);
 
-	ActionProgressMonitor* mon = ActionProgressMonitor::GetInstance();
-	int obj = mon->AddObject("PlayerAttack_1stState"); // 一度だけ呼ぶガードは各自の設計で
+	ActionProgressMonitor* monitor = ActionProgressMonitor::GetInstance();
+	int objectID = monitor->AddObject("PlayerAttack_1stState");
 
-	// Overall（全体）
-	mon->AddOverall(obj, "Attack Progress", [this]() -> float {
-		float p = player_->GetAnimationProgress();
-		if (player_->IsAnimationFinished()) p = 1.0f;
-		return std::clamp(p, 0.0f, 1.0f);
-		});
+	// 全体進捗
+	monitor->AddOverall(objectID, "Attack Progress", [this]() -> float {
+		float progress = player_->GetAnimationProgress();
+		return std::clamp(progress, 0.0f, 1.0f); });
 
-	// Span: Anim Progress (raw) … 0→1 全域
-	mon->AddSpan(obj, "Anim Progress (raw)",
-		[]() { return 0.0f; }, []() { return 1.0f; },
-		[this]() { return std::clamp(player_->GetAnimationProgress(), 0.0f, 1.0f); }
-	);
-
-	// Span: MoveTimer … 0→(target/duration)
-	mon->AddSpan(obj, "MoveTimer",
-		// start
+	// 攻撃骨アニメーション
+	monitor->AddSpan(objectID, "Skinned Animation",
 		[]() { return 0.0f; },
-		// end: target / duration
+		[]() { return 1.0f; },
+		[this]() { return player_->GetAnimationProgress(); });
+	// 移動アニメーション
+	monitor->AddSpan(objectID, "Move Animation",
+		[]() { return 0.0f; },
 		[this]() {
-			const std::string& name = player_->GetCurrentAnimationName();
-			float duration = player_->GetAnimationDuration(name);
-			if (duration <= 0.0f) return 0.0f;
-			return std::clamp(this->moveTimer_.target_ / duration, 0.0f, 1.0f);
+			float duration = player_->GetAnimationDuration(player_->GetCurrentAnimationName());
+			return this->moveTimer_.target_ / duration;
 		},
-		// local: 区間内進捗 = current / target（target>0）
 		[this]() {
-			float tgt = (std::max)(0.0f, this->moveTimer_.target_);
-			if (tgt <= 0.0f) return 0.0f;
-			float v = this->moveTimer_.current_ / tgt;
-			return std::clamp(v, 0.0f, 1.0f);
-		}
-	);
+			return moveTimer_.t_;
+		});
 }
 
 void PlayerAttack_1stState::SaveJson(Json& data) {
