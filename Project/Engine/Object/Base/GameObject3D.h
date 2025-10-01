@@ -7,7 +7,7 @@
 #include <Engine/Collision/Collider.h>
 
 // data
-#include <Engine/Object/Data/Animation.h>
+#include <Engine/Object/Data/SkinnedAnimation.h>
 #include <Engine/Object/Data/MeshRender.h>
 
 //============================================================================

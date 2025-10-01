@@ -354,10 +354,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       </SubType>
     </ClCompile>
     <ClCompile Include="Engine\Object\Core\ObjectPoolManager.cpp" />
-    <ClCompile Include="Engine\Object\Data\Animation.cpp">
-      <SubType>
-      </SubType>
-    </ClCompile>
     <ClCompile Include="Engine\Collision\CollisionBody.cpp">
       <SubType>
       </SubType>
@@ -374,6 +370,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <SubType>
       </SubType>
     </ClCompile>
+    <ClCompile Include="Engine\Object\Data\SkinnedAnimation.cpp" />
     <ClCompile Include="Engine\Object\Data\Skybox.cpp">
       <SubType>
       </SubType>
@@ -1202,10 +1199,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Engine\Object\Data\Animation.h">
-      <SubType>
-      </SubType>
-    </ClInclude>
     <ClInclude Include="Engine\Collision\CollisionBody.h">
       <SubType>
       </SubType>
@@ -1226,6 +1219,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="Engine\Object\Data\SkinnedAnimation.h" />
     <ClInclude Include="Engine\Object\Data\Skybox.h">
       <SubType>
       </SubType>

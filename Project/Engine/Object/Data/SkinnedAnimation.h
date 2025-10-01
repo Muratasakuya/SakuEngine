@@ -9,7 +9,7 @@
 #include <execution>
 #include <ranges> 
 
-// front
+// front 
 class Asset;
 
 //============================================================================
@@ -58,6 +58,8 @@ public:
 	bool IsEventKey(const std::string& keyEvent, uint32_t frameIndex);
 	float GetAnimationDuration(const std::string& animationName) const;
 	float GetPlaybackSpeed() const { return playbackSpeed_; }
+	float GetProgress() const { return animationProgress_; }
+	float GetCurrentAnimTime() const { return currentAnimationTimer_; }
 
 	const std::string& GetCurrentAnimationName() const { return currentAnimationName_; }
 	const std::vector<WellForGPU>& GetWellForGPU() const { return skinCluster_.mappedPalette; }

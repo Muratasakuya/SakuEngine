@@ -10,7 +10,7 @@
 // data
 #include <Engine/Object/Data/Transform.h>
 #include <Engine/Object/Data/Material.h>
-#include <Engine/Object/Data/Animation.h>
+#include <Engine/Object/Data/SkinnedAnimation.h>
 #include <Engine/Object/Data/ObjectTag.h>
 #include <Engine/Object/Data/MeshRender.h>
 // systems

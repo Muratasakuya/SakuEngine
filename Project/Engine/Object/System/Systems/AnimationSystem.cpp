@@ -4,7 +4,7 @@
 //	include
 //============================================================================
 #include <Engine/Object/Core/ObjectPoolManager.h>
-#include <Engine/Object/Data/Animation.h>
+#include <Engine/Object/Data/SkinnedAnimation.h>
 
 //============================================================================
 //	AnimationSystem classMethods
