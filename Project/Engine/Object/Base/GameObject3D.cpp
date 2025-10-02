@@ -209,6 +209,12 @@ Vector3 GameObject3D::GetJointWorldPos(const std::string& jointName) const {
 	return world.GetTranslationValue();
 }
 
+float GameObject3D::GetEventTime(const std::string& animName,
+	const std::string& keyEvent, uint32_t frameIndex) const {
+
+	return animation_->GetEventTime(animName, keyEvent, frameIndex);
+}
+
 void GameObject3D::SetParent(const Transform3D& parent, bool isNull) {
 
 	if (isNull) {

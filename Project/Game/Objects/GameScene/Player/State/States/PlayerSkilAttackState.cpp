@@ -403,7 +403,13 @@ void PlayerSkilAttackState::SetActionProgress() {
 
 	// 全体進捗
 	monitor->AddOverall(objectID, "Attack Progress", [this]() -> float {
-		return player_->GetAnimationProgress(); });
+		float progress = 0.0f;
+		if (player_->GetCurrentAnimationName() == "player_skilAttack_1st" ||
+			player_->GetCurrentAnimationName() == "player_skilAttack_2nd" ||
+			player_->GetCurrentAnimationName() == "player_skilAttack_3rd") {
+			progress = player_->GetAnimationProgress();
+		}
+		return progress; });
 
 	// RushState
 	monitor->AddSpan(objectID, "Rush Move",
@@ -434,11 +440,15 @@ void PlayerSkilAttackState::SetActionProgress() {
 
 	// JumpAttackState
 	monitor->AddSpan(objectID, "Jump Move",
-		[]() { return 0.0f; },
 		[this]() {
 			float duration = player_->GetAnimationDuration("player_skilAttack_3rd");
-			return std::clamp(jumpMoveParam_.timer.target_ / duration, 0.0f, 1.0f);
+			return backJumpParam_.timer.target_ / duration;
+		},
+		[this]() {
+			float duration = player_->GetAnimationDuration("player_skilAttack_3rd");
+			float start = std::clamp(backJumpParam_.timer.target_ / duration, 0.0f, 1.0f);
+			float end = start + std::clamp(jumpMoveParam_.timer.target_ / duration, 0.0f, 1.0f);
+			return end;
 		},
 		[this]() { return jumpMoveParam_.timer.t_; });
-
 }

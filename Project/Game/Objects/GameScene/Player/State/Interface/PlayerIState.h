@@ -78,4 +78,5 @@ protected:
 
 	// helper
 	void SetRotateToDirection(Player& player, const Vector3& move);
+
 };

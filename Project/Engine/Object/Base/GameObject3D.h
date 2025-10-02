@@ -80,6 +80,7 @@ public:
 	float GetAnimationDuration(const std::string& animationName) const { return animation_->GetAnimationDuration(animationName); }
 	float GetAnimationProgress() const { return animation_->GetProgress(); }
 	bool IsEventKey(const std::string& keyEvent, uint32_t frameIndex) { return animation_->IsEventKey(keyEvent, frameIndex); }
+	float GetEventTime(const std::string& animName, const std::string& keyEvent, uint32_t frameIndex) const;
 	float GetPlaybackSpeed() const { return animation_->GetPlaybackSpeed(); }
 	const std::string& GetCurrentAnimationName() const { return animation_->GetCurrentAnimationName(); }
 

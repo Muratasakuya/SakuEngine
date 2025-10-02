@@ -236,12 +236,13 @@ void ActionProgressMonitor::ImGui() {
 						const float posX = rowOrigin.x + fullWidth * start;
 
 						// 進捗名
-						ImGui::SetCursorScreenPos(ImVec2(posX, rowY));
+						ImGui::SetCursorScreenPos(ImVec2(rowOrigin.x, rowY));
 						ImGui::Text("ProgressName: %s [%.2f -> %.2f] local: %5.1f%%",
 							metric.name.c_str(), start, end, localShown * 100.0f);
 						// 進捗率
 						ImGui::SetCursorScreenPos(ImVec2(posX, rowY + labelHeight));
 						ImGui::ProgressBar(localShown, ImVec2(fullWidth * width, bigHeight), "");
+						ImGui::Separator();
 						++row;
 					}
 					ImGui::SetWindowFontScale(1.0f);
