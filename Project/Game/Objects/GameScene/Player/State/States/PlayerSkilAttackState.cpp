@@ -399,7 +399,7 @@ bool PlayerSkilAttackState::GetCanExit() const {
 void PlayerSkilAttackState::SetActionProgress() {
 
 	ActionProgressMonitor* monitor = ActionProgressMonitor::GetInstance();
-	const int objectID = monitor->AddObject("PlayerSkilAttackState");
+	int objectID = PlayerBaseAttackState::AddActionObject("PlayerSkilAttackState");
 
 	// それぞれの処理の目標時間
 	const float target1 = (std::max)(0.0f, rushMoveParam_.timer.target_);

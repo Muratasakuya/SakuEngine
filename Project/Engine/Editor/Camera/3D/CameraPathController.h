@@ -32,11 +32,23 @@ public:
 		bool isActive = false;
 		PreviewMode mode = PreviewMode::Keyframe;
 
-		bool isLoop = false;    // ループ再生
-		float time;             // 現在の時間
+		bool isLoop = false; // ループ再生
+		float time;          // 現在の時間
 
 		// 現在のキーフレーム
 		int selectedKeyIndex = 0;
+	};
+
+	// 同期オブジェクト
+	struct ActionSynchBind {
+
+		std::string objectName;
+		std::string spanName;
+
+		// 同期の仕方
+		// true:  カメラ->状態
+		// false: 状態->カメラ
+		bool driveStateFromCamera = true;
 	};
 public:
 	//========================================================================

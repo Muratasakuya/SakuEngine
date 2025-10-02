@@ -5,7 +5,6 @@
 //============================================================================
 #include <Engine/Object/Core/ObjectManager.h>
 #include <Engine/Editor/GameObject/ImGuiObjectEditor.h>
-#include <Engine/Editor/Camera/3D/Camera3DEditor.h>
 
 //============================================================================
 //	GameObject3D classMethods
@@ -160,14 +159,6 @@ void GameObject3D::AnimationImGui() {
 	}
 
 	animation_->ImGui(itemWidth_);
-}
-
-void GameObject3D::AddCameraEditSubject() {
-
-	if (animation_) {
-
-		Camera3DEditor::GetInstance()->AddAnimation(tag_->name, animation_);
-	}
 }
 
 void GameObject3D::SetNextAnimation(const std::string& nextAnimationName,

@@ -30,11 +30,25 @@ public:
 
 	//--------- accessor -----------------------------------------------------
 
+	void SetSpanSetter(int objectID, const std::string& spanName,
+		std::function<void(float)> setter);
+
 	void SetSelectedObject(int index);
 	void SetSelectedMetric(int index);
 
 	// 選択中のオブジェクト進捗度
 	std::optional<float> GetSelectedValue() const;
+	// 名前からIDの取得
+	int FindObjectID(const std::string& name) const;
+	bool DriveSpanByGlobalT(int objectId, const std::string& spanName, float globalT);
+
+	// IDから補間値を取得する
+	bool GetSpanStart(int objectID, const std::string& spanName, float* outStart) const;
+	bool GetSpanEnd(int objectID, const std::string& spanName, float* outEnd) const;
+	bool GetSpanLocal(int objectID, const std::string& spanName, float* outLocal) const;
+	// 進捗名
+	std::vector<std::string> GetOverallNames(int objectID) const;
+	std::vector<std::string> GetSpanNames(int objectID) const;
 
 	// singleton
 	static ActionProgressMonitor* GetInstance();
@@ -51,6 +65,28 @@ private:
 
 		Overall, // 全体
 		Span     // 個別
+	};
+
+	// 進捗ハンドル
+	struct SpanHandle {
+
+		// 処理補間値の取得
+		std::function<float()> getStart;
+		std::function<float()> getEnd;
+		std::function<float()> getT;
+
+		// 処理補間値の設定
+		std::function<void(float)> setT;
+	};
+	struct SpanKey {
+
+		int objectID;
+		std::string name;
+		bool operator==(const SpanKey& hash) const;
+	};
+	struct SpanKeyHash {
+
+		size_t operator()(const SpanKey& key) const noexcept;
 	};
 
 	// 進捗ごとの経路
@@ -77,6 +113,8 @@ private:
 
 	// 進捗を保持するオブジェクト
 	std::vector<Object> objects_;
+	// 各進捗ごとのハンドル
+	std::unordered_map<SpanKey, SpanHandle, SpanKeyHash> spans_;
 
 	// エディター
 	int selectedObject_ = -1;

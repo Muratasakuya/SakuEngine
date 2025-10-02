@@ -68,7 +68,6 @@ public:
 	void SetMeshRenderView(MeshRenderView renderView) { meshRender_->renderView = renderView; }
 
 	// animation
-	void AddCameraEditSubject();
 	void SetNextAnimation(const std::string& nextAnimationName, bool loopAnimation, float transitionDuration);
 	void SetDebugViewBone(bool enable) { animation_->SetDebugViewBone(enable); }
 	void SetPlaybackSpeed(float playbackSpeed) { animation_->SetPlaybackSpeed(playbackSpeed); }

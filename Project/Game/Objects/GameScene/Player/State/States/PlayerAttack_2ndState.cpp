@@ -273,7 +273,7 @@ bool PlayerAttack_2ndState::GetCanExit() const {
 void PlayerAttack_2ndState::SetActionProgress() {
 
 	ActionProgressMonitor* monitor = ActionProgressMonitor::GetInstance();
-	int objectID = monitor->AddObject("PlayerAttack_2ndState");
+	int objectID = PlayerBaseAttackState::AddActionObject("PlayerAttack_2ndState");
 
 	// 全体進捗
 	monitor->AddOverall(objectID, "Attack Progress", [this]() -> float {

@@ -73,7 +73,32 @@ int ActionProgressMonitor::AddSpan(int objectIndex, const std::string& name,
 	metric.end = std::move(endGetter);
 	metric.local = std::move(localGetter);
 	object.metrics.emplace_back(std::move(metric));
+
+	// 同期用データに登録
+	SpanKey key{ objectIndex, name };
+	SpanHandle handle;
+	handle.getStart = object.metrics.back().start;
+	handle.getEnd = object.metrics.back().end;
+	handle.getT = object.metrics.back().local;
+	spans_[key] = std::move(handle);
+
 	return static_cast<int>(object.metrics.size() - 1);
+}
+
+void ActionProgressMonitor::SetSpanSetter(int objectID,
+	const std::string& spanName, std::function<void(float)> setter) {
+
+	SpanKey key{ objectID, spanName };
+	auto it = spans_.find(key);
+	if (it == spans_.end()) {
+
+		SpanHandle handle;
+		handle.setT = std::move(setter);
+		spans_.emplace(key, std::move(handle));
+	} else {
+
+		it->second.setT = std::move(setter);
+	}
 }
 
 void ActionProgressMonitor::SetSelectedObject(int index) {
@@ -112,6 +137,99 @@ bool ActionProgressMonitor::IsValidMetric(int index) const {
 		return false;
 	}
 	return (0 <= index) && (index < static_cast<int>(objects_[selectedObject_].metrics.size()));
+}
+
+int ActionProgressMonitor::FindObjectID(const std::string& name) const {
+
+	for (int i = 0; i < static_cast<int>(objects_.size()); ++i) {
+		if (objects_[i].name == name) {
+			return i;
+		}
+	}
+	return -1;
+}
+
+bool ActionProgressMonitor::DriveSpanByGlobalT(int objectId,
+	const std::string& spanName, float globalT) {
+
+	SpanKey key{ objectId, spanName };
+	auto it = spans_.find(key);
+	if (it == spans_.end() || !it->second.setT) {
+		return false;
+	}
+	const float start = it->second.getStart();
+	const float end = it->second.getEnd();
+
+	// 進捗のワールド値
+	const float world = (std::max)(end - start, 1e-6f);
+	// 進捗のローカル値
+	const float local = std::clamp((globalT - start) / world, 0.0f, 1.0f);
+	it->second.setT(local);
+	return true;
+}
+
+bool ActionProgressMonitor::GetSpanStart(int objectID,
+	const std::string& spanName, float* outStart) const {
+
+	SpanKey key{ objectID, spanName };
+	auto it = spans_.find(key);
+	if (it == spans_.end() || !it->second.getStart || !outStart) {
+		return false;
+	}
+	*outStart = it->second.getStart();
+	return true;
+}
+
+bool ActionProgressMonitor::GetSpanEnd(int objectID,
+	const std::string& spanName, float* outEnd) const {
+
+	SpanKey key{ objectID, spanName };
+	auto it = spans_.find(key);
+	if (it == spans_.end() || !it->second.getEnd || !outEnd) {
+		return false;
+	}
+	*outEnd = it->second.getEnd();
+	return true;
+}
+
+bool ActionProgressMonitor::GetSpanLocal(int objectID,
+	const std::string& spanName, float* outLocal) const {
+
+	SpanKey key{ objectID, spanName };
+	auto it = spans_.find(key);
+	if (it == spans_.end() || !it->second.getT || !outLocal) {
+		return false;
+	}
+	*outLocal = it->second.getT();
+	return true;
+}
+
+std::vector<std::string> ActionProgressMonitor::GetOverallNames(int objectID) const {
+
+	std::vector<std::string> names;
+	if (!IsValidObject(objectID)) {
+		return names;
+	}
+	for (auto& metric : objects_[objectID].metrics) {
+		if (metric.kind == MetricKind::Overall) {
+			names.push_back(metric.name);
+		}
+	}
+	return names;
+}
+
+std::vector<std::string> ActionProgressMonitor::GetSpanNames(int objectID) const {
+
+	std::vector<std::string> names;
+	if (!IsValidObject(objectID)) {
+		return names;
+	}
+	for (auto& metric : objects_[objectID].metrics) {
+		if (metric.kind == MetricKind::Span) {
+			names.push_back(metric.name);
+		}
+	}
+	return names;
 }
 
 void ActionProgressMonitor::ImGui() {
@@ -251,4 +369,14 @@ void ActionProgressMonitor::ImGui() {
 		}
 		ImGuiHelper::EndFramedChild();
 	}
+}
+
+bool ActionProgressMonitor::SpanKey::operator==(const SpanKey& hash) const {
+
+	return objectID == hash.objectID && name == hash.name;
+}
+
+size_t ActionProgressMonitor::SpanKeyHash::operator()(const SpanKey& key) const noexcept {
+
+	return std::hash<int>()(key.objectID) ^ (std::hash<std::string>()(key.name) << 1);
 }

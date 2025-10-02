@@ -53,4 +53,5 @@ private:
 	//--------- functions ----------------------------------------------------
 
 	void SetActionProgress();
+	void SetSpanUpdate(int objectID);
 };

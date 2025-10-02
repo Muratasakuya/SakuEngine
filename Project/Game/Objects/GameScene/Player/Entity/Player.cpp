@@ -66,9 +66,6 @@ void Player::InitAnimations() {
 	// アニメーションに合わせて発生させるエフェクト
 	animationEffect_ = std::make_unique<PlayerAnimationEffect>();
 	animationEffect_->Init(*this);
-
-	// カメラエディターに追加
-	GameObject3D::AddCameraEditSubject();
 }
 
 void Player::InitCollision() {
