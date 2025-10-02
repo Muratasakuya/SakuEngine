@@ -60,6 +60,7 @@ public:
 	float GetPlaybackSpeed() const { return playbackSpeed_; }
 	float GetProgress() const { return animationProgress_; }
 	float GetCurrentAnimTime() const { return currentAnimationTimer_; }
+	float GetEventTime(const std::string& animName, const std::string& keyEvent, uint32_t frameIndex) const;
 
 	const std::string& GetCurrentAnimationName() const { return currentAnimationName_; }
 	const std::vector<WellForGPU>& GetWellForGPU() const { return skinCluster_.mappedPalette; }

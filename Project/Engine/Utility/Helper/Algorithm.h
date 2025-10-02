@@ -103,4 +103,7 @@ namespace Algorithm {
 		return start + (end - start) * t;
 	}
 	int LerpInt(int a, int b, float t);
+
+	// 値制御
+	float Clamp(float value);
 }

@@ -209,6 +209,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <SubType>
       </SubType>
     </ClCompile>
+    <ClCompile Include="Engine\Editor\ActionProgress\ActionProgressMonitor.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="Engine\Editor\Camera\3D\Camera3DEditorPanel.cpp">
       <SubType>
       </SubType>
@@ -1003,6 +1007,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="Engine\Editor\ActionProgress\ActionProgressMonitor.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="Engine\Editor\Camera\3D\Camera3DEditorPanel.h">
       <SubType>
       </SubType>
@@ -1482,6 +1490,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       </SubType>
     </ClInclude>
     <ClInclude Include="Engine\Scene\Camera\DebugCamera.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Engine\Utility\Object\ObjectMode.h">
       <SubType>
       </SubType>
     </ClInclude>

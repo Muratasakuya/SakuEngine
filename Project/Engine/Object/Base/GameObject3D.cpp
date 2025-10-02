@@ -5,7 +5,6 @@
 //============================================================================
 #include <Engine/Object/Core/ObjectManager.h>
 #include <Engine/Editor/GameObject/ImGuiObjectEditor.h>
-#include <Engine/Editor/Camera/3D/Camera3DEditor.h>
 
 //============================================================================
 //	GameObject3D classMethods
@@ -162,14 +161,6 @@ void GameObject3D::AnimationImGui() {
 	animation_->ImGui(itemWidth_);
 }
 
-void GameObject3D::AddCameraEditSubject() {
-
-	if (animation_) {
-
-		Camera3DEditor::GetInstance()->AddAnimation(tag_->name, animation_);
-	}
-}
-
 void GameObject3D::SetNextAnimation(const std::string& nextAnimationName,
 	bool loopAnimation, float transitionDuration) {
 
@@ -207,6 +198,12 @@ Vector3 GameObject3D::GetJointWorldPos(const std::string& jointName) const {
 
 	// 平行移動成分でワールド座標を返す
 	return world.GetTranslationValue();
+}
+
+float GameObject3D::GetEventTime(const std::string& animName,
+	const std::string& keyEvent, uint32_t frameIndex) const {
+
+	return animation_->GetEventTime(animName, keyEvent, frameIndex);
 }
 
 void GameObject3D::SetParent(const Transform3D& parent, bool isNull) {

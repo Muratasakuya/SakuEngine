@@ -68,7 +68,6 @@ public:
 	void SetMeshRenderView(MeshRenderView renderView) { meshRender_->renderView = renderView; }
 
 	// animation
-	void AddCameraEditSubject();
 	void SetNextAnimation(const std::string& nextAnimationName, bool loopAnimation, float transitionDuration);
 	void SetDebugViewBone(bool enable) { animation_->SetDebugViewBone(enable); }
 	void SetPlaybackSpeed(float playbackSpeed) { animation_->SetPlaybackSpeed(playbackSpeed); }
@@ -78,7 +77,9 @@ public:
 	bool IsAnimationFinished() const { return animation_->IsAnimationFinished(); }
 	int GetAnimationRepeatCount() const { return animation_->GetRepeatCount(); }
 	float GetAnimationDuration(const std::string& animationName) const { return animation_->GetAnimationDuration(animationName); }
+	float GetAnimationProgress() const { return animation_->GetProgress(); }
 	bool IsEventKey(const std::string& keyEvent, uint32_t frameIndex) { return animation_->IsEventKey(keyEvent, frameIndex); }
+	float GetEventTime(const std::string& animName, const std::string& keyEvent, uint32_t frameIndex) const;
 	float GetPlaybackSpeed() const { return animation_->GetPlaybackSpeed(); }
 	const std::string& GetCurrentAnimationName() const { return animation_->GetCurrentAnimationName(); }
 

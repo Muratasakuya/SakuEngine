@@ -15,7 +15,7 @@ public:
 	//	public Methods
 	//========================================================================
 
-	PlayerSkilAttackState();
+	PlayerSkilAttackState(Player* player);
 	~PlayerSkilAttackState() = default;
 
 	void Enter(Player& player) override;
@@ -115,4 +115,6 @@ private:
 	void UpdateRush(Player& player);
 	void UpdateReturn(Player& player);
 	void UpdateJumpAttack(Player& player);
+
+	void SetActionProgress();
 };

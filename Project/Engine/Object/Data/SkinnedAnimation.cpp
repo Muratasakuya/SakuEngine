@@ -1,4 +1,4 @@
-#include "Animation.h"
+#include "SkinnedAnimation.h"
 
 //============================================================================
 //	include
@@ -610,6 +610,28 @@ float SkinnedAnimation::GetAnimationDuration(const std::string& animationName) c
 	// animationの再生時間を取得
 	float duration = animationData_.at(animationName).duration;
 	return duration;
+}
+
+float SkinnedAnimation::GetEventTime(const std::string& animName,
+	const std::string& keyEvent, uint32_t frameIndex) const {
+
+	// 対象アニメーションのイベント表
+	auto animIt = eventKeyTables_.find(animName);
+	if (animIt == eventKeyTables_.end()) {
+		return 0.0f;
+	}
+
+	// 種類ごとの配列
+	const auto& kindMap = animIt->second;
+	auto kindIt = kindMap.find(keyEvent);
+	if (kindIt == kindMap.end()) {
+		return 0.0f;
+	}
+
+	const auto& frames = kindIt->second;
+	constexpr float kFps = 24.0f;
+	float time = static_cast<float>(frames[frameIndex]) / kFps;
+	return time;
 }
 
 std::vector<std::string> SkinnedAnimation::GetAnimationNames() const {

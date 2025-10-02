@@ -3,6 +3,7 @@
 //============================================================================
 //	include
 //============================================================================
+#include <Engine/Editor/ActionProgress/ActionProgressMonitor.h>
 #include <Engine/Utility/Timer/GameTimer.h>
 #include <Game/Objects/GameScene/Enemy/Boss/Entity/BossEnemy.h>
 #include <Game/Objects/GameScene/Player/Entity/Player.h>
@@ -11,7 +12,10 @@
 //	PlayerAttack_1stState classMethods
 //============================================================================
 
-PlayerAttack_1stState::PlayerAttack_1stState() {
+PlayerAttack_1stState::PlayerAttack_1stState(Player* player) {
+
+	player_ = nullptr;
+	player_ = player;
 }
 
 void PlayerAttack_1stState::Enter(Player& player) {
@@ -86,6 +90,8 @@ void PlayerAttack_1stState::ApplyJson(const Json& data) {
 
 	moveTimer_.FromJson(data.value("MoveTimer", Json()));
 	moveValue_ = data.value("moveValue_", 1.0f);
+
+	SetActionProgress();
 }
 
 void PlayerAttack_1stState::SaveJson(Json& data) {
@@ -105,4 +111,63 @@ bool PlayerAttack_1stState::GetCanExit() const {
 	// 経過時間が過ぎたら
 	bool canExit = exitTimer_ > exitTime_;
 	return canExit;
+}
+
+void PlayerAttack_1stState::SetActionProgress() {
+
+	ActionProgressMonitor* monitor = ActionProgressMonitor::GetInstance();
+	int objectID = PlayerBaseAttackState::AddActionObject("PlayerAttack_1stState");
+
+	// 全体進捗
+	monitor->AddOverall(objectID, "Attack Progress", [this]() -> float {
+		float progress = 0.0f;
+		if (player_->GetCurrentAnimationName() == "player_attack_1st") {
+			progress = player_->GetAnimationProgress();
+		}
+		return progress; });
+
+	// 攻撃骨アニメーション
+	monitor->AddSpan(objectID, "Skinned Animation",
+		[]() { return 0.0f; },
+		[]() { return 1.0f; },
+		[this]() {
+			float progress = 0.0f;
+			if (player_->GetCurrentAnimationName() == "player_attack_1st") {
+
+				progress = player_->GetAnimationProgress();
+			}
+			return progress; });
+	// 移動アニメーション
+	monitor->AddSpan(objectID, "Move Animation",
+		[]() { return 0.0f; },
+		[this]() {
+			float duration = player_->GetAnimationDuration("player_attack_1st");
+			return this->moveTimer_.target_ / duration;
+		},
+		[this]() {
+			return moveTimer_.t_;
+		});
+}
+
+void PlayerAttack_1stState::SetSpanUpdate(int objectID) {
+
+	ActionProgressMonitor* monitor = ActionProgressMonitor::GetInstance();
+
+	// 攻撃骨アニメーション
+	monitor->SetSpanSetter(objectID, "Skinned Animation", [this](float t) {
+
+		const float duration = player_->GetAnimationDuration("player_attack_1st");
+		t;
+		duration;
+		// アニメーションの時間を設定
+		//SetPlayerAnimationTimeSeconds(duration * std::clamp(t, 0.0f, 1.0f));
+		});
+
+	// 移動アニメーション
+	monitor->SetSpanSetter(objectID, "Move Animation", [this](float t) {
+
+		// 補間値を設定
+		moveTimer_.t_ = std::clamp(t, 0.0f, 1.0f);
+		moveTimer_.easedT_ = EasedValue(moveTimer_.easeingType_,moveTimer_.t_);
+		});
 }

@@ -61,4 +61,5 @@ protected:
 
 	// debug
 	void DrawAttackOffset(const Player& player);
+	int AddActionObject(const std::string& name);
 };

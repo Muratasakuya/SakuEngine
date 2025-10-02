@@ -21,9 +21,10 @@ public:
 	Camera3DEditorPanel() = default;
 	~Camera3DEditorPanel() = default;
 
+	// 全てのエディターUIの呼び出し
 	void Edit(std::unordered_map<std::string, CameraPathData>& params,
-		std::unordered_map<std::string, const SkinnedAnimation*>& skinnedAnimations,
-		std::string& selectedSkinnedKey, std::string& selectedAnimName,
+		std::unordered_map<std::string, CameraPathController::ActionSynchBind>& actionBinds,
+		std::string& selectedObjectKey, std::string& selectedActionName,
 		std::string& selectedParamKey, int& selectedKeyIndex,
 		JsonSaveState& paramSaveState, char lastLoaded[128],
 		CameraPathController::PlaybackState& playbackCamera);
@@ -34,22 +35,34 @@ private:
 
 	//--------- functions ----------------------------------------------------
 
-	void SelectAnimationSubject(std::unordered_map<std::string, const SkinnedAnimation*>& skinnedAnimations,
-		std::string& selectedSkinnedKey, std::string& selectedAnimName);
+	// オブジェクト選択
+	void SelectActionSubject(std::unordered_map<std::string, CameraPathController::ActionSynchBind>& actionBinds,
+		std::string& selectedObjectKey, std::string& selectedActionName);
+	// 値調整データ追加
 	void AddCameraParam(std::unordered_map<std::string, CameraPathData>& params,
-		std::string& selectedAnimName);
+		std::string& selectedActionName);
+	// 値調整データの選択
 	void SelectCameraParam(std::unordered_map<std::string, CameraPathData>& params,
 		std::string& selectedParamKey);
-	void EditCameraParam(CameraPathData& param, std::unordered_map<std::string, const SkinnedAnimation*>& skinnedAnimations,
-		std::string& selectedSkinnedKey, std::string& selectedParamKey,
-		int& selectedKeyIndex, JsonSaveState& paramSaveState, char lastLoaded[128],
+	// 調整データの保存、読み込み
+	void SaveAndLoad(CameraPathData& param, JsonSaveState& paramSaveState, char lastLoaded[128]);
+
+	// 値調整
+	void EditCameraParam(CameraPathData& param,
+		std::unordered_map<std::string, CameraPathController::ActionSynchBind>& actionBinds,
+		std::string& selectedObjectKey, std::string& selectedParamKey, int& selectedKeyIndex,
+		JsonSaveState& paramSaveState, char lastLoaded[128],
 		CameraPathController::PlaybackState& playbackCamera);
 
-	// edit
-	void SaveAndLoad(CameraPathData& param, JsonSaveState& paramSaveState, char lastLoaded[128]);
-	void EditPlayback(CameraPathData& param, CameraPathController::PlaybackState& playbackCamera);
-	void EditLerp(CameraPathData& param, std::unordered_map<std::string, const SkinnedAnimation*>& skinnedAnimations,
-		std::string& selectedSkinnedKey, std::string& selectedParamKey);
+	// エディターのタブ値調整
+	// 再生、同期処理
+	void EditPlayback(CameraPathData& param, CameraPathController::PlaybackState& playbackCamera,
+		std::unordered_map<std::string, CameraPathController::ActionSynchBind>& actionBinds,
+		std::string& selectedObjectKey);
+	// 補間の仕方設定
+	void EditLerp(CameraPathData& param);
+	// キーフレームの追加、削除、入れ替え
 	void EditKeyframe(CameraPathData& param, int& selectedKeyIndex);
+	// 追従先の設定
 	void SelectTarget(CameraPathData& param);
 };

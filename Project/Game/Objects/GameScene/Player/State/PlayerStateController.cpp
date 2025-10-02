@@ -48,11 +48,11 @@ void PlayerStateController::Init(Player& owner) {
 	states_.emplace(PlayerState::Walk, std::make_unique<PlayerWalkState>());
 	states_.emplace(PlayerState::Dash, std::make_unique<PlayerDashState>());
 	states_.emplace(PlayerState::Avoid, std::make_unique<PlayerAvoidSatate>());
-	states_.emplace(PlayerState::Attack_1st, std::make_unique<PlayerAttack_1stState>());
-	states_.emplace(PlayerState::Attack_2nd, std::make_unique<PlayerAttack_2ndState>());
-	states_.emplace(PlayerState::Attack_3rd, std::make_unique<PlayerAttack_3rdState>());
-	states_.emplace(PlayerState::Attack_4th, std::make_unique<PlayerAttack_4thState>());
-	states_.emplace(PlayerState::SkilAttack, std::make_unique<PlayerSkilAttackState>());
+	states_.emplace(PlayerState::Attack_1st, std::make_unique<PlayerAttack_1stState>(&owner));
+	states_.emplace(PlayerState::Attack_2nd, std::make_unique<PlayerAttack_2ndState>(&owner));
+	states_.emplace(PlayerState::Attack_3rd, std::make_unique<PlayerAttack_3rdState>(&owner));
+	states_.emplace(PlayerState::Attack_4th, std::make_unique<PlayerAttack_4thState>(&owner));
+	states_.emplace(PlayerState::SkilAttack, std::make_unique<PlayerSkilAttackState>(&owner));
 	states_.emplace(PlayerState::Parry, std::make_unique<PlayerParryState>());
 	states_.emplace(PlayerState::SwitchAlly, std::make_unique<PlayerSwitchAllyState>());
 	states_.emplace(PlayerState::StunAttack, std::make_unique<PlayerStunAttackState>(owner.GetAlly()));

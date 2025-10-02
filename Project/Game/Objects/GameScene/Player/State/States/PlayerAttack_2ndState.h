@@ -18,7 +18,7 @@ public:
 	//	public Methods
 	//========================================================================
 
-	PlayerAttack_2ndState();
+	PlayerAttack_2ndState(Player* player);
 	~PlayerAttack_2ndState() = default;
 
 	void Enter(Player& player) override;
@@ -80,4 +80,6 @@ private:
 		std::array<Vector3, kNumSegments>& dstWayPoints);
 	void CalcApproachWayPoints(const Player& player, std::array<Vector3, kNumSegments>& dstWayPoints);
 	bool LerpAlongSegments(Player& player);
+
+	void SetActionProgress();
 };

@@ -3,6 +3,7 @@
 //============================================================================
 //	include
 //============================================================================
+#include <Engine/Editor/ActionProgress/ActionProgressMonitor.h>
 #include <Engine/Core/Graphics/Renderer/LineRenderer.h>
 #include <Engine/Utility/Timer/GameTimer.h>
 #include <Engine/Utility/Enum/EnumAdapter.h>
@@ -13,7 +14,10 @@
 //	PlayerSkilAttackState classMethods
 //============================================================================
 
-PlayerSkilAttackState::PlayerSkilAttackState() {
+PlayerSkilAttackState::PlayerSkilAttackState(Player* player) {
+
+	player_ = nullptr;
+	player_ = player;
 
 	rushMoveParam_.name = "RushMove";
 	returnMoveParam_.name = "ReturnMove";
@@ -363,6 +367,8 @@ void PlayerSkilAttackState::ApplyJson(const Json& data) {
 	lookEnemyTimer_.FromJson(data.value("LookEnemy", Json()));
 	lookStartProgress_ = data.value("lookStartProgress_", 0.8f);
 	jumpStrength_ = data.value("jumpStrength_", 0.8f);
+
+	SetActionProgress();
 }
 
 void PlayerSkilAttackState::SaveJson(Json& data) {
@@ -388,4 +394,60 @@ bool PlayerSkilAttackState::GetCanExit() const {
 	// 経過時間が過ぎたら
 	bool canExit = exitTimer_ > exitTime_;
 	return canExit;
+}
+
+void PlayerSkilAttackState::SetActionProgress() {
+
+	ActionProgressMonitor* monitor = ActionProgressMonitor::GetInstance();
+	int objectID = PlayerBaseAttackState::AddActionObject("PlayerSkilAttackState");
+
+	// それぞれの処理の目標時間
+	const float target1 = (std::max)(0.0f, rushMoveParam_.timer.target_);
+	const float target2 = (std::max)(0.0f, returnMoveParam_.timer.target_);
+	const float target3 = (std::max)(0.0f, backJumpParam_.timer.target_);
+	const float target4 = (std::max)(0.0f, jumpMoveParam_.timer.target_);
+	const float totalT = (std::max)(1e-6f, target1 + target2 + target3 + target4);
+
+	// 全体進捗
+	monitor->AddOverall(objectID, "Attack Progress", [=, this]() -> float {
+
+		float t = 0.0f;
+		t += rushMoveParam_.timer.t_;
+		if (rushMoveParam_.timer.IsReached()) {
+
+			t = target1 + returnMoveParam_.timer.t_;
+		}
+		if (returnMoveParam_.timer.IsReached()) {
+
+			t = target1 + target2 + backJumpParam_.timer.t_;
+		}
+		if (backJumpParam_.timer.IsReached()) {
+
+			t = target1 + target2 + target3 + jumpMoveParam_.timer.t_;
+		}
+		return std::clamp(t / totalT, 0.0f, 1.0f); });
+
+	// Rush
+	monitor->AddSpan(objectID, "Rush Move",
+		[=]() { return 0.0f; },
+		[=]() { return std::clamp(target1 / totalT, 0.0f, 1.0f); },
+		[this]() { return std::clamp(rushMoveParam_.timer.easedT_, 0.0f, 1.0f); });
+
+	// Return
+	monitor->AddSpan(objectID, "Return Move",
+		[=]() { return std::clamp(target1 / totalT, 0.0f, 1.0f); },
+		[=]() { return std::clamp((target1 + target2) / totalT, 0.0f, 1.0f); },
+		[this]() { return std::clamp(returnMoveParam_.timer.easedT_, 0.0f, 1.0f); });
+
+	// Back Jump
+	monitor->AddSpan(objectID, "Back Jump",
+		[=]() { return std::clamp((target1 + target2) / totalT, 0.0f, 1.0f); },
+		[=]() { return std::clamp((target1 + target2 + target3) / totalT, 0.0f, 1.0f); },
+		[this]() { return std::clamp(backJumpParam_.timer.easedT_, 0.0f, 1.0f); });
+
+	// Jump Move
+	monitor->AddSpan(objectID, "Jump Move",
+		[=]() { return std::clamp((target1 + target2 + target3) / totalT, 0.0f, 1.0f); },
+		[=]() { return 1.0f; },
+		[this]() { return std::clamp(jumpMoveParam_.timer.easedT_, 0.0f, 1.0f); });
 }

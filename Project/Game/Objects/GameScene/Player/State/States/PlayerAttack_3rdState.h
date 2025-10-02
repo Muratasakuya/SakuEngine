@@ -15,7 +15,7 @@ public:
 	//	public Methods
 	//========================================================================
 
-	PlayerAttack_3rdState();
+	PlayerAttack_3rdState(Player* player);
 	~PlayerAttack_3rdState() = default;
 
 	void Enter(Player& player) override;
@@ -60,6 +60,10 @@ private:
 		Vector3 startPos;  // 開始座標(親子付けを外した瞬間のワールド座標)
 		Vector3 targetPos; // 目標座標
 		Vector3 rotation;  // 回転
+
+		// 処理進捗
+		float startProgress = 0.0f;
+		float endProgress = 0.0f;
 	};
 
 	//--------- variables ----------------------------------------------------
@@ -89,6 +93,8 @@ private:
 
 	// debug
 	std::unordered_map<PlayerWeaponType, Vector3> debugForward_;
+	// 進捗度
+	StateTimer totalTimer_; // 更新合計時間
 
 	//--------- functions ----------------------------------------------------
 
@@ -100,4 +106,6 @@ private:
 	// helper
 	void StartMoveWeapon(Player& player, PlayerWeaponType type);
 	Vector3 RotateYOffset(const Vector3& direction, float offsetRotationY);
+
+	void SetActionProgress();
 };

@@ -62,6 +62,7 @@ protected:
 	const InputMapper<PlayerInputAction>* inputMapper_;
 	const BossEnemy* bossEnemy_;
 	FollowCamera* followCamera_;
+	Player* player_;
 
 	// 遷移前の状態
 	PlayerState preState_;
@@ -77,4 +78,5 @@ protected:
 
 	// helper
 	void SetRotateToDirection(Player& player, const Vector3& move);
+
 };
