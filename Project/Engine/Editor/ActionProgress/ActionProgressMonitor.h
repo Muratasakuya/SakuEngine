@@ -36,6 +36,10 @@ public:
 	void SetSelectedObject(int index);
 	void SetSelectedMetric(int index);
 
+	// 同期状態の通知
+	void SetSynchToggleHandler(int objectID, std::function<void(bool)> handler);
+	void NotifySynchState(int objectID, bool external) const;
+
 	// 選択中のオブジェクト進捗度
 	std::optional<float> GetSelectedValue() const;
 	// 名前からIDの取得
@@ -116,6 +120,8 @@ private:
 	std::vector<Object> objects_;
 	// 各進捗ごとのハンドル
 	std::unordered_map<SpanKey, SpanHandle, SpanKeyHash> spans_;
+	// 同期通知
+	std::unordered_map<int, std::function<void(bool)>> synchHandlers_;
 
 	// エディター
 	int selectedObject_ = -1;

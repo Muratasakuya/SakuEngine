@@ -47,6 +47,10 @@ public:
 	void ResetAnimation();
 	// 再生速度の設定
 	void SetPlaybackSpeed(float playbackSpeed) { playbackSpeed_ = playbackSpeed; }
+	// 更新方法の設定
+	void SetUpdateMode(ObjectUpdateMode mode) { updateMode_ = mode; }
+	// 再生時間の設定
+	void SetCurrentAnimTime(float time);
 
 	// 登録されているアニメーションの名前
 	const std::string& GetCurrentAnimationName() const { return currentAnimationName_; }

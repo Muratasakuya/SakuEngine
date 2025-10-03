@@ -38,7 +38,6 @@ public:
 
 	/*---------- setter ----------*/
 
-	void SetUpdateMode(ObjectUpdateMode mode) { updateMode_ = mode; }
 	void SetIdentifier(const std::string& identifier) { identifier_ = identifier; }
 	void SetDestroyOnLoad(bool enable) { tag_->destroyOnLoad = enable; }
 
@@ -47,6 +46,7 @@ public:
 	const ObjectTag& GetTag() const { return *tag_; }
 	const std::string& GetIdentifier() const { return identifier_; }
 	uint32_t GetObjectID() const { return objectId_; }
+	ObjectUpdateMode GetUpdateMode() const { return updateMode_; }
 protected:
 	//========================================================================
 	//	protected Methods

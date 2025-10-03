@@ -150,3 +150,17 @@ int PlayerBaseAttackState::AddActionObject(const std::string& name) {
 	Camera3DEditor::GetInstance()->AddActionObject(name);
 	return ActionProgressMonitor::GetInstance()->AddObject(name);
 }
+
+void PlayerBaseAttackState::SetSynchObject(int objectID) {
+
+	ActionProgressMonitor::GetInstance()->SetSynchToggleHandler(
+		objectID, [this](bool external) {
+
+		// エディターの同期設定の共有
+		if (external) {
+			player_->SetUpdateMode(ObjectUpdateMode::External);
+		} else {
+			player_->SetUpdateMode(ObjectUpdateMode::None);
+		}
+	});
+}

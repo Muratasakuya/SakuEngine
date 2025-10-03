@@ -156,14 +156,21 @@ void PlayerAttack_1stState::SetSpanUpdate(int objectID) {
 
 	ActionProgressMonitor* monitor = ActionProgressMonitor::GetInstance();
 
+	// 同期設定
+	PlayerBaseAttackState::SetSynchObject(objectID);
+
 	// 攻撃骨アニメーション
 	monitor->SetSpanSetter(objectID, "Skinned Animation", [this](float t) {
 
+		// アニメーションを切り替え
+		if (player_->GetCurrentAnimationName() != "player_attack_1st") {
+
+			player_->SetNextAnimation("player_attack_1st", false, 0.0f);
+		}
+
 		const float duration = player_->GetAnimationDuration("player_attack_1st");
-		t;
-		duration;
 		// アニメーションの時間を設定
-		//SetPlayerAnimationTimeSeconds(duration * std::clamp(t, 0.0f, 1.0f));
+		player_->SetCurrentAnimTime(duration * t);
 		});
 
 	// 移動アニメーション
@@ -171,6 +178,6 @@ void PlayerAttack_1stState::SetSpanUpdate(int objectID) {
 
 		// 補間値を設定
 		moveTimer_.t_ = std::clamp(t, 0.0f, 1.0f);
-		moveTimer_.easedT_ = EasedValue(moveTimer_.easeingType_,moveTimer_.t_);
+		moveTimer_.easedT_ = EasedValue(moveTimer_.easeingType_, moveTimer_.t_);
 		});
 }

@@ -107,7 +107,7 @@ void Camera3DEditor::Update() {
 	}
 
 	// アクションとカメラの同期
-	if (!selectedParamKey_.empty()) {
+	if (!selectedParamKey_.empty() && playbackCamera_.isSynch) {
 
 		auto& data = params_[selectedParamKey_];
 		const float synchT = ComputeEffectiveCameraT(playbackCamera_, data);
@@ -120,6 +120,10 @@ void Camera3DEditor::Update() {
 			}
 
 			const int objectId = monitor->FindObjectID(bind.objectName);
+
+			// 同期するか進捗に通知
+			const bool external = playbackCamera_.isSynch && bind.driveStateFromCamera;
+			monitor->NotifySynchState(objectId, external);
 			if (bind.driveStateFromCamera) {
 
 				// オブジェクトが所持しているローカルの進捗を更新
@@ -177,13 +181,11 @@ float Camera3DEditor::ComputeEffectiveCameraT(
 	}
 	case CameraPathController::PreviewMode::Manual: {
 
-		float rawT = std::clamp(state.time, 0.0f, 1.0f);
-		float easedT = EasedValue(data.timer.easeingType_, rawT);
 		if (data.useAveraging && !data.averagedT.empty()) {
 
-			return LerpKeyframe::GetReparameterizedT(easedT, data.averagedT);
+			return LerpKeyframe::GetReparameterizedT(state.time, data.averagedT);
 		}
-		return easedT;
+		return state.time;
 	}
 	case CameraPathController::PreviewMode::Play: {
 

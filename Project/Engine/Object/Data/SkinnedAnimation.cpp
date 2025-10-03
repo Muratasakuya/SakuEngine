@@ -7,6 +7,7 @@
 #include <Engine/Core/Graphics/Renderer/LineRenderer.h>
 #include <Engine/Utility/Timer/GameTimer.h>
 #include <Engine/Utility/Json/JsonAdapter.h>
+#include <Engine/Utility/Enum/EnumAdapter.h>
 #include <Engine/Utility/Helper/Algorithm.h>
 
 // imgui
@@ -74,38 +75,39 @@ void SkinnedAnimation::Update(const Matrix4x4& worldMatrix) {
 	//========================================================================
 	float deltaTime = GameTimer::GetScaledDeltaTime() * playbackSpeed_;
 	auto& currentTimer = currentAnimationTimers_[updateModeIndex_];
-	if (!inTransition_ && updateMode_ == ObjectUpdateMode::None) {
+	if (!inTransition_) {
+		if (updateMode_ == ObjectUpdateMode::None) {
+			// ループ再生かしないか
+			if (roopAnimation_) {
 
-		// ループ再生かしないか
-		if (roopAnimation_) {
+				float duration = animationData_[currentAnimationName_].duration;
+				if (currentTimer + deltaTime >= duration) {
 
-			float duration = animationData_[currentAnimationName_].duration;
-			if (currentTimer + deltaTime >= duration) {
+					// 再生カウントをインクリメント
+					++repeatCount_;
+					prevFrameIndexPerKey_.clear();
+				}
 
-				// 再生カウントをインクリメント
-				++repeatCount_;
-				prevFrameIndexPerKey_.clear();
+				currentTimer = std::fmod(currentTimer + deltaTime, duration);
+
+				// 進行度を計算
+				animationProgress_ = currentTimer / animationData_[currentAnimationName_].duration;
+			} else {
+				// 経過時間が最大にいくまで時間を進める
+				if (animationData_[currentAnimationName_].duration > currentTimer) {
+
+					currentTimer += deltaTime;
+				}
+
+				// 経過時間に達したら終了させる
+				if (currentTimer >= animationData_[currentAnimationName_].duration) {
+
+					currentTimer = animationData_[currentAnimationName_].duration;
+					animationFinish_ = true;
+				}
+
+				animationProgress_ = currentTimer / animationData_[currentAnimationName_].duration;
 			}
-
-			currentTimer = std::fmod(currentTimer + deltaTime, duration);
-
-			// 進行度を計算
-			animationProgress_ = currentTimer / animationData_[currentAnimationName_].duration;
-		} else {
-			// 経過時間が最大にいくまで時間を進める
-			if (animationData_[currentAnimationName_].duration > currentTimer) {
-
-				currentTimer += deltaTime;
-			}
-
-			// 経過時間に達したら終了させる
-			if (currentTimer >= animationData_[currentAnimationName_].duration) {
-
-				currentTimer = animationData_[currentAnimationName_].duration;
-				animationFinish_ = true;
-			}
-
-			animationProgress_ = currentTimer / animationData_[currentAnimationName_].duration;
 		}
 
 		// jointの値を更新する
@@ -165,7 +167,7 @@ void SkinnedAnimation::ImGui(float itemSize) {
 		ImGui::Checkbox("Loop", &roopAnimation_);
 		ImGui::SameLine();
 		if (ImGui::Button("Restart")) {
-			
+
 			for (auto& timer : currentAnimationTimers_) {
 
 				timer = 0.0f;
@@ -174,6 +176,7 @@ void SkinnedAnimation::ImGui(float itemSize) {
 		}
 		ImGui::Text("RepeatCount: %d", repeatCount_);
 		ImGui::DragFloat("playbackSpeed", &playbackSpeed_, 0.01f);
+		EnumAdapter<ObjectUpdateMode>::Combo("UpdateMode", &updateMode_);
 	}
 	ImGui::Separator();
 
@@ -642,6 +645,17 @@ float SkinnedAnimation::GetEventTime(const std::string& animName,
 	constexpr float kFps = 24.0f;
 	float time = static_cast<float>(frames[frameIndex]) / kFps;
 	return time;
+}
+
+void SkinnedAnimation::SetCurrentAnimTime(float time) {
+
+	// 時間を設定
+	updateModeIndex_ = static_cast<uint32_t>(updateMode_);
+	currentAnimationTimers_[updateModeIndex_] = time;
+
+	// 進行度を計算
+	animationProgress_ = currentAnimationTimers_[updateModeIndex_] /
+		animationData_[currentAnimationName_].duration;
 }
 
 std::vector<std::string> SkinnedAnimation::GetAnimationNames() const {
