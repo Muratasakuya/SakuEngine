@@ -94,6 +94,8 @@ private:
 	// editor
 	int editingStateIndex_;
 	int comboIndex_;
+	// エディターと同期中の状態
+	std::optional<PlayerState> externalSynchState_;
 
 	//--------- functions ----------------------------------------------------
 
@@ -105,6 +107,7 @@ private:
 	void UpdateInputState();
 	void UpdateParryState(Player& owner);
 	void RequestParryState();
+	bool UpdateExternalSynch(Player& owner);
 
 	// helper
 	void SetStateValue();

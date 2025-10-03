@@ -14,6 +14,15 @@
 //	PlayerBaseAttackState classMethods
 //============================================================================
 
+void PlayerBaseAttackState::UpdateTimer(StateTimer& timer) {
+
+	// 外部による更新がないときのみ
+	if (!externalActive_) {
+
+		timer.Update();
+	}
+}
+
 void PlayerBaseAttackState::AttackAssist(Player& player, bool onceTarget) {
 
 	// 時間経過
@@ -153,14 +162,18 @@ int PlayerBaseAttackState::AddActionObject(const std::string& name) {
 
 void PlayerBaseAttackState::SetSynchObject(int objectID) {
 
+	// IDを設定
+	editObjectID_ = objectID;
+
+	// エディターの同期設定の共有
 	ActionProgressMonitor::GetInstance()->SetSynchToggleHandler(
 		objectID, [this](bool external) {
 
-		// エディターの同期設定の共有
-		if (external) {
-			player_->SetUpdateMode(ObjectUpdateMode::External);
-		} else {
-			player_->SetUpdateMode(ObjectUpdateMode::None);
-		}
-	});
+			externalActive_ = external;
+			if (external) {
+				player_->SetUpdateMode(ObjectUpdateMode::External);
+			} else {
+				player_->SetUpdateMode(ObjectUpdateMode::None);
+			}
+		});
 }

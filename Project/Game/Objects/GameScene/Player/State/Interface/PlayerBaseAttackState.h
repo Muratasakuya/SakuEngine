@@ -19,6 +19,10 @@ public:
 
 	PlayerBaseAttackState() = default;
 	~PlayerBaseAttackState() = default;
+
+	//--------- accessor -----------------------------------------------------
+
+	bool IsExternalActive() const { return externalActive_; }
 protected:
 	//========================================================================
 	//	protected Methods
@@ -40,6 +44,10 @@ protected:
 	std::optional<Vector3> targetTranslation_;
 	std::optional<Quaternion> targetRotation_;
 
+	// 同期
+	bool externalActive_ = false; // エディターと同期中か
+	int editObjectID_ = -1;       // エディター内のID
+
 	//--------- functions ----------------------------------------------------
 
 	// json
@@ -52,6 +60,7 @@ protected:
 	void ResetTarget();
 
 	// update
+	void UpdateTimer(StateTimer& timer);
 	void AttackAssist(Player& player, bool onceTarget = false);
 
 	// helper

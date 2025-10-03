@@ -46,7 +46,7 @@ void PlayerAttack_1stState::Update(Player& player) {
 	} else {
 
 		// 前に前進させる
-		moveTimer_.Update();
+		PlayerBaseAttackState::UpdateTimer(moveTimer_);
 		Vector3 pos = Vector3::Lerp(startPos_, targetPos_, moveTimer_.easedT_);
 		player.SetTranslation(pos);
 	}
