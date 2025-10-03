@@ -204,6 +204,24 @@ bool ActionProgressMonitor::GetSpanLocal(int objectID,
 	return true;
 }
 
+bool ActionProgressMonitor::GetOverallValue(int objectID,
+	const std::string& overallName, float* outValue) const {
+
+	if (!IsValidObject(objectID) || !outValue) {
+
+		return false;
+	}
+	const auto& obj = objects_[objectID];
+	for (const auto& metric : obj.metrics) {
+		if (metric.kind == MetricKind::Overall && metric.name == overallName && metric.getter) {
+
+			*outValue = metric.getter();
+			return true;
+		}
+	}
+	return false;
+}
+
 std::vector<std::string> ActionProgressMonitor::GetOverallNames(int objectID) const {
 
 	std::vector<std::string> names;

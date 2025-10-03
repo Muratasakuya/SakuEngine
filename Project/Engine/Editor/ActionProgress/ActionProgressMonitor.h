@@ -46,6 +46,7 @@ public:
 	bool GetSpanStart(int objectID, const std::string& spanName, float* outStart) const;
 	bool GetSpanEnd(int objectID, const std::string& spanName, float* outEnd) const;
 	bool GetSpanLocal(int objectID, const std::string& spanName, float* outLocal) const;
+	bool GetOverallValue(int objectID, const std::string& overallName, float* outValue) const;
 	// 進捗名
 	std::vector<std::string> GetOverallNames(int objectID) const;
 	std::vector<std::string> GetSpanNames(int objectID) const;

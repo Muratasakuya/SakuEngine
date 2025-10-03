@@ -3,6 +3,7 @@
 //============================================================================
 //	include
 //============================================================================
+#include <Engine/Utility/Enum/ObjectUpdateMode.h>
 
 // data
 #include <Engine/Object/Data/Transform.h>
@@ -37,6 +38,7 @@ public:
 
 	/*---------- setter ----------*/
 
+	void SetUpdateMode(ObjectUpdateMode mode) { updateMode_ = mode; }
 	void SetIdentifier(const std::string& identifier) { identifier_ = identifier; }
 	void SetDestroyOnLoad(bool enable) { tag_->destroyOnLoad = enable; }
 
@@ -58,6 +60,9 @@ protected:
 	uint32_t objectId_;
 	// tag
 	ObjectTag* tag_;
+
+	// 更新方法
+	ObjectUpdateMode updateMode_ = ObjectUpdateMode::None;
 
 	// 序列関係なしの名前
 	std::string identifier_;

@@ -106,42 +106,37 @@ void Camera3DEditor::Update() {
 		controller_->Update(playbackCamera_, param);
 	}
 
+	// アクションとカメラの同期
 	if (!selectedParamKey_.empty()) {
 
 		auto& data = params_[selectedParamKey_];
-		// 同期を行う補間値を取得
 		const float synchT = ComputeEffectiveCameraT(playbackCamera_, data);
-
 		ActionProgressMonitor* monitor = ActionProgressMonitor::GetInstance();
 		for (auto& [name, bind] : actionBinds_) {
 
-			// 設定されていないアクションは処理しない
-			if (bind.spanName.empty()) {
+			// オブジェクト未設定ならスキップ
+			if (bind.objectName.empty() || bind.spanName.empty()) {
 				continue;
 			}
 
 			const int objectId = monitor->FindObjectID(bind.objectName);
 			if (bind.driveStateFromCamera) {
 
-				// 補間値をバインドした状態にセット
-				monitor->DriveSpanByGlobalT(objectId, bind.spanName, synchT);
+				// オブジェクトが所持しているローカルの進捗を更新
+				const auto spanNames = monitor->GetSpanNames(objectId);
+				for (const auto& span : spanNames) {
+
+					monitor->DriveSpanByGlobalT(objectId, span, synchT);
+				}
 			} else {
 
-				// バインドされている状態の補間値
-				float start = 0.0f;  // 開始
-				float end = 1.0f;    // 終了
-				float localT = 0.0f; // ローカル
-				if (monitor->GetSpanStart(objectId, bind.spanName, &start) &&
-					monitor->GetSpanEnd(objectId, bind.spanName, &end) &&
-					monitor->GetSpanLocal(objectId, bind.spanName, &localT)) {
+				// アクション全体進捗でカメラを更新する
+				float overallT = 0.0f;
+				if (monitor->GetOverallValue(objectId, bind.spanName, &overallT)) {
 
-					const float world = (std::max)(end - start, 1e-6f);
-					const float t = std::clamp(start + world * localT, 0.0f, 1.0f);
-
-					// マニュアルにして現在値を確認できるようにする
+					// マニュアルにして自動更新されるようにする
 					playbackCamera_.mode = CameraPathController::PreviewMode::Manual;
-					// 値を反映
-					playbackCamera_.time = t;
+					playbackCamera_.time = std::clamp(overallT, 0.0f, 1.0f);
 				}
 			}
 		}

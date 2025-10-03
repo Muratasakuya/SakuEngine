@@ -66,46 +66,50 @@ void SkinnedAnimation::Update(const Matrix4x4& worldMatrix) {
 	}
 
 	animationFinish_ = false;
+	// 更新方法のインデックスを更新
+	updateModeIndex_ = static_cast<uint32_t>(updateMode_);
 
 	//========================================================================
 	// 通常のAnimation再生
 	//========================================================================
 	float deltaTime = GameTimer::GetScaledDeltaTime() * playbackSpeed_;
-	if (!inTransition_) {
+	auto& currentTimer = currentAnimationTimers_[updateModeIndex_];
+	if (!inTransition_ && updateMode_ == ObjectUpdateMode::None) {
+
 		// ループ再生かしないか
 		if (roopAnimation_) {
 
 			float duration = animationData_[currentAnimationName_].duration;
-			if (currentAnimationTimer_ + deltaTime >= duration) {
+			if (currentTimer + deltaTime >= duration) {
 
 				// 再生カウントをインクリメント
 				++repeatCount_;
 				prevFrameIndexPerKey_.clear();
 			}
 
-			currentAnimationTimer_ = std::fmod(currentAnimationTimer_ + deltaTime, duration);
+			currentTimer = std::fmod(currentTimer + deltaTime, duration);
 
 			// 進行度を計算
-			animationProgress_ = currentAnimationTimer_ / animationData_[currentAnimationName_].duration;
+			animationProgress_ = currentTimer / animationData_[currentAnimationName_].duration;
 		} else {
 			// 経過時間が最大にいくまで時間を進める
-			if (animationData_[currentAnimationName_].duration > currentAnimationTimer_) {
+			if (animationData_[currentAnimationName_].duration > currentTimer) {
 
-				currentAnimationTimer_ += deltaTime;
+				currentTimer += deltaTime;
 			}
 
 			// 経過時間に達したら終了させる
-			if (currentAnimationTimer_ >= animationData_[currentAnimationName_].duration) {
-				currentAnimationTimer_ = animationData_[currentAnimationName_].duration;
+			if (currentTimer >= animationData_[currentAnimationName_].duration) {
 
+				currentTimer = animationData_[currentAnimationName_].duration;
 				animationFinish_ = true;
 			}
 
-			animationProgress_ = currentAnimationTimer_ / animationData_[currentAnimationName_].duration;
+			animationProgress_ = currentTimer / animationData_[currentAnimationName_].duration;
 		}
 
 		// jointの値を更新する
-		ApplyAnimation();
+		ApplyAnimation(currentTimer);
 		UpdateSkeleton(worldMatrix);
 
 		// bufferに渡す値を更新する
@@ -138,7 +142,7 @@ void SkinnedAnimation::Update(const Matrix4x4& worldMatrix) {
 
 			inTransition_ = false;
 			currentAnimationName_ = nextAnimationName_;
-			currentAnimationTimer_ = nextAnimationTimer_;
+			currentTimer = nextAnimationTimer_;
 		}
 	}
 
@@ -161,7 +165,11 @@ void SkinnedAnimation::ImGui(float itemSize) {
 		ImGui::Checkbox("Loop", &roopAnimation_);
 		ImGui::SameLine();
 		if (ImGui::Button("Restart")) {
-			currentAnimationTimer_ = 0.0f;
+			
+			for (auto& timer : currentAnimationTimers_) {
+
+				timer = 0.0f;
+			}
 			repeatCount_ = 0;
 		}
 		ImGui::Text("RepeatCount: %d", repeatCount_);
@@ -171,11 +179,12 @@ void SkinnedAnimation::ImGui(float itemSize) {
 
 	if (ImGui::CollapsingHeader("Status", ImGuiTreeNodeFlags_DefaultOpen)) {
 
+		const float timer = currentAnimationTimers_[updateModeIndex_];
 		const float duration = animationData_[currentAnimationName_].duration;
-		const float prog = currentAnimationTimer_ / duration;
+		const float prog = timer / duration;
 		const float transProg = transitionDuration_ > 0.0f ? transitionTimer_ / transitionDuration_ : 0.0f;
 
-		ImGui::Text("Time       : %5.3f / %5.3f", currentAnimationTimer_, duration);
+		ImGui::Text("Time       : %5.3f / %5.3f", timer, duration);
 		ImGui::ProgressBar(prog, ImVec2(-FLT_MIN, 4));
 		ImGui::Text("Transition : %5.2f %%", transProg * 100.0f);
 		ImGui::ProgressBar(transProg, ImVec2(-FLT_MIN, 4));
@@ -233,7 +242,7 @@ void SkinnedAnimation::ImGui(float itemSize) {
 	ImGui::PopItemWidth();
 }
 
-void SkinnedAnimation::ApplyAnimation() {
+void SkinnedAnimation::ApplyAnimation(float timer) {
 
 	// index配列を用意
 	std::vector<size_t> indices(skeleton_.joints.size());
@@ -250,9 +259,9 @@ void SkinnedAnimation::ApplyAnimation() {
 		}
 
 		Joint& joint = skeleton_.joints[i];
-		joint.transform.translation = Vector3::CalculateValue(track->translate.keyframes, currentAnimationTimer_);
-		joint.transform.rotation = Quaternion::CalculateValue(track->rotate.keyframes, currentAnimationTimer_);
-		joint.transform.scale = Vector3::CalculateValue(track->scale.keyframes, currentAnimationTimer_);
+		joint.transform.translation = Vector3::CalculateValue(track->translate.keyframes, timer);
+		joint.transform.rotation = Quaternion::CalculateValue(track->rotate.keyframes, timer);
+		joint.transform.scale = Vector3::CalculateValue(track->scale.keyframes, timer);
 		});
 }
 
@@ -364,7 +373,8 @@ int SkinnedAnimation::CurrentFrameIndex() const {
 
 	// blenderの再生FPS
 	constexpr float kFps = 24.0f;
-	return static_cast<int>((std::max)(0.0f, currentAnimationTimer_ * kFps + 0.5f));
+	const float timer = currentAnimationTimers_[updateModeIndex_];
+	return static_cast<int>((std::max)(0.0f, timer * kFps + 0.5f));
 }
 
 void SkinnedAnimation::DrawEventTimeline(const std::vector<int>& frames,
@@ -520,7 +530,7 @@ void SkinnedAnimation::SetKeyframeEvent(const std::string& fileName) {
 void SkinnedAnimation::SetPlayAnimation(const std::string& animationName, bool roopAnimation) {
 
 	// Animationの再生設定
-	currentAnimationTimer_ = 0.0f;
+	currentAnimationTimers_[updateModeIndex_] = 0.0f;
 	currentAnimationName_ = animationName;
 	roopAnimation_ = roopAnimation;
 
@@ -543,7 +553,7 @@ void SkinnedAnimation::SwitchAnimation(const std::string& nextAnimName,
 
 	// 現在のAnimationを設定
 	oldAnimationName_ = currentAnimationName_;
-	oldAnimationTimer_ = currentAnimationTimer_;
+	oldAnimationTimer_ = currentAnimationTimers_[updateModeIndex_];
 
 	// 次のAnimationを設定
 	nextAnimationName_ = nextAnimName;

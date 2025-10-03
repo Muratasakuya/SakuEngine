@@ -147,6 +147,9 @@ void PlayerAttack_1stState::SetActionProgress() {
 		[this]() {
 			return moveTimer_.t_;
 		});
+
+	// 進捗率の同期設定
+	SetSpanUpdate(objectID);
 }
 
 void PlayerAttack_1stState::SetSpanUpdate(int objectID) {

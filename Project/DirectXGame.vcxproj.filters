@@ -1017,6 +1017,7 @@
     <ClInclude Include="Engine\Object\Data\SkinnedAnimation.h" />
     <ClInclude Include="Engine\Editor\ActionProgress\ActionProgressMonitor.h" />
     <ClInclude Include="Engine\Utility\Object\ObjectMode.h" />
+    <ClInclude Include="Engine\Utility\Enum\ObjectUpdateMode.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Engine\Shaders\PostProcess\Copy\CopyTexture.CS.hlsl" />
