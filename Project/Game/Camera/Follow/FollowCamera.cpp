@@ -4,6 +4,7 @@
 //	include
 //============================================================================
 #include <Engine/Input/Input.h>
+#include <Engine/Editor/Camera/3D/Camera3DEditor.h>
 #include <Engine/Utility/Timer/GameTimer.h>
 #include <Engine/Utility/Json/JsonAdapter.h>
 #include <Engine/Utility/Random/RandomGenerator.h>
@@ -12,6 +13,16 @@
 //============================================================================
 //	FollowCamera classMethods
 //============================================================================
+
+void FollowCamera::LoadAnimCamera() {
+
+	Camera3DEditor* editor = Camera3DEditor::GetInstance();
+	// プレイヤーの攻撃
+	editor->LoadAnimFile("2ndAttackCamera.json");
+	editor->LoadAnimFile("3rdAttackCamera.json");
+	editor->LoadAnimFile("4thAttackCamera.json");
+	editor->LoadAnimFile("skillAttackCamera.json");
+}
 
 void FollowCamera::Init() {
 
@@ -22,6 +33,9 @@ void FollowCamera::Init() {
 
 	stateController_ = std::make_unique<FollowCameraStateController>();
 	stateController_->Init(*this);
+
+	// カメラアニメーション読み込み
+	LoadAnimCamera();
 
 	// 行列更新
 	BaseCamera::UpdateView();

@@ -31,6 +31,9 @@ public:
 
 	void ImGui() override;
 
+	// ゲームとの連携
+	void LoadAnimFile(const std::string& fileName);
+
 	//--------- accessor -----------------------------------------------------
 
 	// singleton

@@ -33,7 +33,7 @@ void Camera3DEditorPanel::Edit(std::unordered_map<std::string, CameraPathData>& 
 		SelectActionSubject(actionBinds, selectedObjectKey, selectedActionName);
 		ImGui::Spacing();
 		// カメラ調整項目の追加
-		AddCameraParam(params, selectedActionName);
+		AddCameraParam(params, selectedObjectKey, selectedActionName);
 	}
 	ImGuiHelper::EndFramedChild();
 	ImGui::SameLine();
@@ -119,7 +119,7 @@ void Camera3DEditorPanel::SelectActionSubject(
 }
 
 void Camera3DEditorPanel::AddCameraParam(std::unordered_map<std::string, CameraPathData>& params,
-	std::string& selectedAnimName) {
+	std::string& selectedObjectKey, std::string& selectedAnimName) {
 
 	// 何も設定されていなければ追加できない
 	if (selectedAnimName.empty()) {
@@ -134,8 +134,11 @@ void Camera3DEditorPanel::AddCameraParam(std::unordered_map<std::string, CameraP
 		}
 
 		CameraPathData param{};
+		// 名前を設定
+		param.objectName = selectedObjectKey;
+		param.overallName = selectedAnimName;
 		CameraPathData::KeyframeParam keyframe{};
-		keyframe.Init();
+		keyframe.Init(false);
 		// キーフレームをデフォルトで1個追加
 		param.keyframes.emplace_back(std::move(keyframe));
 
@@ -238,7 +241,7 @@ void Camera3DEditorPanel::SaveAndLoad(CameraPathData& param, JsonSaveState& para
 		std::string relPath;
 		if (ImGuiHelper::OpenJsonDialog(relPath)) {
 
-			param.ApplyJson(relPath);
+			param.ApplyJson(relPath, false);
 			strncpy_s(lastLoaded, sizeof(lastLoaded), relPath.c_str(), _TRUNCATE);
 		}
 	}
@@ -337,7 +340,7 @@ void Camera3DEditorPanel::EditPlayback(CameraPathData& param, CameraPathControll
 			translation = translation - offsetTranslation;
 			// キーフレームを初期化
 			CameraPathData::KeyframeParam keyframe{};
-			keyframe.Init();
+			keyframe.Init(false);
 			keyframe.demoObject->SetTranslation(translation);
 			keyframe.demoObject->SetRotation(rotation);
 			keyframe.translation = translation;

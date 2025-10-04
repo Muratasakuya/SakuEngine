@@ -160,6 +160,31 @@ void Camera3DEditor::ImGui() {
 	ImGui::PopItemWidth();
 }
 
+void Camera3DEditor::LoadAnimFile(const std::string& fileName) {
+
+	// 読み込めなければ作成しない
+	Json data;
+	const std::string filePath = CameraPathData::cameraParamJsonPath + fileName;
+	if (!JsonAdapter::LoadCheck(filePath, data)) {
+		return;
+	}
+
+	CameraPathData param{};
+	// 名前を取得
+	param.objectName = data["objectName"];
+	param.overallName = data["overallName"];
+
+	// 追加済みの場合処理しない
+	if (Algorithm::Find(params_, param.overallName)) {
+		return;
+	}
+
+	// データから値を設定
+	param.ApplyJson(filePath, true);
+	// 追加
+	params_.emplace(param.overallName, std::move(param));
+}
+
 float Camera3DEditor::ComputeEffectiveCameraT(
 	const CameraPathController::PlaybackState& state,
 	const CameraPathData& data) const {

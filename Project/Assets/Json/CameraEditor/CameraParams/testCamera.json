@@ -6,7 +6,7 @@
                 "w": 1.0,
                 "x": 0.0,
                 "y": 7.450580596923828e-09,
-                "z": -0.0
+                "z": 0.0
             },
             "translation": {
                 "x": -0.5013788342475891,
@@ -65,6 +65,8 @@
     "followRotation": true,
     "followTarget": true,
     "lerpType": "None",
+    "objectName": "objectName",
+    "overallName": "overallName",
     "targetName": "player",
     "useAveraging": false
 }

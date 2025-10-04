@@ -130,7 +130,7 @@ void PlayerAttack_4thState::SetActionProgress() {
 		}
 		return progress; });
 
-	// 骨アニメーション（0→1 全域）
+	// 骨アニメーション
 	monitor->AddSpan(objectID, "Skinned Animation",
 		[]() { return 0.0f; },
 		[]() { return 1.0f; },

@@ -49,6 +49,9 @@ private:
 
 	//--------- functions ----------------------------------------------------
 
+	// init
+	void LoadAnimCamera();
+
 	// json
 	void ApplyJson();
 	void SaveJson();

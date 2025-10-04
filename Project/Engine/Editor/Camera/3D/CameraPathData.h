@@ -33,11 +33,11 @@ public:
 		std::unique_ptr<GameObject3D> demoObject;
 
 		// init
-		void Init();
+		void Init(bool isUseGame);
 
 		// json
-		void FromJson(const Json&);
-		void ToJson(Json&);
+		void FromJson(const Json& data);
+		void ToJson(Json& data);
 
 		// コピー禁止
 		KeyframeParam(const KeyframeParam&) = delete;
@@ -51,6 +51,10 @@ public:
 
 	static inline const std::string demoCameraJsonPath = "CameraEditor/demoCamera.json";
 	static inline const std::string cameraParamJsonPath = "CameraEditor/CameraParams/";
+
+	// 対象名
+	std::string objectName;  // オブジェクト名
+	std::string overallName; // アクション名
 
 	// 追従先の設定
 	bool followTarget = false;
@@ -74,7 +78,7 @@ public:
 	//--------- functions ----------------------------------------------------
 
 	// json
-	void ApplyJson(const std::string& fileName);
+	void ApplyJson(const std::string& fileName, bool isUseGame);
 	void SaveJson(const std::string& fileName);
 
 	// helper

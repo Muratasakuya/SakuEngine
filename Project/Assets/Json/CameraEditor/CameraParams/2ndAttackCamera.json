@@ -65,6 +65,8 @@
     "followRotation": true,
     "followTarget": true,
     "lerpType": "Spline",
+    "objectName": "PlayerAttack_2ndState",
+    "overallName": "Attack Progress_2nd",
     "targetName": "player",
     "useAveraging": true
 }
