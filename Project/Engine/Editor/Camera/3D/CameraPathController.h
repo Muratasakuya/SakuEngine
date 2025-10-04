@@ -30,7 +30,7 @@ public:
 	struct PlaybackState {
 
 		bool isActive = false;
-		PreviewMode mode = PreviewMode::Keyframe;
+		PreviewMode mode = PreviewMode::Manual;
 
 		bool isSynch = false; // 同期するか
 		bool isLoop = false;  // ループ再生
