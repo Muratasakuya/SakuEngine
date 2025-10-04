@@ -48,7 +48,7 @@ void PlayerAttack_4thState::Update(Player& player) {
 	} else {
 
 		// 前に前進させる
-		moveTimer_.Update();
+		PlayerBaseAttackState::UpdateTimer(moveTimer_);
 		Vector3 pos = Vector3::Lerp(startPos_, targetPos_, moveTimer_.easedT_);
 		player.SetTranslation(pos);
 	}
@@ -150,4 +150,37 @@ void PlayerAttack_4thState::SetActionProgress() {
 			return moveTimer_.target_ / duration;
 		},
 		[this]() { return moveTimer_.t_; });
+
+	// 進捗率の同期設定
+	SetSpanUpdate(objectID);
+}
+
+void PlayerAttack_4thState::SetSpanUpdate(int objectID) {
+
+	ActionProgressMonitor* monitor = ActionProgressMonitor::GetInstance();
+
+	// 同期設定
+	PlayerBaseAttackState::SetSynchObject(objectID);
+
+	// 攻撃骨アニメーション
+	monitor->SetSpanSetter(objectID, "Skinned Animation", [this](float t) {
+
+		// アニメーションを切り替え
+		if (player_->GetCurrentAnimationName() != "player_attack_4th") {
+
+			player_->SetNextAnimation("player_attack_4th", false, 0.0f);
+		}
+
+		const float duration = player_->GetAnimationDuration("player_attack_4th");
+		// アニメーションの時間を設定
+		player_->SetCurrentAnimTime(duration * t);
+		});
+
+	// 移動アニメーション
+	monitor->SetSpanSetter(objectID, "Move Animation", [this](float t) {
+
+		// 補間値を設定
+		moveTimer_.t_ = std::clamp(t, 0.0f, 1.0f);
+		moveTimer_.easedT_ = EasedValue(moveTimer_.easeingType_, moveTimer_.t_);
+		});
 }
