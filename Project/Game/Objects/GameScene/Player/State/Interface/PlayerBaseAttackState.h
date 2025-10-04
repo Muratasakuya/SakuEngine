@@ -19,6 +19,10 @@ public:
 
 	PlayerBaseAttackState() = default;
 	~PlayerBaseAttackState() = default;
+
+	//--------- accessor -----------------------------------------------------
+
+	bool IsExternalActive() const { return externalActive_; }
 protected:
 	//========================================================================
 	//	protected Methods
@@ -40,6 +44,10 @@ protected:
 	std::optional<Vector3> targetTranslation_;
 	std::optional<Quaternion> targetRotation_;
 
+	// 同期
+	bool externalActive_ = false; // エディターと同期中か
+	int editObjectID_ = -1;       // エディター内のID
+
 	//--------- functions ----------------------------------------------------
 
 	// json
@@ -52,14 +60,18 @@ protected:
 	void ResetTarget();
 
 	// update
+	void UpdateTimer(StateTimer& timer);
 	void AttackAssist(Player& player, bool onceTarget = false);
 
 	// helper
 	bool CheckInRange(float range, float distance);
 	Vector3 GetPlayerOffsetPos(const Player& player, const Vector3& offsetTranslation) const;
 	Matrix4x4 GetPlayerOffsetRotation(const Player& player, const Vector3& offsetRotation) const;
+	void SetTimerByOverall(StateTimer& timer, float overall,
+		float start, float end, EasingType easing);
 
 	// debug
 	void DrawAttackOffset(const Player& player);
 	int AddActionObject(const std::string& name);
+	void SetSynchObject(int objectID);
 };

@@ -117,6 +117,41 @@ void ActionProgressMonitor::SetSelectedMetric(int index) {
 	}
 }
 
+void ActionProgressMonitor::SetOverallDriveHandler(int objectID, std::function<void(float)> handler) {
+
+	if (!IsValidObject(objectID)) {
+		return;
+	}
+	overallHandlers_[objectID] = std::move(handler);
+}
+
+void ActionProgressMonitor::NotifyOverallDrive(int objectID, float overallT) const {
+
+	auto it = overallHandlers_.find(objectID);
+	if (it != overallHandlers_.end() && it->second) {
+
+		it->second(overallT);
+	}
+}
+
+void ActionProgressMonitor::SetSynchToggleHandler(int objectID,
+	std::function<void(bool)> handler) {
+
+	if (!IsValidObject(objectID)) {
+		return;
+	}
+	synchHandlers_[objectID] = std::move(handler);
+}
+
+void ActionProgressMonitor::NotifySynchState(int objectID, bool external) const {
+
+	auto it = synchHandlers_.find(objectID);
+	if (it != synchHandlers_.end() && it->second) {
+
+		it->second(external);
+	}
+}
+
 std::optional<float> ActionProgressMonitor::GetSelectedValue() const {
 
 	if (!IsValidObject(selectedObject_) || !IsValidMetric(selectedMetric_)) {
@@ -202,6 +237,24 @@ bool ActionProgressMonitor::GetSpanLocal(int objectID,
 	}
 	*outLocal = it->second.getT();
 	return true;
+}
+
+bool ActionProgressMonitor::GetOverallValue(int objectID,
+	const std::string& overallName, float* outValue) const {
+
+	if (!IsValidObject(objectID) || !outValue) {
+
+		return false;
+	}
+	const auto& obj = objects_[objectID];
+	for (const auto& metric : obj.metrics) {
+		if (metric.kind == MetricKind::Overall && metric.name == overallName && metric.getter) {
+
+			*outValue = metric.getter();
+			return true;
+		}
+	}
+	return false;
 }
 
 std::vector<std::string> ActionProgressMonitor::GetOverallNames(int objectID) const {

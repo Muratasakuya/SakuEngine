@@ -269,17 +269,19 @@ void Camera3DEditorPanel::EditPlayback(CameraPathData& param, CameraPathControll
 
 	ImGui::Checkbox("isActive", &playbackCamera.isActive);
 
+	if (!playbackCamera.isActive) {
+		return;
+	}
+
 	ImGui::SeparatorText("Synch");
 
 	// 同期方向の設定
 	if (!selectedObjectKey.empty()) {
 
+		ImGui::Checkbox("isSynch", &playbackCamera.isSynch);
 		ImGui::Checkbox("driveStateFromCamera", &actionBinds[selectedObjectKey].driveStateFromCamera);
 	}
 
-	if (!playbackCamera.isActive) {
-		return;
-	}
 	ImGui::Separator();
 	ImGui::Spacing();
 

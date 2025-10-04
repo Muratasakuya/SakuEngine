@@ -57,3 +57,14 @@ float Algorithm::Clamp(float value) {
 
 	return value < 0.0f ? 0.0f : (value > 1.0f ? 1.0f : value);
 }
+
+float Algorithm::MapOverallToLocal(float overall, float start, float end) {
+
+	float w = (std::max)(end - start, 1e-6f);
+	return Algorithm::Clamp((overall - start) / w);
+}
+
+bool Algorithm::InRangeOverall(float overall, float start, float end) {
+
+	return (start <= overall && overall <= end);
+}

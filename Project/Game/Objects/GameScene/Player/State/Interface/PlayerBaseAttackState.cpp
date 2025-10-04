@@ -14,6 +14,15 @@
 //	PlayerBaseAttackState classMethods
 //============================================================================
 
+void PlayerBaseAttackState::UpdateTimer(StateTimer& timer) {
+
+	// 外部による更新がないときのみ
+	if (!externalActive_) {
+
+		timer.Update();
+	}
+}
+
 void PlayerBaseAttackState::AttackAssist(Player& player, bool onceTarget) {
 
 	// 時間経過
@@ -85,6 +94,13 @@ Matrix4x4 PlayerBaseAttackState::GetPlayerOffsetRotation(
 	return playerRotation * offsetMatrix;
 }
 
+void PlayerBaseAttackState::SetTimerByOverall(StateTimer& timer, float overall,
+	float start, float end, EasingType easing) {
+
+	timer.t_ = Algorithm::MapOverallToLocal(overall, start, end);
+	timer.easedT_ = EasedValue(easing, timer.t_);
+}
+
 void PlayerBaseAttackState::DrawAttackOffset(const Player& player) {
 
 	LineRenderer* lineRenderer = LineRenderer::GetInstance();
@@ -149,4 +165,22 @@ int PlayerBaseAttackState::AddActionObject(const std::string& name) {
 
 	Camera3DEditor::GetInstance()->AddActionObject(name);
 	return ActionProgressMonitor::GetInstance()->AddObject(name);
+}
+
+void PlayerBaseAttackState::SetSynchObject(int objectID) {
+
+	// IDを設定
+	editObjectID_ = objectID;
+
+	// エディターの同期設定の共有
+	ActionProgressMonitor::GetInstance()->SetSynchToggleHandler(
+		objectID, [this](bool external) {
+
+			externalActive_ = external;
+			if (external) {
+				player_->SetUpdateMode(ObjectUpdateMode::External);
+			} else {
+				player_->SetUpdateMode(ObjectUpdateMode::None);
+			}
+		});
 }

@@ -169,20 +169,23 @@ void Player::SetReverseWeapon(bool isReverse, PlayerWeaponType type) {
 	}
 }
 
-void Player::ResetWeaponTransform() {
+void Player::ResetWeaponTransform(PlayerWeaponType type) {
 
 	// 武器の位置を元に戻す
-	rightWeapon_->ApplyJson(cacheJsonData_["RightWeapon"]);
-	leftWeapon_->ApplyJson(cacheJsonData_["LeftWeapon"]);
+	if (type == PlayerWeaponType::Left) {
 
-	// 武器を手を親として動かす
-	if (const auto& hand = GetJointTransform("rightHand")) {
+		leftWeapon_->ApplyJson(cacheJsonData_["LeftWeapon"]);
+		if (const auto& hand = GetJointTransform("leftHand")) {
 
-		rightWeapon_->SetParent(*hand);
-	}
-	if (const auto& hand = GetJointTransform("leftHand")) {
+			leftWeapon_->SetParent(*hand);
+		}
+	} else if (type == PlayerWeaponType::Right) {
 
-		leftWeapon_->SetParent(*hand);
+		rightWeapon_->ApplyJson(cacheJsonData_["RightWeapon"]);
+		if (const auto& hand = GetJointTransform("rightHand")) {
+
+			rightWeapon_->SetParent(*hand);
+		}
 	}
 }
 

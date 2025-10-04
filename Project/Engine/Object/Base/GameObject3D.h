@@ -46,6 +46,9 @@ public:
 
 	/*---------- setter ----------*/
 
+	// mode
+	void SetUpdateMode(ObjectUpdateMode mode);
+
 	// transform
 	// SRT
 	void SetScale(const Vector3& scale) { transform_->scale = scale; }
@@ -71,6 +74,7 @@ public:
 	void SetNextAnimation(const std::string& nextAnimationName, bool loopAnimation, float transitionDuration);
 	void SetDebugViewBone(bool enable) { animation_->SetDebugViewBone(enable); }
 	void SetPlaybackSpeed(float playbackSpeed) { animation_->SetPlaybackSpeed(playbackSpeed); }
+	void SetCurrentAnimTime(float time) { animation_->SetCurrentAnimTime(time); }
 
 	void ResetAnimation();
 	Vector3 GetJointWorldPos(const std::string& jointName) const;

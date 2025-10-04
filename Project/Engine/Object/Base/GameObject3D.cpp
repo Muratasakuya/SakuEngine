@@ -109,6 +109,15 @@ void GameObject3D::SaveMaterial(Json& data) {
 	}
 }
 
+void GameObject3D::SetUpdateMode(ObjectUpdateMode mode) {
+
+	updateMode_ = mode;
+	if (animation_) {
+
+		animation_->SetUpdateMode(mode);
+	}
+}
+
 void GameObject3D::TransformImGui() {
 
 	transform_->ImGui(itemWidth_);

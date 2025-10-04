@@ -48,6 +48,10 @@ void PlayerAttack_2ndState::Enter(Player& player) {
 
 void PlayerAttack_2ndState::Update(Player& player) {
 
+	if (player.GetUpdateMode() == ObjectUpdateMode::External) {
+		return;
+	}
+
 	// animationが終わったかチェック
 	canExit_ = player.IsAnimationFinished();
 	// animationが終わったら時間経過を進める
@@ -270,6 +274,43 @@ bool PlayerAttack_2ndState::GetCanExit() const {
 	return canExit;
 }
 
+void PlayerAttack_2ndState::DriveOverall(float overall) {
+
+	// 外部同期中は終了ガード系を解除（巻き戻し直後に止まらないように）
+	canExit_ = false;
+	exitTimer_ = 0.0f;
+
+	// 0..1 にクランプ
+	const float t = std::clamp(overall, 0.0f, 1.0f);
+
+	// --- 2nd は常に同じクリップを使う前提（必要なら名前をJson化）
+	if (player_->GetCurrentAnimationName() != "player_attack_2nd") {
+		player_->SetNextAnimation("player_attack_2nd", /*loop*/false, /*blend*/0.0f);
+	}
+	const float dur = player_->GetAnimationDuration("player_attack_2nd");
+	player_->SetCurrentAnimTime(dur * t);
+
+	// --- 経路の逆算: overall → segmentIndex + local
+	//     2nd は 3 分割（kNumSegments）
+	constexpr float kEps = 1e-6f;
+	const float s = std::min(t * static_cast<float>(kNumSegments), static_cast<float>(kNumSegments) - kEps);
+	const size_t segIndex = static_cast<size_t>(std::floor(s));     // 0,1,2
+	const float  segLocal = s - static_cast<float>(segIndex);        // 0..<1
+
+	// easing を本来の Update と合わせる
+	const float eased = EasedValue(attackPosEaseType_, std::clamp(segLocal, 0.0f, 1.0f));
+
+	// --- 区間始点/終点
+	// Enter 時に CalcWayPoints/CalcApproachWayPoints で wayPoints_ と startTranslation_ は確定している
+	// （External時は PlayerStateController が Enter を一度だけ呼ぶ実装）
+	Vector3 segStart = (segIndex == 0) ? startTranslation_ : wayPoints_[segIndex - 1];
+	Vector3 segEnd = wayPoints_[segIndex];
+
+	// 位置を反映
+	const Vector3 pos = Vector3::Lerp(segStart, segEnd, eased);
+	player_->SetTranslation(pos);
+}
+
 void PlayerAttack_2ndState::SetActionProgress() {
 
 	ActionProgressMonitor* monitor = ActionProgressMonitor::GetInstance();
@@ -307,4 +348,19 @@ void PlayerAttack_2ndState::SetActionProgress() {
 			float done = (currentIndex_ >= kNumSegments) ? kNumSegments : static_cast<float>(currentIndex_);
 			float overall = (done + segmentLocal) / kNumSegments;
 			return overall; });
+
+	SetSpanUpdate(objectID);
+}
+
+void PlayerAttack_2ndState::SetSpanUpdate(int objectID) {
+
+	ActionProgressMonitor* monitor = ActionProgressMonitor::GetInstance();
+
+	// External ON/OFF → 基底で player_->SetUpdateMode(...) 切替 & externalActive_ を持つ
+	PlayerBaseAttackState::SetSynchObject(objectID);
+
+	// Overall 駆動（カメラ → 状態）
+	monitor->SetOverallDriveHandler(objectID, [this](float overall) {
+		DriveOverall(overall);
+		});
 }

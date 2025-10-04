@@ -32,8 +32,9 @@ public:
 		bool isActive = false;
 		PreviewMode mode = PreviewMode::Keyframe;
 
-		bool isLoop = false; // ループ再生
-		float time;          // 現在の時間
+		bool isSynch = false; // 同期するか
+		bool isLoop = false;  // ループ再生
+		float time;           // 現在の時間
 
 		// 現在のキーフレーム
 		int selectedKeyIndex = 0;

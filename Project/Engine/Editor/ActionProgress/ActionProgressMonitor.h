@@ -36,6 +36,12 @@ public:
 	void SetSelectedObject(int index);
 	void SetSelectedMetric(int index);
 
+	// 同期状態の通知
+	void SetOverallDriveHandler(int objectID, std::function<void(float)> handler);
+	void NotifyOverallDrive(int objectID, float overallT) const;
+	void SetSynchToggleHandler(int objectID, std::function<void(bool)> handler);
+	void NotifySynchState(int objectID, bool external) const;
+
 	// 選択中のオブジェクト進捗度
 	std::optional<float> GetSelectedValue() const;
 	// 名前からIDの取得
@@ -46,6 +52,7 @@ public:
 	bool GetSpanStart(int objectID, const std::string& spanName, float* outStart) const;
 	bool GetSpanEnd(int objectID, const std::string& spanName, float* outEnd) const;
 	bool GetSpanLocal(int objectID, const std::string& spanName, float* outLocal) const;
+	bool GetOverallValue(int objectID, const std::string& overallName, float* outValue) const;
 	// 進捗名
 	std::vector<std::string> GetOverallNames(int objectID) const;
 	std::vector<std::string> GetSpanNames(int objectID) const;
@@ -115,6 +122,9 @@ private:
 	std::vector<Object> objects_;
 	// 各進捗ごとのハンドル
 	std::unordered_map<SpanKey, SpanHandle, SpanKeyHash> spans_;
+	// 同期通知
+	std::unordered_map<int, std::function<void(float)>> overallHandlers_;
+	std::unordered_map<int, std::function<void(bool)>> synchHandlers_;
 
 	// エディター
 	int selectedObject_ = -1;

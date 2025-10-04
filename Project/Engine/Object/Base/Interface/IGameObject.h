@@ -3,6 +3,7 @@
 //============================================================================
 //	include
 //============================================================================
+#include <Engine/Utility/Enum/ObjectUpdateMode.h>
 
 // data
 #include <Engine/Object/Data/Transform.h>
@@ -45,6 +46,7 @@ public:
 	const ObjectTag& GetTag() const { return *tag_; }
 	const std::string& GetIdentifier() const { return identifier_; }
 	uint32_t GetObjectID() const { return objectId_; }
+	ObjectUpdateMode GetUpdateMode() const { return updateMode_; }
 protected:
 	//========================================================================
 	//	protected Methods
@@ -58,6 +60,9 @@ protected:
 	uint32_t objectId_;
 	// tag
 	ObjectTag* tag_;
+
+	// 更新方法
+	ObjectUpdateMode updateMode_ = ObjectUpdateMode::None;
 
 	// 序列関係なしの名前
 	std::string identifier_;

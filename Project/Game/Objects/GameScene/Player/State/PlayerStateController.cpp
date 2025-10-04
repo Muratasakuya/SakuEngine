@@ -165,6 +165,12 @@ PlayerState PlayerStateController::GetSwitchSelectState() const {
 
 void PlayerStateController::Update(Player& owner) {
 
+	// 外部進捗による更新中なら入力による状態遷移を行わない
+	bool isExternalActive = UpdateExternalSynch(owner);
+	if (isExternalActive) {
+		return;
+	}
+
 	// 入力に応じた状態の遷移
 	UpdateInputState();
 
@@ -357,6 +363,74 @@ void PlayerStateController::RequestParryState() {
 			parrySession_.Init();
 		}
 	}
+}
+
+bool PlayerStateController::UpdateExternalSynch(Player& owner) {
+
+	// オブジェクトの更新が外部による更新なら
+	if (owner.GetUpdateMode() == ObjectUpdateMode::External) {
+
+		// 同期中の状態をチェック
+		std::optional<PlayerState> currentActive{};
+		PlayerIState* currentPtr = nullptr;
+		for (auto& [state, ptr] : states_) {
+			// 外部のエディターと同期中ならポインタを設定
+			if (auto* base = dynamic_cast<PlayerBaseAttackState*>(ptr.get())) {
+				if (base->IsExternalActive()) {
+
+					currentActive = state;
+					currentPtr = ptr.get();
+
+					// 最初に見つかったポインタのみ
+					break;
+				}
+			}
+		}
+		// 同期中の状態がなければ
+		if (!currentActive.has_value()) {
+			if (externalSynchState_.has_value()) {
+				// Exitを呼びだしてリセットして終了
+				if (PlayerIState* preState = states_[*externalSynchState_].get()) {
+
+					preState->Exit(owner);
+
+				}
+				externalSynchState_.reset();
+			}
+			return true;
+		}
+		// 同期対象が変更されたら
+		if (!externalSynchState_.has_value() || *externalSynchState_ != *currentActive) {
+			// 1度Exitを呼びだしてリセットする
+			if (externalSynchState_.has_value()) {
+				if (PlayerIState* preState = states_[*externalSynchState_].get()) {
+
+					preState->Exit(owner);
+				}
+			}
+			// 同期を開始させる
+			currentPtr->Enter(owner);
+			externalSynchState_ = *currentActive;
+		}
+
+		// 同期中の状態を更新する
+		if (currentPtr) {
+
+			currentPtr->Update(owner);
+			currentPtr->UpdateAlways(owner);
+		}
+		return true;
+	}
+
+	// 外部同期を終了したらExitを呼びだしてリセットして終了させる
+	if (externalSynchState_.has_value()) {
+		if (PlayerIState* preState = states_[*externalSynchState_].get()) {
+
+			preState->Exit(owner);
+		}
+		externalSynchState_.reset();
+	}
+	return false;
 }
 
 bool PlayerStateController::Request(PlayerState state) {

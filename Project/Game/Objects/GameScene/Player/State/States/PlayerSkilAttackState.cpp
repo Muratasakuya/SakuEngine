@@ -68,11 +68,15 @@ void PlayerSkilAttackState::Enter(Player& player) {
 
 void PlayerSkilAttackState::Update(Player& player) {
 
+	// 外部による更新中は処理しない
+	if (player.GetUpdateMode() == ObjectUpdateMode::External) {
+
+		UpdateState(player);
+		return;
+	}
 	if (!assisted_ || canExit_) {
 		return;
 	}
-
-	// 各状態を更新
 	UpdateState(player);
 }
 
@@ -97,7 +101,7 @@ void PlayerSkilAttackState::UpdateState(Player& player) {
 void PlayerSkilAttackState::UpdateRush(Player& player) {
 
 	// 座標を補間する
-	rushMoveParam_.timer.Update();
+	PlayerBaseAttackState::UpdateTimer(rushMoveParam_.timer);
 	player.SetTranslation(Vector3::Lerp(rushMoveParam_.start,
 		rushMoveParam_.target, rushMoveParam_.timer.easedT_));
 
@@ -115,7 +119,10 @@ void PlayerSkilAttackState::UpdateRush(Player& player) {
 		returnMoveParam_.target.y = 0.0f;
 
 		// アニメーションを設定
-		player.SetNextAnimation("player_skilAttack_2nd", false, returnMoveParam_.nextAnim);
+		if (player.GetUpdateMode() != ObjectUpdateMode::External) {
+
+			player.SetNextAnimation("player_skilAttack_2nd", false, returnMoveParam_.nextAnim);
+		}
 		// 敵の方を向ける
 		player.SetRotation(Quaternion::LookRotation(direction, Vector3(0.0f, 1.0f, 0.0f)));
 
@@ -127,7 +134,7 @@ void PlayerSkilAttackState::UpdateRush(Player& player) {
 void PlayerSkilAttackState::UpdateReturn(Player& player) {
 
 	// 座標を補間する
-	returnMoveParam_.timer.Update();
+	PlayerBaseAttackState::UpdateTimer(returnMoveParam_.timer);
 	player.SetTranslation(Vector3::Lerp(returnMoveParam_.start,
 		returnMoveParam_.target, returnMoveParam_.timer.easedT_));
 
@@ -148,7 +155,7 @@ void PlayerSkilAttackState::UpdateReturn(Player& player) {
 	if (isStratLookEnemy_) {
 
 		// 敵方向へ補間
-		lookEnemyTimer_.Update();
+		PlayerBaseAttackState::UpdateTimer(lookEnemyTimer_);
 		player.SetRotation(Quaternion::Slerp(yawLerpStart_, yawLerpEnd_, lookEnemyTimer_.easedT_));
 	}
 
@@ -166,7 +173,10 @@ void PlayerSkilAttackState::UpdateReturn(Player& player) {
 		backJumpParam_.target.y = jumpStrength_;
 
 		// アニメーションを設定
-		player.SetNextAnimation("player_skilAttack_3rd", false, backJumpParam_.nextAnim);
+		if (player.GetUpdateMode() != ObjectUpdateMode::External) {
+
+			player.SetNextAnimation("player_skilAttack_3rd", false, backJumpParam_.nextAnim);
+		}
 		// 敵の方を向ける
 		player.SetRotation(Quaternion::LookRotation(direction, Vector3(0.0f, 1.0f, 0.0f)));
 
@@ -181,7 +191,7 @@ void PlayerSkilAttackState::UpdateJumpAttack(Player& player) {
 	case PlayerSkilAttackState::JumpAttackState::Jump: {
 
 		// 座標を補間する
-		backJumpParam_.timer.Update();
+		PlayerBaseAttackState::UpdateTimer(backJumpParam_.timer);
 		player.SetTranslation(Vector3::Lerp(backJumpParam_.start,
 			backJumpParam_.target, backJumpParam_.timer.easedT_));
 
@@ -208,7 +218,7 @@ void PlayerSkilAttackState::UpdateJumpAttack(Player& player) {
 	case PlayerSkilAttackState::JumpAttackState::Attack: {
 
 		// 座標を補間する
-		jumpMoveParam_.timer.Update();
+		PlayerBaseAttackState::UpdateTimer(jumpMoveParam_.timer);
 		player.SetTranslation(Vector3::Lerp(jumpMoveParam_.start,
 			jumpMoveParam_.target, jumpMoveParam_.timer.easedT_));
 
@@ -396,58 +406,237 @@ bool PlayerSkilAttackState::GetCanExit() const {
 	return canExit;
 }
 
+void PlayerSkilAttackState::DriveOverall(float overall) {
+
+	// 更新が止まらないように終了フラグを常にリセット
+	canExit_ = false;
+	exitTimer_ = 0.0f;
+
+	// 総時間としきい値
+	const float t1 = (std::max)(0.0f, rushMoveParam_.timer.target_);
+	const float t2 = (std::max)(0.0f, returnMoveParam_.timer.target_);
+	const float t3 = (std::max)(0.0f, backJumpParam_.timer.target_);
+	const float t4 = (std::max)(0.0f, jumpMoveParam_.timer.target_);
+	const float total = (std::max)(1e-6f, t1 + t2 + t3 + t4);
+
+	const float c1 = t1 / total;
+	const float c2 = (t1 + t2) / total;
+	const float c3 = (t1 + t2 + t3) / total;
+
+	auto lookDirXZ = [this]() {
+		const Vector3 p = player_->GetTranslation();
+		const Vector3 e = bossEnemy_->GetTranslation();
+		Vector3 dir = Vector3(e.x - p.x, 0.0f, e.z - p.z).Normalize();
+		return dir;
+		};
+
+	// ========= Rush ========= [0, c1]
+	if (Algorithm::InRangeOverall(overall, 0.0f, c1)) {
+		// フェーズ初期化（Enter相当）
+		if (currentState_ != State::Rush) {
+			currentState_ = State::Rush;
+			jumpAttackState_ = JumpAttackState::Jump;
+
+			// 座標セット（Enterと同等）
+			const Vector3 playerPos = player_->GetTranslation();
+			const Vector3 bossPos = bossEnemy_->GetTranslation();
+			Vector3 dir = (bossPos - playerPos).Normalize();
+
+			rushMoveParam_.start = playerPos;       rushMoveParam_.start.y = 0.0f;
+			rushMoveParam_.target = bossPos + dir * rushMoveParam_.moveValue;
+			rushMoveParam_.target.y = 0.0f;
+
+			// アニメ切替（スナップ）
+			if (player_->GetCurrentAnimationName() != "player_skilAttack_1st") {
+				player_->SetNextAnimation("player_skilAttack_1st", false, 0.0f);
+			}
+			player_->SetRotation(Quaternion::LookRotation(dir, Vector3(0, 1, 0)));
+			isStratLookEnemy_ = false;
+			lookEnemyTimer_.Reset();
+		}
+
+		// local t を算出して座標/アニメ時間を合わせる
+		SetTimerByOverall(rushMoveParam_.timer, overall, 0.0f, c1, rushMoveParam_.timer.easeingType_);
+
+		const float local = Algorithm::MapOverallToLocal(overall, 0.0f, c1);
+		const float dur = player_->GetAnimationDuration("player_skilAttack_1st");
+		player_->SetCurrentAnimTime(dur * local);
+		return;
+	}
+
+	// ========= Return ========= [c1, c2]
+	if (Algorithm::InRangeOverall(overall, c1, c2)) {
+		if (currentState_ != State::Return) {
+			currentState_ = State::Return;
+
+			// 座標セット（UpdateRushの遷移処理と同等）
+			const Vector3 playerPos = player_->GetTranslation();
+			const Vector3 bossPos = bossEnemy_->GetTranslation();
+			Vector3 dir = (bossPos - playerPos).Normalize();
+
+			returnMoveParam_.start = rushMoveParam_.target;  returnMoveParam_.start.y = 0.0f;
+			returnMoveParam_.target = bossPos + dir * returnMoveParam_.moveValue;
+			returnMoveParam_.target.y = 0.0f;
+
+			// アニメ切替
+			if (player_->GetCurrentAnimationName() != "player_skilAttack_2nd") {
+				player_->SetNextAnimation("player_skilAttack_2nd", false, 0.0f);
+			}
+			player_->SetRotation(Quaternion::LookRotation(dir, Vector3(0, 1, 0)));
+
+			// 敵向き補間の初期化は UpdateReturn 側にもあるが、外部同期でもズレないようここでも安全に準備
+			isStratLookEnemy_ = false;
+			lookEnemyTimer_.Reset();
+		}
+
+		SetTimerByOverall(returnMoveParam_.timer, overall, c1, c2, returnMoveParam_.timer.easeingType_);
+
+		// アニメ時間
+		const float local = Algorithm::MapOverallToLocal(overall, c1, c2);
+		const float dur = player_->GetAnimationDuration("player_skilAttack_2nd");
+		player_->SetCurrentAnimTime(dur * local);
+
+		// 敵向き補間（双方向対応）
+		if (local >= lookStartProgress_) {
+			isStratLookEnemy_ = true;
+			const float lookLocal = Algorithm::MapOverallToLocal(local, lookStartProgress_, 1.0f);
+			lookEnemyTimer_.t_ = lookLocal;
+			lookEnemyTimer_.easedT_ = EasedValue(lookEnemyTimer_.easeingType_, lookLocal);
+
+			// 目標回転も更新（現在位置→敵方向）
+			const Quaternion startQ = player_->GetRotation();
+			const Quaternion endQ = Quaternion::LookRotation(lookDirXZ(), Vector3(0, 1, 0));
+			yawLerpStart_ = startQ;
+			yawLerpEnd_ = endQ;
+			// Update側で Slerp 適用
+		} else {
+			isStratLookEnemy_ = false;
+			lookEnemyTimer_.Reset();
+		}
+		return;
+	}
+
+	// ========= BackJump ========= [c2, c3]
+	if (Algorithm::InRangeOverall(overall, c2, c3)) {
+		if (currentState_ != State::JumpAttack || jumpAttackState_ != JumpAttackState::Jump) {
+			currentState_ = State::JumpAttack;
+			jumpAttackState_ = JumpAttackState::Jump;
+
+			// 座標セット（UpdateReturnの遷移処理と同等）
+			const Vector3 playerPos = player_->GetTranslation();
+			const Vector3 bossPos = bossEnemy_->GetTranslation();
+			Vector3 dir = (bossPos - playerPos).Normalize();
+
+			backJumpParam_.start = returnMoveParam_.target;
+			backJumpParam_.target = playerPos + dir * backJumpParam_.moveValue;
+			backJumpParam_.target.y = jumpStrength_;
+
+			if (player_->GetCurrentAnimationName() != "player_skilAttack_3rd") {
+				player_->SetNextAnimation("player_skilAttack_3rd", false, 0.0f);
+			}
+			player_->SetRotation(Quaternion::LookRotation(dir, Vector3(0, 1, 0)));
+		}
+
+		SetTimerByOverall(backJumpParam_.timer, overall, c2, c3, backJumpParam_.timer.easeingType_);
+		const float local = Algorithm::MapOverallToLocal(overall, c2, c3);
+		const float portionBack = t3 / (t3 + t4 + 1e-6f);
+		const float dur = player_->GetAnimationDuration("player_skilAttack_3rd");
+		const float clipT = portionBack * local;
+		player_->SetCurrentAnimTime(dur* clipT);
+		return;
+	}
+
+	// ========= JumpMove ========= [c3, 1]
+	if (Algorithm::InRangeOverall(overall, c3, 1.0f)) {
+		if (currentState_ != State::JumpAttack || jumpAttackState_ != JumpAttackState::Attack) {
+			currentState_ = State::JumpAttack;
+			jumpAttackState_ = JumpAttackState::Attack;
+
+			// 座標セット（UpdateJumpAttackの遷移処理と同等）
+			const Vector3 playerPos = player_->GetTranslation();
+			const Vector3 bossPos = bossEnemy_->GetTranslation();
+			Vector3 dir = (bossPos - playerPos).Normalize();
+
+			jumpMoveParam_.start = backJumpParam_.target;
+			jumpMoveParam_.target = bossPos + dir * jumpMoveParam_.moveValue;
+			jumpMoveParam_.target.y = 0.0f;
+			player_->SetRotation(Quaternion::LookRotation(dir, Vector3(0, 1, 0)));
+		}
+
+		SetTimerByOverall(jumpMoveParam_.timer, overall, c3, 1.0f, jumpMoveParam_.timer.easeingType_);
+		const float local = Algorithm::MapOverallToLocal(overall, c3, 1.0f);
+		const float portionBack = t3 / (t3 + t4 + 1e-6f);
+		const float dur = player_->GetAnimationDuration("player_skilAttack_3rd");
+		const float clipT = portionBack + (1.0f - portionBack) * local;  // portionBack .. 1
+		player_->SetCurrentAnimTime(dur * clipT);
+		return;
+	}
+}
+
 void PlayerSkilAttackState::SetActionProgress() {
 
 	ActionProgressMonitor* monitor = ActionProgressMonitor::GetInstance();
+
+	// エディター側にオブジェクトを登録
 	int objectID = PlayerBaseAttackState::AddActionObject("PlayerSkilAttackState");
 
-	// それぞれの処理の目標時間
-	const float target1 = (std::max)(0.0f, rushMoveParam_.timer.target_);
-	const float target2 = (std::max)(0.0f, returnMoveParam_.timer.target_);
-	const float target3 = (std::max)(0.0f, backJumpParam_.timer.target_);
-	const float target4 = (std::max)(0.0f, jumpMoveParam_.timer.target_);
-	const float totalT = (std::max)(1e-6f, target1 + target2 + target3 + target4);
+	// Overall（0..1）：スキル全体の進捗
+	monitor->AddOverall(objectID, "Skill Progress", [this]() -> float {
+		// それぞれのフェーズ時間（秒相当）。0 でも安全に扱う
+		const float t1 = (std::max)(0.0f, rushMoveParam_.timer.target_);
+		const float t2 = (std::max)(0.0f, returnMoveParam_.timer.target_);
+		const float t3 = (std::max)(0.0f, backJumpParam_.timer.target_);
+		const float t4 = (std::max)(0.0f, jumpMoveParam_.timer.target_);
+		const float total = (std::max)(1e-6f, t1 + t2 + t3 + t4);
 
-	// 全体進捗
-	monitor->AddOverall(objectID, "Attack Progress", [=, this]() -> float {
+		// 区切り（0..1）
+		const float c1 = t1 / total;
+		const float c2 = (t1 + t2) / total;
+		const float c3 = (t1 + t2 + t3) / total;
 
-		float t = 0.0f;
-		t += rushMoveParam_.timer.t_;
-		if (rushMoveParam_.timer.IsReached()) {
+		// 各フェーズのローカル t（0..1）
+		const float r1 = std::clamp(rushMoveParam_.timer.t_, 0.0f, 1.0f);
+		const float r2 = std::clamp(returnMoveParam_.timer.t_, 0.0f, 1.0f);
+		const float r3 = std::clamp(backJumpParam_.timer.t_, 0.0f, 1.0f);
+		const float r4 = std::clamp(jumpMoveParam_.timer.t_, 0.0f, 1.0f);
 
-			t = target1 + returnMoveParam_.timer.t_;
+		// 現在フェーズに応じて全体 t を算出
+		// （外部駆動時は DriveOverall が timer.t_ を上書き、内部再生時は Update が進める）
+		float overall = 0.0f;
+		switch (currentState_) {
+		case State::Rush:
+			overall = c1 * r1;
+			break;
+		case State::Return:
+			overall = c1 + (c2 - c1) * r2;
+			break;
+		case State::JumpAttack:
+			if (jumpAttackState_ == JumpAttackState::Jump) {
+				overall = c2 + (c3 - c2) * r3;
+			} else { // Attack
+				overall = c3 + (1.0f - c3) * r4;
+			}
+			break;
+		default:
+			// 未初期化時のフェールセーフ
+			overall = c1 * r1;
+			break;
 		}
-		if (returnMoveParam_.timer.IsReached()) {
+		return std::clamp(overall, 0.0f, 1.0f);
+		});
 
-			t = target1 + target2 + backJumpParam_.timer.t_;
-		}
-		if (backJumpParam_.timer.IsReached()) {
+	// 進捗率の同期設定
+	SetSpanUpdate(objectID);
+}
 
-			t = target1 + target2 + target3 + jumpMoveParam_.timer.t_;
-		}
-		return std::clamp(t / totalT, 0.0f, 1.0f); });
+void PlayerSkilAttackState::SetSpanUpdate(int objectID) {
 
-	// Rush
-	monitor->AddSpan(objectID, "Rush Move",
-		[=]() { return 0.0f; },
-		[=]() { return std::clamp(target1 / totalT, 0.0f, 1.0f); },
-		[this]() { return std::clamp(rushMoveParam_.timer.easedT_, 0.0f, 1.0f); });
+	ActionProgressMonitor* monitor = ActionProgressMonitor::GetInstance();
 
-	// Return
-	monitor->AddSpan(objectID, "Return Move",
-		[=]() { return std::clamp(target1 / totalT, 0.0f, 1.0f); },
-		[=]() { return std::clamp((target1 + target2) / totalT, 0.0f, 1.0f); },
-		[this]() { return std::clamp(returnMoveParam_.timer.easedT_, 0.0f, 1.0f); });
+	// 同期設定
+	PlayerBaseAttackState::SetSynchObject(objectID);
 
-	// Back Jump
-	monitor->AddSpan(objectID, "Back Jump",
-		[=]() { return std::clamp((target1 + target2) / totalT, 0.0f, 1.0f); },
-		[=]() { return std::clamp((target1 + target2 + target3) / totalT, 0.0f, 1.0f); },
-		[this]() { return std::clamp(backJumpParam_.timer.easedT_, 0.0f, 1.0f); });
-
-	// Jump Move
-	monitor->AddSpan(objectID, "Jump Move",
-		[=]() { return std::clamp((target1 + target2 + target3) / totalT, 0.0f, 1.0f); },
-		[=]() { return 1.0f; },
-		[this]() { return std::clamp(jumpMoveParam_.timer.easedT_, 0.0f, 1.0f); });
+	// 全体進捗による同期
+	monitor->SetOverallDriveHandler(objectID, [this](float overall) {
+		DriveOverall(overall); });
 }

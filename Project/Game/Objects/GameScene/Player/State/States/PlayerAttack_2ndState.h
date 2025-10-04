@@ -80,6 +80,8 @@ private:
 		std::array<Vector3, kNumSegments>& dstWayPoints);
 	void CalcApproachWayPoints(const Player& player, std::array<Vector3, kNumSegments>& dstWayPoints);
 	bool LerpAlongSegments(Player& player);
+	void DriveOverall(float overall);
 
 	void SetActionProgress();
+	void SetSpanUpdate(int objectID);
 };
