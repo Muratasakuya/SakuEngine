@@ -20,8 +20,9 @@ int CameraPathGizmoSynch::SynchSelectedKeyIndex(const CameraPathData& data, int 
 	for (int i = 0; i < static_cast<int>(keyframes.size()); ++i) {
 
 		const auto& keyframe = keyframes[i];
+		keyframe.demoObject->SetColor(Color::White());
 		if (keyframe.demoObject->GetObjectID() == *selected) {
-
+			keyframe.demoObject->SetColor(Color::Red());
 			return i;
 		}
 	}
