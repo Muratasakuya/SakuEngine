@@ -60,7 +60,7 @@ float Algorithm::Clamp(float value) {
 
 float Algorithm::MapOverallToLocal(float overall, float start, float end) {
 
-	float w = std::max(end - start, 1e-6f);
+	float w = (std::max)(end - start, 1e-6f);
 	return Algorithm::Clamp((overall - start) / w);
 }
 

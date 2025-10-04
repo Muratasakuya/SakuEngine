@@ -397,16 +397,16 @@ bool PlayerAttack_3rdState::GetCanExit() const {
 
 void PlayerAttack_3rdState::DriveOverall(float overall) {
 
-	const float totalT = std::max(1e-6f, totalTimer_.target_);
+	const float totalT = (std::max)(1e-6f, totalTimer_.target_);
 
-	const float backEnd = std::max(0.0f, backMoveTimer_.target_) / totalT;
-	const float catchBegin = std::max(0.0f, player_->GetEventTime("player_attack_3rd", "CatchSword", 0)) / totalT;
-	const float catchEnd = std::max(catchBegin, catchBegin + std::max(0.0f, catchSwordTimer_.target_ / totalT));
+	const float backEnd = (std::max)(0.0f, backMoveTimer_.target_) / totalT;
+	const float catchBegin = (std::max)(0.0f, player_->GetEventTime("player_attack_3rd", "CatchSword", 0)) / totalT;
+	const float catchEnd = (std::max)(catchBegin, catchBegin + (std::max)(0.0f, catchSwordTimer_.target_ / totalT));
 
-	const float outLbegin = std::max(0.0f, player_->GetEventTime("player_attack_3rd", "OutSword", 0)) / totalT;
-	const float outRbegin = std::max(0.0f, player_->GetEventTime("player_attack_3rd", "OutSword", 1)) / totalT;
-	const float outLend = std::max(outLbegin, outLbegin + std::max(0.0f, weaponMoveTimer_.target_ / totalT));
-	const float outRend = std::max(outRbegin, outRbegin + std::max(0.0f, weaponMoveTimer_.target_ / totalT));
+	const float outLbegin = (std::max)(0.0f, player_->GetEventTime("player_attack_3rd", "OutSword", 0)) / totalT;
+	const float outRbegin = (std::max)(0.0f, player_->GetEventTime("player_attack_3rd", "OutSword", 1)) / totalT;
+	const float outLend = (std::max)(outLbegin, outLbegin + (std::max)(0.0f, weaponMoveTimer_.target_ / totalT));
+	const float outRend = (std::max)(outRbegin, outRbegin + (std::max)(0.0f, weaponMoveTimer_.target_ / totalT));
 
 	if (catchEnd - 1e-6f <= overall) {
 		if (!endAttached_) {
