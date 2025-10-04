@@ -531,7 +531,7 @@ void PlayerAttack_3rdState::SetActionProgress() {
 	int objectID = PlayerBaseAttackState::AddActionObject("PlayerAttack_3rdState");
 
 	// 全体進捗
-	monitor->AddOverall(objectID, "Attack Progress", [this]() -> float {
+	monitor->AddOverall(objectID, "Attack Progress_3rd", [this]() -> float {
 		return std::clamp(totalTimer_.t_ / totalTimer_.target_, 0.0f, 1.0f); });
 
 	// 0除算回避

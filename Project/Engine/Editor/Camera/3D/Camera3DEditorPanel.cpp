@@ -354,7 +354,6 @@ void Camera3DEditorPanel::EditPlayback(CameraPathData& param, CameraPathControll
 			}
 		}
 	}
-
 	ImGui::PopItemWidth();
 }
 

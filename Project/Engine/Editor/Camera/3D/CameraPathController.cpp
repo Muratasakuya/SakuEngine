@@ -83,7 +83,6 @@ void CameraPathController::Update(const PlaybackState& state, CameraPathData& da
 		break;
 	}
 	}
-
 	// カメラに適応
 	ApplyToCamera(*camera, translation, rotation, fovY);
 }

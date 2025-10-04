@@ -123,7 +123,7 @@ void PlayerAttack_4thState::SetActionProgress() {
 	int objectID = PlayerBaseAttackState::AddActionObject("PlayerAttack_4thState");
 
 	// 全体進捗
-	monitor->AddOverall(objectID, "Attack Progress", [this]() -> float {
+	monitor->AddOverall(objectID, "Attack Progress_4th", [this]() -> float {
 		float progress = 0.0f;
 		if (player_->GetCurrentAnimationName() == "player_attack_4th") {
 			progress = player_->GetAnimationProgress();
