@@ -4,6 +4,7 @@
 //	include
 //============================================================================
 #include <Engine/Scene/Camera/BaseCamera.h>
+#include <Game/Objects/GameScene/Player/Structures/PlayerStructures.h>
 
 // state
 #include <Game/Camera/Follow/State/FollowCameraStateController.h>
@@ -22,6 +23,7 @@ public:
 	~FollowCamera() = default;
 
 	void Init() override;
+	void LoadAnim();
 
 	void Update() override;
 
@@ -37,6 +39,9 @@ public:
 	void SetState(FollowCameraState state);
 
 	float GetFovY() const { return fovY_; }
+
+	void StartPlayerActionAnim(PlayerState state);
+	void EndPlayerActionAnim(PlayerState state);
 private:
 	//========================================================================
 	//	private Methods
@@ -47,10 +52,10 @@ private:
 	// 状態の管理
 	std::unique_ptr<FollowCameraStateController> stateController_;
 
-	//--------- functions ----------------------------------------------------
+	// アニメーションを読み込んだか
+	bool isLoadedAnim_;
 
-	// init
-	void LoadAnimCamera();
+	//--------- functions ----------------------------------------------------
 
 	// json
 	void ApplyJson();

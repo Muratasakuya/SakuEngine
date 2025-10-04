@@ -32,7 +32,17 @@ public:
 	void ImGui() override;
 
 	// ゲームとの連携
+	// ファイル読み込み
 	void LoadAnimFile(const std::string& fileName);
+
+	// アニメーション処理
+	// 開始
+	// canCutIn: 補間処理途中に他のアニメーションから開始できるか
+	void StartAnim(const std::string& actionName,bool canCutIn);
+	// 終了
+	void EndAnim(const std::string& actionName);
+	// ゲームカメラ更新
+	void UpdateGameAnimation();
 
 	//--------- accessor -----------------------------------------------------
 
@@ -44,6 +54,18 @@ private:
 	//	private Methods
 	//========================================================================
 
+	//--------- structure ----------------------------------------------------
+
+	// ゲームでの再生状態
+	struct RuntimePlayState {
+
+		std::string action;
+		bool playing = false;
+		bool canCutIn = false;
+		// 開始時に追加するオブジェクトのID
+		uint32_t injectedHeadId = 0;
+	};
+
 	//--------- variables ----------------------------------------------------
 
 	static Camera3DEditor* instance_;
@@ -53,6 +75,8 @@ private:
 	std::unordered_map<std::string, CameraPathData> params_;
 	// 対象アクション
 	std::unordered_map<std::string, CameraPathController::ActionSynchBind> actionBinds_;
+	// ランタイム状態
+	std::optional<RuntimePlayState> runtime_;
 
 	// カメラの補間処理、更新
 	std::unique_ptr<CameraPathController> controller_;

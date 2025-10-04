@@ -190,6 +190,12 @@ void GameScene::Update() {
 	}
 }
 
+void GameScene::EndFrame() {
+
+	// カメラアニメーションの読み込み
+	context_.camera->GetFollowCamera()->LoadAnim();
+}
+
 void GameScene::RequestNextState(GameSceneState next) {
 
 	// 現在の状態を終了させる

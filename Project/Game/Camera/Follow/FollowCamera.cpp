@@ -14,7 +14,11 @@
 //	FollowCamera classMethods
 //============================================================================
 
-void FollowCamera::LoadAnimCamera() {
+void FollowCamera::LoadAnim() {
+
+	if (isLoadedAnim_) {
+		return;
+	}
 
 	Camera3DEditor* editor = Camera3DEditor::GetInstance();
 	// プレイヤーの攻撃
@@ -22,20 +26,67 @@ void FollowCamera::LoadAnimCamera() {
 	editor->LoadAnimFile("3rdAttackCamera.json");
 	editor->LoadAnimFile("4thAttackCamera.json");
 	editor->LoadAnimFile("skillAttackCamera.json");
+
+	// 読み込み済み
+	isLoadedAnim_ = true;
+}
+
+void FollowCamera::StartPlayerActionAnim(PlayerState state) {
+
+	Camera3DEditor* editor = Camera3DEditor::GetInstance();
+	switch (state) {
+	case PlayerState::Attack_2nd:
+
+		editor->StartAnim("AttackProgress_2nd", true);
+		break;
+	case PlayerState::Attack_3rd:
+
+		editor->StartAnim("AttackProgress_3rd", true);
+		break;
+	case PlayerState::Attack_4th:
+
+		editor->StartAnim("AttackProgress_4th", true);
+		break;
+	case PlayerState::SkilAttack:
+
+		editor->StartAnim("SkillProgress", true);
+		break;
+	}
+}
+
+void FollowCamera::EndPlayerActionAnim(PlayerState state) {
+
+	Camera3DEditor* editor = Camera3DEditor::GetInstance();
+	switch (state) {
+	case PlayerState::Attack_2nd:
+
+		editor->EndAnim("AttackProgress_2nd");
+		break;
+	case PlayerState::Attack_3rd:
+
+		editor->EndAnim("AttackProgress_3rd");
+		break;
+	case PlayerState::Attack_4th:
+
+		editor->EndAnim("AttackProgress_4th");
+		break;
+	case PlayerState::SkilAttack:
+
+		editor->EndAnim("SkillProgress");
+		break;
+	}
 }
 
 void FollowCamera::Init() {
 
 	displayFrustum_ = false;
+	isLoadedAnim_ = false;
 
 	// json適応
 	ApplyJson();
 
 	stateController_ = std::make_unique<FollowCameraStateController>();
 	stateController_->Init(*this);
-
-	// カメラアニメーション読み込み
-	LoadAnimCamera();
 
 	// 行列更新
 	BaseCamera::UpdateView();

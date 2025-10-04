@@ -45,6 +45,9 @@ void PlayerAttack_3rdState::Enter(Player& player) {
 
 	// Y座標の固定値
 	initPosY_ = player.GetTranslation().y;
+
+	// カメラアニメーション開始
+	followCamera_->StartPlayerActionAnim(PlayerState::Attack_3rd);
 }
 
 void PlayerAttack_3rdState::Update(Player& player) {
@@ -531,7 +534,7 @@ void PlayerAttack_3rdState::SetActionProgress() {
 	int objectID = PlayerBaseAttackState::AddActionObject("PlayerAttack_3rdState");
 
 	// 全体進捗
-	monitor->AddOverall(objectID, "Attack Progress_3rd", [this]() -> float {
+	monitor->AddOverall(objectID, "AttackProgress_3rd", [this]() -> float {
 		return std::clamp(totalTimer_.t_ / totalTimer_.target_, 0.0f, 1.0f); });
 
 	// 0除算回避

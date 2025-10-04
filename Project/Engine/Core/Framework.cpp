@@ -168,6 +168,9 @@ void Framework::Update() {
 		sceneManager_->InitNextScene();
 	}
 
+	// シーン開始
+	sceneManager_->BeginFrame();
+
 	// imgui表示更新
 	bool playGame = true;
 #if defined(_DEBUG) || defined(_DEVELOPBUILD)
@@ -181,6 +184,8 @@ void Framework::Update() {
 		// scene更新
 		UpdateScene();
 	}
+	// シーン終了
+	sceneManager_->EndFrame();
 	GameTimer::EndUpdateCount();
 }
 void Framework::UpdateScene() {

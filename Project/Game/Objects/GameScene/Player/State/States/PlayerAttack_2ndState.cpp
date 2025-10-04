@@ -6,6 +6,7 @@
 #include <Engine/Editor/ActionProgress/ActionProgressMonitor.h>
 #include <Engine/Core/Graphics/Renderer/LineRenderer.h>
 #include <Engine/Utility/Timer/GameTimer.h>
+#include <Game/Camera/Follow/FollowCamera.h>
 #include <Game/Objects/GameScene/Enemy/Boss/Entity/BossEnemy.h>
 #include <Game/Objects/GameScene/Player/Entity/Player.h>
 
@@ -317,7 +318,7 @@ void PlayerAttack_2ndState::SetActionProgress() {
 	int objectID = PlayerBaseAttackState::AddActionObject("PlayerAttack_2ndState");
 
 	// 全体進捗
-	monitor->AddOverall(objectID, "Attack Progress_2nd", [this]() -> float {
+	monitor->AddOverall(objectID, "AttackProgress_2nd", [this]() -> float {
 		float progress = 0.0f;
 		if (player_->GetCurrentAnimationName() == "player_attack_2nd") {
 			progress = player_->GetAnimationProgress();

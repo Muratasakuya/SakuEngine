@@ -192,7 +192,7 @@
     "followTarget": true,
     "lerpType": "Spline",
     "objectName": "PlayerSkilAttackState",
-    "overallName": "Skill Progress",
+    "overallName": "SkillProgress",
     "targetName": "player",
     "useAveraging": true
 }

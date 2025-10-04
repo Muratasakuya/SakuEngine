@@ -7,6 +7,7 @@
 #include <Engine/Core/Graphics/Renderer/LineRenderer.h>
 #include <Engine/Utility/Timer/GameTimer.h>
 #include <Engine/Utility/Enum/EnumAdapter.h>
+#include <Game/Camera/Follow/FollowCamera.h>
 #include <Game/Objects/GameScene/Player/Entity/Player.h>
 #include <Game/Objects/GameScene/Enemy/Boss/Entity/BossEnemy.h>
 
@@ -58,6 +59,9 @@ void PlayerSkilAttackState::Enter(Player& player) {
 		player.SetNextAnimation("player_skilAttack_1st", false, rushMoveParam_.nextAnim);
 		// 敵の方を向ける
 		player.SetRotation(Quaternion::LookRotation(direction, Vector3(0.0f, 1.0f, 0.0f)));
+
+		// カメラアニメーション開始
+		followCamera_->StartPlayerActionAnim(PlayerState::SkilAttack);
 	} else {
 
 		canExit_ = true;
@@ -581,7 +585,7 @@ void PlayerSkilAttackState::SetActionProgress() {
 	int objectID = PlayerBaseAttackState::AddActionObject("PlayerSkilAttackState");
 
 	// Overall（0..1）：スキル全体の進捗
-	monitor->AddOverall(objectID, "Skill Progress", [this]() -> float {
+	monitor->AddOverall(objectID, "SkillProgress", [this]() -> float {
 		// それぞれのフェーズ時間（秒相当）。0 でも安全に扱う
 		const float t1 = (std::max)(0.0f, rushMoveParam_.timer.target_);
 		const float t2 = (std::max)(0.0f, returnMoveParam_.timer.target_);

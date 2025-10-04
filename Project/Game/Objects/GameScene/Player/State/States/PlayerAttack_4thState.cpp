@@ -36,6 +36,8 @@ void PlayerAttack_4thState::Enter(Player& player) {
 		startPos_ = playerPos;
 		targetPos_ = startPos_ + player.GetTransform().GetForward() * moveValue_;
 	}
+	// カメラアニメーション開始
+	followCamera_->StartPlayerActionAnim(PlayerState::Attack_4th);
 }
 
 void PlayerAttack_4thState::Update(Player& player) {
@@ -123,7 +125,7 @@ void PlayerAttack_4thState::SetActionProgress() {
 	int objectID = PlayerBaseAttackState::AddActionObject("PlayerAttack_4thState");
 
 	// 全体進捗
-	monitor->AddOverall(objectID, "Attack Progress_4th", [this]() -> float {
+	monitor->AddOverall(objectID, "AttackProgress_4th", [this]() -> float {
 		float progress = 0.0f;
 		if (player_->GetCurrentAnimationName() == "player_attack_4th") {
 			progress = player_->GetAnimationProgress();
