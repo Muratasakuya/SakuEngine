@@ -132,6 +132,7 @@ void Camera3DEditor::Update() {
 
 					monitor->DriveSpanByGlobalT(objectId, span, synchT);
 				}
+				monitor->NotifyOverallDrive(objectId, synchT);
 			} else {
 
 				// アクション全体進捗でカメラを更新する

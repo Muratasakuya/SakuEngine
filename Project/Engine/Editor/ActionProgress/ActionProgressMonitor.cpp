@@ -117,6 +117,23 @@ void ActionProgressMonitor::SetSelectedMetric(int index) {
 	}
 }
 
+void ActionProgressMonitor::SetOverallDriveHandler(int objectID, std::function<void(float)> handler) {
+
+	if (!IsValidObject(objectID)) {
+		return;
+	}
+	overallHandlers_[objectID] = std::move(handler);
+}
+
+void ActionProgressMonitor::NotifyOverallDrive(int objectID, float overallT) const {
+
+	auto it = overallHandlers_.find(objectID);
+	if (it != overallHandlers_.end() && it->second) {
+
+		it->second(overallT);
+	}
+}
+
 void ActionProgressMonitor::SetSynchToggleHandler(int objectID,
 	std::function<void(bool)> handler) {
 

@@ -67,6 +67,8 @@ protected:
 	bool CheckInRange(float range, float distance);
 	Vector3 GetPlayerOffsetPos(const Player& player, const Vector3& offsetTranslation) const;
 	Matrix4x4 GetPlayerOffsetRotation(const Player& player, const Vector3& offsetRotation) const;
+	void SetTimerByOverall(StateTimer& timer, float overall,
+		float start, float end, EasingType easing);
 
 	// debug
 	void DrawAttackOffset(const Player& player);

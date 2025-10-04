@@ -37,6 +37,8 @@ public:
 	void SetSelectedMetric(int index);
 
 	// 同期状態の通知
+	void SetOverallDriveHandler(int objectID, std::function<void(float)> handler);
+	void NotifyOverallDrive(int objectID, float overallT) const;
 	void SetSynchToggleHandler(int objectID, std::function<void(bool)> handler);
 	void NotifySynchState(int objectID, bool external) const;
 
@@ -121,6 +123,7 @@ private:
 	// 各進捗ごとのハンドル
 	std::unordered_map<SpanKey, SpanHandle, SpanKeyHash> spans_;
 	// 同期通知
+	std::unordered_map<int, std::function<void(float)>> overallHandlers_;
 	std::unordered_map<int, std::function<void(bool)>> synchHandlers_;
 
 	// エディター

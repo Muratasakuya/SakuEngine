@@ -94,6 +94,13 @@ Matrix4x4 PlayerBaseAttackState::GetPlayerOffsetRotation(
 	return playerRotation * offsetMatrix;
 }
 
+void PlayerBaseAttackState::SetTimerByOverall(StateTimer& timer, float overall,
+	float start, float end, EasingType easing) {
+
+	timer.t_ = Algorithm::MapOverallToLocal(overall, start, end);
+	timer.easedT_ = EasedValue(easing, timer.t_);
+}
+
 void PlayerBaseAttackState::DrawAttackOffset(const Player& player) {
 
 	LineRenderer* lineRenderer = LineRenderer::GetInstance();

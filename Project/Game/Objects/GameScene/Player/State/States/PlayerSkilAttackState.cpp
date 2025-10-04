@@ -97,7 +97,7 @@ void PlayerSkilAttackState::UpdateState(Player& player) {
 void PlayerSkilAttackState::UpdateRush(Player& player) {
 
 	// 座標を補間する
-	rushMoveParam_.timer.Update();
+	PlayerBaseAttackState::UpdateTimer(rushMoveParam_.timer);
 	player.SetTranslation(Vector3::Lerp(rushMoveParam_.start,
 		rushMoveParam_.target, rushMoveParam_.timer.easedT_));
 
@@ -127,7 +127,7 @@ void PlayerSkilAttackState::UpdateRush(Player& player) {
 void PlayerSkilAttackState::UpdateReturn(Player& player) {
 
 	// 座標を補間する
-	returnMoveParam_.timer.Update();
+	PlayerBaseAttackState::UpdateTimer(returnMoveParam_.timer);
 	player.SetTranslation(Vector3::Lerp(returnMoveParam_.start,
 		returnMoveParam_.target, returnMoveParam_.timer.easedT_));
 
@@ -181,7 +181,7 @@ void PlayerSkilAttackState::UpdateJumpAttack(Player& player) {
 	case PlayerSkilAttackState::JumpAttackState::Jump: {
 
 		// 座標を補間する
-		backJumpParam_.timer.Update();
+		PlayerBaseAttackState::UpdateTimer(backJumpParam_.timer);
 		player.SetTranslation(Vector3::Lerp(backJumpParam_.start,
 			backJumpParam_.target, backJumpParam_.timer.easedT_));
 
@@ -208,7 +208,7 @@ void PlayerSkilAttackState::UpdateJumpAttack(Player& player) {
 	case PlayerSkilAttackState::JumpAttackState::Attack: {
 
 		// 座標を補間する
-		jumpMoveParam_.timer.Update();
+		PlayerBaseAttackState::UpdateTimer(jumpMoveParam_.timer);
 		player.SetTranslation(Vector3::Lerp(jumpMoveParam_.start,
 			jumpMoveParam_.target, jumpMoveParam_.timer.easedT_));
 
@@ -396,6 +396,80 @@ bool PlayerSkilAttackState::GetCanExit() const {
 	return canExit;
 }
 
+void PlayerSkilAttackState::DriveOverall(float overall) {
+
+	// 総時間
+	const float t1 = std::max(0.0f, rushMoveParam_.timer.target_);
+	const float t2 = std::max(0.0f, returnMoveParam_.timer.target_);
+	const float t3 = std::max(0.0f, backJumpParam_.timer.target_);
+	const float t4 = std::max(0.0f, jumpMoveParam_.timer.target_);
+	const float total = std::max(1e-6f, t1 + t2 + t3 + t4);
+
+	const float c1 = t1 / total;
+	const float c2 = (t1 + t2) / total;
+	const float c3 = (t1 + t2 + t3) / total;
+
+	// 全体進捗に応じて更新する状態を切り替える
+
+	// Rush
+	if (Algorithm::InRangeOverall(overall, 0.0f, c1)) {
+		currentState_ = State::Rush;
+		SetTimerByOverall(rushMoveParam_.timer, overall, 0.0f, c1, rushMoveParam_.timer.easeingType_);
+
+		// アニメーションを切り替える
+		player_->SetNextAnimation("player_skilAttack_1st", false, 0.0f);
+		isStratLookEnemy_ = false;
+		lookEnemyTimer_.Reset();
+		return;
+	}
+
+	// Return
+	if (Algorithm::InRangeOverall(overall, c1, c2)) {
+
+		currentState_ = State::Return;
+		SetTimerByOverall(returnMoveParam_.timer, overall, c1, c2, returnMoveParam_.timer.easeingType_);
+
+		// アニメーションを切り替える
+		player_->SetNextAnimation("player_skilAttack_2nd", false, 0.0f);
+
+		const float local = Algorithm::MapOverallToLocal(overall, c1, c2);
+		// 敵向き補間
+		if (local >= lookStartProgress_) {
+
+			isStratLookEnemy_ = true;
+			const float lookLocal = Algorithm::MapOverallToLocal(local, lookStartProgress_, 1.0f);
+			lookEnemyTimer_.t_ = lookLocal;
+			lookEnemyTimer_.easedT_ = EasedValue(lookEnemyTimer_.easeingType_, lookLocal);
+		} else {
+
+			isStratLookEnemy_ = false;
+			lookEnemyTimer_.Reset();
+		}
+		return;
+	}
+
+	// BackJump
+	if (Algorithm::InRangeOverall(overall, c2, c3)) {
+
+		currentState_ = State::JumpAttack;
+		jumpAttackState_ = JumpAttackState::Jump;
+		SetTimerByOverall(backJumpParam_.timer, overall, c2, c3, backJumpParam_.timer.easeingType_);
+
+		// アニメーションを設定
+		player_->SetNextAnimation("player_skilAttack_3rd", false, 0.0f);
+		return;
+	}
+
+	// JumpMove
+	if (Algorithm::InRangeOverall(overall, c3, 1.0f)) {
+
+		currentState_ = State::JumpAttack;
+		jumpAttackState_ = JumpAttackState::Attack;
+		SetTimerByOverall(jumpMoveParam_.timer, overall, c3, 1.0f, jumpMoveParam_.timer.easeingType_);
+		return;
+	}
+}
+
 void PlayerSkilAttackState::SetActionProgress() {
 
 	ActionProgressMonitor* monitor = ActionProgressMonitor::GetInstance();
@@ -450,4 +524,19 @@ void PlayerSkilAttackState::SetActionProgress() {
 		[=]() { return std::clamp((target1 + target2 + target3) / totalT, 0.0f, 1.0f); },
 		[=]() { return 1.0f; },
 		[this]() { return std::clamp(jumpMoveParam_.timer.easedT_, 0.0f, 1.0f); });
+
+	// 進捗率の同期設定
+	SetSpanUpdate(objectID);
+}
+
+void PlayerSkilAttackState::SetSpanUpdate(int objectID) {
+	
+	ActionProgressMonitor* monitor = ActionProgressMonitor::GetInstance();
+
+	// 同期設定
+	PlayerBaseAttackState::SetSynchObject(objectID);
+
+	// 全体進捗による同期
+	monitor->SetOverallDriveHandler(objectID, [this](float overall) {
+		DriveOverall(overall); });
 }

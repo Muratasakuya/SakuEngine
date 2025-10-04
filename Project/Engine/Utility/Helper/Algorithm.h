@@ -106,4 +106,8 @@ namespace Algorithm {
 
 	// 値制御
 	float Clamp(float value);
+	// 全体の進捗から開始、終了地点の補間値を取得
+	float MapOverallToLocal(float overall, float start, float end);
+	// 全体進捗区間内か
+	bool InRangeOverall(float overall, float start, float end);
 }

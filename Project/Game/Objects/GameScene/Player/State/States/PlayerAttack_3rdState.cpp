@@ -75,17 +75,13 @@ void PlayerAttack_3rdState::Update(Player& player) {
 
 void PlayerAttack_3rdState::LerpWeapon(Player& player, PlayerWeaponType type) {
 
-	if (currentState_ == State::None) {
-		return;
-	}
-
 	// 補間開始合図まで処理しない
 	if (!weaponParams_[type].isMoveStart) {
 		return;
 	}
 
 	// 時間を進める
-	weaponParams_[type].moveTimer.Update();
+	PlayerBaseAttackState::UpdateTimer(weaponParams_[type].moveTimer);
 
 	// 補間座標を剣に設定
 	Vector3 pos = Vector3::Lerp(weaponParams_[type].startPos,
@@ -98,7 +94,10 @@ void PlayerAttack_3rdState::LerpWeapon(Player& player, PlayerWeaponType type) {
 		player.GetWeapon(type)->SetTranslation(weaponParams_[type].targetPos);
 	}
 
-
+	// 剣を取り終えたら回転しない
+	if (catchSwordTimer_.IsReached()) {
+		return;
+	}
 	switch (type) {
 	case PlayerWeaponType::Left:
 
@@ -128,7 +127,7 @@ void PlayerAttack_3rdState::LerpPlayer(Player& player) {
 	case PlayerAttack_3rdState::State::MoveBack: {
 
 		// 時間を進める
-		backMoveTimer_.Update();
+		PlayerBaseAttackState::UpdateTimer(backMoveTimer_);
 		// 座標を補間
 		Vector3 pos = Vector3::Lerp(backStartPos_, backTargetPos_,
 			backMoveTimer_.easedT_);
@@ -144,7 +143,7 @@ void PlayerAttack_3rdState::LerpPlayer(Player& player) {
 	case PlayerAttack_3rdState::State::Catch: {
 
 		// 時間を進める
-		catchSwordTimer_.Update();
+		PlayerBaseAttackState::UpdateTimer(catchSwordTimer_);
 		// 座標を補間
 		Vector3 pos = Vector3::Lerp(backTargetPos_, catchTargetPos_,
 			catchSwordTimer_.easedT_);
@@ -157,7 +156,8 @@ void PlayerAttack_3rdState::LerpPlayer(Player& player) {
 			currentState_ = State::None;
 
 			// 親子付けを元に戻す
-			player.ResetWeaponTransform();
+			player.ResetWeaponTransform(PlayerWeaponType::Left);
+			player.ResetWeaponTransform(PlayerWeaponType::Right);
 		}
 		break;
 	}
@@ -288,7 +288,8 @@ void PlayerAttack_3rdState::Exit(Player& player) {
 	// 剣の親子付けを戻す
 	if (currentState_ != State::None) {
 
-		player.ResetWeaponTransform();
+		player.ResetWeaponTransform(PlayerWeaponType::Left);
+		player.ResetWeaponTransform(PlayerWeaponType::Right);
 	}
 }
 
@@ -394,6 +395,136 @@ bool PlayerAttack_3rdState::GetCanExit() const {
 	return canExit;
 }
 
+void PlayerAttack_3rdState::DriveOverall(float overall) {
+
+	const float totalT = std::max(1e-6f, totalTimer_.target_);
+
+	const float backEnd = std::max(0.0f, backMoveTimer_.target_) / totalT;
+	const float catchBegin = std::max(0.0f, player_->GetEventTime("player_attack_3rd", "CatchSword", 0)) / totalT;
+	const float catchEnd = std::max(catchBegin, catchBegin + std::max(0.0f, catchSwordTimer_.target_ / totalT));
+
+	const float outLbegin = std::max(0.0f, player_->GetEventTime("player_attack_3rd", "OutSword", 0)) / totalT;
+	const float outRbegin = std::max(0.0f, player_->GetEventTime("player_attack_3rd", "OutSword", 1)) / totalT;
+	const float outLend = std::max(outLbegin, outLbegin + std::max(0.0f, weaponMoveTimer_.target_ / totalT));
+	const float outRend = std::max(outRbegin, outRbegin + std::max(0.0f, weaponMoveTimer_.target_ / totalT));
+
+	if (catchEnd - 1e-6f <= overall) {
+		if (!endAttached_) {
+
+			// 右手はこの瞬間に親子付けを戻す
+			EnsureWeaponReset(PlayerWeaponType::Left);
+			EnsureWeaponReset(PlayerWeaponType::Right);
+			endAttached_ = true;
+		}
+		currentState_ = State::None;
+		return;
+	} else {
+		if (endAttached_) {
+
+			endAttached_ = false;
+			EnsureWeaponHoldAtTargetDetached(PlayerWeaponType::Left);
+			EnsureWeaponHoldAtTargetDetached(PlayerWeaponType::Right);
+		}
+	}
+
+	// 全体進捗に応じて更新する状態を切り替える
+
+	// プレイヤー移動
+	if (Algorithm::InRangeOverall(overall, 0.0f, backEnd)) {
+
+		currentState_ = State::MoveBack;
+		SetTimerByOverall(backMoveTimer_, overall, 0.0f, backEnd, backMoveTimer_.easeingType_);
+	} else if (Algorithm::InRangeOverall(overall, catchBegin, catchEnd)) {
+
+		// 補間先を設定する
+		if (currentState_ != State::Catch) {
+
+			Vector3 left = player_->GetWeapon(PlayerWeaponType::Left)->GetTransform().GetWorldPos();
+			Vector3 right = player_->GetWeapon(PlayerWeaponType::Right)->GetTransform().GetWorldPos();
+			catchTargetPos_ = (left + right) * 0.5f;
+			catchTargetPos_.y = initPosY_;
+		}
+		currentState_ = State::Catch;
+		SetTimerByOverall(catchSwordTimer_, overall, catchBegin, catchEnd, catchSwordTimer_.easeingType_);
+	} else {
+
+		currentState_ = State::None;
+	}
+
+	// 武器投げ移動処理
+	// 左
+	if (Algorithm::InRangeOverall(overall, outLbegin, outLend)) {
+
+		EnsureWeaponStarted(PlayerWeaponType::Left);
+		SetTimerByOverall(weaponParams_.at(PlayerWeaponType::Left).moveTimer,
+			overall, outLbegin, outLend, weaponMoveTimer_.easeingType_);
+	} else {
+		if (overall < outLbegin) {
+
+			EnsureWeaponReset(PlayerWeaponType::Left);
+		}
+	}
+	// 右
+	if (Algorithm::InRangeOverall(overall, outRbegin, outRend)) {
+
+		EnsureWeaponStarted(PlayerWeaponType::Right);
+		SetTimerByOverall(weaponParams_.at(PlayerWeaponType::Right).moveTimer,
+			overall, outRbegin, outRend, weaponMoveTimer_.easeingType_);
+	} else {
+		if (overall < outRbegin) {
+
+			EnsureWeaponReset(PlayerWeaponType::Right);
+		}
+	}
+}
+
+void PlayerAttack_3rdState::EnsureWeaponStarted(PlayerWeaponType type) {
+
+	// まだ剣がプレイヤーの手から離れていなければ
+	if (!weaponParams_[type].isMoveStart) {
+
+		// 手から離して補間を開始する
+		StartMoveWeapon(*player_, type);
+	}
+}
+
+void PlayerAttack_3rdState::EnsureWeaponReset(PlayerWeaponType type) {
+
+	auto& param = weaponParams_[type];
+	// 補間中
+	if (param.isMoveStart) {
+
+		// 補間を終了して元の位置に戻す
+		param.isMoveStart = false;
+		param.moveTimer.Reset();
+		param.rotation.Init();
+		player_->ResetWeaponTransform(type);
+		player_->GetWeapon(type)->SetAlpha(1.0f);
+	}
+}
+
+void PlayerAttack_3rdState::EnsureWeaponHoldAtTargetDetached(PlayerWeaponType type) {
+
+	// すでに空中保持中なら何もしない
+	auto& param = weaponParams_[type];
+	if (param.isMoveStart && param.moveTimer.t_ >= 1.0f) {
+		return;
+	}
+	// 親子付けを解除する
+	player_->GetWeapon(type)->SetParent(Transform3D(), true);
+
+	// 目標座標を保持
+	Vector3 hold = param.targetPos;
+	hold.y = weaponPosY_;
+	player_->GetWeapon(type)->SetTranslation(hold);
+
+	// 表示状態を補間中に戻す
+	player_->GetWeapon(type)->SetAlpha(0.5f);
+	param.isMoveStart = true;
+	param.moveTimer.t_ = 1.0f;
+	param.moveTimer.easedT_ = 1.0f;
+}
+
 void PlayerAttack_3rdState::SetActionProgress() {
 
 	ActionProgressMonitor* monitor = ActionProgressMonitor::GetInstance();
@@ -448,4 +579,33 @@ void PlayerAttack_3rdState::SetActionProgress() {
 		[=]() { return std::clamp(outRightT / totalT, 0.0f, 1.0f); },
 		[=]() { return std::clamp(outRightTEnd / totalT, 0.0f, 1.0f); },
 		[this]() { return weaponParams_.at(PlayerWeaponType::Right).moveTimer.t_; });
+
+	// 進捗率の同期設定
+	SetSpanUpdate(objectID);
+}
+
+void PlayerAttack_3rdState::SetSpanUpdate(int objectID) {
+
+	ActionProgressMonitor* monitor = ActionProgressMonitor::GetInstance();
+
+	// 同期設定
+	PlayerBaseAttackState::SetSynchObject(objectID);
+
+	// 攻撃骨アニメーション
+	monitor->SetSpanSetter(objectID, "Skinned Animation", [this](float t) {
+
+		// アニメーションを切り替え
+		if (player_->GetCurrentAnimationName() != "player_attack_3rd") {
+
+			player_->SetNextAnimation("player_attack_3rd", false, 0.0f);
+		}
+
+		const float duration = player_->GetAnimationDuration("player_attack_3rd");
+		// アニメーションの時間を設定
+		player_->SetCurrentAnimTime(duration * t);
+		});
+
+	// 全体進捗による同期
+	monitor->SetOverallDriveHandler(objectID, [this](float overall) {
+		DriveOverall(overall); });
 }

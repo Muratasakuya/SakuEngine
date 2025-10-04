@@ -116,5 +116,9 @@ private:
 	void UpdateReturn(Player& player);
 	void UpdateJumpAttack(Player& player);
 
+	// helper
+	void DriveOverall(float overall);
+
 	void SetActionProgress();
+	void SetSpanUpdate(int objectID);
 };
