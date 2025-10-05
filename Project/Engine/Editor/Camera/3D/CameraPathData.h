@@ -31,6 +31,7 @@ public:
 
 		// 場所、回転を可視化するオブジェクト
 		std::unique_ptr<GameObject3D> demoObject;
+		Vector3 viewScale;
 
 		// init
 		void Init(bool isUseGame);
@@ -74,6 +75,10 @@ public:
 	int  divisionCount = 64;      // 曲線の分割数
 	bool useAveraging = false;    // 平均化を行うか
 	std::vector<float> averagedT; // 平均化されたt値
+
+	// エディター
+	bool isUseGame = false;
+	bool isDrawKeyframe = false;
 
 	//--------- functions ----------------------------------------------------
 

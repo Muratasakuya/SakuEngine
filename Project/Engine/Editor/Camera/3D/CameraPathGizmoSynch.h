@@ -22,4 +22,7 @@ public:
 
 	// 追従先のオフセットの更新
 	void UpdateFollowTarget(CameraPathData& data) const;
+
+	// ローカルからワールド位置に変換
+	void ApplyLocalToWorldByTarget(CameraPathData& data) const;
 };

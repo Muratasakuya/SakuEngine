@@ -144,7 +144,7 @@ void CameraPathController::ApplyToCamera(BaseCamera& camera, const Vector3& tran
 	}
 
 	camera.SetTranslation(translation);
-	camera.SetRotation(rotation);
+	camera.SetRotation(Quaternion::Normalize(rotation));
 	camera.SetFovY(fovY);
 	// quaternionで更新
 	camera.UpdateView(BaseCamera::UpdateMode::Quaternion);

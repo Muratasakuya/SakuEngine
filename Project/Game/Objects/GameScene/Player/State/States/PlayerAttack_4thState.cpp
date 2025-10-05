@@ -36,8 +36,6 @@ void PlayerAttack_4thState::Enter(Player& player) {
 		startPos_ = playerPos;
 		targetPos_ = startPos_ + player.GetTransform().GetForward() * moveValue_;
 	}
-	// カメラアニメーション開始
-	followCamera_->StartPlayerActionAnim(PlayerState::Attack_4th);
 }
 
 void PlayerAttack_4thState::Update(Player& player) {

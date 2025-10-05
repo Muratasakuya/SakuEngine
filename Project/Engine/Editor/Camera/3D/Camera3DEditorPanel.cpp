@@ -272,9 +272,18 @@ void Camera3DEditorPanel::EditPlayback(CameraPathData& param, CameraPathControll
 
 	ImGui::Checkbox("isActive", &playbackCamera.isActive);
 
-	if (!playbackCamera.isActive) {
-		return;
+	ImGui::SeparatorText("Runtime");
+
+	if (ImGui::Checkbox("isDrawKeyframe", &param.isDrawKeyframe)) {
+
+		for (const auto& keyframe : param.keyframes) {
+
+			keyframe.demoObject->SetScale(param.isDrawKeyframe ?
+				keyframe.viewScale : Vector3::AnyInit(0.0f));
+		}
 	}
+	ImGui::Checkbox("isDrawLine3D", &param.isDrawLine3D);
+	ImGui::Checkbox("isUseGame", &param.isUseGame);
 
 	ImGui::SeparatorText("Synch");
 

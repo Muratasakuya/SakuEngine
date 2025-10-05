@@ -28,14 +28,10 @@ void CameraPathData::KeyframeParam::Init(bool isUseGame) {
 	// 見た目を設定
 	demoObject->ApplyTransform(data);
 	demoObject->ApplyMaterial(data);
+	viewScale = demoObject->GetScale();
 	// ゲームで使用する場合描画しない
-	if (isUseGame) {
-
-		demoObject->SetMeshRenderView(MeshRenderView::None);
-	} else {
-
-		demoObject->SetMeshRenderView(MeshRenderView::Scene);
-	}
+	demoObject->SetScale(isUseGame ? Vector3::AnyInit(0.0f) : viewScale);
+	demoObject->SetMeshRenderView(MeshRenderView::Scene);
 }
 
 void CameraPathData::KeyframeParam::FromJson(const Json& data) {
@@ -43,10 +39,11 @@ void CameraPathData::KeyframeParam::FromJson(const Json& data) {
 	fovY = data.value("fovY", 54.0f);
 
 	translation = Vector3::FromJson(data.value("translation", Json()));
-	rotation = Quaternion::FromJson(data.value("rotation", Json()));
+	rotation = Quaternion::Normalize(Quaternion::FromJson(data.value("rotation", Json())));
 
 	demoObject->SetTranslation(translation);
 	demoObject->SetRotation(rotation);
+	demoObject->SetEulerRotation(Quaternion::ToEulerAngles(rotation));
 }
 
 void CameraPathData::KeyframeParam::ToJson(Json& data) {
@@ -58,7 +55,7 @@ void CameraPathData::KeyframeParam::ToJson(Json& data) {
 	data["rotation"] = demoObject->GetRotation().ToJson();
 }
 
-void CameraPathData::ApplyJson(const std::string& fileName, bool isUseGame) {
+void CameraPathData::ApplyJson(const std::string& fileName, bool _isUseGame) {
 
 	Json data;
 	// 読み込めなければ処理しない
@@ -67,9 +64,11 @@ void CameraPathData::ApplyJson(const std::string& fileName, bool isUseGame) {
 	}
 
 	// ゲームで使用する場合は線描画をしない
-	if (isUseGame) {
+	if (_isUseGame) {
 
 		isDrawLine3D = false;
+		isDrawKeyframe = false;
+		this->isUseGame = _isUseGame;
 	}
 
 	objectName = data.value("objectName", "objectName");

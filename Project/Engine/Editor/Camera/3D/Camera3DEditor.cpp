@@ -89,6 +89,19 @@ void Camera3DEditor::Update() {
 
 	for (auto& param : std::views::values(params_)) {
 
+		const bool isPlaying = (runtime_ && runtime_->playing &&
+			param.overallName == runtime_->action);
+		// ゲームで開始したときの処理
+		if (isPlaying || param.isUseGame) {
+
+			gizmoSynch_->ApplyLocalToWorldByTarget(param);
+		}
+		// エディターで動かしているときの処理
+		else {
+
+			gizmoSynch_->UpdateFollowTarget(param);
+		}
+
 		// 追従先オフセットを更新
 		gizmoSynch_->UpdateFollowTarget(param);
 
@@ -207,12 +220,31 @@ void Camera3DEditor::StartAnim(const std::string& actionName, bool canCutIn) {
 	CameraPathData& param = params_[actionName];
 	CameraPathData::KeyframeParam keyframe{};
 	BaseCamera* camera = sceneView_->GetCamera();
+
+	// 追従先がいるかどうか
+	const bool hasTarget = (param.followTarget && param.target);
+	// 追従情報
+	const Vector3 targetTranslation = hasTarget ? param.target->GetWorldPos() : Vector3::AnyInit(0.0f);
+	const Quaternion targetRotation = hasTarget ?
+		Quaternion::Normalize(param.target->rotation) :
+		Quaternion::IdentityQuaternion();
+	const Quaternion inverseTargetRotation = Quaternion::Conjugate(targetRotation);
+	// カメラ位置、回転
+	const Vector3 cameraTranslation = camera->GetTransform().translation;
+	const Quaternion cameraRotation = camera->GetTransform().rotation;
+	// ローカルの座標と回転を求める
+	Vector3 localTranslation = hasTarget ? inverseTargetRotation *
+		(cameraTranslation - targetTranslation) : cameraTranslation;
+	Quaternion localRataion = param.followRotation ?
+		Quaternion::Normalize(inverseTargetRotation * cameraRotation) : cameraRotation;
 	// キーフレームを初期位置に設定して初期化
 	keyframe.Init(true);
-	keyframe.demoObject->SetTranslation(camera->GetTransform().translation);
-	keyframe.demoObject->SetRotation(camera->GetTransform().rotation);
-	keyframe.translation = camera->GetTransform().translation;
-	keyframe.rotation = camera->GetTransform().rotation;
+	keyframe.demoObject->SetOffsetTranslation(targetTranslation);
+	keyframe.demoObject->SetTranslation(targetRotation * localTranslation);
+	keyframe.demoObject->SetRotation(param.followRotation ?
+		Quaternion::Normalize(targetRotation * localRataion) : localRataion);
+	keyframe.translation = localTranslation;
+	keyframe.rotation = localRataion;
 	keyframe.fovY = camera->GetFovY();
 	// 追加
 	const uint32_t injectedId = keyframe.demoObject->GetObjectID();
@@ -283,11 +315,13 @@ void Camera3DEditor::UpdateGameAnimation() {
 	// カメラへ適応
 	BaseCamera* camera = sceneView_->GetCamera();
 	camera->SetIsUpdateEditor(true);
-	controller_->ApplyToCamera(*camera, translation, rotation, fovY, true);
+	controller_->ApplyToCamera(*camera, translation, rotation, fovY, !param.isDrawLine3D);
 
 	// 補間が最後まで行けば終了
 	if (param.timer.IsReached()) {
 
+		camera->SetEulerRotation(param.keyframes.back().
+			demoObject->GetTransform().matrix.world.GetRotationValue());
 		EndAnim(runtime_->action);
 	}
 }

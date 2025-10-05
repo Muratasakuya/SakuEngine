@@ -69,3 +69,23 @@ void CameraPathGizmoSynch::UpdateFollowTarget(CameraPathData& data) const {
 			keyframe.rotation);
 	}
 }
+
+void CameraPathGizmoSynch::ApplyLocalToWorldByTarget(CameraPathData& data) const {
+
+	// 追従先がいるかどうか
+	const bool hasTarget = (data.followTarget && data.target);
+	const Vector3 targetTranslation = hasTarget ? data.target->GetWorldPos()
+		: Vector3::AnyInit(0.0f);
+	const Quaternion targetRotation = hasTarget ?
+		Quaternion::Normalize(data.target->rotation)
+		: Quaternion::IdentityQuaternion();
+	for (const auto& keyframe : data.keyframes) {
+
+		// 0回転時のローカルをワールドに変換
+		keyframe.demoObject->SetOffsetTranslation(targetTranslation);
+		keyframe.demoObject->SetTranslation(targetRotation * keyframe.translation);
+		keyframe.demoObject->SetRotation(data.followRotation ?
+			Quaternion::Normalize(targetRotation * keyframe.rotation) :
+			keyframe.rotation);
+	}
+}
