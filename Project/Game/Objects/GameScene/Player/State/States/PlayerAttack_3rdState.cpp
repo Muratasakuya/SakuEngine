@@ -286,11 +286,8 @@ void PlayerAttack_3rdState::Exit(Player& player) {
 	}
 
 	// 剣の親子付けを戻す
-	if (currentState_ != State::None) {
-
-		player.ResetWeaponTransform(PlayerWeaponType::Left);
-		player.ResetWeaponTransform(PlayerWeaponType::Right);
-	}
+	player.ResetWeaponTransform(PlayerWeaponType::Left);
+	player.ResetWeaponTransform(PlayerWeaponType::Right);
 }
 
 void PlayerAttack_3rdState::ImGui(const Player& player) {

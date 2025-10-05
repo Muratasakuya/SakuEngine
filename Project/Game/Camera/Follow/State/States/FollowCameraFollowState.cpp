@@ -16,49 +16,75 @@ void FollowCameraFollowState::Enter([[maybe_unused]] FollowCamera& followCamera)
 
 void FollowCameraFollowState::Update(FollowCamera& followCamera) {
 
-	InputType inputType = Input::GetInstance()->GetType();
-	Vector3 rotation = followCamera.GetTransform().eulerRotate;
-	Vector3 translation = followCamera.GetTransform().translation;
-	Vector3 offset{};
-
-	// 画角を常に元に戻しておく
+	// 画角に変更があっても常に初期値に補間させる
 	float fovY = std::lerp(followCamera.GetFovY(), defaultFovY_, fovYLerpRate_);
 	followCamera.SetFovY(fovY);
 
-	// 補間先の座標を補完割合に応じて補間する
-	interTarget_ = Vector3::Lerp(interTarget_, targets_[FollowCameraTargetType::Player]->GetWorldPos(), lerpRate_);
+	// 追従ターゲット位置の補間
+	interTarget_ = Vector3::Lerp(interTarget_,
+		targets_[FollowCameraTargetType::Player]->GetWorldPos(), lerpRate_);
 
 	// 入力から移動量を取得する
+	InputType inputType = Input::GetInstance()->GetType();
 	Vector2 rawInput(inputMapper_->GetVector(FollowCameraInputAction::RotateX),
 		inputMapper_->GetVector(FollowCameraInputAction::RotateY));
 	// 補間を適応する
 	smoothedInput_ = Vector2::Lerp(smoothedInput_, rawInput, inputLerpRate_);
 
-	// 現在の入力状態に応じて加算する
-	if (inputType == InputType::Keyboard) {
+	// X軸とY軸の入力量
+	// Y軸
+	float yawDelta = (inputType == InputType::Keyboard) ?
+		(smoothedInput_.x * mouseSensitivity_.y) :
+		(smoothedInput_.x * padSensitivity_.y);
+	// X軸
+	float pitchDelta = (inputType == InputType::Keyboard) ?
+		(smoothedInput_.y * mouseSensitivity_.x) :
+		(-smoothedInput_.y * padSensitivity_.x);
 
-		// Y軸回転: 左右
-		rotation.y += smoothedInput_.x * mouseSensitivity_.y;
-		// X軸回転: 上下
-		rotation.x += smoothedInput_.y * mouseSensitivity_.x;
-	} else if (inputType == InputType::GamePad) {
+	Quaternion currentRotation = followCamera.GetTransform().rotation;
+	// Y軸の回転
+	Quaternion yawRotation = Quaternion::Normalize(Quaternion::MakeRotateAxisAngleQuaternion(
+		Direction::Get(Direction3D::Up), yawDelta) * currentRotation);
+	// X軸の回転
+	Vector3 rightAxis = (yawRotation * Direction::Get(Direction3D::Right)).Normalize();
+	Quaternion pitchRotation = Quaternion::Normalize(
+		Quaternion::MakeRotateAxisAngleQuaternion(rightAxis, pitchDelta));
+	// X軸回転とY軸回転を合成
+	Quaternion candidateRotation = Quaternion::Normalize(pitchRotation * yawRotation);
 
-		// Y軸回転: 左右
-		rotation.y += smoothedInput_.x * padSensitivity_.y;
-		// X軸回転: 上下
-		rotation.x -= smoothedInput_.y * padSensitivity_.x;
+	// 前方ベクトルからX軸回転を取得
+	Vector3 forward = candidateRotation * Direction::Get(Direction3D::Forward);
+	float currentPitch = std::atan2(forward.y, std::sqrt(forward.x * forward.x + forward.z * forward.z));
+	// X軸の回転を制御
+	float pitchClamped = std::clamp(currentPitch,
+		rotateMinusParam_.rotateClampX, rotatePlusParam_.rotateClampX);
+	// 回転をクランプしたら回転を再設定する
+	if (pitchClamped != currentPitch) {
+
+		Vector3 horizontal = Vector3(forward.x, 0.0f, forward.z);
+		if (horizontal.Length() < 1e-6f) {
+
+			Vector3 fowrardYaw = yawRotation * Direction::Get(Direction3D::Forward);
+			horizontal = Vector3(fowrardYaw.x, 0.0f, fowrardYaw.z);
+		}
+		horizontal = horizontal.Normalize();
+
+		Vector3 forwardClamped = Vector3(horizontal.x * std::cos(pitchClamped),
+			std::sin(pitchClamped), horizontal.z * std::cos(pitchClamped)).Normalize();
+		candidateRotation = Quaternion::LookRotation(forwardClamped, Direction::Get(Direction3D::Up));
 	}
-	// 回転を制限する
-	rotation.x = std::clamp(rotation.x, rotateMinusParam_.rotateClampX, rotatePlusParam_.rotateClampX);
-	rotation.z = std::lerp(rotation.z, 0.0f, rotateZLerpRate_);
-	followCamera.SetEulerRotation(rotation);
 
-	// カメラ角度の距離を計算
-	float distanceToMinus = std::abs(rotation.x - rotateMinusParam_.rotateClampX);
-	float distanceToPlus = std::abs(rotation.x - rotatePlusParam_.rotateClampX);
-	// 目標値
+	// Z回転を常に0.0fに補間
+	Vector3 forwardRoll = candidateRotation * Direction::Get(Direction3D::Forward);
+	Quaternion currentRoll = Quaternion::LookRotation(
+		forwardRoll.Normalize(), Direction::Get(Direction3D::Up));
+	Quaternion rotation = Quaternion::Slerp(candidateRotation, currentRoll, rotateZLerpRate_);
+
+	// クランプされるまでの距離
+	float distanceToMinus = std::fabs(pitchClamped - rotateMinusParam_.rotateClampX);
+	float distanceToPlus = std::fabs(pitchClamped - rotatePlusParam_.rotateClampX);
 	float targetZ = defaultOffsetZ_;
-	// clampThresholdより近ければ近いほど補間される
+	// 距離が閾値以下なら補間値分最大/最小の回転に近づける
 	if (distanceToMinus < rotateMinusParam_.clampThreshold) {
 
 		float t = 1.0f - (distanceToMinus / rotateMinusParam_.clampThreshold);
@@ -69,16 +95,16 @@ void FollowCameraFollowState::Update(FollowCamera& followCamera) {
 		targetZ = std::lerp(defaultOffsetZ_, rotatePlusParam_.offsetZNear, t);
 	}
 
-	// オフセット距離補間
+	// オフセットの補間
 	offsetTranslation_.z = std::lerp(offsetTranslation_.z, targetZ, offsetZLerpRate_);
 	offsetTranslation_.y = std::lerp(offsetTranslation_.y, defaultOffsetY_, offsetYLerpRate_);
 	offsetTranslation_.x = std::lerp(offsetTranslation_.x, defaultOffsetX_, offsetXLerpRate_);
 
-	Matrix4x4 rotateMatrix = Matrix4x4::MakeRotateMatrix(rotation);
-	offset = Vector3::TransferNormal(offsetTranslation_, rotateMatrix);
+	// 回転を考慮したオフセットと追従先の座標を足す
+	Vector3 translation = interTarget_ + rotation * offsetTranslation_;
 
-	// offset分座標をずらす
-	translation = interTarget_ + offset;
+	// カメラにセット
+	followCamera.SetRotation(rotation);
 	followCamera.SetTranslation(translation);
 }
 

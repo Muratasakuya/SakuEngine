@@ -152,7 +152,7 @@ void FollowCamera::Update() {
 	stateController_->Update(*this);
 
 	// 行列更新
-	BaseCamera::UpdateView();
+	BaseCamera::UpdateView(UpdateMode::Quaternion);
 }
 
 void FollowCamera::ImGui() {
