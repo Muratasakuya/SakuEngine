@@ -375,7 +375,7 @@ void SkinnedAnimation::BlendAnimation(Skeleton& skeleton, const AnimationData& o
 int SkinnedAnimation::CurrentFrameIndex() const {
 
 	// blenderの再生FPS
-	constexpr float kFps = 24.0f;
+	constexpr float kFps = 30.0f;
 	const float timer = currentAnimationTimers_[updateModeIndex_];
 	return static_cast<int>((std::max)(0.0f, timer * kFps + 0.5f));
 }
@@ -642,7 +642,7 @@ float SkinnedAnimation::GetEventTime(const std::string& animName,
 	}
 
 	const auto& frames = kindIt->second;
-	constexpr float kFps = 24.0f;
+	constexpr float kFps = 30.0f;
 	float time = static_cast<float>(frames[frameIndex]) / kFps;
 	return time;
 }
