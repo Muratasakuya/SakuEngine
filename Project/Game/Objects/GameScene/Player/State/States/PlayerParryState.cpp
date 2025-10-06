@@ -37,8 +37,8 @@ void PlayerParryState::Enter(Player& player) {
 	GameTimer::SetReturnScaleEnable(false);
 	GameTimer::SetTimeScale(0.0f);
 
-	// カメラをパリィ状態に遷移させる
-	followCamera_->SetParry(true);
+	// パリィ用のカメラアニメーションを設定
+	followCamera_->StartPlayerActionAnim(PlayerState::Parry);
 
 	canExit_ = false;
 	request_ = std::nullopt;
@@ -150,9 +150,10 @@ void PlayerParryState::UpdateAnimation(Player& player) {
 
 		request_ = RequestState::AttackAnimation;
 
-		// カメラをパリィ攻撃用に遷移
-		followCamera_->SetParry(false);
-		followCamera_->SetParryAttack(true);
+		// カメラをパリィ攻撃用アニメーションにする
+		followCamera_->EndPlayerActionAnim(PlayerState::Parry);
+		// パリィ攻撃は4段目の攻撃と同じ
+		followCamera_->StartPlayerActionAnim(PlayerState::Attack_4th);
 
 		// 元に戻す
 		player.SetReverseWeapon(false, PlayerWeaponType::Left);

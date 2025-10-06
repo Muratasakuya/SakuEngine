@@ -70,7 +70,6 @@ private:
 	void SaveJson();
 
 	// helper
-	void SetStateValue();
 	void SetInputMapper();
 	bool Request(FollowCameraState state);
 	void ChangeState(FollowCamera& owner);

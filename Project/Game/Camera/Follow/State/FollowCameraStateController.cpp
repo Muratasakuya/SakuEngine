@@ -18,8 +18,6 @@
 #include <Game/Camera/Follow/State/States/FollowCameraAllyAttackState.h>
 #include <Game/Camera/Follow/State/States/FollowCameraStunAttackState.h>
 #include <Game/Camera/Follow/State/States/FollowCameraShakeState.h>
-#include <Game/Camera/Follow/State/States/FollowCameraParryState.h>
-#include <Game/Camera/Follow/State/States/FollowCameraParryAttackState.h>
 
 // imgui
 #include <imgui.h>
@@ -44,16 +42,12 @@ void FollowCameraStateController::Init(FollowCamera& owner) {
 	states_.emplace(FollowCameraState::AllyAttack, std::make_unique<FollowCameraAllyAttackState>(owner.GetFovY()));
 	states_.emplace(FollowCameraState::StunAttack, std::make_unique<FollowCameraStunAttackState>());
 	overlayStates_.emplace(FollowCameraOverlayState::Shake, std::make_unique<FollowCameraShakeState>());
-	overlayStates_.emplace(FollowCameraOverlayState::Parry, std::make_unique<FollowCameraParryState>(owner.GetFovY()));
-	overlayStates_.emplace(FollowCameraOverlayState::ParryAttack, std::make_unique<FollowCameraParryAttackState>());
 
 	// json適応
 	ApplyJson();
 
 	// inputを設定
 	SetInputMapper();
-	// 状態間の値の共有
-	SetStateValue();
 
 	// 最初の状態を設定
 	current_ = FollowCameraState::Follow;
@@ -92,16 +86,6 @@ void FollowCameraStateController::ExitOverlayState(FollowCameraOverlayState stat
 	// 強制終了
 	overlayState_ = std::nullopt;
 	overlayStates_[state]->Exit();
-}
-
-void FollowCameraStateController::SetStateValue() {
-
-	// 状態間の値の共有(値ずれを防ぐため)
-	static_cast<FollowCameraParryState*>(overlayStates_.at(FollowCameraOverlayState::Parry).get())->SetStartOffsetTranslation(
-		static_cast<FollowCameraFollowState*>(states_.at(FollowCameraState::Follow).get())->GetOffsetTranslation());
-
-	static_cast<FollowCameraParryAttackState*>(overlayStates_.at(FollowCameraOverlayState::ParryAttack).get())->SetStartOffsetTranslation(
-		static_cast<FollowCameraParryState*>(overlayStates_.at(FollowCameraOverlayState::Parry).get())->GetCurrentOffset());
 }
 
 void FollowCameraStateController::SetInputMapper() {
@@ -184,23 +168,6 @@ void FollowCameraStateController::CheckExitOverlayState() {
 	auto state = overlayState_.value();
 	if (!overlayStates_[state]->GetCanExit()) {
 		return;
-	}
-
-	// Parryが終わる時にオフセット距離をセットする
-	if (state == FollowCameraOverlayState::Parry) {
-
-		const auto& follow = static_cast<FollowCameraFollowState*>(
-			states_[FollowCameraState::Follow].get());
-		const auto& parry = static_cast<FollowCameraParryState*>(
-			overlayStates_[state].get());
-		follow->SetOffsetTranslation(parry->GetCurrentOffset());
-	} else if (state == FollowCameraOverlayState::ParryAttack) {
-
-		const auto& follow = static_cast<FollowCameraFollowState*>(
-			states_[FollowCameraState::Follow].get());
-		const auto& parryAttack = static_cast<FollowCameraParryAttackState*>(
-			overlayStates_[state].get());
-		follow->SetOffsetTranslation(parryAttack->GetCurrentOffset());
 	}
 
 	overlayStates_[state]->Exit();

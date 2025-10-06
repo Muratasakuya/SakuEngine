@@ -494,12 +494,6 @@
     <ClCompile Include="Game\Objects\GameScene\Enemy\Boss\Collision\BossEnemyAttackCollision.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Camera\Follow\State\States\FollowCameraParryState.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Camera\Follow\State\States\FollowCameraParryAttackState.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Object\Core\ObjectPoolManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -911,8 +905,6 @@
     <ClInclude Include="Game\Objects\GameScene\Enemy\Boss\Collision\BossEnemyBladeCollision.h" />
     <ClInclude Include="Game\Objects\GameScene\Player\State\States\PlayerAvoidSatate.h" />
     <ClInclude Include="Game\Objects\GameScene\Enemy\Boss\Collision\BossEnemyAttackCollision.h" />
-    <ClInclude Include="Game\Camera\Follow\State\States\FollowCameraParryState.h" />
-    <ClInclude Include="Game\Camera\Follow\State\States\FollowCameraParryAttackState.h" />
     <ClInclude Include="Engine\Core\Graphics\GPUObject\DxStructuredBuffer.h" />
     <ClInclude Include="Engine\Core\Graphics\GPUObject\VertexBuffer.h" />
     <ClInclude Include="Engine\Core\Graphics\GPUObject\IndexBuffer.h" />
