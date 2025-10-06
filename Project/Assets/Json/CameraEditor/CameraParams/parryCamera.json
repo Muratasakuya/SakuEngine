@@ -1,0 +1,44 @@
+{
+    "Keyframes": {
+        "0": {
+            "fovY": 0.8799999952316284,
+            "rotation": {
+                "w": 0.9598215222358704,
+                "x": -0.044942162930965424,
+                "y": -0.274580180644989,
+                "z": -0.03644980117678642
+            },
+            "translation": {
+                "x": 9.726693153381348,
+                "y": 2.1347250938415527,
+                "z": -7.869659423828125
+            }
+        },
+        "1": {
+            "fovY": 0.5400000214576721,
+            "rotation": {
+                "w": 0.9927231073379517,
+                "x": -0.05047815665602684,
+                "y": -0.1093209832906723,
+                "z": -0.0013207501033321023
+            },
+            "translation": {
+                "x": 10.512120246887207,
+                "y": 2.2721381187438965,
+                "z": -29.1982421875
+            }
+        }
+    },
+    "Timer": {
+        "easeingType_": "EaseOutSine",
+        "target_": 0.5400000214576721
+    },
+    "divisionCount": 64,
+    "followRotation": true,
+    "followTarget": true,
+    "lerpType": "Spline",
+    "objectName": "PlayerAttack_2ndState",
+    "overallName": "AttackProgress_2nd",
+    "targetName": "player",
+    "useAveraging": true
+}
