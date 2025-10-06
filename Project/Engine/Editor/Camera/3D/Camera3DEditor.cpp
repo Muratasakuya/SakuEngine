@@ -243,12 +243,24 @@ void Camera3DEditor::StartAnim(const std::string& actionName, bool canCutIn) {
 	keyframe.demoObject->SetTranslation(targetRotation * localTranslation);
 	keyframe.demoObject->SetRotation(param.followRotation ?
 		Quaternion::Normalize(targetRotation * localRataion) : localRataion);
+	// 行列を更新
+	keyframe.demoObject->UpdateMatrix();
+	// ローカルを設定
 	keyframe.translation = localTranslation;
 	keyframe.rotation = localRataion;
 	keyframe.fovY = camera->GetFovY();
 	// 追加
 	const uint32_t injectedId = keyframe.demoObject->GetObjectID();
 	param.keyframes.insert(param.keyframes.begin(), std::move(keyframe));
+
+	for (const auto& keyframeTest : param.keyframes) {
+		if (keyframeTest.translation.Length() <= 1.0f ||
+			keyframeTest.demoObject->GetTranslation().Length() <= 1.0f) {
+
+			int a = 0;
+			a++;
+		}
+	}
 
 	// キーフレームの平均の再取得
 	if (param.useAveraging) {

@@ -215,6 +215,11 @@ float GameObject3D::GetEventTime(const std::string& animName,
 	return animation_->GetEventTime(animName, keyEvent, frameIndex);
 }
 
+void GameObject3D::UpdateMatrix() {
+
+	transform_->UpdateMatrix();
+}
+
 void GameObject3D::SetParent(const Transform3D& parent, bool isNull) {
 
 	if (isNull) {

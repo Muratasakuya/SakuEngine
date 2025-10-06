@@ -91,6 +91,7 @@ public:
 	/*---------- getter ----------*/
 
 	// transform
+	void UpdateMatrix();
 	const Transform3D& GetTransform() const { return *transform_; }
 	// SRT
 	const Vector3& GetScale() const { return transform_->scale; }

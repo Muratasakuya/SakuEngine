@@ -49,10 +49,9 @@ void CameraPathData::KeyframeParam::FromJson(const Json& data) {
 void CameraPathData::KeyframeParam::ToJson(Json& data) {
 
 	data["fovY"] = fovY;
-
-	// demoObjectから渡す
-	data["translation"] = demoObject->GetTranslation().ToJson();
-	data["rotation"] = demoObject->GetRotation().ToJson();
+	// ローカルを渡す
+	data["translation"] = translation.ToJson();
+	data["rotation"] = rotation.ToJson();
 }
 
 void CameraPathData::ApplyJson(const std::string& fileName, bool _isUseGame) {

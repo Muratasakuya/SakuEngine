@@ -97,6 +97,12 @@ void CameraPathController::Evaluate(const CameraPathData& data, float t,
 
 		points.emplace_back(keyframe.demoObject->GetTransform().GetWorldPos());
 	}
+
+	if (LerpKeyframe::GetValue<Vector3>(points, t, data.lerpType).Length() <= 28.0f) {
+
+		int a = 0;
+		a++;
+	}
 	outTranslation = LerpKeyframe::GetValue<Vector3>(points, t, data.lerpType);
 
 	// 画角の補間
