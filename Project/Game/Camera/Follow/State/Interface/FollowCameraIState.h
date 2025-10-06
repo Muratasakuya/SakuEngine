@@ -5,6 +5,7 @@
 //============================================================================
 #include <Engine/Input/Base/InputMapper.h>
 #include <Engine/Utility/Enum/Direction.h>
+#include <Engine/Utility/Timer/StateTimer.h>
 #include <Engine/MathLib/MathUtils.h>
 #include <Game/Camera/Follow/Structures/FollowCameraStructures.h>
 #include <Game/Camera/Follow/Input/FollowCameraInputAction.h>

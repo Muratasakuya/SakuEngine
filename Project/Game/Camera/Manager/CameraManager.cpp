@@ -5,6 +5,7 @@
 //============================================================================
 #include <Engine/Scene/SceneView.h>
 #include <Game/Objects/GameScene/Player/Entity/Player.h>
+#include <Game/Objects/GameScene/Enemy/Boss/Entity/BossEnemy.h>
 
 //============================================================================
 //	CameraManager classMethods
@@ -41,7 +42,7 @@ void CameraManager::Init(SceneView* sceneView) {
 #endif
 }
 
-void CameraManager::SetTarget(const Player* Player) {
+void CameraManager::SetTarget(const Player* Player, const BossEnemy* bossEnemy) {
 
 	player_ = nullptr;
 	player_ = Player;
@@ -49,6 +50,8 @@ void CameraManager::SetTarget(const Player* Player) {
 	// 追従先を設定する: player
 	followCamera_->SetTarget(FollowCameraTargetType::Player, player_->GetTransform());
 	followCamera_->SetTarget(FollowCameraTargetType::PlayerAlly, player_->GetAlly()->GetTransform());
+	// bossEnemy
+	followCamera_->SetTarget(FollowCameraTargetType::BossEnemy, bossEnemy->GetTransform());
 }
 
 void CameraManager::Update(GameSceneState sceneState) {

@@ -14,6 +14,7 @@
 #include <Game/Camera/ResultCamera/ClearResultCamera.h>
 // front
 class Player;
+class BossEnemy;
 class SceneView;
 
 //============================================================================
@@ -37,7 +38,7 @@ public:
 
 	//--------- accessor -----------------------------------------------------
 
-	void SetTarget(const Player* Player);
+	void SetTarget(const Player* Player, const BossEnemy* bossEnemy);
 
 	FollowCamera* GetFollowCamera() const { return followCamera_.get(); }
 	BeginGameCamera* GetBeginGameCamera() const { return beginGameCamera_.get(); }

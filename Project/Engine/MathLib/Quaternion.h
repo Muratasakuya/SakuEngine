@@ -68,7 +68,7 @@ public:
 
 	static Quaternion Inverse(const Quaternion& quaternion);
 
-	static Quaternion MakeRotateAxisAngleQuaternion(const Vector3& axis, float angle);
+	static Quaternion MakeAxisAngle(const Vector3& axis, float angle);
 
 	static Vector3 RotateVector(const Vector3& vector, const Quaternion& quaternion);
 

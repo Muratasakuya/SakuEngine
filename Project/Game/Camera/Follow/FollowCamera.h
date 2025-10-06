@@ -40,22 +40,38 @@ public:
 
 	float GetFovY() const { return fovY_; }
 
+	// エディターによるカメラアニメーション
 	void StartPlayerActionAnim(PlayerState state);
 	void EndPlayerActionAnim(PlayerState state);
+
+	// 視点を注視点に向ける
+	void StartLookToTarget(FollowCameraTargetType from, FollowCameraTargetType to,
+		bool isReset = false);
 private:
 	//========================================================================
 	//	private Methods
 	//========================================================================
 
 	//--------- variables ----------------------------------------------------
-	
+
 	// 状態の管理
 	std::unique_ptr<FollowCameraStateController> stateController_;
+	std::unordered_map<FollowCameraTargetType, const Transform3D*> targets_;
+
+	// 視点を注視点に向ける処理
+	bool lookStart_ = false; // 補間開始するか
+	std::pair<FollowCameraTargetType, FollowCameraTargetType> lookPair_;
+	Quaternion lookToStart_; // 補間開始時の回転
+	StateTimer lookTimer_;   // 補間までの時間
+	float targetXRotation_;  // 目標X回転
 
 	// アニメーションを読み込んだか
 	bool isLoadedAnim_;
 
 	//--------- functions ----------------------------------------------------
+
+	// update
+	void UpdateLookToTarget();
 
 	// json
 	void ApplyJson();

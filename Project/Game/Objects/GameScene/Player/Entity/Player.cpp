@@ -149,21 +149,21 @@ void Player::SetReverseWeapon(bool isReverse, PlayerWeaponType type) {
 	if (isReverse) {
 		if (type == PlayerWeaponType::Left) {
 
-			leftWeapon_->SetRotation(Quaternion::MakeRotateAxisAngleQuaternion(
+			leftWeapon_->SetRotation(Quaternion::MakeAxisAngle(
 				Vector3(1.0f, 0.0f, 0.0f), pi));
 		} else {
 
-			rightWeapon_->SetRotation(Quaternion::MakeRotateAxisAngleQuaternion(
+			rightWeapon_->SetRotation(Quaternion::MakeAxisAngle(
 				Vector3(1.0f, 0.0f, 0.0f), pi));
 		}
 	} else {
 		if (type == PlayerWeaponType::Left) {
 
-			leftWeapon_->SetRotation(Quaternion::MakeRotateAxisAngleQuaternion(
+			leftWeapon_->SetRotation(Quaternion::MakeAxisAngle(
 				Vector3(1.0f, 0.0f, 0.0f), 0.0f));
 		} else {
 
-			rightWeapon_->SetRotation(Quaternion::MakeRotateAxisAngleQuaternion(
+			rightWeapon_->SetRotation(Quaternion::MakeAxisAngle(
 				Vector3(1.0f, 0.0f, 0.0f), 0.0f));
 		}
 	}

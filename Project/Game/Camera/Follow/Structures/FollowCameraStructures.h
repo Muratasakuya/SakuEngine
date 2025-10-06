@@ -29,5 +29,6 @@ enum class FollowCameraOverlayState {
 enum class FollowCameraTargetType {
 
 	Player,
-	PlayerAlly
+	PlayerAlly,
+	BossEnemy
 };

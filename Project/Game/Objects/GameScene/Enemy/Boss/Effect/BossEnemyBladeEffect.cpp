@@ -69,7 +69,7 @@ void BossEnemySingleBladeEffect::EmitEffect(
 		plane_.translation, localRotation);
 	plane_.effect->Emit();
 	// 後ろのパーティクル
-	Quaternion inverseYRotation = Quaternion::MakeRotateAxisAngleQuaternion(Vector3(0.0f, 1.0f, 0.0f), -pi);
+	Quaternion inverseYRotation = Quaternion::MakeAxisAngle(Vector3(0.0f, 1.0f, 0.0f), -pi);
 	GameEffectCommandHelper::SendSpawnerRotation(*particle_.effect,
 		Quaternion::MakeRotateMatrix(Quaternion::Multiply(transform.rotation, inverseYRotation)));
 	GameEffectCommandHelper::ApplyAndSend(*particle_.effect, transform.rotation,

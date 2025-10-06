@@ -59,9 +59,6 @@ void StartGameState::Init(SceneView* sceneView) {
 	// プレイヤー
 	context_->player->Init("player", "player", "Player", "player_idle");
 
-	// 追従先を設定する: player
-	context_->camera->SetTarget(context_->player);
-
 	// ボス
 	context_->boss->Init("bossEnemy", "bossEnemy", "Enemy", "bossEnemy_idle");
 
@@ -77,6 +74,9 @@ void StartGameState::Init(SceneView* sceneView) {
 
 	// リザルト画面
 	context_->result->Init();
+
+	// 追従先を設定する
+	context_->camera->SetTarget(context_->player, context_->boss);
 
 	//========================================================================
 	//	sprites

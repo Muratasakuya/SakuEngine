@@ -43,12 +43,12 @@ void FollowCameraFollowState::Update(FollowCamera& followCamera) {
 
 	Quaternion currentRotation = followCamera.GetTransform().rotation;
 	// Y軸の回転
-	Quaternion yawRotation = Quaternion::Normalize(Quaternion::MakeRotateAxisAngleQuaternion(
+	Quaternion yawRotation = Quaternion::Normalize(Quaternion::MakeAxisAngle(
 		Direction::Get(Direction3D::Up), yawDelta) * currentRotation);
 	// X軸の回転
 	Vector3 rightAxis = (yawRotation * Direction::Get(Direction3D::Right)).Normalize();
 	Quaternion pitchRotation = Quaternion::Normalize(
-		Quaternion::MakeRotateAxisAngleQuaternion(rightAxis, pitchDelta));
+		Quaternion::MakeAxisAngle(rightAxis, pitchDelta));
 	// X軸回転とY軸回転を合成
 	Quaternion candidateRotation = Quaternion::Normalize(pitchRotation * yawRotation);
 

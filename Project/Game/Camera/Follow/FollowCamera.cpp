@@ -77,6 +77,24 @@ void FollowCamera::EndPlayerActionAnim(PlayerState state) {
 	}
 }
 
+void FollowCamera::StartLookToTarget(FollowCameraTargetType from,
+	FollowCameraTargetType to, bool isReset) {
+
+	// 処理中なら受け付けない
+	if (lookStart_ && !isReset) {
+		return;
+	}
+
+	// 補間開始
+	lookStart_ = true;
+	lookTimer_.Reset();
+	lookPair_.first = from;
+	lookPair_.second = to;
+
+	// 開始回転を設定
+	lookToStart_ = Quaternion::Normalize(transform_.rotation);
+}
+
 void FollowCamera::Init() {
 
 	displayFrustum_ = false;
@@ -134,6 +152,7 @@ void FollowCamera::SetParryAttack(bool isParry) {
 void FollowCamera::SetTarget(FollowCameraTargetType type, const Transform3D& target) {
 
 	stateController_->SetTarget(type, target);
+	targets_[type] = &target;
 }
 
 void FollowCamera::SetState(FollowCameraState state) {
@@ -151,8 +170,59 @@ void FollowCamera::Update() {
 		return;
 	}
 
+	// 視点を注視点に向ける処理
+	UpdateLookToTarget();
+
 	// 行列更新
 	BaseCamera::UpdateView(UpdateMode::Quaternion);
+}
+
+void FollowCamera::UpdateLookToTarget() {
+
+	if (!lookStart_) {
+		return;
+	}
+
+	// 注視点に向ける
+	// 視点と注視点
+	const Transform3D fromTransform = *targets_[lookPair_.first];
+	const Transform3D toTransform = *targets_[lookPair_.second];
+
+	// ワールド座標
+	const Vector3 fromPos = fromTransform.GetWorldPos();
+	const Vector3 toPos = toTransform.GetWorldPos();
+
+	// 水平のみの前方ベクトル方向を取得
+	Vector3 forward = toPos - fromPos;
+	forward.y = 0.0f;
+	forward = forward.Normalize();
+
+	// Y軸の回転
+	Quaternion yawRotation = Quaternion::LookRotation(
+		forward, Direction::Get(Direction3D::Up));
+	// X軸回転
+	Vector3 rightAxis = (yawRotation * Direction::Get(Direction3D::Right)).Normalize();
+	Quaternion pitchRotation = Quaternion::Normalize(Quaternion::MakeAxisAngle(
+		rightAxis, targetXRotation_));
+	// 目標回転
+	Quaternion targetRotation = Quaternion::Normalize(pitchRotation * yawRotation);
+
+	// 時間の更新
+	lookTimer_.Update();
+
+	// 回転補間
+	Quaternion rotation = Quaternion::Slerp(lookToStart_,
+		targetRotation, lookTimer_.easedT_);
+	transform_.rotation = Quaternion::Normalize(rotation);
+
+	// 時間経過で終了
+	if (lookTimer_.IsReached()) {
+
+		// 回転を固定する
+		transform_.rotation = targetRotation;
+		lookStart_ = false;
+		lookTimer_.Reset();
+	}
 }
 
 void FollowCamera::ImGui() {
@@ -181,6 +251,18 @@ void FollowCamera::ImGui() {
 			stateController_->ImGui(*this);
 			ImGui::EndTabItem();
 		}
+		if (ImGui::BeginTabItem("LookTarget")) {
+
+			if (ImGui::Button("Start")) {
+
+				StartLookToTarget(FollowCameraTargetType::Player,
+					FollowCameraTargetType::BossEnemy, true);
+			}
+
+			ImGui::DragFloat("targetXRotation", &targetXRotation_, 0.01f);
+			lookTimer_.ImGui("Timer", true);
+			ImGui::EndTabItem();
+		}
 		ImGui::EndTabBar();
 	}
 	ImGui::SetWindowFontScale(1.0f);
@@ -197,6 +279,9 @@ void FollowCamera::ApplyJson() {
 	fovY_ = JsonAdapter::GetValue<float>(data, "fovY_");
 	nearClip_ = JsonAdapter::GetValue<float>(data, "nearClip_");
 	farClip_ = JsonAdapter::GetValue<float>(data, "farClip_");
+
+	targetXRotation_ = data.value("targetXRotation_", 0.4f);
+	lookTimer_.FromJson(data.value("LookTimer", Json()));
 }
 
 void FollowCamera::SaveJson() {
@@ -206,6 +291,9 @@ void FollowCamera::SaveJson() {
 	data["fovY_"] = fovY_;
 	data["nearClip_"] = nearClip_;
 	data["farClip_"] = farClip_;
+
+	data["targetXRotation_"] = targetXRotation_;
+	lookTimer_.ToJson(data["LookTimer"]);
 
 	JsonAdapter::Save("Camera/Follow/initParameter.json", data);
 }
