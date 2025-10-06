@@ -104,6 +104,10 @@ private:
 	StateMoveParam backJumpParam_;
 	float jumpStrength_;
 	StateMoveParam jumpMoveParam_;
+	// カメラアニメーション終了までの進捗
+	float jumpMoveOutProgress_;
+	bool isOutJumpAttackCameraAnim_;
+	float lookTimerRate_;
 
 	// エディター
 	State editState_;

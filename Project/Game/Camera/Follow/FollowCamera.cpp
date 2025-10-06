@@ -78,7 +78,7 @@ void FollowCamera::EndPlayerActionAnim(PlayerState state) {
 }
 
 void FollowCamera::StartLookToTarget(FollowCameraTargetType from,
-	FollowCameraTargetType to, bool isReset) {
+	FollowCameraTargetType to, bool isReset, bool isLockTarget, float lookTimerRate) {
 
 	// 処理中なら受け付けない
 	if (lookStart_ && !isReset) {
@@ -88,11 +88,20 @@ void FollowCamera::StartLookToTarget(FollowCameraTargetType from,
 	// 補間開始
 	lookStart_ = true;
 	lookTimer_.Reset();
+	lookTimerRate_ = lookTimerRate;
 	lookPair_.first = from;
 	lookPair_.second = to;
 
 	// 開始回転を設定
 	lookToStart_ = Quaternion::Normalize(transform_.rotation);
+	lookToTarget_ = std::nullopt;
+
+	// 目標回転を固定するなら
+	if (isLockTarget) {
+
+		// 目標回転を設定
+		lookToTarget_ = GetTargetRotation();
+	}
 }
 
 void FollowCamera::Init() {
@@ -183,10 +192,35 @@ void FollowCamera::UpdateLookToTarget() {
 		return;
 	}
 
+	// 目標回転
+	Quaternion targetRotation = lookToTarget_.has_value() ?
+		lookToTarget_.value() : GetTargetRotation();
+
+	// 時間の更新
+	lookTimer_.Update(lookTimer_.target_ * lookTimerRate_);
+
+	// 回転補間
+	Quaternion rotation = Quaternion::Slerp(lookToStart_,
+		targetRotation, lookTimer_.easedT_);
+	transform_.rotation = Quaternion::Normalize(rotation);
+
+	// 時間経過で終了
+	if (lookTimer_.IsReached()) {
+
+		// 回転を固定する
+		transform_.rotation = targetRotation;
+		lookStart_ = false;
+		lookTimer_.Reset();
+		lookToTarget_ = std::nullopt;
+	}
+}
+
+Quaternion FollowCamera::GetTargetRotation() const {
+
 	// 注視点に向ける
 	// 視点と注視点
-	const Transform3D fromTransform = *targets_[lookPair_.first];
-	const Transform3D toTransform = *targets_[lookPair_.second];
+	const Transform3D fromTransform = *targets_.at(lookPair_.first);
+	const Transform3D toTransform = *targets_.at(lookPair_.second);
 
 	// ワールド座標
 	const Vector3 fromPos = fromTransform.GetWorldPos();
@@ -206,23 +240,7 @@ void FollowCamera::UpdateLookToTarget() {
 		rightAxis, targetXRotation_));
 	// 目標回転
 	Quaternion targetRotation = Quaternion::Normalize(pitchRotation * yawRotation);
-
-	// 時間の更新
-	lookTimer_.Update();
-
-	// 回転補間
-	Quaternion rotation = Quaternion::Slerp(lookToStart_,
-		targetRotation, lookTimer_.easedT_);
-	transform_.rotation = Quaternion::Normalize(rotation);
-
-	// 時間経過で終了
-	if (lookTimer_.IsReached()) {
-
-		// 回転を固定する
-		transform_.rotation = targetRotation;
-		lookStart_ = false;
-		lookTimer_.Reset();
-	}
+	return targetRotation;
 }
 
 void FollowCamera::ImGui() {

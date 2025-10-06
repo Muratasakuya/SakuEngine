@@ -38,6 +38,7 @@ void PlayerSkilAttackState::Enter(Player& player) {
 	// 初期状態を設定
 	currentState_ = State::Rush;
 	jumpAttackState_ = JumpAttackState::Jump;
+	isOutJumpAttackCameraAnim_ = false;
 
 	// 敵が攻撃可能範囲にいるかチェック
 	const Vector3 playerPos = player.GetTranslation();
@@ -59,6 +60,10 @@ void PlayerSkilAttackState::Enter(Player& player) {
 		player.SetNextAnimation("player_skilAttack_1st", false, rushMoveParam_.nextAnim);
 		// 敵の方を向ける
 		player.SetRotation(Quaternion::LookRotation(direction, Vector3(0.0f, 1.0f, 0.0f)));
+
+		// カメラの向きを補正させる
+		followCamera_->StartLookToTarget(FollowCameraTargetType::Player,
+			FollowCameraTargetType::BossEnemy, true, true, lookTimerRate_);
 	} else {
 
 		canExit_ = true;
@@ -226,6 +231,19 @@ void PlayerSkilAttackState::UpdateJumpAttack(Player& player) {
 		player.SetTranslation(Vector3::Lerp(jumpMoveParam_.start,
 			jumpMoveParam_.target, jumpMoveParam_.timer.easedT_));
 
+		// 補間がほぼ終了すればカメラアニメーションを終了させてカメラ補間させる
+		if (!isOutJumpAttackCameraAnim_ &&
+			jumpMoveOutProgress_ < jumpMoveParam_.timer.t_) {
+
+			isOutJumpAttackCameraAnim_ = true;
+
+			// カメラアニメーション終了
+			followCamera_->EndPlayerActionAnim(PlayerState::SkilAttack);
+			// カメラの向きを補正させる
+			followCamera_->StartLookToTarget(FollowCameraTargetType::Player,
+				FollowCameraTargetType::BossEnemy);
+		}
+
 		// 補間終了後状態を閉じる
 		if (jumpMoveParam_.timer.IsReached()) {
 
@@ -243,6 +261,7 @@ void PlayerSkilAttackState::Exit(Player& player) {
 	// リセット
 	canExit_ = false;
 	isStratLookEnemy_ = false;
+	isOutJumpAttackCameraAnim_ = false;
 	exitTimer_ = 0.0f;
 	rushMoveParam_.timer.Reset();
 	returnMoveParam_.timer.Reset();
@@ -292,6 +311,8 @@ void PlayerSkilAttackState::ImGui(const Player& player) {
 		ImGui::DragFloat("jumpStrength", &jumpStrength_, 0.1f);
 		ImGui::Separator();
 		jumpMoveParam_.ImGui(player, *bossEnemy_, true);
+		ImGui::DragFloat("jumpMoveOutProgress", &jumpMoveOutProgress_, 0.01f);
+		ImGui::DragFloat("lookTimerRate", &lookTimerRate_, 0.01f);
 		break;
 	}
 }
@@ -370,6 +391,8 @@ void PlayerSkilAttackState::ApplyJson(const Json& data) {
 	nextAnimDuration_ = JsonAdapter::GetValue<float>(data, "nextAnimDuration_");
 	rotationLerpRate_ = JsonAdapter::GetValue<float>(data, "rotationLerpRate_");
 	exitTime_ = JsonAdapter::GetValue<float>(data, "exitTime_");
+	jumpMoveOutProgress_ = data.value("jumpMoveOutProgress_", 0.8f);
+	lookTimerRate_ = data.value("lookTimerRate_", 1.6f);
 
 	PlayerBaseAttackState::ApplyJson(data);
 
@@ -390,6 +413,8 @@ void PlayerSkilAttackState::SaveJson(Json& data) {
 	data["nextAnimDuration_"] = nextAnimDuration_;
 	data["rotationLerpRate_"] = rotationLerpRate_;
 	data["exitTime_"] = exitTime_;
+	data["jumpMoveOutProgress_"] = jumpMoveOutProgress_;
+	data["lookTimerRate_"] = lookTimerRate_;
 
 	PlayerBaseAttackState::SaveJson(data);
 
@@ -546,7 +571,7 @@ void PlayerSkilAttackState::DriveOverall(float overall) {
 		const float portionBack = t3 / (t3 + t4 + 1e-6f);
 		const float dur = player_->GetAnimationDuration("player_skilAttack_3rd");
 		const float clipT = portionBack * local;
-		player_->SetCurrentAnimTime(dur* clipT);
+		player_->SetCurrentAnimTime(dur * clipT);
 		return;
 	}
 

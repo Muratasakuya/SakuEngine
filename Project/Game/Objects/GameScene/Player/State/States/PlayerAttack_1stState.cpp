@@ -5,6 +5,7 @@
 //============================================================================
 #include <Engine/Editor/ActionProgress/ActionProgressMonitor.h>
 #include <Engine/Utility/Timer/GameTimer.h>
+#include <Game/Camera/Follow/FollowCamera.h>
 #include <Game/Objects/GameScene/Enemy/Boss/Entity/BossEnemy.h>
 #include <Game/Objects/GameScene/Player/Entity/Player.h>
 
@@ -33,6 +34,11 @@ void PlayerAttack_1stState::Enter(Player& player) {
 
 		startPos_ = playerPos;
 		targetPos_ = startPos_ + player.GetTransform().GetForward() * moveValue_;
+	} else {
+
+		// カメラの向きを補正させる
+		followCamera_->StartLookToTarget(FollowCameraTargetType::Player,
+			FollowCameraTargetType::BossEnemy);
 	}
 }
 

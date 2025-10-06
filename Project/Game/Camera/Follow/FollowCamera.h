@@ -46,7 +46,7 @@ public:
 
 	// 視点を注視点に向ける
 	void StartLookToTarget(FollowCameraTargetType from, FollowCameraTargetType to,
-		bool isReset = false);
+		bool isReset = false, bool isLockTarget = false, float lookTimerRate = 1.0f);
 private:
 	//========================================================================
 	//	private Methods
@@ -61,8 +61,10 @@ private:
 	// 視点を注視点に向ける処理
 	bool lookStart_ = false; // 補間開始するか
 	std::pair<FollowCameraTargetType, FollowCameraTargetType> lookPair_;
-	Quaternion lookToStart_; // 補間開始時の回転
+	Quaternion lookToStart_;  // 補間開始時の回転
+	std::optional<Quaternion> lookToTarget_; // 補間目標の回転
 	StateTimer lookTimer_;   // 補間までの時間
+	float lookTimerRate_;    // 目標時間の倍速率
 	float targetXRotation_;  // 目標X回転
 
 	// アニメーションを読み込んだか
@@ -72,6 +74,9 @@ private:
 
 	// update
 	void UpdateLookToTarget();
+
+	// helper
+	Quaternion GetTargetRotation() const;
 
 	// json
 	void ApplyJson();

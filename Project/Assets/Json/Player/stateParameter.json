@@ -273,8 +273,10 @@
         "attackPosLerpCircleRange_": 95.4000015258789,
         "attackPosLerpTime_": 0.4399999976158142,
         "exitTime_": 0.029999999329447746,
+        "jumpMoveOutProgress_": 0.41999998688697815,
         "jumpStrength_": 16.0,
         "lookStartProgress_": 0.5,
+        "lookTimerRate_": 1.2000000476837158,
         "nextAnimDuration_": 0.029999999329447746,
         "rotationLerpRate_": 0.3199999928474426
     },

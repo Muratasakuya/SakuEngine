@@ -44,6 +44,10 @@ void PlayerAttack_2ndState::Enter(Player& player) {
 		// 範囲内のとき
 		CalcWayPoints(player, wayPoints_);
 		startTranslation_ = player.GetTranslation();
+
+		// カメラの向きを補正させる
+		followCamera_->StartLookToTarget(FollowCameraTargetType::Player,
+			FollowCameraTargetType::BossEnemy, false, true);
 	}
 }
 
@@ -80,8 +84,8 @@ void PlayerAttack_2ndState::Update(Player& player) {
 		}
 
 		// 範囲内になったら敵補間へ切り替え
-		const float dist = (bossEnemy_->GetTranslation() - player.GetTranslation()).Length();
-		if (dist <= attackPosLerpCircleRange_) {
+		const float distance = (bossEnemy_->GetTranslation() - player.GetTranslation()).Length();
+		if (distance <= attackPosLerpCircleRange_) {
 
 			approachPhase_ = false;
 			CalcWayPoints(player, wayPoints_);

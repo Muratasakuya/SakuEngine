@@ -8,6 +8,7 @@
 
 // c++
 #include <string>
+#include <optional>
 
 //============================================================================
 //	StateTimer class
@@ -21,7 +22,7 @@ public:
 	StateTimer() = default;
 	~StateTimer() = default;
 
-	void Update();
+	void Update(const std::optional<float>& target = std::nullopt);
 
 	void Reset();
 
