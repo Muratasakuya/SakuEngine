@@ -242,18 +242,18 @@
         "BackJump": {
             "easeingType_": "EaseOutBack",
             "moveValue": -32.0,
-            "nextAnim": 0.019999999552965164,
-            "target_": 0.2800000011920929
+            "nextAnim": 0.10000000149011612,
+            "target_": 0.3499999940395355
         },
         "LookEnemy": {
             "easeingType_": "EaseInSine",
             "target_": 0.11999999731779099
         },
         "MoveJump": {
-            "easeingType_": "EaseOutExpo",
+            "easeingType_": "EaseOutQuint",
             "moveValue": 22.0,
             "nextAnim": 0.0,
-            "target_": 0.30000001192092896
+            "target_": 0.6600000262260437
         },
         "ReturnMove": {
             "easeingType_": "EaseOutQuad",

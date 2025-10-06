@@ -59,9 +59,6 @@ void PlayerSkilAttackState::Enter(Player& player) {
 		player.SetNextAnimation("player_skilAttack_1st", false, rushMoveParam_.nextAnim);
 		// 敵の方を向ける
 		player.SetRotation(Quaternion::LookRotation(direction, Vector3(0.0f, 1.0f, 0.0f)));
-
-		// カメラアニメーション開始
-		followCamera_->StartPlayerActionAnim(PlayerState::SkilAttack);
 	} else {
 
 		canExit_ = true;
@@ -186,6 +183,9 @@ void PlayerSkilAttackState::UpdateReturn(Player& player) {
 
 		// 次に進める
 		currentState_ = State::JumpAttack;
+
+		// カメラアニメーション開始
+		followCamera_->StartPlayerActionAnim(PlayerState::SkilAttack);
 	}
 }
 
