@@ -26,6 +26,7 @@ void FollowCamera::LoadAnim() {
 	editor->LoadAnimFile("3rdAttackCamera.json");
 	editor->LoadAnimFile("4thAttackCamera.json");
 	editor->LoadAnimFile("skillAttackCamera.json");
+	editor->LoadAnimFile("parryCamera.json");
 
 	// 読み込み済み
 	isLoadedAnim_ = true;
@@ -51,6 +52,10 @@ void FollowCamera::StartPlayerActionAnim(PlayerState state) {
 
 		editor->StartAnim("SkillProgress", true);
 		break;
+	case PlayerState::Parry:
+
+		editor->StartAnim("Parry", true);
+		break;
 	}
 }
 
@@ -73,6 +78,10 @@ void FollowCamera::EndPlayerActionAnim(PlayerState state) {
 	case PlayerState::SkilAttack:
 
 		editor->EndAnim("SkillProgress");
+		break;
+	case PlayerState::Parry:
+
+		editor->EndAnim("Parry");
 		break;
 	}
 }
@@ -129,32 +138,6 @@ void FollowCamera::SetScreenShake(bool isShake) {
 
 		// shakeを止める
 		stateController_->ExitOverlayState(FollowCameraOverlayState::Shake);
-	}
-}
-
-void FollowCamera::SetParry(bool isParry) {
-
-	if (isParry) {
-
-		// 状態を設定する
-		stateController_->SetOverlayState(*this, FollowCameraOverlayState::Parry);
-	} else {
-
-		// parryを止める
-		stateController_->ExitOverlayState(FollowCameraOverlayState::Parry);
-	}
-}
-
-void FollowCamera::SetParryAttack(bool isParry) {
-
-	if (isParry) {
-
-		// 状態を設定する
-		stateController_->SetOverlayState(*this, FollowCameraOverlayState::ParryAttack);
-	} else {
-
-		// parryを止める
-		stateController_->ExitOverlayState(FollowCameraOverlayState::ParryAttack);
 	}
 }
 
