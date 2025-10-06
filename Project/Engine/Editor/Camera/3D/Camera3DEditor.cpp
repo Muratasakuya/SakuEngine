@@ -320,8 +320,7 @@ void Camera3DEditor::UpdateGameAnimation() {
 	// 補間が最後まで行けば終了
 	if (param.timer.IsReached()) {
 
-		camera->SetEulerRotation(param.keyframes.back().
-			demoObject->GetTransform().matrix.world.GetRotationValue());
+		camera->SetRotation(param.keyframes.back().demoObject->GetRotation());
 		EndAnim(runtime_->action);
 	}
 }

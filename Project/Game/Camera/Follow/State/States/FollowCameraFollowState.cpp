@@ -115,7 +115,7 @@ void FollowCameraFollowState::ImGui([[maybe_unused]] const FollowCamera& followC
 
 	ImGui::DragFloat3("offsetTranslation", &offsetTranslation_.x, 0.1f);
 
-	ImGui::DragFloat("lerpRate", &lerpRate_, 0.1f);
+	ImGui::DragFloat("lerpRate", &lerpRate_, 0.01f);
 	ImGui::DragFloat("inputLerpRate_", &inputLerpRate_, 0.01f);
 
 	ImGui::DragFloat2("mouseSensitivity", &mouseSensitivity_.x, 0.001f);

@@ -143,13 +143,13 @@ void FollowCamera::SetState(FollowCameraState state) {
 
 void FollowCamera::Update() {
 
+	// 状態の更新
+	stateController_->Update(*this);
+
 	// エディターで更新しているときは処理しない
 	if (isUpdateEditor_) {
 		return;
 	}
-
-	// 状態の更新
-	stateController_->Update(*this);
 
 	// 行列更新
 	BaseCamera::UpdateView(UpdateMode::Quaternion);
