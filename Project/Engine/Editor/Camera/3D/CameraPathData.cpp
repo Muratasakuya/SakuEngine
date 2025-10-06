@@ -128,8 +128,8 @@ void CameraPathData::ApplyJson(const std::string& fileName, bool _isUseGame) {
 		std::vector<Vector3> points;
 		points.reserve(keyframes.size());
 		for (const auto& keyframe : keyframes) {
-
-			points.emplace_back(keyframe.translation);
+      
+			points.emplace_back(keyframe.demoObject->GetTransform().translation);
 		}
 		averagedT = LerpKeyframe::AveragingPoints<Vector3>(points, divisionCount, lerpType);
 	}
