@@ -181,6 +181,7 @@ void FollowCamera::Update() {
 
 	// 視点を注視点に向ける処理
 	UpdateLookToTarget();
+	UpdateLookAlwaysTarget();
 
 	// 行列更新
 	BaseCamera::UpdateView(UpdateMode::Quaternion);
@@ -213,6 +214,25 @@ void FollowCamera::UpdateLookToTarget() {
 		lookTimer_.Reset();
 		lookToTarget_ = std::nullopt;
 	}
+}
+
+void FollowCamera::UpdateLookAlwaysTarget() {
+
+	if (!lookAlwaysTarget_) {
+		return;
+	}
+
+	// 視点と注視点は固定
+	lookPair_.first = FollowCameraTargetType::Player;
+	lookPair_.second = FollowCameraTargetType::BossEnemy;
+
+	// 目標回転
+	Quaternion targetRotation = GetTargetRotation();
+
+	// 回転をフレーム補間
+	Quaternion rotation = Quaternion::Slerp(
+		transform_.rotation, targetRotation, lookTargetLerpRate_);
+	transform_.rotation = Quaternion::Normalize(rotation);
 }
 
 Quaternion FollowCamera::GetTargetRotation() const {
@@ -277,7 +297,10 @@ void FollowCamera::ImGui() {
 					FollowCameraTargetType::BossEnemy, true);
 			}
 
+			ImGui::Checkbox("lookAlwaysTarget", &lookAlwaysTarget_);
+
 			ImGui::DragFloat("targetXRotation", &targetXRotation_, 0.01f);
+			ImGui::DragFloat("lookTargetLerpRate", &lookTargetLerpRate_, 0.01f);
 			lookTimer_.ImGui("Timer", true);
 			ImGui::EndTabItem();
 		}
@@ -299,6 +322,7 @@ void FollowCamera::ApplyJson() {
 	farClip_ = JsonAdapter::GetValue<float>(data, "farClip_");
 
 	targetXRotation_ = data.value("targetXRotation_", 0.4f);
+	lookTargetLerpRate_ = data.value("lookTargetLerpRate_", 0.4f);
 	lookTimer_.FromJson(data.value("LookTimer", Json()));
 }
 
@@ -311,6 +335,7 @@ void FollowCamera::SaveJson() {
 	data["farClip_"] = farClip_;
 
 	data["targetXRotation_"] = targetXRotation_;
+	data["lookTargetLerpRate_"] = lookTargetLerpRate_;
 	lookTimer_.ToJson(data["LookTimer"]);
 
 	JsonAdapter::Save("Camera/Follow/initParameter.json", data);

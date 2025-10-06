@@ -47,6 +47,7 @@ public:
 	// 視点を注視点に向ける
 	void StartLookToTarget(FollowCameraTargetType from, FollowCameraTargetType to,
 		bool isReset = false, bool isLockTarget = false, float lookTimerRate = 1.0f);
+	void SetLookAlwaysTarget(bool look) { lookAlwaysTarget_ = look; }
 private:
 	//========================================================================
 	//	private Methods
@@ -60,6 +61,8 @@ private:
 
 	// 視点を注視点に向ける処理
 	bool lookStart_ = false; // 補間開始するか
+	bool  lookAlwaysTarget_ = false;  // trueの間ずっと向ける
+	float lookTargetLerpRate_; // フレーム補間割合
 	std::pair<FollowCameraTargetType, FollowCameraTargetType> lookPair_;
 	Quaternion lookToStart_;  // 補間開始時の回転
 	std::optional<Quaternion> lookToTarget_; // 補間目標の回転
@@ -74,6 +77,7 @@ private:
 
 	// update
 	void UpdateLookToTarget();
+	void UpdateLookAlwaysTarget();
 
 	// helper
 	Quaternion GetTargetRotation() const;
