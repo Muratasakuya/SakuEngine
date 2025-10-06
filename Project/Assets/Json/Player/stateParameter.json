@@ -62,7 +62,7 @@
         "attackPosLerpCircleRange_": 40.0,
         "attackPosLerpTime_": 0.4399999976158142,
         "backMoveValue_": -48.0,
-        "bossEnemyDistance_": -9.600000381469727,
+        "bossEnemyDistance_": 8.600000381469727,
         "exitTime_": 0.019999999552965164,
         "nextAnimDuration_": 0.07999999821186066,
         "rotationLerpRate_": 0.46000000834465027,

@@ -13,7 +13,7 @@
 
 void BossEnemyFalterState::Enter(BossEnemy& bossEnemy) {
 
-	bossEnemy.SetNextAnimation("bossEnemy_idle", true, nextAnimDuration_);
+	bossEnemy.SetNextAnimation("bossEnemy_falter", false, nextAnimDuration_);
 }
 
 void BossEnemyFalterState::Update(BossEnemy& bossEnemy) {
@@ -32,6 +32,12 @@ void BossEnemyFalterState::Update(BossEnemy& bossEnemy) {
 	// 後ずさりさせる
 	Vector3 backStepVelocity = bossEnemy.GetTransform().GetBack() * backStepSpeed_ * deltaTime;
 	bossEnemy.SetTranslation(bossPos + backStepVelocity);
+
+	// アニメーションが終了次第状態を終了
+	if (bossEnemy.IsAnimationFinished()) {
+
+		canExit_ = true;
+	}
 }
 
 void BossEnemyFalterState::Exit([[maybe_unused]] BossEnemy& bossEnemy) {

@@ -4,6 +4,7 @@
 //	include
 //============================================================================
 #include <Engine/MathLib/MathUtils.h>
+#include <Engine/Utility/Timer/StateTimer.h>
 
 // c++
 #include <cstdint>
@@ -12,19 +13,6 @@
 //============================================================================
 //	BossEnemyStructures class
 //============================================================================
-
-// memo
-// stateTableを作成する、これを基にstateを変更できるようにする
-// 各phaseには共通のパラメータとして次のstateへ遷移するまでの時間を設定できるようにする
-// []のなかに入る組み合わせをComboとし、作成できるようにする
-// Comboの流れをvectorに格納し[]内に入れられるようにする(1つでもComboとする)
-// PhaseでAddStateをすると[]を追加できる、とりあえずデフォルトでIdle(同じStateは選択できない)
-// []のなかでドロップダウンでComboを選択できるようにする
-// 各Comboの中のパラメータとしてstateが切り替わったときに、
-// また同じstate(Combo処理)になってもいいのかだめなのか設定できるようにする
-// Phase0 [Idle][LightAttack]
-// Phase1 [Idle][LightAttack][Teleportation -> ChargeAttack]
-// Phase2 [Idle][LightAttack][StrongAttack][RushAttack]
 
 // 状態の種類
 enum class BossEnemyState {
@@ -53,15 +41,21 @@ struct BossEnemyStats {
 	int maxHP;     // 最大HP
 	int currentHP; // 現在のHP
 
+	int maxDestroyToughness;     // 撃破靭性値
+	int currentDestroyToughness; // 現在の撃破靭性
+
+	int maxFalterCount;       // 怯める最大回数
+	int currentFalterCount;   // 現在の怯んだ回数
+	StateTimer reFalterTimer; // 再度怯むまでの時間
+	// 攻撃をくらっても怯まない状態
+	std::vector<BossEnemyState> blockFalterStates_;
+
 	// 閾値リストの条件
 	// indexNはindexN+1の値より必ず大きい(N=80、N+1=85にはならない)
 	std::vector<int> hpThresholds; // HP割合の閾値リスト
 
 	std::unordered_map<BossEnemyState, int> damages; // 各攻撃のダメージ量
 	int damageRandomRange;                           // ダメージのランダム範囲
-
-	int maxDestroyToughness;     // 撃破靭性値
-	int currentDestroyToughness; // 現在の撃破靭性値
 };
 
 // コンボリスト
@@ -80,7 +74,7 @@ struct BossEnemyPhase {
 
 	float nextStateDuration = 1.0f; // この秒数経過で次状態へ遷移
 	std::vector<int> comboIndices;  // コンボインデックスのリスト
-	bool autoIdleAfterAttack; // 強制的に待機状態に戻すか
+	bool autoIdleAfterAttack;       // 強制的に待機状態に戻すか
 
 	void FromJson(const Json& data);
 	void ToJson(Json& data);
@@ -88,7 +82,7 @@ struct BossEnemyPhase {
 
 // ボスの状態テーブル
 struct BossEnemyStateTable {
-
+	
 	std::vector<BossEnemyCombo> combos;
 	std::vector<BossEnemyPhase> phases;
 

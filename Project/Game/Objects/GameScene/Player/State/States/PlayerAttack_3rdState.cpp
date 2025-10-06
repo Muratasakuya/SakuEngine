@@ -78,6 +78,10 @@ void PlayerAttack_3rdState::Update(Player& player) {
 
 void PlayerAttack_3rdState::LerpWeapon(Player& player, PlayerWeaponType type) {
 
+	if (currentState_ == State::None) {
+		return;
+	}
+
 	// 補間開始合図まで処理しない
 	if (!weaponParams_[type].isMoveStart) {
 		return;
@@ -216,12 +220,12 @@ void PlayerAttack_3rdState::StartMoveWeapon(Player& player, PlayerWeaponType typ
 	if (assisted_) {
 
 		// 敵への向き
-		Vector3 toEnemy = bossEnemy_->GetTranslation() - player.GetTranslation();
-		toEnemy.y = 0.0f;
-		toEnemy = toEnemy.Normalize();
+		Vector3 toPlayer = player.GetTranslation() - bossEnemy_->GetTranslation();
+		toPlayer.y = 0.0f;
+		toPlayer = toPlayer.Normalize();
 
 		// Y軸回転オフセットをかける
-		Vector3 rotated = RotateYOffset(toEnemy, weaponParams_[type].offsetRotationY);
+		Vector3 rotated = RotateYOffset(toPlayer, weaponParams_[type].offsetRotationY);
 
 		// 敵を中心に一定距離だけオフセット
 		weaponParams_[type].targetPos = bossEnemy_->GetTranslation() + rotated * bossEnemyDistance_;
