@@ -56,6 +56,16 @@ void SceneManager::Update() {
 	Camera3DEditor::GetInstance()->Update();
 }
 
+void SceneManager::BeginFrame() {
+
+	currentScene_->BeginFrame();
+}
+
+void SceneManager::EndFrame() {
+
+	currentScene_->EndFrame();
+}
+
 void SceneManager::SwitchScene() {
 
 	if (sceneTransition_->IsBeginTransitionFinished()) {

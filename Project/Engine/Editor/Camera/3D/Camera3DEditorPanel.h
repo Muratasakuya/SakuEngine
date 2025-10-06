@@ -40,7 +40,7 @@ private:
 		std::string& selectedObjectKey, std::string& selectedActionName);
 	// 値調整データ追加
 	void AddCameraParam(std::unordered_map<std::string, CameraPathData>& params,
-		std::string& selectedActionName);
+		std::string& selectedObjectKey, std::string& selectedActionName);
 	// 値調整データの選択
 	void SelectCameraParam(std::unordered_map<std::string, CameraPathData>& params,
 		std::string& selectedParamKey);

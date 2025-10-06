@@ -35,6 +35,9 @@ public:
 
 	virtual void Update() = 0;
 
+	virtual void BeginFrame() {}
+	virtual void EndFrame() {}
+
 	//--------- accessor -----------------------------------------------------
 
 	void SetPtr(SceneView* sceneView, SceneManager* sceneManager);

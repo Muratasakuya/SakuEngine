@@ -26,12 +26,14 @@ public:
 	SceneManager(Scene scene, Asset* asset, SceneView* sceneView);
 	~SceneManager() = default;
 
+	// シーンの更新
 	void Update();
+	void BeginFrame();
+	void EndFrame();
 
+	// シーン切り替え
 	void SwitchScene();
-
 	void InitNextScene();
-
 	void SetNextScene(Scene scene, std::unique_ptr<ITransition> transition);
 
 	void ImGui() override;

@@ -67,11 +67,8 @@ public:
 		Vector3& outTranslation, Quaternion& outRotation, float& outFovY) const;
 
 	// カメラ適応
-	void ApplyToCamera(BaseCamera& camera,
-		const Vector3& translation, const Quaternion& rotation, float fovY) const;
-
-	//--------- accessor -----------------------------------------------------
-
+	void ApplyToCamera(BaseCamera& camera, const Vector3& translation,
+		const Quaternion& rotation, float fovY, bool isUseGame) const;
 private:
 	//========================================================================
 	//	private Methods

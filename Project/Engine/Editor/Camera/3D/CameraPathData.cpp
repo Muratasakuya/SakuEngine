@@ -12,7 +12,7 @@
 //	CameraPathData classMethods
 //============================================================================
 
-void CameraPathData::KeyframeParam::Init() {
+void CameraPathData::KeyframeParam::Init(bool isUseGame) {
 
 	// キーフレーム初期値
 	fovY = 0.54f;
@@ -28,6 +28,9 @@ void CameraPathData::KeyframeParam::Init() {
 	// 見た目を設定
 	demoObject->ApplyTransform(data);
 	demoObject->ApplyMaterial(data);
+	viewScale = demoObject->GetScale();
+	// ゲームで使用する場合描画しない
+	demoObject->SetScale(isUseGame ? Vector3::AnyInit(0.0f) : viewScale);
 	demoObject->SetMeshRenderView(MeshRenderView::Scene);
 }
 
@@ -36,10 +39,11 @@ void CameraPathData::KeyframeParam::FromJson(const Json& data) {
 	fovY = data.value("fovY", 54.0f);
 
 	translation = Vector3::FromJson(data.value("translation", Json()));
-	rotation = Quaternion::FromJson(data.value("rotation", Json()));
+	rotation = Quaternion::Normalize(Quaternion::FromJson(data.value("rotation", Json())));
 
 	demoObject->SetTranslation(translation);
 	demoObject->SetRotation(rotation);
+	demoObject->SetEulerRotation(Quaternion::ToEulerAngles(rotation));
 }
 
 void CameraPathData::KeyframeParam::ToJson(Json& data) {
@@ -51,13 +55,24 @@ void CameraPathData::KeyframeParam::ToJson(Json& data) {
 	data["rotation"] = demoObject->GetRotation().ToJson();
 }
 
-void CameraPathData::ApplyJson(const std::string& fileName) {
+void CameraPathData::ApplyJson(const std::string& fileName, bool _isUseGame) {
 
 	Json data;
 	// 読み込めなければ処理しない
 	if (!JsonAdapter::LoadCheck(fileName, data)) {
 		return;
 	}
+
+	// ゲームで使用する場合は線描画をしない
+	if (_isUseGame) {
+
+		isDrawLine3D = false;
+		isDrawKeyframe = false;
+		this->isUseGame = _isUseGame;
+	}
+
+	objectName = data.value("objectName", "objectName");
+	overallName = data.value("overallName", "overallName");
 
 	followTarget = data.value("followTarget", false);
 	followRotation = data.value("followRotation", true);
@@ -101,7 +116,7 @@ void CameraPathData::ApplyJson(const std::string& fileName) {
 
 		const std::string key = std::to_string(index);
 		KeyframeParam keyframe;
-		keyframe.Init();
+		keyframe.Init(isUseGame);
 		keyframe.FromJson(kfs[key]);
 		keyframes.emplace_back(std::move(keyframe));
 	}
@@ -113,7 +128,7 @@ void CameraPathData::ApplyJson(const std::string& fileName) {
 		std::vector<Vector3> points;
 		points.reserve(keyframes.size());
 		for (const auto& keyframe : keyframes) {
-
+      
 			points.emplace_back(keyframe.demoObject->GetTransform().translation);
 		}
 		averagedT = LerpKeyframe::AveragingPoints<Vector3>(points, divisionCount, lerpType);
@@ -123,6 +138,9 @@ void CameraPathData::ApplyJson(const std::string& fileName) {
 void CameraPathData::SaveJson(const std::string& fileName) {
 
 	Json data;
+
+	data["objectName"] = objectName;
+	data["overallName"] = overallName;
 
 	data["followTarget"] = followTarget;
 	data["followRotation"] = followRotation;

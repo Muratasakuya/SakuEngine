@@ -4,6 +4,7 @@
 //	include
 //============================================================================
 #include <Engine/Input/Input.h>
+#include <Engine/Editor/Camera/3D/Camera3DEditor.h>
 #include <Engine/Utility/Timer/GameTimer.h>
 #include <Engine/Utility/Json/JsonAdapter.h>
 #include <Engine/Utility/Random/RandomGenerator.h>
@@ -13,9 +14,73 @@
 //	FollowCamera classMethods
 //============================================================================
 
+void FollowCamera::LoadAnim() {
+
+	if (isLoadedAnim_) {
+		return;
+	}
+
+	Camera3DEditor* editor = Camera3DEditor::GetInstance();
+	// プレイヤーの攻撃
+	editor->LoadAnimFile("2ndAttackCamera.json");
+	editor->LoadAnimFile("3rdAttackCamera.json");
+	editor->LoadAnimFile("4thAttackCamera.json");
+	editor->LoadAnimFile("skillAttackCamera.json");
+
+	// 読み込み済み
+	isLoadedAnim_ = true;
+}
+
+void FollowCamera::StartPlayerActionAnim(PlayerState state) {
+
+	Camera3DEditor* editor = Camera3DEditor::GetInstance();
+	switch (state) {
+	case PlayerState::Attack_2nd:
+
+		editor->StartAnim("AttackProgress_2nd", true);
+		break;
+	case PlayerState::Attack_3rd:
+
+		editor->StartAnim("AttackProgress_3rd", true);
+		break;
+	case PlayerState::Attack_4th:
+
+		editor->StartAnim("AttackProgress_4th", true);
+		break;
+	case PlayerState::SkilAttack:
+
+		editor->StartAnim("SkillProgress", true);
+		break;
+	}
+}
+
+void FollowCamera::EndPlayerActionAnim(PlayerState state) {
+
+	Camera3DEditor* editor = Camera3DEditor::GetInstance();
+	switch (state) {
+	case PlayerState::Attack_2nd:
+
+		editor->EndAnim("AttackProgress_2nd");
+		break;
+	case PlayerState::Attack_3rd:
+
+		editor->EndAnim("AttackProgress_3rd");
+		break;
+	case PlayerState::Attack_4th:
+
+		editor->EndAnim("AttackProgress_4th");
+		break;
+	case PlayerState::SkilAttack:
+
+		editor->EndAnim("SkillProgress");
+		break;
+	}
+}
+
 void FollowCamera::Init() {
 
 	displayFrustum_ = false;
+	isLoadedAnim_ = false;
 
 	// json適応
 	ApplyJson();
@@ -78,16 +143,16 @@ void FollowCamera::SetState(FollowCameraState state) {
 
 void FollowCamera::Update() {
 
+	// 状態の更新
+	stateController_->Update(*this);
+
 	// エディターで更新しているときは処理しない
 	if (isUpdateEditor_) {
 		return;
 	}
 
-	// 状態の更新
-	stateController_->Update(*this);
-
 	// 行列更新
-	BaseCamera::UpdateView();
+	BaseCamera::UpdateView(UpdateMode::Quaternion);
 }
 
 void FollowCamera::ImGui() {

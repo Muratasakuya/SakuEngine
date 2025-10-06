@@ -29,6 +29,7 @@ public:
 	void Init() override;
 
 	void Update() override;
+	void EndFrame() override;
 
 	void ImGui() override;
 private:

@@ -83,9 +83,8 @@ void CameraPathController::Update(const PlaybackState& state, CameraPathData& da
 		break;
 	}
 	}
-
 	// カメラに適応
-	ApplyToCamera(*camera, translation, rotation, fovY);
+	ApplyToCamera(*camera, translation, rotation, fovY, false);
 }
 
 void CameraPathController::Evaluate(const CameraPathData& data, float t,
@@ -136,12 +135,16 @@ void CameraPathController::EvaluateAtKey(const CameraPathData& data, int keyInde
 }
 
 void CameraPathController::ApplyToCamera(BaseCamera& camera, const Vector3& translation,
-	const Quaternion& rotation, float fovY) const {
+	const Quaternion& rotation, float fovY, bool isUseGame) const {
 
-	LineRenderer::GetInstance()->DrawOBB(translation, Vector3::AnyInit(2.4f), rotation, Color::Cyan());
+	if (!isUseGame) {
+
+		LineRenderer::GetInstance()->DrawOBB(translation,
+			Vector3::AnyInit(2.4f), rotation, Color::Cyan());
+	}
 
 	camera.SetTranslation(translation);
-	camera.SetRotation(rotation);
+	camera.SetRotation(Quaternion::Normalize(rotation));
 	camera.SetFovY(fovY);
 	// quaternionで更新
 	camera.UpdateView(BaseCamera::UpdateMode::Quaternion);

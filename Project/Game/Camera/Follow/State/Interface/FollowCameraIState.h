@@ -4,9 +4,10 @@
 //	include
 //============================================================================
 #include <Engine/Input/Base/InputMapper.h>
+#include <Engine/Utility/Enum/Direction.h>
+#include <Engine/MathLib/MathUtils.h>
 #include <Game/Camera/Follow/Structures/FollowCameraStructures.h>
 #include <Game/Camera/Follow/Input/FollowCameraInputAction.h>
-#include <Engine/MathLib/MathUtils.h>
 
 // front
 class FollowCamera;

@@ -20,7 +20,7 @@
         "offsetTranslation_": {
             "x": 4.344025239406933e-44,
             "y": 6.402082920074463,
-            "z": -53.999839782714844
+            "z": -51.58128356933594
         },
         "offsetXLerpRate_": 0.01600000075995922,
         "offsetYLerpRate_": 0.01600000075995922,
@@ -29,8 +29,8 @@
             "x": 0.03200000151991844,
             "y": 0.04800000041723251
         },
-        "rotateClampMinusX_": -0.07000000029802322,
-        "rotateClampPlusX_": 0.699999988079071,
+        "rotateClampMinusX_": -0.4699999988079071,
+        "rotateClampPlusX_": 0.12999999523162842,
         "rotateMinusParam_.clampThreshold": 0.14000000059604645,
         "rotateMinusParam_.offsetZNear": -32.0,
         "rotatePlusParam_.clampThreshold": 0.3199999928474426,

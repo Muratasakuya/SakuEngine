@@ -89,6 +89,19 @@ void Camera3DEditor::Update() {
 
 	for (auto& param : std::views::values(params_)) {
 
+		const bool isPlaying = (runtime_ && runtime_->playing &&
+			param.overallName == runtime_->action);
+		// ゲームで開始したときの処理
+		if (isPlaying || param.isUseGame) {
+
+			gizmoSynch_->ApplyLocalToWorldByTarget(param);
+		}
+		// エディターで動かしているときの処理
+		else {
+
+			gizmoSynch_->UpdateFollowTarget(param);
+		}
+
 		// 追従先オフセットを更新
 		gizmoSynch_->UpdateFollowTarget(param);
 
@@ -98,6 +111,9 @@ void Camera3DEditor::Update() {
 			renderer_->DrawLine3D(param);
 		}
 	}
+
+	// ランタイムのゲームカメラを更新
+	UpdateGameAnimation();
 
 	// ゲーム画面のカメラを更新する
 	if (!selectedParamKey_.empty()) {
@@ -158,6 +174,155 @@ void Camera3DEditor::ImGui() {
 		selectedKeyIndex_, paramSaveState_, lastLoaded_, playbackCamera_);
 
 	ImGui::PopItemWidth();
+}
+
+void Camera3DEditor::LoadAnimFile(const std::string& fileName) {
+
+	// 読み込めなければ作成しない
+	Json data;
+	const std::string filePath = CameraPathData::cameraParamJsonPath + fileName;
+	if (!JsonAdapter::LoadCheck(filePath, data)) {
+		return;
+	}
+
+	CameraPathData param{};
+	// 名前を取得
+	param.objectName = data["objectName"];
+	param.overallName = data["overallName"];
+
+	// 追加済みの場合処理しない
+	if (Algorithm::Find(params_, param.overallName)) {
+		return;
+	}
+
+	// データから値を設定
+	param.ApplyJson(filePath, true);
+	// 追加
+	params_.emplace(param.overallName, std::move(param));
+}
+
+void Camera3DEditor::StartAnim(const std::string& actionName, bool canCutIn) {
+
+	// 無ければ処理できない
+	if (!Algorithm::Find(params_, actionName)) {
+		return;
+	}
+	// 再生中
+	if (runtime_ && runtime_->playing) {
+		// 割り込み不可なら処理しない
+		if (!canCutIn) {
+			return;
+		}
+		// リセットして再スタート
+		EndAnim(runtime_->action);
+	}
+	// キーフレームの最初に現在位置のカメラを追加
+	CameraPathData& param = params_[actionName];
+	CameraPathData::KeyframeParam keyframe{};
+	BaseCamera* camera = sceneView_->GetCamera();
+
+	// 追従先がいるかどうか
+	const bool hasTarget = (param.followTarget && param.target);
+	// 追従情報
+	const Vector3 targetTranslation = hasTarget ? param.target->GetWorldPos() : Vector3::AnyInit(0.0f);
+	const Quaternion targetRotation = hasTarget ?
+		Quaternion::Normalize(param.target->rotation) :
+		Quaternion::IdentityQuaternion();
+	const Quaternion inverseTargetRotation = Quaternion::Conjugate(targetRotation);
+	// カメラ位置、回転
+	const Vector3 cameraTranslation = camera->GetTransform().translation;
+	const Quaternion cameraRotation = camera->GetTransform().rotation;
+	// ローカルの座標と回転を求める
+	Vector3 localTranslation = hasTarget ? inverseTargetRotation *
+		(cameraTranslation - targetTranslation) : cameraTranslation;
+	Quaternion localRataion = param.followRotation ?
+		Quaternion::Normalize(inverseTargetRotation * cameraRotation) : cameraRotation;
+	// キーフレームを初期位置に設定して初期化
+	keyframe.Init(true);
+	keyframe.demoObject->SetOffsetTranslation(targetTranslation);
+	keyframe.demoObject->SetTranslation(targetRotation * localTranslation);
+	keyframe.demoObject->SetRotation(param.followRotation ?
+		Quaternion::Normalize(targetRotation * localRataion) : localRataion);
+	keyframe.translation = localTranslation;
+	keyframe.rotation = localRataion;
+	keyframe.fovY = camera->GetFovY();
+	// 追加
+	const uint32_t injectedId = keyframe.demoObject->GetObjectID();
+	param.keyframes.insert(param.keyframes.begin(), std::move(keyframe));
+
+	// キーフレームの平均の再取得
+	if (param.useAveraging) {
+
+		auto points = param.CollectTranslationPoints();
+		param.averagedT = LerpKeyframe::AveragingPoints<Vector3>(
+			points, param.divisionCount, param.lerpType);
+	}
+
+	// リセットして開始させる
+	param.timer.Reset();
+	runtime_ = RuntimePlayState{ actionName, true, canCutIn, injectedId };
+}
+
+void Camera3DEditor::EndAnim(const std::string& actionName) {
+
+	// 無ければ処理できない
+	if (!Algorithm::Find(params_, actionName)) {
+		return;
+	}
+	// 開始時に追加した最初のキーフレームを削除
+	CameraPathData& param = params_[actionName];
+	if (runtime_ && runtime_->playing && runtime_->action == actionName) {
+
+		// IDが一致したオブジェクト
+		const auto headId = param.keyframes.front().demoObject->GetObjectID();
+		if (headId == runtime_->injectedHeadId) {
+
+			param.keyframes.erase(param.keyframes.begin());
+		}
+		// キーフレームの平均の再取得
+		if (param.useAveraging) {
+
+			auto points = param.CollectTranslationPoints();
+			param.averagedT = LerpKeyframe::AveragingPoints<Vector3>(
+				points, param.divisionCount, param.lerpType);
+		}
+		runtime_ = std::nullopt;
+	}
+	// 更新状態を元に戻す
+	sceneView_->GetCamera()->SetIsUpdateEditor(false);
+}
+
+void Camera3DEditor::UpdateGameAnimation() {
+
+	// 再生中のみ処理
+	if (!runtime_.has_value()) {
+		return;
+	}
+
+	auto& param = params_[runtime_->action];
+
+	// 時間を進める
+	param.timer.Update();
+	float t = param.useAveraging ?
+		LerpKeyframe::GetReparameterizedT(param.timer.easedT_, param.averagedT) :
+		param.timer.easedT_;
+	// それぞれの値の補間
+	Vector3 translation;
+	Quaternion rotation;
+	float fovY;
+	controller_->Evaluate(param, t, translation, rotation, fovY);
+
+	// カメラへ適応
+	BaseCamera* camera = sceneView_->GetCamera();
+	camera->SetIsUpdateEditor(true);
+	controller_->ApplyToCamera(*camera, translation, rotation, fovY, !param.isDrawLine3D);
+
+	// 補間が最後まで行けば終了
+	if (param.timer.IsReached()) {
+
+		camera->SetRotation(param.keyframes.back().demoObject->GetRotation());
+		EndAnim(runtime_->action);
+	}
 }
 
 float Camera3DEditor::ComputeEffectiveCameraT(

@@ -53,6 +53,7 @@ public:
 	// SRT
 	void SetScale(const Vector3& scale) { transform_->scale = scale; }
 	void SetRotation(const Quaternion& rotation) { transform_->rotation = rotation; }
+	void SetEulerRotation(const Vector3& rotation) { transform_->eulerRotate = rotation; }
 	void SetTranslation(const Vector3& translation) { transform_->translation = translation; }
 	void SetOffsetTranslation(const Vector3& translation) { transform_->offsetTranslation = translation; }
 	// 親
