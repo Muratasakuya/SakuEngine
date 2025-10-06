@@ -47,7 +47,7 @@ void PlayerAttack_2ndState::Enter(Player& player) {
 
 		// カメラの向きを補正させる
 		followCamera_->StartLookToTarget(FollowCameraTargetType::Player,
-			FollowCameraTargetType::BossEnemy, false, true);
+			FollowCameraTargetType::BossEnemy, true, true);
 	}
 }
 

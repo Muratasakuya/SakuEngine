@@ -19,6 +19,9 @@ void PlayerDashState::Enter(Player& player) {
 	// 加速開始
 	currentState_ = State::Accel;
 	accelLerp_->Start();
+
+	// カメラは常に敵の方向を向くようにする
+	followCamera_->SetLookAlwaysTarget(true);
 }
 
 void PlayerDashState::Update(Player& player) {
@@ -101,6 +104,9 @@ void PlayerDashState::Exit(Player& player) {
 	move_.Init();
 
 	player.ResetAnimation();
+
+	// 追従をオフ
+	followCamera_->SetLookAlwaysTarget(false);
 }
 
 bool PlayerDashState::GetCanExit() const {
