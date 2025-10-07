@@ -43,13 +43,19 @@ private:
 
 	//--------- structure ----------------------------------------------------
 
+	// 判定区間
+	struct TimeWindow {
+
+		float on;  // 衝突開始時間(判定入り)
+		float off; // 衝突終了時間(判定を消す)
+	};
+
 	struct AttackParameter {
 
 		Vector3 centerOffset; // player座標からのオフセット
 		Vector3 size;         // サイズ
-		float onTime;         // 衝突開始時間(判定入り)
-		float offTime;        // 衝突終了時間(判定を消す)
 		float hitInterval;    // 多段ヒット
+		std::vector<TimeWindow> windows;
 	};
 
 	//--------- variables ----------------------------------------------------
@@ -73,4 +79,5 @@ private:
 
 	// helper
 	PlayerState GetPlayerStateFromName(const std::string& name);
+	void EditWindowParameter(const std::string& label, std::vector<TimeWindow>& windows);
 };

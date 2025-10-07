@@ -34,12 +34,17 @@ void PlayerAttackCollision::Init() {
 
 void PlayerAttackCollision::Update(const Transform3D& transform) {
 
+	if (!currentParameter_) {
+		return;
+	}
+
 	transform_ = &transform;
 
 	// 攻撃中かどうか
-	const bool isAttack = currentParameter_
-		&& currentParameter_->onTime <= currentTimer_
-		&& currentTimer_ < currentParameter_->offTime;
+	bool isAttack = std::any_of(currentParameter_->windows.begin(),
+		currentParameter_->windows.end(),
+		[t = currentTimer_](const TimeWindow& window) {
+			return window.on <= t && t < window.off; });
 	reHitTimer_ = (std::max)(0.0f, reHitTimer_ - GameTimer::GetDeltaTime());
 
 	// 遷移可能な状態の時のみ武器状態にする
@@ -129,9 +134,8 @@ void PlayerAttackCollision::ImGui() {
 	bool edit = false;
 	edit |= ImGui::DragFloat3("centerOffset", &parameter.centerOffset.x, 0.01f);
 	edit |= ImGui::DragFloat3("size", &parameter.size.x, 0.01f);
-	edit |= ImGui::DragFloat("onTime", &parameter.onTime, 0.01f, 0.0f);
-	edit |= ImGui::DragFloat("offTime", &parameter.offTime, 0.01f, parameter.onTime);
 	edit |= ImGui::DragFloat("hitInterval", &parameter.hitInterval, 0.01f);
+	EditWindowParameter("hitWindows", parameter.windows);
 
 	if (edit) {
 
@@ -153,10 +157,23 @@ void PlayerAttackCollision::ApplyJson(const Json& data) {
 
 		parameter.centerOffset = JsonAdapter::ToObject<Vector3>(value["centerOffset"]);
 		parameter.size = JsonAdapter::ToObject<Vector3>(value["size"]);
-		parameter.onTime = value.value("onTime", 0.0f);
-		parameter.offTime = value.value("offTime", 0.0f);
 		parameter.hitInterval = value.value("hitInterval", 0.0f);
 
+		if (value.contains("hitWindows")) {
+			for (auto& window : value["hitWindows"]) {
+
+				TimeWindow timeWindow{};
+				timeWindow.on = window.value("onTime", 0.0f);
+				timeWindow.off = window.value("offTime", 0.0f);
+				parameter.windows.emplace_back(timeWindow);
+			}
+		} else {
+
+			TimeWindow timeWindow{};
+			timeWindow.on = value.value("onTime", 0.0f);
+			timeWindow.off = value.value("offTime", 0.0f);
+			parameter.windows.emplace_back(timeWindow);
+		}
 		table_[state] = parameter;
 	}
 }
@@ -171,9 +188,19 @@ void PlayerAttackCollision::SaveJson(Json& data) {
 		Json& value = data[EnumAdapter<PlayerState>::ToString(state)];
 		value["centerOffset"] = JsonAdapter::FromObject(parameter.centerOffset);
 		value["size"] = JsonAdapter::FromObject(parameter.size);
-		value["onTime"] = parameter.onTime;
-		value["offTime"] = parameter.offTime;
 		value["hitInterval"] = parameter.hitInterval;
+
+		Json windowData = Json::array();
+		{
+			for (auto& window : parameter.windows) {
+
+				Json data_;
+				data_["onTime"] = window.on;
+				data_["offTime"] = window.off;
+				windowData.push_back(data_);
+			}
+		}
+		value["hitWindows"] = windowData;
 	}
 }
 
@@ -186,4 +213,26 @@ PlayerState PlayerAttackCollision::GetPlayerStateFromName(const std::string& nam
 		}
 	}
 	return PlayerState::None;
+}
+
+void PlayerAttackCollision::EditWindowParameter(
+	const std::string& label, std::vector<TimeWindow>& windows) {
+
+	ImGui::PushID(label.c_str());
+	ImGui::SeparatorText(label.c_str());
+	for (size_t i = 0; i < windows.size(); ++i) {
+
+		ImGui::PushID(static_cast<int>(i));
+		ImGui::DragFloat("onTime", &windows[i].on, 0.01f, 0.0f);
+		ImGui::DragFloat("offTime", &windows[i].off, 0.01f, windows[i].on);
+		ImGui::PopID();
+	}
+	if (ImGui::Button(("AddOnTime" + label).c_str())) {
+		windows.emplace_back();
+	}
+	if (!windows.empty() && ImGui::Button(("RemoveOnTime" + label).c_str())) {
+		windows.pop_back();
+	}
+	ImGui::PopID();
+
 }

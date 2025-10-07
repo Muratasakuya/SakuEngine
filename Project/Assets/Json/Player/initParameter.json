@@ -7,8 +7,12 @@
                 "z": 5.400000095367432
             },
             "hitInterval": 0.30000001192092896,
-            "offTime": 0.38999998569488525,
-            "onTime": 0.0,
+            "hitWindows": [
+                {
+                    "offTime": 0.38999998569488525,
+                    "onTime": 0.0
+                }
+            ],
             "size": {
                 "x": 5.599999904632568,
                 "y": 4.0,
@@ -22,8 +26,12 @@
                 "z": 6.0
             },
             "hitInterval": 0.3199999928474426,
-            "offTime": 0.5,
-            "onTime": 0.0,
+            "hitWindows": [
+                {
+                    "offTime": 0.5,
+                    "onTime": 0.0
+                }
+            ],
             "size": {
                 "x": 6.0,
                 "y": 4.0,
@@ -37,8 +45,12 @@
                 "z": 59.0099983215332
             },
             "hitInterval": 0.10999999940395355,
-            "offTime": 0.44999998807907104,
-            "onTime": 0.0,
+            "hitWindows": [
+                {
+                    "offTime": 0.44999998807907104,
+                    "onTime": 0.0
+                }
+            ],
             "size": {
                 "x": 3.200000047683716,
                 "y": 6.0,
@@ -52,8 +64,12 @@
                 "z": 5.400000095367432
             },
             "hitInterval": 0.30000001192092896,
-            "offTime": 0.5600000023841858,
-            "onTime": 0.1599999964237213,
+            "hitWindows": [
+                {
+                    "offTime": 0.5600000023841858,
+                    "onTime": 0.1599999964237213
+                }
+            ],
             "size": {
                 "x": 5.599999904632568,
                 "y": 4.0,
@@ -67,8 +83,12 @@
                 "z": 0.0
             },
             "hitInterval": 0.0,
-            "offTime": 0.0,
-            "onTime": 0.0,
+            "hitWindows": [
+                {
+                    "offTime": 0.0,
+                    "onTime": 0.0
+                }
+            ],
             "size": {
                 "x": 0.0,
                 "y": 0.0,
@@ -82,8 +102,12 @@
                 "z": 0.0
             },
             "hitInterval": 0.0,
-            "offTime": 0.0,
-            "onTime": 0.0,
+            "hitWindows": [
+                {
+                    "offTime": 0.0,
+                    "onTime": 0.0
+                }
+            ],
             "size": {
                 "x": 0.0,
                 "y": 0.0,
@@ -97,8 +121,12 @@
                 "z": 0.0
             },
             "hitInterval": 0.0,
-            "offTime": 0.0,
-            "onTime": 0.0,
+            "hitWindows": [
+                {
+                    "offTime": 0.0,
+                    "onTime": 0.0
+                }
+            ],
             "size": {
                 "x": 0.0,
                 "y": 0.0,
@@ -111,9 +139,13 @@
                 "y": 4.0,
                 "z": 0.0
             },
-            "hitInterval": 0.5299999713897705,
-            "offTime": 0.6499999761581421,
-            "onTime": 0.0,
+            "hitInterval": 0.10000000149011612,
+            "hitWindows": [
+                {
+                    "offTime": 1.399999976158142,
+                    "onTime": 0.019999999552965164
+                }
+            ],
             "size": {
                 "x": 6.0,
                 "y": 6.0,
@@ -127,8 +159,12 @@
                 "z": 0.0
             },
             "hitInterval": 0.0,
-            "offTime": 0.0,
-            "onTime": 0.0,
+            "hitWindows": [
+                {
+                    "offTime": 0.0,
+                    "onTime": 0.0
+                }
+            ],
             "size": {
                 "x": 0.0,
                 "y": 0.0,
@@ -142,8 +178,12 @@
                 "z": 0.0
             },
             "hitInterval": 0.0,
-            "offTime": 0.0,
-            "onTime": 0.0,
+            "hitWindows": [
+                {
+                    "offTime": 0.0,
+                    "onTime": 0.0
+                }
+            ],
             "size": {
                 "x": 0.0,
                 "y": 0.0,
