@@ -51,6 +51,12 @@ public:
 	void TellParryTiming();
 	void ResetParryTiming() { parryTimingTickets_ = 0; }
 
+	/*---------- falter -----------*/
+
+	void OnFalterState() { ++stats_.currentFalterCount; }
+	void ResetFalterTimer() { stats_.reFalterTimer.Reset(); }
+	void UpdateFalterCooldown();
+
 	//--------- accessor -----------------------------------------------------
 
 	void SetPlayer(const Player* player);

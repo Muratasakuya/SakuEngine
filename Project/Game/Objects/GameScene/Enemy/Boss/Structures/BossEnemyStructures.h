@@ -48,7 +48,7 @@ struct BossEnemyStats {
 	int currentFalterCount;   // 現在の怯んだ回数
 	StateTimer reFalterTimer; // 再度怯むまでの時間
 	// 攻撃をくらっても怯まない状態
-	std::vector<BossEnemyState> blockFalterStates_;
+	std::vector<BossEnemyState> blockFalterStates;
 
 	// 閾値リストの条件
 	// indexNはindexN+1の値より必ず大きい(N=80、N+1=85にはならない)

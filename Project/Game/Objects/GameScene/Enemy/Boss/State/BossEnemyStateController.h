@@ -33,6 +33,8 @@ public:
 
 	// 状態遷移をリクエスト
 	void RequestState(BossEnemyState state) { requested_ = state; }
+	// ダメージを受けたら怯み回数を入れる
+	void OnDamaged() { ++pendingFalterTickets_; }
 
 	void ImGui(const BossEnemy& bossEnemy);
 	void EditStateTable();
@@ -67,7 +69,10 @@ private:
 	uint32_t currentComboIndex_;
 	uint32_t prevPhase_;
 	uint32_t prevComboIndex_;
-	float stateTimer_;
+	StateTimer stateTimer_;
+
+	// 怯み依頼保留回数
+	uint32_t pendingFalterTickets_;
 
 	// 現在のフェーズ
 	uint32_t currentPhase_;
@@ -95,6 +100,10 @@ private:
 	// update
 	void UpdatePhase();
 	void UpdateStateTimer();
+
+	// 怯み処理
+	void ProcessFalterRequest(BossEnemy& owner);
+	void UpdateReFalterCooldown(BossEnemy& owner);
 
 	// helper
 	void ChangeState(BossEnemy& owner);

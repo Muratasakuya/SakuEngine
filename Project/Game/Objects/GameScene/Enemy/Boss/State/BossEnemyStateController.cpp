@@ -44,7 +44,9 @@ void BossEnemyStateController::Init(BossEnemy& owner) {
 	requested_ = BossEnemyState::Idle;
 	ChangeState(owner);
 
+	// 遷移不可フラグ
 	disableTransitions_ = false;
+	pendingFalterTickets_ = 0;
 
 	// 攻撃予兆
 	attackSign_ = std::make_unique<BossEnemyAttackSign>();
@@ -90,6 +92,10 @@ void BossEnemyStateController::Update(BossEnemy& owner) {
 	// 状態切り替えの設定処理
 	UpdatePhase();
 	CheckStunToughness();
+
+	// 怯み依頼処理
+	ProcessFalterRequest(owner);
+
 	UpdateStateTimer();
 
 	// 何か設定されて入れば状態遷移させる
@@ -113,10 +119,8 @@ void BossEnemyStateController::Update(BossEnemy& owner) {
 	// 攻撃予兆の更新処理
 	attackSign_->Update();
 
-	if (stateTable_.phases.back().comboIndices.size() == 0) {
-		int a = 0;
-		++a;
-	}
+	// 怯みのクールタイムを更新
+	UpdateReFalterCooldown(owner);
 }
 
 void BossEnemyStateController::UpdatePhase() {
@@ -144,7 +148,7 @@ void BossEnemyStateController::UpdatePhase() {
 		prevPhase_ = currentPhase_;
 		currentComboIndex_ = 0;
 		currentSequenceIndex_ = 0;
-		stateTimer_ = 0.0f;
+		stateTimer_.Reset();
 
 		// 最後のphaseの時
 		if (currentPhase_ + 1 == stateTable_.phases.size()) {
@@ -177,7 +181,7 @@ void BossEnemyStateController::UpdateStateTimer() {
 	// 遷移不可
 	if (disableTransitions_) {
 		requested_.reset();
-		stateTimer_ = 0.0f;
+		stateTimer_.Reset();
 		return;
 	}
 
@@ -189,7 +193,7 @@ void BossEnemyStateController::UpdateStateTimer() {
 		currentComboIndex_ = 0;
 		prevComboIndex_ = 0;
 		currentSequenceIndex_ = 0;
-		stateTimer_ = 0.0f;
+		stateTimer_.Reset();
 		return;
 	}
 
@@ -204,7 +208,7 @@ void BossEnemyStateController::UpdateStateTimer() {
 			currentComboSlot_ = 0;
 			prevComboIndex_ = currentComboIndex_;
 			currentSequenceIndex_ = 0;
-			stateTimer_ = 0.0f;
+			stateTimer_.Reset();
 			return;
 		}
 
@@ -223,20 +227,95 @@ void BossEnemyStateController::UpdateStateTimer() {
 			currentComboSlot_ = 0;
 			prevComboIndex_ = currentComboIndex_;
 			currentSequenceIndex_ = 0;
-			stateTimer_ = 0.0f;
-			return;
+			stateTimer_.Reset();
 		}
 
-		stateTimer_ += GameTimer::GetDeltaTime();
-		if (stateTimer_ >= phase.nextStateDuration) {
+		// 状態遷移の時間を更新
+		stateTimer_.Update();
+		if (stateTimer_.current_ >= phase.nextStateDuration) {
 
 			ChooseNextState(phase);
-			stateTimer_ = 0.0f;
+			stateTimer_.Reset();
 		}
 	}
 	// 遷移できない状態
 	else {
-		stateTimer_ = 0.0f;
+		stateTimer_.Reset();
+	}
+}
+
+void BossEnemyStateController::ProcessFalterRequest(BossEnemy& owner) {
+
+	// 怯み回数の保留が0なら処理しない
+	if (pendingFalterTickets_ <= 0) {
+		return;
+	}
+
+	// スタン中、強制状態遷移中は処理しない
+	if (forcedState_.has_value()) {
+
+		// 怯み回数をリセット
+		pendingFalterTickets_ = 0;
+		return;
+	}
+
+	// 現在の状態が怯まない状態なら処理しない
+	const auto blocked = std::find(stats_.blockFalterStates.begin(),
+		stats_.blockFalterStates.end(),
+		current_) != stats_.blockFalterStates.end();
+	if (blocked) {
+
+		// 怯み回数をリセット
+		pendingFalterTickets_ = 0;
+		return;
+	}
+
+	// クールダウン中は怯まない
+	if (stats_.maxFalterCount <= stats_.currentFalterCount) {
+		pendingFalterTickets_ = 0;
+		return;
+	}
+
+	// 怯み回数を進める
+	owner.OnFalterState();
+
+	// コンボをすべてリセット
+	currentComboSlot_ = 0;
+	currentComboIndex_ = 0;
+	prevComboIndex_ = 0;
+	currentSequenceIndex_ = 0;
+	stateTimer_.Reset();
+
+	// 怯み中なら処理を閉じて再度怯ませる
+	if (current_ == BossEnemyState::Falter) {
+		if (BossEnemyIState* current = states_[current_].get()) {
+
+			current->Exit(owner);
+			current->Enter(owner);
+		}
+		owner.GetAttackCollision()->SetEnterState(current_);
+	} else {
+
+		requested_ = BossEnemyState::Falter;
+		ChangeState(owner);
+	}
+
+	// 上限に行ったらクールタイムを進めさせる
+	if (stats_.maxFalterCount <= stats_.currentFalterCount) {
+
+		owner.ResetFalterTimer();
+	}
+	pendingFalterTickets_ = 0;
+}
+
+void BossEnemyStateController::UpdateReFalterCooldown(BossEnemy& owner) {
+
+	// アイドル状態の時にのみクールタイムを進める
+	if (current_ == BossEnemyState::Idle &&
+		stats_.maxFalterCount <= stats_.currentFalterCount) {
+
+		// 時間経過でリセットまで行う
+		owner.UpdateFalterCooldown();
 	}
 }
 
@@ -539,7 +618,7 @@ void BossEnemyStateController::EditStateTable() {
 	//--------------------------------------------------------------------
 
 	float duration = stateTable_.phases[currentPhase_].nextStateDuration;
-	float progress = std::clamp(stateTimer_ / duration, 0.0f, 1.0f);
+	float progress = std::clamp(stateTimer_.current_ / duration, 0.0f, 1.0f);
 	ImGui::ProgressBar(progress, ImVec2(200.0f, 0.0f));
 
 	// 数値表示
