@@ -5,8 +5,8 @@
 //============================================================================
 #include <Engine/Core/Graphics/DxObject/DxCommand.h>
 #include <Engine/Core/Graphics/Descriptors/SRVDescriptor.h>
-#include <Engine/Core/Graphics/PostProcess/RenderTexture.h>
-#include <Engine/Core/Graphics/PostProcess/DepthTexture.h>
+#include <Engine/Core/Graphics/PostProcess/Texture/RenderTexture.h>
+#include <Engine/Core/Graphics/PostProcess/Texture/DepthTexture.h>
 #include <Engine/Core/Graphics/GPUObject/SceneConstBuffer.h>
 #include <Engine/Core/Graphics/Context/MeshCommandContext.h>
 #include <Engine/Core/Graphics/DxLib/DxUtils.h>

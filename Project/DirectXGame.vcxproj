@@ -463,15 +463,15 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="Engine\Core\Graphics\PostProcess\ComputePostProcessor.cpp">
+    <ClCompile Include="Engine\Core\Graphics\PostProcess\Core\ComputePostProcessor.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="Engine\Core\Graphics\PostProcess\DepthTexture.cpp">
+    <ClCompile Include="Engine\Core\Graphics\PostProcess\Texture\DepthTexture.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="Engine\Core\Graphics\PostProcess\PostProcessSystem.cpp">
+    <ClCompile Include="Engine\Core\Graphics\PostProcess\Core\PostProcessSystem.cpp">
       <SubType>
       </SubType>
     </ClCompile>
@@ -479,7 +479,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="Engine\Core\Graphics\PostProcess\PostProcessPipeline.cpp">
+    <ClCompile Include="Engine\Core\Graphics\PostProcess\Core\PostProcessPipeline.cpp">
       <SubType>
       </SubType>
     </ClCompile>
@@ -571,8 +571,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Core\Graphics\Pipeline\DxRootSignature.cpp" />
     <ClCompile Include="Engine\Core\Graphics\Pipeline\DxShaderCompiler.cpp" />
     <ClCompile Include="Engine\Core\Graphics\Pipeline\PipelineState.cpp" />
-    <ClCompile Include="Engine\Core\Graphics\PostProcess\RenderTexture.cpp" />
-    <ClCompile Include="Engine\Core\Graphics\PostProcess\ShadowMap.cpp" />
+    <ClCompile Include="Engine\Core\Graphics\PostProcess\Texture\RenderTexture.cpp" />
+    <ClCompile Include="Engine\Core\Graphics\PostProcess\Texture\ShadowMap.cpp" />
     <ClCompile Include="Engine\Core\Graphics\GPUObject\CBufferStructures.cpp" />
     <ClCompile Include="Engine\Collision\CollisionGeometry.cpp">
       <SubType>
@@ -1321,15 +1321,15 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Engine\Core\Graphics\PostProcess\ComputePostProcessor.h">
+    <ClInclude Include="Engine\Core\Graphics\PostProcess\Core\ComputePostProcessor.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Engine\Core\Graphics\PostProcess\DepthTexture.h">
+    <ClInclude Include="Engine\Core\Graphics\PostProcess\Texture\DepthTexture.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Engine\Core\Graphics\PostProcess\PostProcessSystem.h">
+    <ClInclude Include="Engine\Core\Graphics\PostProcess\Core\PostProcessSystem.h">
       <SubType>
       </SubType>
     </ClInclude>
@@ -1337,7 +1337,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Engine\Core\Graphics\PostProcess\PostProcessPipeline.h">
+    <ClInclude Include="Engine\Core\Graphics\PostProcess\Core\PostProcessPipeline.h">
       <SubType>
       </SubType>
     </ClInclude>
@@ -1446,8 +1446,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Core\Graphics\Pipeline\DxRootSignature.h" />
     <ClInclude Include="Engine\Core\Graphics\Pipeline\DxShaderCompiler.h" />
     <ClInclude Include="Engine\Core\Graphics\Pipeline\PipelineState.h" />
-    <ClInclude Include="Engine\Core\Graphics\PostProcess\RenderTexture.h" />
-    <ClInclude Include="Engine\Core\Graphics\PostProcess\ShadowMap.h" />
+    <ClInclude Include="Engine\Core\Graphics\PostProcess\Texture\RenderTexture.h" />
+    <ClInclude Include="Engine\Core\Graphics\PostProcess\Texture\ShadowMap.h" />
     <ClInclude Include="Engine\Core\Graphics\GPUObject\CBufferStructures.h" />
     <ClInclude Include="Engine\Collision\CollisionGeometry.h">
       <SubType>

@@ -5,8 +5,8 @@
 //============================================================================
 #include <Engine/Core/Graphics/PostProcess/PostProcessType.h>
 #include <Engine/Core/Graphics/PostProcess/Buffer/PostProcessBuffer.h>
-#include <Engine/Core/Graphics/PostProcess/ComputePostProcessor.h>
-#include <Engine/Core/Graphics/PostProcess/PostProcessPipeline.h>
+#include <Engine/Core/Graphics/PostProcess/Core/ComputePostProcessor.h>
+#include <Engine/Core/Graphics/PostProcess/Core/PostProcessPipeline.h>
 #include <Engine/Editor/Base/IGameEditor.h>
 #include <Engine/Utility/Helper/Algorithm.h>
 

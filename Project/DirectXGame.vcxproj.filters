@@ -65,10 +65,10 @@
     <ClCompile Include="Engine\Core\Graphics\DxObject\DxSwapChain.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Core\Graphics\PostProcess\RenderTexture.cpp">
+    <ClCompile Include="Engine\Core\Graphics\PostProcess\Texture\RenderTexture.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Core\Graphics\PostProcess\ShadowMap.cpp">
+    <ClCompile Include="Engine\Core\Graphics\PostProcess\Texture\ShadowMap.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Core\Graphics\GPUObject\CBufferStructures.cpp">
@@ -185,10 +185,10 @@
     <ClCompile Include="Engine\Editor\Manager\GameEditorManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Core\Graphics\PostProcess\ComputePostProcessor.cpp">
+    <ClCompile Include="Engine\Core\Graphics\PostProcess\Core\ComputePostProcessor.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Core\Graphics\PostProcess\PostProcessSystem.cpp">
+    <ClCompile Include="Engine\Core\Graphics\PostProcess\Core\PostProcessSystem.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Core\Graphics\Context\PostProcessCommandContext.cpp">
@@ -200,7 +200,7 @@
     <ClCompile Include="Engine\Core\Graphics\PostProcess\Buffer\PostProcessBufferSize.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Core\Graphics\PostProcess\PostProcessPipeline.cpp">
+    <ClCompile Include="Engine\Core\Graphics\PostProcess\Core\PostProcessPipeline.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Core\Graphics\Mesh\MeshletBuilder.cpp">
@@ -299,7 +299,7 @@
     <ClCompile Include="Engine\Core\Graphics\Raytracing\AccelerationStructureBuffer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Core\Graphics\PostProcess\DepthTexture.cpp">
+    <ClCompile Include="Engine\Core\Graphics\PostProcess\Texture\DepthTexture.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Core\Graphics\RenderEngine.cpp">
@@ -747,8 +747,8 @@
     <ClInclude Include="Engine\Core\Graphics\DxObject\DxCommand.h" />
     <ClInclude Include="Engine\Core\Graphics\DxObject\DxDevice.h" />
     <ClInclude Include="Engine\Core\Graphics\DxObject\DxSwapChain.h" />
-    <ClInclude Include="Engine\Core\Graphics\PostProcess\RenderTexture.h" />
-    <ClInclude Include="Engine\Core\Graphics\PostProcess\ShadowMap.h" />
+    <ClInclude Include="Engine\Core\Graphics\PostProcess\Texture\RenderTexture.h" />
+    <ClInclude Include="Engine\Core\Graphics\PostProcess\Texture\ShadowMap.h" />
     <ClInclude Include="Engine\Core\Graphics\GPUObject\CBufferStructures.h" />
     <ClInclude Include="Engine\Core\Graphics\DxLib\ComPtr.h" />
     <ClInclude Include="Engine\Core\Graphics\DxLib\DxStructures.h" />
@@ -791,13 +791,13 @@
     <ClInclude Include="Engine\Scene\Camera\Camera2D.h" />
     <ClInclude Include="Engine\Editor\Base\IGameEditor.h" />
     <ClInclude Include="Engine\Editor\Manager\GameEditorManager.h" />
-    <ClInclude Include="Engine\Core\Graphics\PostProcess\ComputePostProcessor.h" />
+    <ClInclude Include="Engine\Core\Graphics\PostProcess\Core\ComputePostProcessor.h" />
     <ClInclude Include="Engine\Core\Graphics\Context\PostProcessCommandContext.h" />
-    <ClInclude Include="Engine\Core\Graphics\PostProcess\PostProcessSystem.h" />
+    <ClInclude Include="Engine\Core\Graphics\PostProcess\Core\PostProcessSystem.h" />
     <ClInclude Include="Engine\Core\Graphics\PostProcess\PostProcessType.h" />
     <ClInclude Include="Engine\Core\Graphics\PostProcess\Buffer\PostProcessBuffer.h" />
     <ClInclude Include="Engine\Core\Graphics\PostProcess\Buffer\PostProcessBufferSize.h" />
-    <ClInclude Include="Engine\Core\Graphics\PostProcess\PostProcessPipeline.h" />
+    <ClInclude Include="Engine\Core\Graphics\PostProcess\Core\PostProcessPipeline.h" />
     <ClInclude Include="Engine\Core\Graphics\Mesh\MeshletStructures.h" />
     <ClInclude Include="Engine\Core\Graphics\Mesh\MeshletBuilder.h" />
     <ClInclude Include="Engine\Core\Graphics\Mesh\Mesh.h" />
@@ -835,7 +835,7 @@
     <ClInclude Include="Engine\Core\Graphics\Raytracing\TopLevelAS.h" />
     <ClInclude Include="Engine\Core\Graphics\Raytracing\RaytracingScene.h" />
     <ClInclude Include="Engine\Core\Graphics\Raytracing\RaytracingStructures.h" />
-    <ClInclude Include="Engine\Core\Graphics\PostProcess\DepthTexture.h" />
+    <ClInclude Include="Engine\Core\Graphics\PostProcess\Texture\DepthTexture.h" />
     <ClInclude Include="Engine\Core\Graphics\RenderEngine.h" />
     <ClInclude Include="Engine\Scene\SceneView.h" />
     <ClInclude Include="Engine\Core\Graphics\GraphicsPlatform.h" />

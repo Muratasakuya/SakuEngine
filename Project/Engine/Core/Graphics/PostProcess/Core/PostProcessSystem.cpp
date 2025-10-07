@@ -5,7 +5,7 @@
 //	include
 //============================================================================
 #include <Engine/Core/Graphics/Context/PostProcessCommandContext.h>
-#include <Engine/Core/Graphics/PostProcess/RenderTexture.h>
+#include <Engine/Core/Graphics/PostProcess/Texture/RenderTexture.h>
 #include <Engine/Core/Graphics/PostProcess/Buffer/PostProcessBufferSize.h>
 #include <Engine/Core/Graphics/DxObject/DxCommand.h>
 #include <Engine/Scene/SceneView.h>
