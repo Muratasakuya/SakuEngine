@@ -310,9 +310,8 @@ void BossEnemyStateController::ProcessFalterRequest(BossEnemy& owner) {
 
 void BossEnemyStateController::UpdateReFalterCooldown(BossEnemy& owner) {
 
-	// アイドル状態の時にのみクールタイムを進める
-	if (current_ == BossEnemyState::Idle &&
-		stats_.maxFalterCount <= stats_.currentFalterCount) {
+	// 怯める回数が最大数まで行ったらクールタイムを進める
+	if (stats_.maxFalterCount <= stats_.currentFalterCount) {
 
 		// 時間経過でリセットまで行う
 		owner.UpdateFalterCooldown();

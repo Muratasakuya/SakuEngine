@@ -259,13 +259,13 @@
             "easeingType_": "EaseOutQuad",
             "moveValue": 60.0,
             "nextAnim": 0.0,
-            "target_": 0.41999998688697815
+            "target_": 0.5
         },
         "RushMove": {
             "easeingType_": "EaseOutExpo",
             "moveValue": 26.0,
             "nextAnim": 0.009999999776482582,
-            "target_": 0.23999999463558197
+            "target_": 0.3199999928474426
         },
         "attackLookAtCircleRange_": 108.0,
         "attackOffsetTranslation_": 8.0,
