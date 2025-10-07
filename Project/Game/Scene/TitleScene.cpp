@@ -24,6 +24,7 @@ void TitleScene::Init() {
 		PostProcessType::Bloom,
 		PostProcessType::CRTDisplay,
 		PostProcessType::Glitch,
+		PostProcessType::DepthBasedOutline,
 		PostProcessType::Grayscale });
 
 	PostProcessSystem::GetInstance()->InputProcessTexture("noise", PostProcessType::Glitch);

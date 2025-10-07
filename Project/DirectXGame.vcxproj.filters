@@ -725,6 +725,9 @@
     <ClCompile Include="Engine\Editor\ActionProgress\ActionProgressMonitor.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Core\Graphics\PostProcess\Buffer\Updater\DepthOutlineUpdater.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Asset\AnimationManager.h" />
@@ -1010,6 +1013,9 @@
     <ClInclude Include="Engine\Editor\ActionProgress\ActionProgressMonitor.h" />
     <ClInclude Include="Engine\Utility\Object\ObjectMode.h" />
     <ClInclude Include="Engine\Utility\Enum\ObjectUpdateMode.h" />
+    <ClInclude Include="Engine\Core\Graphics\PostProcess\Buffer\Updater\Interface\IPostProcessUpdater.h" />
+    <ClInclude Include="Engine\Core\Graphics\PostProcess\Buffer\Updater\Interface\PostProcessUpdaterBase.h" />
+    <ClInclude Include="Engine\Core\Graphics\PostProcess\Buffer\Updater\DepthOutlineUpdater.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Engine\Shaders\PostProcess\Copy\CopyTexture.CS.hlsl" />

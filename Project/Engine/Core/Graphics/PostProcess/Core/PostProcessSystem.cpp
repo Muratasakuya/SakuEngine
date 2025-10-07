@@ -13,6 +13,9 @@
 #include <Engine/Config.h>
 #include <Engine/Utility/Enum/EnumAdapter.h>
 
+// updaters
+#include <Engine/Core/Graphics/PostProcess/Buffer/Updater/DepthOutlineUpdater.h>
+
 //============================================================================
 //	PostProcessSystem classMethods
 //============================================================================
@@ -72,8 +75,49 @@ void PostProcessSystem::InputProcessTexture(
 	}
 }
 
-void PostProcessSystem::Init(ID3D12Device8* device,
-	DxShaderCompiler* shaderComplier, SRVDescriptor* srvDescriptor, Asset* asset) {
+void PostProcessSystem::RegisterUpdater(std::unique_ptr<PostProcessUpdaterBase> updater) {
+
+	// 更新クラスを登録
+	PostProcessType type = updater->GetType();
+	updaters_[type] = std::move(updater);
+	updaters_[type]->Init();
+
+	// シーンクラスをセット
+	updaters_[type]->SetSceneView(sceneView_);
+}
+
+void PostProcessSystem::RemoveUpdater(PostProcessType type) {
+
+	// 更新クラスを削除
+	updaters_.erase(type);
+}
+
+void PostProcessSystem::Start(PostProcessType type) {
+
+	if (Algorithm::Find(updaters_, type)) {
+
+		updaters_[type]->Start();
+	}
+}
+
+void PostProcessSystem::Stop(PostProcessType type) {
+
+	if (Algorithm::Find(updaters_, type)) {
+
+		updaters_[type]->Stop();
+	}
+}
+
+void PostProcessSystem::Reset(PostProcessType type) {
+
+	if (Algorithm::Find(updaters_, type)) {
+
+		updaters_[type]->Reset();
+	}
+}
+
+void PostProcessSystem::Init(ID3D12Device8* device, DxShaderCompiler* shaderComplier,
+	SRVDescriptor* srvDescriptor, Asset* asset, SceneView* sceneView) {
 
 	width_ = Config::kWindowWidth;
 	height_ = Config::kWindowHeight;
@@ -86,6 +130,9 @@ void PostProcessSystem::Init(ID3D12Device8* device,
 
 	asset_ = nullptr;
 	asset_ = asset;
+
+	sceneView_ = nullptr;
+	sceneView_ = sceneView;
 
 	// pipeline初期化
 	pipeline_ = std::make_unique<PostProcessPipeline>();
@@ -132,7 +179,7 @@ void PostProcessSystem::Create(const std::vector<PostProcessType>& processes) {
 	}
 }
 
-void PostProcessSystem::Update(SceneView* sceneView) {
+void PostProcessSystem::Update() {
 
 	// scene情報が必要な場合のみ
 	if (Algorithm::Find(activeProcesses_, PostProcessType::DepthBasedOutline, false)) {
@@ -144,12 +191,28 @@ void PostProcessSystem::Update(SceneView* sceneView) {
 
 		// 渡す値の設定
 		DepthBasedOutlineForGPU parama{};
-		parama.projectionInverse = Matrix4x4::Inverse(sceneView->GetCamera()->GetProjectionMatrix());
+		parama.projectionInverse = Matrix4x4::Inverse(sceneView_->GetCamera()->GetProjectionMatrix());
 		parama.edgeScale = parameter.edgeScale;
 		parama.threshold = parameter.threshold;
 		parama.color = parameter.color;
 
 		buffer->SetParameter(&parama, sizeof(DepthBasedOutlineForGPU));
+	}
+
+	// バッファ更新クラスでGPUバッファを更新する
+	ApplyUpdatersToBuffers();
+}
+
+void PostProcessSystem::ApplyUpdatersToBuffers() {
+
+	for (const auto& [type, updater] : updaters_) {
+
+		// 更新処理
+		updater->Update();
+
+		// GPUバッファに値を渡す
+		auto [ptr, size] = updater->GetBufferData();
+		buffers_[type]->SetParameter(ptr, size);
 	}
 }
 
@@ -246,11 +309,10 @@ void PostProcessSystem::ImGui() {
 		needSort_ = false;
 	}
 
-	ImGui::SetWindowFontScale(0.8f);
+	ImGui::SetWindowFontScale(0.72f);
 
 	using EA = EnumAdapter<PostProcessType>;
-
-	if (ImGui::BeginChild("##checklist", ImVec2(240.0f, 0.0f), true)) {
+	if (ImGui::BeginChild("##checklist", ImVec2(192.0f, 0.0f), true)) {
 		ImGui::TextDisabled("Available");
 		for (auto process : initProcesses_) {
 
@@ -270,7 +332,7 @@ void PostProcessSystem::ImGui() {
 
 	ImGui::SameLine();
 
-	if (ImGui::BeginChild("##activelist", ImVec2(240.0f, 0.0f), true)) {
+	if (ImGui::BeginChild("##activelist", ImVec2(192.0f, 0.0f), true)) {
 
 		ImGui::TextDisabled("ActiveProcessList");
 		for (int i = 0; i < activeProcesses_.size(); ++i) {
@@ -323,6 +385,13 @@ void PostProcessSystem::ImGui() {
 		if (auto it = buffers_.find(process); it != buffers_.end()) {
 
 			it->second->ImGui();
+
+			// updaterがあれば下に表示する
+			if (Algorithm::Find(updaters_, process)) {
+
+				ImGui::SeparatorText("Updater");
+				updaters_[process]->ImGui();
+			}
 		} else {
 
 			ImGui::TextDisabled("No parameters");
@@ -460,6 +529,8 @@ void PostProcessSystem::CreateCBuffer(PostProcessType type) {
 		buffer->Init(device_, 3);
 
 		buffers_[type] = std::move(buffer);
+		// 更新クラスを自動追加
+		RegisterUpdater(std::make_unique<DepthOutlineUpdater>());
 		break;
 	}
 	case PostProcessType::Lut: {
