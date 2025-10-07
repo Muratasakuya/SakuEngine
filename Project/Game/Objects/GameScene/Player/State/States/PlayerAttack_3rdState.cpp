@@ -45,7 +45,7 @@ void PlayerAttack_3rdState::Enter(Player& player) {
 
 	// Y座標の固定値
 	initPosY_ = player.GetTranslation().y;
-	
+
 	// カメラアニメーション開始
 	followCamera_->StartPlayerActionAnim(PlayerState::Attack_3rd);
 }
@@ -78,7 +78,8 @@ void PlayerAttack_3rdState::Update(Player& player) {
 
 void PlayerAttack_3rdState::LerpWeapon(Player& player, PlayerWeaponType type) {
 
-	if (currentState_ == State::None) {
+	if (player.GetUpdateMode() == ObjectUpdateMode::None &&
+		currentState_ == State::None) {
 		return;
 	}
 
