@@ -6,6 +6,7 @@
 #include <Engine/Core/Graphics/PostProcess/PostProcessType.h>
 #include <Engine/Core/Graphics/PostProcess/Buffer/PostProcessBuffer.h>
 #include <Engine/Core/Graphics/PostProcess/Buffer/Updater/Interface/PostProcessUpdaterBase.h>
+#include <Engine/Core/Graphics/PostProcess/Buffer/Updater/Interface/IPostProcessUpdater.h>
 #include <Engine/Core/Graphics/PostProcess/Core/ComputePostProcessor.h>
 #include <Engine/Core/Graphics/PostProcess/Core/PostProcessPipeline.h>
 #include <Engine/Editor/Base/IGameEditor.h>
@@ -40,7 +41,7 @@ public:
 
 	// postProcess実行
 	void Execute(const D3D12_GPU_DESCRIPTOR_HANDLE& inputSRVGPUHandle, DxCommand* dxCommand);
-	void ExecuteDebugScene(const D3D12_GPU_DESCRIPTOR_HANDLE& inputSRVGPUHandle,DxCommand* dxCommand);
+	void ExecuteDebugScene(const D3D12_GPU_DESCRIPTOR_HANDLE& inputSRVGPUHandle, DxCommand* dxCommand);
 
 	// 最終的なtextureをframeBufferに描画する
 	void RenderFrameBuffer(DxCommand* dxCommand);
@@ -75,6 +76,9 @@ public:
 
 	PostProcessPipeline* GetPipeline() const { return pipeline_.get(); }
 	const D3D12_GPU_DESCRIPTOR_HANDLE& GetCopySRVGPUHandle() const { return copyTextureProcess_->GetSRVGPUHandle(); }
+
+	template <typename T>
+	T* GetUpdater(PostProcessType type) const;
 
 	// singleton
 	static PostProcessSystem* GetInstance();
@@ -150,4 +154,15 @@ inline void PostProcessSystem::SetParameter(const T& parameter, PostProcessType 
 
 		buffers_[process]->SetParameter((void*)&parameter, sizeof(T));
 	}
+}
+
+template<typename T>
+inline T* PostProcessSystem::GetUpdater(PostProcessType type) const {
+
+	static_assert(std::is_base_of_v<PostProcessUpdaterBase, T>,
+		"T must derive from PostProcessUpdaterBase");
+	if (!Algorithm::Find(updaters_, type)) {
+		return nullptr;
+	}
+	return dynamic_cast<T*>(updaters_.at(type).get());
 }

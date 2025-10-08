@@ -37,8 +37,6 @@ public:
 	//--------- accessor -----------------------------------------------------
 
 	PlayerState GetSelectState() const { return selectState_; }
-
-	const RadialBlurForGPU& GetBlurParam() const { return targetRadialBlur_; }
 private:
 	//========================================================================
 	//	private Methods
@@ -54,19 +52,11 @@ private:
 	float switchAllyTimer_; // 現在の経過時間
 	float switchAllyTime_;  // 切り替え選択の行える時間
 
-	// postProcess
-	float blurTimer_; // ブラーの経過時間
-	float blurTime_;  // ブラーの時間
-	EasingType blurEasingType_;
-	RadialBlurForGPU radialBlur_;       // systemに渡す値
-	RadialBlurForGPU targetRadialBlur_; // 補間先の値
-
 	// 切り替えたかどうかのフラグ
 	PlayerState selectState_;
 
 	//--------- functions----------------------------------------------------
 
 	// update
-	void UpdateBlur();
 	void CheckInput(float t);
 };

@@ -13,6 +13,8 @@
 #include <numbers>
 #include <vector>
 #include <algorithm>
+// front
+class BaseCamera;
 
 constexpr float pi = std::numbers::pi_v<float>;
 constexpr float radian = pi / 180.0f;
@@ -38,4 +40,6 @@ namespace Math {
 
 	void ToColumnMajor(const Matrix4x4& matrix, float out[16]);
 	void FromColumnMajor(const float in[16], Matrix4x4& matrix);
+
+	Vector2 ProjectToScreen(const Vector3& translation, const BaseCamera& camera);
 }

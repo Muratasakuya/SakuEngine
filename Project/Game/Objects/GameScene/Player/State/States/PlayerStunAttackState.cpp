@@ -19,11 +19,6 @@ PlayerStunAttackState::PlayerStunAttackState(GameObject3D* ally) {
 	ally_ = nullptr;
 	ally_ = ally;
 
-	// 初期化値
-	targetRadialBlur_.center = Vector2(0.5f, 0.5f);
-	targetRadialBlur_.numSamples = 0;
-	targetRadialBlur_.width = 0.0f;
-
 	currentState_ = State::AllyEntry;
 	canExit_ = false;
 }
@@ -49,9 +44,6 @@ void PlayerStunAttackState::Enter([[maybe_unused]] Player& player) {
 
 void PlayerStunAttackState::Update(Player& player) {
 
-	// ブラーの状態を元に戻す
-	UpdateBlur();
-
 	// 状態に応じて更新
 	switch (currentState_) {
 	case PlayerStunAttackState::State::AllyEntry: {
@@ -70,34 +62,6 @@ void PlayerStunAttackState::Update(Player& player) {
 		break;
 	}
 	}
-}
-
-void PlayerStunAttackState::UpdateBlur() {
-
-	PostProcessSystem* postProcess = PostProcessSystem::GetInstance();
-
-	// 補間終了
-	if (blurTime_ <= blurTimer_) {
-
-		// 初期化値を設定
-		postProcess->SetParameter(targetRadialBlur_, PostProcessType::RadialBlur);
-		return;
-	}
-
-	// ブラー更新
-	blurTimer_ += GameTimer::GetDeltaTime();
-
-	float lerpT = std::clamp(blurTimer_ / blurTime_, 0.0f, 1.0f);
-	lerpT = EasedValue(blurEasingType_, lerpT);
-
-	// 各値を0へ補間(ブラーを消す)
-	radialBlur_.center.y = std::lerp(startRadialBlur_.center.y, 0.5f, lerpT);
-	radialBlur_.numSamples = static_cast<int>(std::round(std::lerp(
-		static_cast<float>(startRadialBlur_.numSamples), 0.0f, lerpT)));
-	radialBlur_.width = std::lerp(startRadialBlur_.width, 0.0f, lerpT);
-
-	// 値を設定
-	postProcess->SetParameter(radialBlur_, PostProcessType::RadialBlur);
 }
 
 void PlayerStunAttackState::UpdateAllyEntry(Player& player) {
@@ -182,15 +146,12 @@ void PlayerStunAttackState::Exit([[maybe_unused]] Player& player) {
 	currentState_ = State::AllyEntry;
 	entryTimer_ = 0.0f;
 	rushTimer_ = 0.0f;
-	blurTimer_ = 0.0f;
 	canExit_ = false;
 }
 
 void PlayerStunAttackState::ImGui([[maybe_unused]] const Player& player) {
 
 	ImGui::DragFloat("nextAnimDuration", &nextAnimDuration_, 0.01f);
-	ImGui::DragFloat("blurTime", &blurTime_, 0.01f);
-	Easing::SelectEasingType(blurEasingType_);
 	ImGui::DragFloat("entryTime", &entryTime_, 0.01f);
 	ImGui::DragFloat("targetTranslationY", &targetTranslationY_, 0.01f);
 	ImGui::DragFloat("enemyDistance", &enemyDistance_, 0.01f);
@@ -206,13 +167,10 @@ void PlayerStunAttackState::ApplyJson(const Json& data) {
 	targetTranslationY_ = JsonAdapter::GetValue<float>(data, "targetTranslationY_");
 	enemyDistance_ = JsonAdapter::GetValue<float>(data, "enemyDistance_");
 	rushTime_ = JsonAdapter::GetValue<float>(data, "rushTime_");
-	blurTime_ = JsonAdapter::GetValue<float>(data, "blurTime_");
 	entryEasingType_ = static_cast<EasingType>(
 		JsonAdapter::GetValue<int>(data, "entryEasingType_"));
 	rushEasingType_ = static_cast<EasingType>(
 		JsonAdapter::GetValue<int>(data, "rushEasingType_"));
-	blurEasingType_ = static_cast<EasingType>(
-		JsonAdapter::GetValue<int>(data, "blurEasingType_"));
 }
 
 void PlayerStunAttackState::SaveJson(Json& data) {
@@ -222,8 +180,6 @@ void PlayerStunAttackState::SaveJson(Json& data) {
 	data["targetTranslationY_"] = targetTranslationY_;
 	data["enemyDistance_"] = enemyDistance_;
 	data["rushTime_"] = rushTime_;
-	data["blurTime_"] = blurTime_;
 	data["entryEasingType_"] = static_cast<int>(entryEasingType_);
 	data["rushEasingType_"] = static_cast<int>(rushEasingType_);
-	data["blurEasingType_"] = static_cast<int>(blurEasingType_);
 }

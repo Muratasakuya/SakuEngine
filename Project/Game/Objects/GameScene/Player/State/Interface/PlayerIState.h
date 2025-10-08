@@ -12,6 +12,7 @@
 class Player;
 class BossEnemy;
 class FollowCamera;
+class PostProcessSystem;
 
 //============================================================================
 //	PlayerIState class
@@ -22,7 +23,7 @@ public:
 	//	public Methods
 	//========================================================================
 
-	PlayerIState() = default;
+	PlayerIState();
 	virtual ~PlayerIState() = default;
 
 	// 状態遷移時
@@ -63,6 +64,7 @@ protected:
 	const BossEnemy* bossEnemy_;
 	FollowCamera* followCamera_;
 	Player* player_;
+	PostProcessSystem* postProcess_;
 
 	// 遷移前の状態
 	PlayerState preState_;
@@ -78,5 +80,4 @@ protected:
 
 	// helper
 	void SetRotateToDirection(Player& player, const Vector3& move);
-
 };

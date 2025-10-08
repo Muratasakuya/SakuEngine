@@ -52,7 +52,12 @@ public:
 
 	// タイプを設定
 	void SetBlurType(RadialBlurType type) { type_ = type; }
-	void SetAnimationType(SimpleAnimationType type);
+	void StartState() { currentState_ = State::Updating; }
+
+	// ブラーの中心を設定
+	void SetBlurCenter(const Vector2& center);
+	// 自動で元に戻るようにするか設定
+	void SetIsAutoReturn(bool isAuto) { isAutoReturn_ = isAuto; }
 
 	PostProcessType GetType() const override { return PostProcessType::RadialBlur; }
 private:
@@ -87,6 +92,9 @@ private:
 	// 現在の状態
 	State currentState_;
 
+	// 自動で元の値に戻すか
+	bool isAutoReturn_;
+
 	// 補間に使用する値
 	std::unordered_map<RadialBlurType, LerpRadialBlur> lerpValues_;
 
@@ -95,4 +103,7 @@ private:
 	// json
 	void ApplyJson() override;
 	void SaveJson() override;
+	
+	// helper
+	void SetAnimationType(SimpleAnimationType type);
 };

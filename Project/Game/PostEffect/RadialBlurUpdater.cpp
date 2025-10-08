@@ -20,6 +20,7 @@ void RadialBlurUpdater::Init() {
 	// 初期状態を設定
 	currentState_ = State::None;
 	type_ = RadialBlurType::Parry;
+	isAutoReturn_ = true;
 
 	// json適応
 	ApplyJson();
@@ -33,6 +34,12 @@ void RadialBlurUpdater::SetAnimationType(SimpleAnimationType type) {
 		value.numSamples.SetAnimationType(type);
 		value.width.SetAnimationType(type);
 	}
+}
+
+void RadialBlurUpdater::SetBlurCenter(const Vector2& center) {
+
+	// 目標中心を設定
+	lerpValues_[type_].center.SetEnd(center);
 }
 
 void RadialBlurUpdater::Update() {
@@ -56,7 +63,22 @@ void RadialBlurUpdater::Update() {
 			value.numSamples.IsFinished() &&
 			value.width.IsFinished()) {
 
-			currentState_ = State::None;
+			// 戻る状態が終了したらNoneにする
+			if (currentState_ == State::Return) {
+
+				currentState_ = State::None;
+				Reset();
+				return;
+			}
+
+			// 自動で戻るかによって次の状態を決める
+			currentState_ = isAutoReturn_ ? State::Return : State::None;
+			// 自動で元の値に戻すなら再スタート
+			if (isAutoReturn_) {
+
+				Start();
+				SetAnimationType(SimpleAnimationType::Return);
+			}
 		}
 		break;
 	}
@@ -92,6 +114,7 @@ void RadialBlurUpdater::ImGui() {
 			break;
 		}
 	}
+	ImGui::Checkbox("isAutoReturn", &isAutoReturn_);
 
 	ImGui::Separator();
 
@@ -114,6 +137,9 @@ void RadialBlurUpdater::Start() {
 	value.center.Start();
 	value.numSamples.Start();
 	value.width.Start();
+
+	// 通常アニメーションに戻す
+	SetAnimationType(SimpleAnimationType::None);
 }
 
 void RadialBlurUpdater::Stop() {
