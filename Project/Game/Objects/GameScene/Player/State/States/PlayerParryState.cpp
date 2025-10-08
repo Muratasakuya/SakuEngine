@@ -4,16 +4,20 @@
 //	include
 //============================================================================
 #include <Engine/Core/Graphics/Renderer/LineRenderer.h>
+#include <Engine/Core/Graphics/PostProcess/Core/PostProcessSystem.h>
 #include <Engine/Utility/Timer/GameTimer.h>
 #include <Game/Camera/Follow/FollowCamera.h>
 #include <Game/Objects/GameScene/Enemy/Boss/Entity/BossEnemy.h>
 #include <Game/Objects/GameScene/Player/Entity/Player.h>
+#include <Game/PostEffect/RadialBlurUpdater.h>
 
 //============================================================================
 //	PlayerParryState classMethods
 //============================================================================
 
 PlayerParryState::PlayerParryState() {
+
+	isEmitedBlur_ = false;
 
 	// effect作成
 	parryEffect_ = std::make_unique<GameEffect>();
@@ -41,6 +45,7 @@ void PlayerParryState::Enter(Player& player) {
 	followCamera_->StartPlayerActionAnim(PlayerState::Parry);
 
 	canExit_ = false;
+	isEmitedBlur_ = false;
 	request_ = std::nullopt;
 	parryLerp_.isFinised = false;
 	attackLerp_.isFinised = false;
@@ -69,7 +74,7 @@ void PlayerParryState::UpdateDeltaWaitTime(const Player& player) {
 	if (deltaWaitTime_ < deltaWaitTimer_) {
 
 		GameTimer::SetReturnScaleEnable(true);
-		
+
 		// コマンドに設定
 		ParticleCommand command{};
 		// 座標設定
@@ -78,8 +83,28 @@ void PlayerParryState::UpdateDeltaWaitTime(const Player& player) {
 		command.value = player.GetJointWorldPos("leftHand");
 		parryEffect_->SendCommand(command);
 
-		// 発生させる
-		parryEffect_->Emit(true);
+		if (!isEmitedBlur_) {
+
+			// 発生させる
+			parryEffect_->Emit(true);
+
+			// ブラー手の位置に発生させる
+			postProcess_->Start(PostProcessType::RadialBlur);
+			RadialBlurUpdater* blur = postProcess_->GetUpdater<RadialBlurUpdater>(
+				PostProcessType::RadialBlur);
+			// 自動で元の値に戻すように設定
+			blur->StartState();
+			blur->SetBlurType(RadialBlurType::Parry);
+			blur->SetIsAutoReturn(true);
+
+			// 腕の入りをスクリーン座標に変換して0.0f~1.0fの正規化する
+			Vector2 screenPos = Math::ProjectToScreen(
+				player.GetWeapon(PlayerWeaponType::Left)->GetTransform().GetWorldPos(), *followCamera_).Normalize();
+			blur->SetBlurCenter(screenPos);
+			
+			// 発生済み
+			isEmitedBlur_ = true;
+		}
 	}
 }
 
@@ -122,7 +147,7 @@ void PlayerParryState::UpdateAnimation(Player& player) {
 			(parryLerp_.time > 0.0f) && (parryLerp_.timer >= parryLerp_.time * 0.5f);
 		// 半分以上時間経過していれば攻撃アニメーションを行えるようにする
 		if (hasAttackRequest && reachedHalf) {
-			
+
 			parryLerp_.isFinised = true;
 		} else {
 			return;
@@ -230,6 +255,7 @@ void PlayerParryState::Exit([[maybe_unused]] Player& player) {
 	attackLerp_.isFinised = false;
 	canExit_ = false;
 	allowAttack_ = false;
+	isEmitedBlur_ = false;
 	parryEffect_->ResetEmitFlag();
 }
 

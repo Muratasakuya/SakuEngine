@@ -209,6 +209,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <SubType>
       </SubType>
     </ClCompile>
+    <ClCompile Include="Engine\Core\Graphics\PostProcess\Buffer\Updater\DepthOutlineUpdater.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="Engine\Editor\ActionProgress\ActionProgressMonitor.cpp">
       <SubType>
       </SubType>
@@ -463,15 +467,15 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="Engine\Core\Graphics\PostProcess\ComputePostProcessor.cpp">
+    <ClCompile Include="Engine\Core\Graphics\PostProcess\Core\ComputePostProcessor.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="Engine\Core\Graphics\PostProcess\DepthTexture.cpp">
+    <ClCompile Include="Engine\Core\Graphics\PostProcess\Texture\DepthTexture.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="Engine\Core\Graphics\PostProcess\PostProcessSystem.cpp">
+    <ClCompile Include="Engine\Core\Graphics\PostProcess\Core\PostProcessSystem.cpp">
       <SubType>
       </SubType>
     </ClCompile>
@@ -479,7 +483,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="Engine\Core\Graphics\PostProcess\PostProcessPipeline.cpp">
+    <ClCompile Include="Engine\Core\Graphics\PostProcess\Core\PostProcessPipeline.cpp">
       <SubType>
       </SubType>
     </ClCompile>
@@ -571,8 +575,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Core\Graphics\Pipeline\DxRootSignature.cpp" />
     <ClCompile Include="Engine\Core\Graphics\Pipeline\DxShaderCompiler.cpp" />
     <ClCompile Include="Engine\Core\Graphics\Pipeline\PipelineState.cpp" />
-    <ClCompile Include="Engine\Core\Graphics\PostProcess\RenderTexture.cpp" />
-    <ClCompile Include="Engine\Core\Graphics\PostProcess\ShadowMap.cpp" />
+    <ClCompile Include="Engine\Core\Graphics\PostProcess\Texture\RenderTexture.cpp" />
+    <ClCompile Include="Engine\Core\Graphics\PostProcess\Texture\ShadowMap.cpp" />
     <ClCompile Include="Engine\Core\Graphics\GPUObject\CBufferStructures.cpp" />
     <ClCompile Include="Engine\Collision\CollisionGeometry.cpp">
       <SubType>
@@ -869,6 +873,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <SubType>
       </SubType>
     </ClCompile>
+    <ClCompile Include="Game\PostEffect\GlitchUpdater.cpp" />
+    <ClCompile Include="Game\PostEffect\RadialBlurUpdater.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="Game\Scene\EffectScene.cpp">
       <SubType>
       </SubType>
@@ -992,6 +1001,18 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       </SubType>
     </ClInclude>
     <ClInclude Include="Engine\Core\Graphics\GPUObject\VertexBuffer.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Engine\Core\Graphics\PostProcess\Buffer\Updater\DepthOutlineUpdater.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Engine\Core\Graphics\PostProcess\Buffer\Updater\Interface\IPostProcessUpdater.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Engine\Core\Graphics\PostProcess\Buffer\Updater\Interface\PostProcessUpdaterBase.h">
       <SubType>
       </SubType>
     </ClInclude>
@@ -1321,15 +1342,15 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Engine\Core\Graphics\PostProcess\ComputePostProcessor.h">
+    <ClInclude Include="Engine\Core\Graphics\PostProcess\Core\ComputePostProcessor.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Engine\Core\Graphics\PostProcess\DepthTexture.h">
+    <ClInclude Include="Engine\Core\Graphics\PostProcess\Texture\DepthTexture.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Engine\Core\Graphics\PostProcess\PostProcessSystem.h">
+    <ClInclude Include="Engine\Core\Graphics\PostProcess\Core\PostProcessSystem.h">
       <SubType>
       </SubType>
     </ClInclude>
@@ -1337,7 +1358,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Engine\Core\Graphics\PostProcess\PostProcessPipeline.h">
+    <ClInclude Include="Engine\Core\Graphics\PostProcess\Core\PostProcessPipeline.h">
       <SubType>
       </SubType>
     </ClInclude>
@@ -1401,10 +1422,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Engine\Particle\ParticleUpdater.h">
-      <SubType>
-      </SubType>
-    </ClInclude>
     <ClInclude Include="Engine\Scene\SceneView.h">
       <SubType>
       </SubType>
@@ -1446,8 +1463,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Core\Graphics\Pipeline\DxRootSignature.h" />
     <ClInclude Include="Engine\Core\Graphics\Pipeline\DxShaderCompiler.h" />
     <ClInclude Include="Engine\Core\Graphics\Pipeline\PipelineState.h" />
-    <ClInclude Include="Engine\Core\Graphics\PostProcess\RenderTexture.h" />
-    <ClInclude Include="Engine\Core\Graphics\PostProcess\ShadowMap.h" />
+    <ClInclude Include="Engine\Core\Graphics\PostProcess\Texture\RenderTexture.h" />
+    <ClInclude Include="Engine\Core\Graphics\PostProcess\Texture\ShadowMap.h" />
     <ClInclude Include="Engine\Core\Graphics\GPUObject\CBufferStructures.h" />
     <ClInclude Include="Engine\Collision\CollisionGeometry.h">
       <SubType>
@@ -1762,6 +1779,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       </SubType>
     </ClInclude>
     <ClInclude Include="Game\Objects\TitleScene\TitleController.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Game\PostEffect\GlitchUpdater.h" />
+    <ClInclude Include="Game\PostEffect\RadialBlurUpdater.h">
       <SubType>
       </SubType>
     </ClInclude>
@@ -2093,14 +2115,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Develop|x64'">true</ExcludedFromBuild>
-    </FxCompile>
-    <FxCompile Include="Assets\Engine\Shaders\VS_PS\Particle\VertexEffect.VS.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Develop|x64'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Develop|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

@@ -4,9 +4,13 @@
 //	include
 //============================================================================
 #include <Engine/Core/Graphics/Renderer/LineRenderer.h>
-#include <Engine/Core/Graphics/PostProcess/PostProcessSystem.h>
+#include <Engine/Core/Graphics/PostProcess/Core/PostProcessSystem.h>
 #include <Engine/Scene/SceneView.h>
 #include <Engine/Scene/Manager/SceneManager.h>
+
+// postEffect
+#include <Game/PostEffect/RadialBlurUpdater.h>
+#include <Game/PostEffect/GlitchUpdater.h>
 
 //============================================================================
 //	TitleScene classMethods
@@ -18,15 +22,22 @@ void TitleScene::Init() {
 	//	postProcess
 	//========================================================================
 
+	PostProcessSystem* postProcess = PostProcessSystem::GetInstance();
+
 	// 初期化時にのみ作成できる
-	PostProcessSystem::GetInstance()->Create({
+	postProcess->Create({
 		PostProcessType::RadialBlur,
 		PostProcessType::Bloom,
 		PostProcessType::CRTDisplay,
 		PostProcessType::Glitch,
+		PostProcessType::DepthBasedOutline,
 		PostProcessType::Grayscale });
+	// グリッチに使用するテクスチャを設定
+	postProcess->InputProcessTexture("noise", PostProcessType::Glitch);
 
-	PostProcessSystem::GetInstance()->InputProcessTexture("noise", PostProcessType::Glitch);
+	// 更新クラスを登録
+	postProcess->RegisterUpdater(std::make_unique<RadialBlurUpdater>());
+	postProcess->RegisterUpdater(std::make_unique<GlitchUpdater>());
 
 	//========================================================================
 	//	controller(objects)

@@ -4,6 +4,8 @@
 //	include
 //============================================================================
 #include <Engine/Utility/Random/RandomGenerator.h>
+#include <Engine/Scene/Camera/BaseCamera.h>
+#include <Engine/Config.h>
 
 //============================================================================
 //	MathUtils namespaceMethods
@@ -97,4 +99,18 @@ void Math::FromColumnMajor(const float in[16], Matrix4x4& matrix) {
 			matrix.m[r][c] = in[c * 4 + r];
 		}
 	}
+}
+
+Vector2 Math::ProjectToScreen(const Vector3& translation, const BaseCamera& camera) {
+
+	Matrix4x4 viewMatrix = camera.GetViewMatrix();
+	Matrix4x4 projectionMatrix = camera.GetProjectionMatrix();
+
+	Vector3 viewPos = Vector3::Transform(translation, viewMatrix);
+	Vector3 clipPos = Vector3::Transform(viewPos, projectionMatrix);
+
+	float screenX = (clipPos.x * 0.5f + 0.5f) * Config::kWindowWidthf;
+	float screenY = (1.0f - (clipPos.y * 0.5f + 0.5f)) * Config::kWindowHeightf;
+
+	return Vector2(screenX, screenY);
 }

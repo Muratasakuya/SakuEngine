@@ -5,8 +5,10 @@
 //============================================================================
 #include <Engine/Core/Graphics/PostProcess/PostProcessType.h>
 #include <Engine/Core/Graphics/PostProcess/Buffer/PostProcessBuffer.h>
-#include <Engine/Core/Graphics/PostProcess/ComputePostProcessor.h>
-#include <Engine/Core/Graphics/PostProcess/PostProcessPipeline.h>
+#include <Engine/Core/Graphics/PostProcess/Buffer/Updater/Interface/PostProcessUpdaterBase.h>
+#include <Engine/Core/Graphics/PostProcess/Buffer/Updater/Interface/IPostProcessUpdater.h>
+#include <Engine/Core/Graphics/PostProcess/Core/ComputePostProcessor.h>
+#include <Engine/Core/Graphics/PostProcess/Core/PostProcessPipeline.h>
 #include <Engine/Editor/Base/IGameEditor.h>
 #include <Engine/Utility/Helper/Algorithm.h>
 
@@ -30,16 +32,16 @@ public:
 	//========================================================================
 
 	void Init(ID3D12Device8* device, class DxShaderCompiler* shaderComplier,
-		SRVDescriptor* srvDescriptor, Asset* asset);
+		SRVDescriptor* srvDescriptor, Asset* asset, SceneView* sceneView);
 
-	void Update(SceneView* sceneView);
+	void Update();
 
 	// postProcess作成
 	void Create(const std::vector<PostProcessType>& processes);
 
 	// postProcess実行
 	void Execute(const D3D12_GPU_DESCRIPTOR_HANDLE& inputSRVGPUHandle, DxCommand* dxCommand);
-	void ExecuteDebugScene(const D3D12_GPU_DESCRIPTOR_HANDLE& inputSRVGPUHandle,DxCommand* dxCommand);
+	void ExecuteDebugScene(const D3D12_GPU_DESCRIPTOR_HANDLE& inputSRVGPUHandle, DxCommand* dxCommand);
 
 	// 最終的なtextureをframeBufferに描画する
 	void RenderFrameBuffer(DxCommand* dxCommand);
@@ -49,6 +51,8 @@ public:
 
 	void ToWrite(DxCommand* dxCommand);
 
+	//--------- accessor -----------------------------------------------------
+
 	// processの追加、削除
 	void AddProcess(PostProcessType process);
 	void RemoveProcess(PostProcessType process);
@@ -57,7 +61,14 @@ public:
 	// postProcessに使うtextureの設定
 	void InputProcessTexture(const std::string& textureName, PostProcessType process);
 
-	//--------- accessor -----------------------------------------------------
+	// buffer更新クラスの登録
+	void RegisterUpdater(std::unique_ptr<PostProcessUpdaterBase> updater);
+	void RemoveUpdater(PostProcessType type);
+
+	// 更新クラスの呼び出し
+	void Start(PostProcessType type);
+	void Stop(PostProcessType type);
+	void Reset(PostProcessType type);
 
 	template <typename T>
 	void SetParameter(const T& parameter, PostProcessType process);
@@ -65,6 +76,9 @@ public:
 
 	PostProcessPipeline* GetPipeline() const { return pipeline_.get(); }
 	const D3D12_GPU_DESCRIPTOR_HANDLE& GetCopySRVGPUHandle() const { return copyTextureProcess_->GetSRVGPUHandle(); }
+
+	template <typename T>
+	T* GetUpdater(PostProcessType type) const;
 
 	// singleton
 	static PostProcessSystem* GetInstance();
@@ -81,6 +95,7 @@ private:
 	ID3D12Device* device_;
 	SRVDescriptor* srvDescriptor_;
 	Asset* asset_;
+	SceneView* sceneView_;
 
 	//--------- variables ----------------------------------------------------
 
@@ -98,6 +113,8 @@ private:
 
 	// buffers
 	std::unordered_map<PostProcessType, std::unique_ptr<IPostProcessBuffer>> buffers_;
+	// buffer更新
+	std::unordered_map<PostProcessType, std::unique_ptr<PostProcessUpdaterBase>> updaters_;
 
 	// debugSceneのα値を調整するためのプロセス
 	std::unique_ptr<ComputePostProcessor> copyTextureProcess_;
@@ -112,9 +129,12 @@ private:
 
 	//--------- functions ----------------------------------------------------
 
+	// update
+	void ApplyUpdatersToBuffers();
+
+	// helper
 	void CreateCBuffer(PostProcessType type);
 	void ExecuteCBuffer(ID3D12GraphicsCommandList* commandList, PostProcessType type);
-
 	void BeginTransition(PostProcessType type, DxCommand* dxCommand);
 
 	PostProcessSystem() :IGameEditor("PostProcessSystem") {}
@@ -134,4 +154,15 @@ inline void PostProcessSystem::SetParameter(const T& parameter, PostProcessType 
 
 		buffers_[process]->SetParameter((void*)&parameter, sizeof(T));
 	}
+}
+
+template<typename T>
+inline T* PostProcessSystem::GetUpdater(PostProcessType type) const {
+
+	static_assert(std::is_base_of_v<PostProcessUpdaterBase, T>,
+		"T must derive from PostProcessUpdaterBase");
+	if (!Algorithm::Find(updaters_, type)) {
+		return nullptr;
+	}
+	return dynamic_cast<T*>(updaters_.at(type).get());
 }

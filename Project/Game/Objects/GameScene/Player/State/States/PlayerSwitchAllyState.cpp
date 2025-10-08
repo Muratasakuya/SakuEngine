@@ -3,7 +3,7 @@
 //============================================================================
 //	include
 //============================================================================
-#include <Engine/Core/Graphics/PostProcess/PostProcessSystem.h>
+#include <Engine/Core/Graphics/PostProcess/Core/PostProcessSystem.h>
 #include <Engine/Utility/Timer/GameTimer.h>
 #include <Game/Camera/Follow/FollowCamera.h>
 #include <Game/Objects/GameScene/Player/Entity/Player.h>
@@ -18,11 +18,9 @@
 
 PlayerSwitchAllyState::PlayerSwitchAllyState() {
 
-	// 変更しない値(中心)
-	radialBlur_.center.x = 0.5f;
 	canExit_ = false;
 
-	// NONEで初期化
+	// Noneで初期化
 	selectState_ = PlayerState::None;
 }
 
@@ -58,9 +56,6 @@ void PlayerSwitchAllyState::Update(Player& player) {
 	switchAllyTimer_ += GameTimer::GetDeltaTime();
 	float t = switchAllyTimer_ / switchAllyTime_;
 
-	// ブラー更新
-	UpdateBlur();
-
 	// 入力状態の確認
 	CheckInput(t);
 
@@ -70,32 +65,6 @@ void PlayerSwitchAllyState::Update(Player& player) {
 		player.GetHUD()->SetValid();
 		player.GetStunHUD()->SetCancel();
 	}
-}
-
-void PlayerSwitchAllyState::UpdateBlur() {
-
-	PostProcessSystem* postProcess = PostProcessSystem::GetInstance();
-
-	// ブラー更新
-	blurTimer_ += GameTimer::GetDeltaTime();
-
-	// 補間終了
-	if (blurTime_ <= blurTimer_) {
-
-		postProcess->SetParameter(targetRadialBlur_, PostProcessType::RadialBlur);
-		return;
-	}
-	float lerpT = std::clamp(blurTimer_ / blurTime_, 0.0f, 1.0f);
-	lerpT = EasedValue(blurEasingType_, lerpT);
-
-	// 各値を補間
-	radialBlur_.center.y = std::lerp(0.5f, targetRadialBlur_.center.y, lerpT);
-	radialBlur_.numSamples = static_cast<int>(std::round(std::lerp(
-		0.0f, static_cast<float>(targetRadialBlur_.numSamples), lerpT)));
-	radialBlur_.width = std::lerp(0.0f, targetRadialBlur_.width, lerpT);
-
-	// 値を設定
-	postProcess->SetParameter(radialBlur_, PostProcessType::RadialBlur);
 }
 
 void PlayerSwitchAllyState::CheckInput(float t) {
@@ -138,7 +107,6 @@ void PlayerSwitchAllyState::Exit([[maybe_unused]] Player& player) {
 	// リセット
 	deltaTimeScaleTimer_ = 0.0f;
 	switchAllyTimer_ = 0.0f;
-	blurTimer_ = 0.0f;
 	canExit_ = false;
 }
 
@@ -148,11 +116,6 @@ void PlayerSwitchAllyState::ImGui([[maybe_unused]] const Player& player) {
 	ImGui::DragFloat("deltaTimeScaleTime", &deltaTimeScaleTime_, 0.01f);
 	ImGui::DragFloat("switchAllyTime", &switchAllyTime_, 0.01f);
 	ImGui::DragFloat("deltaTimeScale", &deltaTimeScale_, 0.01f);
-	ImGui::DragFloat("blurTime", &blurTime_, 0.01f);
-	ImGui::DragFloat("targetRadialBlurCenterY", &targetRadialBlur_.center.y, 0.01f);
-	ImGui::DragInt("targetRadialBlurNumSamples", &targetRadialBlur_.numSamples, 1);
-	ImGui::DragFloat("targetRadialBlurWidth", &targetRadialBlur_.width, 0.1f);
-	Easing::SelectEasingType(blurEasingType_);
 }
 
 void PlayerSwitchAllyState::ApplyJson(const Json& data) {
@@ -162,12 +125,6 @@ void PlayerSwitchAllyState::ApplyJson(const Json& data) {
 	deltaTimeScale_ = JsonAdapter::GetValue<float>(data, "deltaTimeScale_");
 	deltaTimeScaleEasingType_ = static_cast<EasingType>(
 		JsonAdapter::GetValue<int>(data, "deltaTimeScaleEasingType_"));
-	blurTime_ = JsonAdapter::GetValue<float>(data, "blurTime_");
-	blurEasingType_ = static_cast<EasingType>(
-		JsonAdapter::GetValue<int>(data, "blurEasingType_"));
-	targetRadialBlur_.center.y = JsonAdapter::GetValue<float>(data, "targetRadialBlur_.center.y");
-	targetRadialBlur_.numSamples = JsonAdapter::GetValue<int>(data, "targetRadialBlur_.numSamples");
-	targetRadialBlur_.width = JsonAdapter::GetValue<float>(data, "targetRadialBlur_.width");
 }
 
 void PlayerSwitchAllyState::SaveJson(Json& data) {
@@ -176,9 +133,4 @@ void PlayerSwitchAllyState::SaveJson(Json& data) {
 	data["switchAllyTime_"] = switchAllyTime_;
 	data["deltaTimeScale_"] = deltaTimeScale_;
 	data["deltaTimeScaleEasingType_"] = static_cast<int>(deltaTimeScaleEasingType_);
-	data["blurTime_"] = blurTime_;
-	data["blurEasingType_"] = static_cast<int>(blurEasingType_);
-	data["targetRadialBlur_.center.y"] = targetRadialBlur_.center.y;
-	data["targetRadialBlur_.numSamples"] = targetRadialBlur_.numSamples;
-	data["targetRadialBlur_.width"] = targetRadialBlur_.width;
 }

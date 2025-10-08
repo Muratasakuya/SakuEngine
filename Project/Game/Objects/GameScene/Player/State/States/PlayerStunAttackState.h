@@ -33,10 +33,6 @@ public:
 	// json
 	void ApplyJson(const Json& data) override;
 	void SaveJson(Json& data) override;
-
-	//--------- accessor -----------------------------------------------------
-
-	void SetBlurParam(RadialBlurForGPU blur) { startRadialBlur_ = blur; }
 private:
 	//========================================================================
 	//	private Methods
@@ -71,18 +67,9 @@ private:
 	Vector3 rushTargetAllyTranslation_; // 目標座標
 	EasingType rushEasingType_;         // イージングの種類
 
-	// postProcess
-	float blurTimer_; // ブラーの経過時間
-	float blurTime_;  // ブラーの時間
-	EasingType blurEasingType_;
-	RadialBlurForGPU radialBlur_;       // systemに渡す値
-	RadialBlurForGPU startRadialBlur_;  // 開始値
-	RadialBlurForGPU targetRadialBlur_; // 初期化値
-
 	//--------- functions ----------------------------------------------------
 
 	// update
-	void UpdateBlur();
 	void UpdateAllyEntry(Player& player);
 	void UpdateAllyRushAttack(Player& player);
 	void UpdatePlayerAttack(Player& player);

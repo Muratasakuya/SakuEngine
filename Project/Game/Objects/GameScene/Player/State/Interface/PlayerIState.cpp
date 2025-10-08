@@ -3,11 +3,18 @@
 //============================================================================
 //	include
 //============================================================================
+#include <Engine/Core/Graphics/PostProcess/Core/PostProcessSystem.h>
 #include <Game/Objects/GameScene/Player/Entity/Player.h>
 
 //============================================================================
 //	PlayerIState classMethods
 //============================================================================
+
+PlayerIState::PlayerIState() {
+
+	postProcess_ = nullptr;
+	postProcess_ = PostProcessSystem::GetInstance();
+}
 
 void PlayerIState::SetRotateToDirection(Player& player, const Vector3& move) {
 

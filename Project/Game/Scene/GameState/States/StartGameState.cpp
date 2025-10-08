@@ -4,7 +4,7 @@
 //	include
 //============================================================================
 #include <Engine/Core/Debug/SpdLogger.h>
-#include <Engine/Core/Graphics/PostProcess/PostProcessSystem.h>
+#include <Engine/Core/Graphics/PostProcess/Core/PostProcessSystem.h>
 #include <Engine/Object/Core/ObjectManager.h>
 #include <Engine/Scene/SceneView.h>
 

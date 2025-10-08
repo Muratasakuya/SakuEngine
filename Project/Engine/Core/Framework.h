@@ -10,7 +10,7 @@
 #include <Engine/Core/Window/WinApp.h>
 #include <Engine/Core/Graphics/GraphicsPlatform.h>
 #include <Engine/Core/Graphics/RenderEngine.h>
-#include <Engine/Core/Graphics/PostProcess/PostProcessSystem.h>
+#include <Engine/Core/Graphics/PostProcess/Core/PostProcessSystem.h>
 
 // scene
 #include <Engine/Scene/Manager/SceneManager.h>

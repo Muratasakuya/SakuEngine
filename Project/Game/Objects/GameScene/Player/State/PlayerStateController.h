@@ -110,7 +110,6 @@ private:
 	bool UpdateExternalSynch(Player& owner);
 
 	// helper
-	void SetStateValue();
 	void SetInputMapper();
 	bool Request(PlayerState state);
 	void ChangeState(Player& owner);

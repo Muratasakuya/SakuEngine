@@ -63,6 +63,7 @@ private:
 
 	// 攻撃制御
 	bool allowAttack_;
+	bool isEmitedBlur_;
 
 	// parameters
 	LerpParameter parryLerp_;

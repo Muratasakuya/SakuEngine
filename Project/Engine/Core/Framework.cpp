@@ -95,7 +95,8 @@ Framework::Framework() {
 	asset_->Init(device, dxCommand, srvDescriptor);
 
 	PostProcessSystem* postProcessSystem = PostProcessSystem::GetInstance();
-	postProcessSystem->Init(device, shaderCompiler, srvDescriptor, asset_.get());
+	postProcessSystem->Init(device, shaderCompiler,
+		srvDescriptor, asset_.get(), sceneView_.get());
 	postProcessSystem->SetDepthFrameBufferGPUHandle(renderEngine_->GetDepthGPUHandle());
 
 	// fullScreen設定
@@ -204,7 +205,7 @@ void Framework::UpdateScene() {
 	// particle更新
 	ParticleManager::GetInstance()->Update(graphicsPlatform_->GetDxCommand());
 	// postProcess更新
-	PostProcessSystem::GetInstance()->Update(sceneView_.get());
+	PostProcessSystem::GetInstance()->Update();
 }
 
 void Framework::Draw() {

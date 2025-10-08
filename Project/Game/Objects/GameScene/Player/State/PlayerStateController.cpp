@@ -62,8 +62,6 @@ void PlayerStateController::Init(Player& owner) {
 
 	// inputを設定
 	SetInputMapper();
-	// 状態間の値の共有
-	SetStateValue();
 
 	// 初期状態を設定
 	current_ = PlayerState::Idle;
@@ -71,16 +69,6 @@ void PlayerStateController::Init(Player& owner) {
 	currentEnterTime_ = GameTimer::GetTotalTime();
 	lastEnterTime_[current_] = currentEnterTime_;
 	ChangeState(owner);
-}
-
-void PlayerStateController::SetStateValue() {
-
-	// 状態間の値の共有(値ずれを防ぐため)
-	static_cast<PlayerIdleState*>(states_.at(PlayerState::Idle).get())->SetBlurParam(
-		static_cast<PlayerSwitchAllyState*>(states_.at(PlayerState::SwitchAlly).get())->GetBlurParam());
-
-	static_cast<PlayerStunAttackState*>(states_.at(PlayerState::StunAttack).get())->SetBlurParam(
-		static_cast<PlayerSwitchAllyState*>(states_.at(PlayerState::SwitchAlly).get())->GetBlurParam());
 }
 
 void PlayerStateController::SetInputMapper() {

@@ -1,0 +1,132 @@
+{
+    "BeginStun": {
+        "Center": {
+            "Loop": {
+                "loop": {
+                    "loopCount": 1,
+                    "type": "Repeat"
+                }
+            },
+            "ReturnTimer": {
+                "easeingType_": "EaseInSine",
+                "target_": 0.800000011920929
+            },
+            "Timer": {
+                "easeingType_": "EaseInSine",
+                "target_": 0.0
+            },
+            "move_.end": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "move_.start": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "useReturnTimer_": false
+        },
+        "NumSamples": {
+            "Loop": {
+                "loop": {
+                    "loopCount": 1,
+                    "type": "Repeat"
+                }
+            },
+            "ReturnTimer": {
+                "easeingType_": "EaseInSine",
+                "target_": 0.800000011920929
+            },
+            "Timer": {
+                "easeingType_": "EaseInSine",
+                "target_": 0.0
+            },
+            "move_.end": 0,
+            "move_.start": 0,
+            "useReturnTimer_": false
+        },
+        "Width": {
+            "Loop": {
+                "loop": {
+                    "loopCount": 1,
+                    "type": "Repeat"
+                }
+            },
+            "ReturnTimer": {
+                "easeingType_": "EaseInSine",
+                "target_": 0.800000011920929
+            },
+            "Timer": {
+                "easeingType_": "EaseInSine",
+                "target_": 0.0
+            },
+            "move_.end": 0.0,
+            "move_.start": 0.0,
+            "useReturnTimer_": false
+        }
+    },
+    "Parry": {
+        "Center": {
+            "Loop": {
+                "loop": {
+                    "loopCount": 1,
+                    "type": "Repeat"
+                }
+            },
+            "ReturnTimer": {
+                "easeingType_": "EaseInSine",
+                "target_": 0.36000001430511475
+            },
+            "Timer": {
+                "easeingType_": "EaseOutExpo",
+                "target_": 0.23000000417232513
+            },
+            "move_.end": {
+                "x": 0.6642055511474609,
+                "y": 0.7475500702857971
+            },
+            "move_.start": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "useReturnTimer_": true
+        },
+        "NumSamples": {
+            "Loop": {
+                "loop": {
+                    "loopCount": 1,
+                    "type": "Repeat"
+                }
+            },
+            "ReturnTimer": {
+                "easeingType_": "EaseInSine",
+                "target_": 0.36000001430511475
+            },
+            "Timer": {
+                "easeingType_": "EaseOutExpo",
+                "target_": 0.23000000417232513
+            },
+            "move_.end": 12,
+            "move_.start": 0,
+            "useReturnTimer_": true
+        },
+        "Width": {
+            "Loop": {
+                "loop": {
+                    "loopCount": 1,
+                    "type": "Repeat"
+                }
+            },
+            "ReturnTimer": {
+                "easeingType_": "EaseInSine",
+                "target_": 0.36000001430511475
+            },
+            "Timer": {
+                "easeingType_": "EaseOutExpo",
+                "target_": 0.23000000417232513
+            },
+            "move_.end": 0.009999999776482582,
+            "move_.start": 0.0,
+            "useReturnTimer_": true
+        }
+    }
+}

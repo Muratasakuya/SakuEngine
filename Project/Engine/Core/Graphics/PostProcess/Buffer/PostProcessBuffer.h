@@ -25,12 +25,11 @@ public:
 
 	//--------- accessor -----------------------------------------------------
 
-	virtual void SetParameter(void* parameter, size_t size) = 0;
+	virtual void SetParameter(const void* parameter, size_t size) = 0;
 
 	virtual ID3D12Resource* GetResource() const = 0;
 
 	UINT GetRootIndex() const { return rootIndex_; };
-
 protected:
 	//========================================================================
 	//	protected Methods
@@ -63,7 +62,7 @@ public:
 
 	//--------- accessor -----------------------------------------------------
 
-	void SetParameter(void* parameter, size_t size) override;
+	void SetParameter(const void* parameter, size_t size) override;
 
 	ID3D12Resource* GetResource() const override;
 	T GetParameter() const { return parameter_; }
@@ -102,7 +101,7 @@ inline void PostProcessBuffer<T>::ImGui() {
 }
 
 template<typename T>
-inline void PostProcessBuffer<T>::SetParameter(void* parameter, size_t size) {
+inline void PostProcessBuffer<T>::SetParameter(const void* parameter, size_t size) {
 
 	std::memcpy(&parameter_, parameter, size);
 }

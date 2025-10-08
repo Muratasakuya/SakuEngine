@@ -1,0 +1,16 @@
+{
+    "ConvergenceTimer": {
+        "easeingType_": "EaseInSine",
+        "target_": 1.2000000476837158
+    },
+    "Timer": {
+        "easeingType_": "EaseInSine",
+        "target_": 0.10000000149011612
+    },
+    "blockSize": 16.0,
+    "colorOffset": 6.0,
+    "lineSpeed": 32.0,
+    "maxRandomCount_": 12,
+    "noiseStrength": 0.0,
+    "startIntencityRange_": 16.0
+}

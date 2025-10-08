@@ -1,6 +1,16 @@
 #include "Algorithm.h"
 
 //============================================================================
+//	Algorithm define
+//============================================================================
+
+#if defined(__GNUC__) || defined(__clang__)
+#include <cxxabi.h>
+#include <cstdlib>
+#endif
+#include <cstring>
+
+//============================================================================
 //	Algorithm classMethods
 //============================================================================
 
@@ -29,6 +39,34 @@ std::string Algorithm::RemoveAfterUnderscore(const std::string& input) {
 std::string Algorithm::GetIndexLabel(const std::string& label, uint32_t index) {
 
 	return label + std::to_string(index);
+}
+
+std::string Algorithm::DemangleType(const char* name) {
+
+#if defined(__GNUC__) || defined(__clang__)
+	int status = 0;
+	size_t len = 0;
+	char* demangled = abi::__cxa_demangle(name, nullptr, &len, &status);
+	std::string out = (status == 0 && demangled) ? std::string(demangled) : std::string(name);
+	std::free(demangled);
+	return out;
+#else
+	return std::string(name);
+#endif
+}
+
+std::string Algorithm::AdjustLeadingCase(std::string string, LeadingCase leadingCase) {
+
+	if (string.empty()) {
+		return string;
+	}
+	unsigned char ch = static_cast<unsigned char>(string[0]);
+	switch (leadingCase) {
+	case LeadingCase::Lower: string[0] = static_cast<char>(std::tolower(ch)); break;
+	case LeadingCase::Upper: string[0] = static_cast<char>(std::toupper(ch)); break;
+	case LeadingCase::AsIs:  default: break;
+	}
+	return string;
 }
 
 std::wstring Algorithm::ConvertString(const std::string& str) {
