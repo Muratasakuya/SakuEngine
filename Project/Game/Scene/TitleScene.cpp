@@ -7,7 +7,10 @@
 #include <Engine/Core/Graphics/PostProcess/Core/PostProcessSystem.h>
 #include <Engine/Scene/SceneView.h>
 #include <Engine/Scene/Manager/SceneManager.h>
+
+// postEffect
 #include <Game/PostEffect/RadialBlurUpdater.h>
+#include <Game/PostEffect/GlitchUpdater.h>
 
 //============================================================================
 //	TitleScene classMethods
@@ -34,6 +37,7 @@ void TitleScene::Init() {
 
 	// 更新クラスを登録
 	postProcess->RegisterUpdater(std::make_unique<RadialBlurUpdater>());
+	postProcess->RegisterUpdater(std::make_unique<GlitchUpdater>());
 
 	//========================================================================
 	//	controller(objects)

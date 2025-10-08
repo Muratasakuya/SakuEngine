@@ -873,6 +873,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <SubType>
       </SubType>
     </ClCompile>
+    <ClCompile Include="Game\PostEffect\GlitchUpdater.cpp" />
     <ClCompile Include="Game\PostEffect\RadialBlurUpdater.cpp">
       <SubType>
       </SubType>
@@ -1781,6 +1782,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="Game\PostEffect\GlitchUpdater.h" />
     <ClInclude Include="Game\PostEffect\RadialBlurUpdater.h">
       <SubType>
       </SubType>

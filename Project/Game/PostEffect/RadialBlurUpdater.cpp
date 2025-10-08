@@ -42,6 +42,39 @@ void RadialBlurUpdater::SetBlurCenter(const Vector2& center) {
 	lerpValues_[type_].center.SetEnd(center);
 }
 
+void RadialBlurUpdater::Start() {
+
+	// 処理を開始させる
+	LerpRadialBlur& value = lerpValues_[type_];
+	value.center.Start();
+	value.numSamples.Start();
+	value.width.Start();
+
+	// 通常アニメーションに戻す
+	SetAnimationType(SimpleAnimationType::None);
+}
+
+void RadialBlurUpdater::Stop() {
+
+	// 値を止める
+	LerpRadialBlur& value = lerpValues_[type_];
+	value.center.Stop();
+	value.numSamples.Stop();
+	value.width.Stop();
+
+	// Stopに設定
+	currentState_ = State::Stop;
+}
+
+void RadialBlurUpdater::Reset() {
+
+	// 値をリセット
+	LerpRadialBlur& value = lerpValues_[type_];
+	value.center.Reset(false);
+	value.numSamples.Reset(false);
+	value.width.Reset(false);
+}
+
 void RadialBlurUpdater::Update() {
 
 	switch (currentState_) {
@@ -128,39 +161,6 @@ void RadialBlurUpdater::ImGui() {
 
 	value.width.ImGui("Width", false);
 	ImGui::Spacing();
-}
-
-void RadialBlurUpdater::Start() {
-
-	// 処理を開始させる
-	LerpRadialBlur& value = lerpValues_[type_];
-	value.center.Start();
-	value.numSamples.Start();
-	value.width.Start();
-
-	// 通常アニメーションに戻す
-	SetAnimationType(SimpleAnimationType::None);
-}
-
-void RadialBlurUpdater::Stop() {
-
-	// 値を止める
-	LerpRadialBlur& value = lerpValues_[type_];
-	value.center.Stop();
-	value.numSamples.Stop();
-	value.width.Stop();
-
-	// Stopに設定
-	currentState_ = State::Stop;
-}
-
-void RadialBlurUpdater::Reset() {
-
-	// 値をリセット
-	LerpRadialBlur& value = lerpValues_[type_];
-	value.center.Reset(false);
-	value.numSamples.Reset(false);
-	value.width.Reset(false);
 }
 
 void RadialBlurUpdater::ApplyJson() {

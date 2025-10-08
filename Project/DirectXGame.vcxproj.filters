@@ -2259,4 +2259,10 @@
       <Filter>Assets\Engine\Shaders\Particle\Common\Primitive</Filter>
     </FxCompile>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Game\PostEffect\GlitchUpdater.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Game\PostEffect\GlitchUpdater.h" />
+  </ItemGroup>
 </Project>
