@@ -6,6 +6,7 @@
 #include <Engine/Core/Graphics/PostProcess/Buffer/Updater/Interface/PostProcessUpdaterBase.h>
 #include <Engine/Core/Graphics/PostProcess/Buffer/PostProcessBufferSize.h>
 #include <Engine/Utility/Json/JsonAdapter.h>
+#include <Engine/Utility/Helper/Algorithm.h>
 
 // imgui
 #include <imgui.h>
@@ -62,9 +63,14 @@ protected:
 	// json
 	virtual void ApplyJson() {}
 	virtual void SaveJson() {}
+	bool LoadFile(Json& data);
+	void SaveFile(const Json& data);
 
 	// imgui
 	void SaveButton();
+
+	// helper
+	std::string GetFileName() const;
 };
 
 //============================================================================
@@ -78,10 +84,31 @@ inline std::pair<const void*, size_t> IPostProcessUpdater<T>::GetBufferData() co
 }
 
 template<typename T>
+inline bool IPostProcessUpdater<T>::LoadFile(Json& data) {
+
+	return JsonAdapter::LoadCheck(GetFileName(), data);
+}
+
+template<typename T>
+inline void IPostProcessUpdater<T>::SaveFile(const Json& data) {
+
+	JsonAdapter::Save(GetFileName(), data);
+}
+
+template<typename T>
 inline void IPostProcessUpdater<T>::SaveButton() {
 
 	if (ImGui::Button("Save")) {
 
 		SaveJson();
 	}
+}
+
+template<typename T>
+inline std::string IPostProcessUpdater<T>::GetFileName() const {
+
+	std::string name = Algorithm::DemangleType(typeid(*this).name());
+	name = Algorithm::RemoveSubstring(name, "class ");
+	return kJsonBasePath_ + Algorithm::AdjustLeadingCase(
+		std::move(name), Algorithm::LeadingCase::Lower) + ".json";
 }

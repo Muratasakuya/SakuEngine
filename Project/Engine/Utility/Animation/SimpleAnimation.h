@@ -39,7 +39,7 @@ public:
 	SimpleAnimation() = default;
 	~SimpleAnimation() = default;
 
-	void ImGui(const std::string& label);
+	void ImGui(const std::string& label, bool isLoop = true);
 
 	// 0.0fから1.0fの間で補間された値を取得
 	void LerpValue(T& value);
@@ -47,7 +47,9 @@ public:
 	// 動き出し開始
 	void Start();
 	// リセット
-	void Reset();
+	void Reset(bool isStop = true);
+	// 停止
+	void Stop();
 
 	// json
 	void ToJson(Json& data);
@@ -72,8 +74,8 @@ private:
 
 	struct Move {
 
-		T start;               // 開始値
-		T end;                 // 終了値
+		T start; // 開始値
+		T end;   // 終了値
 	};
 
 	//--------- variables ----------------------------------------------------
@@ -140,21 +142,29 @@ inline void SimpleAnimation<T>::Start() {
 
 	isRunning_ = true;
 	isFinished_ = false;
-}
-
-template<typename T>
-inline void SimpleAnimation<T>::Reset() {
-
-	isRunning_ = false;
-	isFinished_ = false;
 	timer_.Reset();
 }
 
 template<typename T>
-inline void SimpleAnimation<T>::ImGui(const std::string& label) {
+inline void SimpleAnimation<T>::Reset(bool isStop) {
+
+	isRunning_ = isStop ? false : true;
+	isFinished_ = false;
+	timer_.Reset();
+}
+template<typename T>
+inline void SimpleAnimation<T>::Stop() {
+
+	isRunning_ = false;
+}
+
+template<typename T>
+inline void SimpleAnimation<T>::ImGui(const std::string& label, bool isLoop) {
 
 	ImGui::PushItemWidth(itemSize_);
 	ImGui::PushID(label.c_str());
+
+	ImGui::SeparatorText(label.c_str());
 
 	ImGuiTreeNodeFlags windowFlag = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Leaf;
 	if (ImGui::CollapsingHeader("AnimValue", windowFlag)) {
@@ -185,9 +195,11 @@ inline void SimpleAnimation<T>::ImGui(const std::string& label) {
 
 		timer_.ImGui("Time", false);
 	}
-	if (ImGui::CollapsingHeader("Loop", windowFlag)) {
+	if (isLoop) {
+		if (ImGui::CollapsingHeader("Loop", windowFlag)) {
 
-		loop_.ImGuiLoopParam(false);
+			loop_.ImGuiLoopParam(false);
+		}
 	}
 
 	ImGui::PopID();
@@ -205,10 +217,14 @@ inline void SimpleAnimation<T>::FromJson(const Json& data) {
 	timer_.FromJson(data.value("Timer", Json()));
 
 	// moveの値を適応
-	if constexpr (std::is_same_v<T, float> || std::is_same_v<T, int>) {
+	if constexpr (std::is_same_v<T, float>) {
 
 		move_.start = data.value("move_.start", 0.0f);
 		move_.end = data.value("move_.end", 0.0f);
+	} else if constexpr (std::is_same_v<T, int>) {
+
+		move_.start = data.value("move_.start", 0);
+		move_.end = data.value("move_.end", 0);
 	} else {
 
 		move_.start = T::FromJson(data["move_.start"]);

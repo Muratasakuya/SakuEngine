@@ -21,6 +21,14 @@ namespace Algorithm {
 	//	Enum
 	//========================================================================
 
+	// クラスの名前取得時の設定
+	enum class LeadingCase {
+
+		AsIs,  // 変更しない
+		Lower, // 先頭を小文字にする
+		Upper  // 先頭を大文字にする
+	};
+
 	template <typename Enum, typename = std::enable_if_t<std::is_enum_v<Enum>>>
 	std::vector<uint32_t> GetEnumArray(Enum enumValue) {
 
@@ -42,13 +50,17 @@ namespace Algorithm {
 
 	std::string GetIndexLabel(const std::string& label, uint32_t index);
 
-	template<typename T>
-	std::string ClassName(const T& obj) {
+	std::string DemangleType(const char* name);
+	std::string AdjustLeadingCase(std::string string, LeadingCase leadingCase);
 
-		std::string className = typeid(obj).name();
-		std::string prefix = "class ";
+	template <typename T>
+	std::string ClassName(LeadingCase mode = LeadingCase::AsIs) {
 
-		return RemoveSubstring(className, prefix);
+		std::string name = DemangleType(typeid(T).name());
+		name = RemoveSubstring(name, "class ");
+		name = RemoveSubstring(name, "struct ");
+		name = RemoveSubstring(name, "enum ");
+		return Algorithm::AdjustLeadingCase(std::move(name), mode);
 	}
 
 	std::wstring ConvertString(const std::string& str);
@@ -97,10 +109,16 @@ namespace Algorithm {
 	//========================================================================
 
 	// 線形補間
-	template <typename T>
+	template <typename T, std::enable_if_t<!std::is_integral_v<T>, int> = 0>
+	inline T Lerp(const T& start, const T& end, float t) {
+		return start + (end - start) * t;
+	}
+	template <typename T, std::enable_if_t<std::is_integral_v<T>, int> = 0>
 	inline T Lerp(const T& start, const T& end, float t) {
 
-		return start + (end - start) * t;
+		float v = static_cast<float>(start) +
+			(static_cast<float>(end) - static_cast<float>(start)) * t;
+		return static_cast<T>(std::lround(v));
 	}
 	int LerpInt(int a, int b, float t);
 

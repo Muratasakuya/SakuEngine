@@ -45,6 +45,7 @@ private:
 
 	//--------- functions ----------------------------------------------------
 
+	// json
 	void ApplyJson() override;
 	void SaveJson() override;
 };

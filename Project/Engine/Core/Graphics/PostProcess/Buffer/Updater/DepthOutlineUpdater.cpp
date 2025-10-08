@@ -37,7 +37,7 @@ void DepthOutlineUpdater::ImGui() {
 void DepthOutlineUpdater::ApplyJson() {
 
 	Json data;
-	if (!JsonAdapter::LoadCheck(kJsonBasePath_ + "depthOutlineUpdater.json", data)) {
+	if (!LoadFile(data)) {
 		return;
 	}
 
@@ -54,5 +54,5 @@ void DepthOutlineUpdater::SaveJson() {
 	data["threshold"] = bufferData_.threshold;
 	data["color"] = bufferData_.color.ToJson();
 
-	JsonAdapter::Save(kJsonBasePath_ + "depthOutlineUpdater.json", data);
+	SaveFile(data);
 }

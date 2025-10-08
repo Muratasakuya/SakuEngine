@@ -1,0 +1,102 @@
+{
+    "BeginStun": {
+        "Center": {
+            "Loop": {
+                "loop": {
+                    "loopCount": 1,
+                    "type": "Repeat"
+                }
+            },
+            "Timer": {
+                "easeingType_": "EaseInSine",
+                "target_": 0.0
+            },
+            "move_.end": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "move_.start": {
+                "x": 0.0,
+                "y": 0.0
+            }
+        },
+        "NumSamples": {
+            "Loop": {
+                "loop": {
+                    "loopCount": 1,
+                    "type": "Repeat"
+                }
+            },
+            "Timer": {
+                "easeingType_": "EaseInSine",
+                "target_": 0.0
+            },
+            "move_.end": 0,
+            "move_.start": 0
+        },
+        "Width": {
+            "Loop": {
+                "loop": {
+                    "loopCount": 1,
+                    "type": "Repeat"
+                }
+            },
+            "Timer": {
+                "easeingType_": "EaseInSine",
+                "target_": 0.0
+            },
+            "move_.end": 0.0,
+            "move_.start": 0.0
+        }
+    },
+    "Parry": {
+        "Center": {
+            "Loop": {
+                "loop": {
+                    "loopCount": 1,
+                    "type": "Repeat"
+                }
+            },
+            "Timer": {
+                "easeingType_": "EaseInSine",
+                "target_": 0.800000011920929
+            },
+            "move_.end": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "move_.start": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        "NumSamples": {
+            "Loop": {
+                "loop": {
+                    "loopCount": 1,
+                    "type": "Repeat"
+                }
+            },
+            "Timer": {
+                "easeingType_": "EaseInSine",
+                "target_": 0.800000011920929
+            },
+            "move_.end": 12,
+            "move_.start": 0
+        },
+        "Width": {
+            "Loop": {
+                "loop": {
+                    "loopCount": 1,
+                    "type": "Repeat"
+                }
+            },
+            "Timer": {
+                "easeingType_": "EaseInSine",
+                "target_": 0.800000011920929
+            },
+            "move_.end": 0.009999999776482582,
+            "move_.start": 0.0
+        }
+    }
+}
