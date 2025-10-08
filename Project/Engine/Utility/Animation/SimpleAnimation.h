@@ -66,7 +66,7 @@ public:
 	bool IsStart() const { return isRunning_; }
 	bool IsFinished() const { return isFinished_; }
 
-	float GetProgress() const { return timer_.t_; }
+	float GetProgress(SimpleAnimationType type = SimpleAnimationType::None) const;
 private:
 	//========================================================================
 	//	private Methods
@@ -85,8 +85,10 @@ private:
 	SimpleAnimationType type_;
 	bool isRunning_ = false;
 	bool isFinished_ = false;
+	bool useReturnTimer_ = false;
 
 	StateTimer timer_;
+	StateTimer returnTimer_;
 	float rawT_ = 0.0f;
 	AnimationLoop loop_;
 	Move move_;
@@ -121,9 +123,24 @@ inline void SimpleAnimation<T>::LerpValue(T& value) {
 	}
 
 	// 時間の更新処理
-	timer_.Update();
-	rawT_ = timer_.current_ / (std::max)(0.0001f, timer_.target_);
-	float easedT = EasedValue(timer_.easeingType_, loop_.LoopedT(rawT_));
+	StateTimer timer{};
+	if (type_ == SimpleAnimationType::None) {
+
+		timer_.Update();
+		timer = timer_;
+	} else if (type_ == SimpleAnimationType::Return) {
+		if (useReturnTimer_) {
+
+			returnTimer_.Update();
+			timer = returnTimer_;
+		} else {
+
+			timer_.Update();
+			timer = timer_;
+		}
+	}
+	rawT_ = timer.current_ / (std::max)(0.0001f, timer.target_);
+	float easedT = EasedValue(timer.easeingType_, loop_.LoopedT(rawT_));
 
 	T from = move_.start;
 	T to = move_.end;
@@ -149,6 +166,7 @@ inline void SimpleAnimation<T>::Start() {
 	isRunning_ = true;
 	isFinished_ = false;
 	timer_.Reset();
+	returnTimer_.Reset();
 }
 
 template<typename T>
@@ -157,6 +175,7 @@ inline void SimpleAnimation<T>::Reset(bool isStop) {
 	isRunning_ = isStop ? false : true;
 	isFinished_ = false;
 	timer_.Reset();
+	returnTimer_.Reset();
 }
 template<typename T>
 inline void SimpleAnimation<T>::Stop() {
@@ -200,6 +219,12 @@ inline void SimpleAnimation<T>::ImGui(const std::string& label, bool isLoop) {
 	if (ImGui::CollapsingHeader("Timer", windowFlag)) {
 
 		timer_.ImGui("Time", false);
+
+		ImGui::Checkbox("useReturnTimer", &useReturnTimer_);
+		if (useReturnTimer_) {
+
+			returnTimer_.ImGui("ReturnTimer", true);
+		}
 	}
 	if (isLoop) {
 		if (ImGui::CollapsingHeader("Loop", windowFlag)) {
@@ -220,7 +245,9 @@ inline void SimpleAnimation<T>::FromJson(const Json& data) {
 	}
 
 	loop_.FromLoopJson(data);
+	useReturnTimer_ = data.value("useReturnTimer_", false);
 	timer_.FromJson(data.value("Timer", Json()));
+	returnTimer_.FromJson(data.value("ReturnTimer", Json()));
 
 	// moveの値を適応
 	if constexpr (std::is_same_v<T, float>) {
@@ -251,10 +278,28 @@ inline void SimpleAnimation<T>::SetDragValue(int value) {
 }
 
 template<typename T>
+inline float SimpleAnimation<T>::GetProgress(SimpleAnimationType type) const {
+
+	if (type == SimpleAnimationType::None) {
+
+		return timer_.t_;
+	} else if (type == SimpleAnimationType::Return) {
+		if (useReturnTimer_) {
+
+			return returnTimer_.t_;
+		}
+		return timer_.t_;
+	}
+	return 0.0f;
+}
+
+template<typename T>
 inline void SimpleAnimation<T>::ToJson(Json& data) {
 
 	loop_.ToLoopJson(data["Loop"]);
+	data["useReturnTimer_"] = useReturnTimer_;
 	timer_.ToJson(data["Timer"]);
+	returnTimer_.ToJson(data["ReturnTimer"]);
 
 	// moveの値を保存
 	if constexpr (std::is_same_v<T, float> || std::is_same_v<T, int>) {
