@@ -52,6 +52,7 @@ public:
 
 	// タイプを設定
 	void SetBlurType(RadialBlurType type) { type_ = type; }
+	void SetAnimationType(SimpleAnimationType type);
 
 	PostProcessType GetType() const override { return PostProcessType::RadialBlur; }
 private:
@@ -64,9 +65,10 @@ private:
 	// 状態
 	enum class State {
 
-		None,
-		Updating,
-		Stop
+		None,     // 処理しない
+		Updating, // 補間中
+		Return,   // startに戻す
+		Stop      // 停止中
 	};
 
 	// ラジアルブラー補間

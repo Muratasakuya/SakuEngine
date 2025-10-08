@@ -60,6 +60,8 @@ public:
 	void SetStart(const T& start) { move_.start = start; }
 	void SetEnd(const T& end) { move_.end = end; }
 	void SetAnimationType(SimpleAnimationType type) { type_ = type; }
+	void SetDragValue(float value);
+	void SetDragValue(int value);
 
 	bool IsStart() const { return isRunning_; }
 	bool IsFinished() const { return isFinished_; }
@@ -88,6 +90,10 @@ private:
 	float rawT_ = 0.0f;
 	AnimationLoop loop_;
 	Move move_;
+
+	// Drag値
+	int dragValueInt = 1;
+	float dragValueFloat = 0.01f;
 
 	// imguiのサイズ
 	const float itemSize_ = 224.0f;
@@ -171,20 +177,20 @@ inline void SimpleAnimation<T>::ImGui(const std::string& label, bool isLoop) {
 
 		if constexpr (std::is_same_v<T, float>) {
 
-			ImGui::DragFloat("start", &move_.start, 0.01f);
-			ImGui::DragFloat("end", &move_.end, 0.01f);
+			ImGui::DragFloat("start", &move_.start, dragValueFloat);
+			ImGui::DragFloat("end", &move_.end, dragValueFloat);
 		} else if constexpr (std::is_same_v<T, int>) {
 
-			ImGui::DragInt("start", &move_.start, 1);
-			ImGui::DragInt("end", &move_.end, 1);
+			ImGui::DragInt("start", &move_.start, static_cast<float>(dragValueInt));
+			ImGui::DragInt("end", &move_.end, static_cast<float>(dragValueInt));
 		} else if constexpr (std::is_same_v<T, Vector2>) {
 
-			ImGui::DragFloat2("start", &move_.start.x, 0.01f);
-			ImGui::DragFloat2("end", &move_.end.x, 0.01f);
+			ImGui::DragFloat2("start", &move_.start.x, dragValueFloat);
+			ImGui::DragFloat2("end", &move_.end.x, dragValueFloat);
 		} else if constexpr (std::is_same_v<T, Vector3>) {
 
-			ImGui::DragFloat3("start", &move_.start.x, 0.01f);
-			ImGui::DragFloat3("end", &move_.end.x, 0.01f);
+			ImGui::DragFloat3("start", &move_.start.x, dragValueFloat);
+			ImGui::DragFloat3("end", &move_.end.x, dragValueFloat);
 		} else if constexpr (std::is_same_v<T, Color>) {
 
 			ImGui::ColorEdit4("start", &move_.start.a);
@@ -230,6 +236,18 @@ inline void SimpleAnimation<T>::FromJson(const Json& data) {
 		move_.start = T::FromJson(data["move_.start"]);
 		move_.end = T::FromJson(data["move_.end"]);
 	}
+}
+
+template<typename T>
+inline void SimpleAnimation<T>::SetDragValue(float value) {
+
+	dragValueFloat = value;
+}
+
+template<typename T>
+inline void SimpleAnimation<T>::SetDragValue(int value) {
+
+	dragValueInt = value;
 }
 
 template<typename T>

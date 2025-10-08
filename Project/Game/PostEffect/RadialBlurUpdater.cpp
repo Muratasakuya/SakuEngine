@@ -12,8 +12,10 @@
 void RadialBlurUpdater::Init() {
 
 	// 使用するタイプを追加
-	lerpValues_.emplace(RadialBlurType::Parry, LerpRadialBlur());
-	lerpValues_.emplace(RadialBlurType::BeginStun, LerpRadialBlur());
+	LerpRadialBlur value{};
+	value.width.SetDragValue(0.001f);
+	lerpValues_.emplace(RadialBlurType::Parry, value);
+	lerpValues_.emplace(RadialBlurType::BeginStun, value);
 
 	// 初期状態を設定
 	currentState_ = State::None;
@@ -23,10 +25,21 @@ void RadialBlurUpdater::Init() {
 	ApplyJson();
 }
 
+void RadialBlurUpdater::SetAnimationType(SimpleAnimationType type) {
+
+	for (auto& value : std::views::values(lerpValues_)) {
+
+		value.center.SetAnimationType(type);
+		value.numSamples.SetAnimationType(type);
+		value.width.SetAnimationType(type);
+	}
+}
+
 void RadialBlurUpdater::Update() {
 
 	switch (currentState_) {
 	case RadialBlurUpdater::State::Updating:
+	case RadialBlurUpdater::State::Return:
 
 		// 時間を更新して各値を補間
 		LerpRadialBlur& value = lerpValues_[type_];
@@ -66,6 +79,12 @@ void RadialBlurUpdater::ImGui() {
 		case RadialBlurUpdater::State::Updating:
 
 			Start();
+			SetAnimationType(SimpleAnimationType::None);
+			break;
+		case RadialBlurUpdater::State::Return:
+
+			Start();
+			SetAnimationType(SimpleAnimationType::Return);
 			break;
 		case RadialBlurUpdater::State::Stop:
 
@@ -95,9 +114,6 @@ void RadialBlurUpdater::Start() {
 	value.center.Start();
 	value.numSamples.Start();
 	value.width.Start();
-
-	// Updateに設定
-	currentState_ = State::Updating;
 }
 
 void RadialBlurUpdater::Stop() {
