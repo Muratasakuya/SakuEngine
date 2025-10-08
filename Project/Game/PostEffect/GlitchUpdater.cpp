@@ -56,7 +56,6 @@ void GlitchUpdater::Update() {
 
 			// リセットして進める
 			timer_.Reset();
-			convergenceTimer_.Reset();
 			++currentCount_;
 
 			// 最大数を超えたら終了
