@@ -4,11 +4,12 @@
 //	include
 //============================================================================
 #include <Engine/Input/Input.h>
+#include <Engine/Core/Graphics/PostProcess/Core/PostProcessSystem.h>
 #include <Engine/Utility/Json/JsonAdapter.h>
 #include <Engine/Utility/Enum/EnumAdapter.h>
+#include <Engine/Utility/Random/RandomGenerator.h>
 #include <Engine/Config.h>
 #include <Game/Objects/Common/GameButtonBlinkingUpdater.h>
-#include <Engine/Utility/Random/RandomGenerator.h>
 
 //============================================================================
 //	GameResultDisplay classMethods
@@ -31,6 +32,8 @@ void GameResultDisplay::Init() {
 	resultTime_ = std::make_unique<GameTimerDisplay>();
 	resultTime_->Init("dd:dd:dd", "toughnessNumber",
 		"toughnessTimeSymbol", "resultTime", "GameResultDisplay");
+	// ポストエフェクト有効
+	resultTime_->SetPostProcessEnable(true);
 	// 最初は表示しない
 	resultTime_->SetAlpha(0.0f);
 
@@ -123,6 +126,9 @@ void GameResultDisplay::StartDisplay() {
 		float u = float(index + 1) / float(randomSwitchCount_ + 1);
 		return std::pow(u, randomSwitchBias_); };
 	nextSwitchT_ = (randomSwitchCount_ > 0) ? calcThreshold(0) : 1.0f;
+
+	// グリッチを発生させる
+	PostProcessSystem::GetInstance()->Start(PostProcessType::Glitch);
 }
 
 void GameResultDisplay::Update() {

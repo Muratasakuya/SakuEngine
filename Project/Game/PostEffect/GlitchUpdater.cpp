@@ -3,6 +3,7 @@
 //============================================================================
 //	include
 //============================================================================
+#include <Engine/Core/Graphics/PostProcess/Core/PostProcessSystem.h>
 #include <Engine/Utility/Random/RandomGenerator.h>
 #include <Engine/Utility/Enum/EnumAdapter.h>
 
@@ -20,6 +21,9 @@ void GlitchUpdater::Init() {
 }
 
 void GlitchUpdater::Start() {
+
+	// グリッチを有効にする
+	PostProcessSystem::GetInstance()->AddProcess(GetType());
 
 	// 収束時間を設定
 	convergenceTimer_.target_ = maxRandomCount_ * timer_.target_;
@@ -64,6 +68,8 @@ void GlitchUpdater::Update() {
 				// 更新しない状態にする
 				bufferData_.intensity = 0.0f;
 				currentState_ = State::None;
+				// 処理が終了次第無効にする
+				PostProcessSystem::GetInstance()->RemoveProcess(GetType());
 			}
 		}
 		break;
