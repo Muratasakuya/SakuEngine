@@ -13,7 +13,7 @@ void DxBlendState::Create(BlendMode blendMode, D3D12_RENDER_TARGET_BLEND_DESC& b
 	// 各ブレンドモードの設定をswitch文で行う
 	switch (blendMode) {
 		// 通常αブレンド
-	case BlendMode::Normal:
+	case BlendMode::kBlendModeNormal:
 
 		blendDesc.BlendEnable = true;
 		blendDesc.SrcBlend = D3D12_BLEND_SRC_ALPHA;
@@ -26,7 +26,7 @@ void DxBlendState::Create(BlendMode blendMode, D3D12_RENDER_TARGET_BLEND_DESC& b
 		break;
 
 		// 加算
-	case BlendMode::Add:
+	case BlendMode::kBlendModeAdd:
 
 		blendDesc.BlendEnable = true;
 		blendDesc.SrcBlend = D3D12_BLEND_SRC_ALPHA;
@@ -39,7 +39,7 @@ void DxBlendState::Create(BlendMode blendMode, D3D12_RENDER_TARGET_BLEND_DESC& b
 		break;
 
 		// 減算
-	case BlendMode::Subtract:
+	case BlendMode::kBlendModeSubtract:
 
 		blendDesc.BlendEnable = true;
 		blendDesc.SrcBlend = D3D12_BLEND_SRC_ALPHA;
@@ -52,7 +52,7 @@ void DxBlendState::Create(BlendMode blendMode, D3D12_RENDER_TARGET_BLEND_DESC& b
 		break;
 
 		// 乗算
-	case BlendMode::Multiply:
+	case BlendMode::kBlendModeMultiply:
 
 		blendDesc.BlendEnable = true;
 		blendDesc.SrcBlend = D3D12_BLEND_ZERO;
@@ -65,7 +65,7 @@ void DxBlendState::Create(BlendMode blendMode, D3D12_RENDER_TARGET_BLEND_DESC& b
 		break;
 
 		// スクリーン
-	case BlendMode::Screen:
+	case BlendMode::kBlendModeScreen:
 
 		blendDesc.BlendEnable = true;
 		blendDesc.SrcBlend = D3D12_BLEND_INV_DEST_COLOR;

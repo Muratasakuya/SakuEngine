@@ -20,7 +20,7 @@ void CPUParticleGroup::Create(ID3D12Device* device,
 	// 全ての形状を初期化しておく
 	emitter_.Init();
 
-	blendMode_ = Add;
+	blendMode_ = BlendMode::kBlendModeAdd;
 
 	// buffer作成
 	BaseParticleGroup::CreatePrimitiveBuffer(device, primitiveType, kMaxCPUParticles);

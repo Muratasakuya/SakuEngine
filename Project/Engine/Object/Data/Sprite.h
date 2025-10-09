@@ -106,7 +106,7 @@ private:
 
 	// 頂点情報
 	std::vector<SpriteVertexData> vertexData_;
-	BlendMode blendMode_ = BlendMode::Normal;
+	BlendMode blendMode_ = BlendMode::kBlendModeNormal;
 
 	// buffer
 	VertexBuffer<SpriteVertexData> vertexBuffer_;

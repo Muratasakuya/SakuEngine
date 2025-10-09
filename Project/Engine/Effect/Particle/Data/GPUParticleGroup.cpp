@@ -31,7 +31,7 @@ void GPUParticleGroup::Create(ID3D12Device* device, Asset* asset, ParticlePrimit
 	frequency_ = 0.4f;
 	frequencyTime_ = 0.0f;
 	isInitialized_ = false;
-	blendMode_ = Add;
+	blendMode_ = BlendMode::kBlendModeAdd;
 	scalingValue_ = 1.0f;
 
 	// 最初のテクスチャを設定

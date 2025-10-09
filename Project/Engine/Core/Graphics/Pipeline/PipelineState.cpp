@@ -193,7 +193,7 @@ void PipelineState::CreateVertexPipeline(const std::string& fileName, const Json
 
 	// 全てのblendModeで作成
 	if (blendMode == "ALL") {
-		for (const auto& blend : Algorithm::GetEnumArray(BlendMode::Count)) {
+		for (const auto& blend : Algorithm::GetEnumArray(BlendMode::kBlendModeCount)) {
 
 			// BlendState
 			DxBlendState dxBlendState;
@@ -236,14 +236,14 @@ void PipelineState::CreateVertexPipeline(const std::string& fileName, const Json
 		// BlendState
 		DxBlendState dxBlendState;
 		D3D12_RENDER_TARGET_BLEND_DESC blendState;
-		dxBlendState.Create(static_cast<BlendMode>(Normal), blendState);
+		dxBlendState.Create(BlendMode::kBlendModeNormal, blendState);
 		pipelineDesc.BlendState.RenderTarget[0] = blendState;
 
 		// 生成
-		graphicsPipelinepipelineStates_[Normal] = nullptr;
+		graphicsPipelinepipelineStates_[BlendMode::kBlendModeNormal] = nullptr;
 		HRESULT hr = device->CreateGraphicsPipelineState(
 			&pipelineDesc,
-			IID_PPV_ARGS(&graphicsPipelinepipelineStates_[Normal]));
+			IID_PPV_ARGS(&graphicsPipelinepipelineStates_[BlendMode::kBlendModeNormal]));
 		if (FAILED(hr)) {
 
 			const std::string& file = "FileName: " + fileName + "\n";
@@ -312,7 +312,7 @@ void PipelineState::CreateMeshPipeline(const std::string& fileName, const Json& 
 
 	// 全てのblendModeで作成
 	if (blendMode == "ALL") {
-		for (const auto& blend : Algorithm::GetEnumArray(BlendMode::Count)) {
+		for (const auto& blend : Algorithm::GetEnumArray(BlendMode::kBlendModeCount)) {
 
 			// BlendState
 			DxBlendState dxBlendState;
@@ -363,7 +363,7 @@ void PipelineState::CreateMeshPipeline(const std::string& fileName, const Json& 
 		// BlendState
 		DxBlendState dxBlendState;
 		D3D12_RENDER_TARGET_BLEND_DESC blendState;
-		dxBlendState.Create(static_cast<BlendMode>(Normal), blendState);
+		dxBlendState.Create(BlendMode::kBlendModeNormal, blendState);
 		pipelineDesc.BlendState.RenderTarget[0] = blendState;
 
 		pipelineDesc.RasterizerState = rasterizerDesc;
@@ -379,7 +379,7 @@ void PipelineState::CreateMeshPipeline(const std::string& fileName, const Json& 
 
 		// 生成
 		HRESULT hr = device->CreatePipelineState(&streamDesc,
-			IID_PPV_ARGS(graphicsPipelinepipelineStates_[Normal].GetAddressOf()));
+			IID_PPV_ARGS(graphicsPipelinepipelineStates_[BlendMode::kBlendModeNormal].GetAddressOf()));
 		if (FAILED(hr)) {
 
 			const std::string& file = "FileName: " + fileName + "\n";
