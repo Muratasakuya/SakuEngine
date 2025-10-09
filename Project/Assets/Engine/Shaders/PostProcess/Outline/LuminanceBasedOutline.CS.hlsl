@@ -2,7 +2,7 @@
 //	include
 //============================================================================
 
-#include "../../../../../Engine/Core/Graphics/PostProcess/PostProcessConfig.h"
+#include "../PostProcessCommon.hlsli"
 
 //============================================================================
 //	Constant
@@ -40,13 +40,6 @@ struct EdgeParameter {
 ConstantBuffer<EdgeParameter> gEdge : register(b0);
 
 //============================================================================
-//	buffer
-//============================================================================
-
-RWTexture2D<float4> gOutputTexture : register(u0);
-Texture2D<float4> gTexture : register(t0);
-
-//============================================================================
 //	Function
 //============================================================================
 
@@ -62,13 +55,20 @@ float Luminance(float3 v) {
 void main(uint3 DTid : SV_DispatchThreadID) {
 	
 	uint width, height;
-	gTexture.GetDimensions(width, height);
+	gInputTexture.GetDimensions(width, height);
 
 	// ピクセル位置
 	uint2 pixelPos = DTid.xy;
 
 	// 範囲外
 	if (pixelPos.x >= width || pixelPos.y >= height) {
+		return;
+	}
+	
+	// フラグが立っていなければ処理しない
+	if (!CheckPixelBitMask(Bit_LuminanceBasedOutline, gMaskTexture[pixelPos])) {
+		
+		gOutputTexture[pixelPos] = gInputTexture.Load(int3(pixelPos, 0));
 		return;
 	}
 
@@ -88,7 +88,7 @@ void main(uint3 DTid : SV_DispatchThreadID) {
 			int2 samplePos = clamp(pixelPos + offset, int2(0, 0), int2(width - 1, height - 1));
 
 			// テクスチャのサンプル
-			float3 sampleColor = gTexture.Load(int3(samplePos, 0)).rgb;
+			float3 sampleColor = gInputTexture.Load(int3(samplePos, 0)).rgb;
 
 			// 輝度計算
 			float luminance = Luminance(sampleColor);
@@ -103,7 +103,7 @@ void main(uint3 DTid : SV_DispatchThreadID) {
 	float weight = length(difference) * gEdge.strength;
 	weight = saturate(weight);
 	// 元のテクスチャカラーを取得
-	float4 originalColor = gTexture.Load(int3(pixelPos, 0));
+	float4 originalColor = gInputTexture.Load(int3(pixelPos, 0));
 	// エッジを適用
 	float3 finalColor = (1.0f - weight) * originalColor.rgb;
 

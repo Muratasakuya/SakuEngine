@@ -258,8 +258,9 @@ void Framework::RenderPath(DxCommand* dxCommand) {
 	renderEngine_->BeginPostProcess();
 
 	// postProcess処理実行
-	postProcessSystem->Execute(renderEngine_->GetRenderTexture(
-		RenderEngine::ViewType::Main)->GetSRVGPUHandle(), dxCommand);
+	postProcessSystem->Execute(dxCommand,
+		renderEngine_->GetRenderTexture(RenderEngine::ViewType::Main, 0)->GetSRVGPUHandle(),  // 0.色
+		renderEngine_->GetRenderTexture(RenderEngine::ViewType::Main, 1)->GetSRVGPUHandle()); // 1.マスク
 
 	renderEngine_->EndPostProcess();
 
@@ -270,8 +271,9 @@ void Framework::RenderPath(DxCommand* dxCommand) {
 
 	renderEngine_->Rendering(RenderEngine::ViewType::Debug, meshEnable);
 
-	postProcessSystem->ExecuteDebugScene(renderEngine_->GetRenderTexture(
-		RenderEngine::ViewType::Debug)->GetSRVGPUHandle(), dxCommand);
+	postProcessSystem->ExecuteDebugScene(dxCommand,
+		renderEngine_->GetRenderTexture(RenderEngine::ViewType::Debug, 0)->GetSRVGPUHandle(),  // 0.色
+		renderEngine_->GetRenderTexture(RenderEngine::ViewType::Debug, 1)->GetSRVGPUHandle()); // 1.マスク
 #endif
 	//========================================================================
 	//	draw: frameBuffer

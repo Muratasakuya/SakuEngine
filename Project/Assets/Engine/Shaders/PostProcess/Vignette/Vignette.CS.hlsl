@@ -2,7 +2,7 @@
 //	include
 //============================================================================
 
-#include "../../../../../Engine/Core/Graphics/PostProcess/PostProcessConfig.h"
+#include "../PostProcessCommon.hlsli"
 
 //============================================================================
 //	CBuffer
@@ -10,18 +10,11 @@
 
 struct VignetteParameter {
 	
-	float scale;  // スケール調整
-	float power;  // 乗算パラメータ
+	float scale; // スケール調整
+	float power; // 乗算パラメータ
 	float3 color; // 色
 };
 ConstantBuffer<VignetteParameter> gVignette : register(b0);
-
-//============================================================================
-//	buffer
-//============================================================================
-
-RWTexture2D<float4> gOutputTexture : register(u0);
-Texture2D<float4> gTexture : register(t0);
 
 //============================================================================
 //	Main
@@ -30,13 +23,20 @@ Texture2D<float4> gTexture : register(t0);
 void main(uint3 DTid : SV_DispatchThreadID) {
 	
 	uint width, height;
-	gTexture.GetDimensions(width, height);
+	gInputTexture.GetDimensions(width, height);
 
 	// ピクセル位置
 	uint2 pixelPos = DTid.xy;
-
+	
 	// 範囲外
 	if (pixelPos.x >= width || pixelPos.y >= height) {
+		return;
+	}
+	
+	// フラグが立っていなければ処理しない
+	if (!CheckPixelBitMask(Bit_Vignette, gMaskTexture[pixelPos])) {
+
+		gOutputTexture[pixelPos] = gInputTexture.Load(int3(pixelPos, 0));
 		return;
 	}
 
@@ -49,7 +49,7 @@ void main(uint3 DTid : SV_DispatchThreadID) {
 	vignette = saturate(pow(vignette, gVignette.power));
 
 	// テクスチャのサンプル
-	float4 color = gTexture.Load(int3(pixelPos, 0));
+	float4 color = gInputTexture.Load(int3(pixelPos, 0));
 	// ビネット適用
 	color.rgb = lerp(color.rgb, gVignette.color, 1.0f - vignette);
 

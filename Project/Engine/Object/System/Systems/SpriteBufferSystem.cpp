@@ -37,7 +37,7 @@ void SpriteBufferSystem::Update(ObjectPoolManager& ObjectPoolManager) {
 		sprite->UpdateVertex(*transform);
 
 		// mapに追加
-		spriteDataMap_[sprite->GetLayer()].push_back(SpriteData(transform, material, sprite));
+		spriteDataMap_[sprite->GetLayer()].emplace_back(SpriteData(transform, material, sprite));
 	}
 
 	// 描画順インデックスでソートを行う

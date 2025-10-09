@@ -175,6 +175,27 @@ void DxCommand::SetRenderTargets(const std::optional<RenderTarget>& renderTarget
 	}
 }
 
+void DxCommand::SetRenderTargets(const std::vector<RenderTarget>& renderTargets,
+	const std::optional<D3D12_CPU_DESCRIPTOR_HANDLE>& dsvHandle) {
+
+	std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> handles;
+	handles.reserve(renderTargets.size());
+	for (const auto& renderTarget : renderTargets) {
+
+		handles.push_back(renderTarget.rtvHandle);
+	}
+	commandList_->OMSetRenderTargets(static_cast<UINT>(handles.size()),
+		handles.data(), FALSE, dsvHandle.has_value() ? &dsvHandle.value() : nullptr);
+
+	// すべてのRTVをクリア
+	for (const auto& renderTarget : renderTargets) {
+
+		float colors[] = { renderTarget.clearColor.r, renderTarget.clearColor.g,
+			renderTarget.clearColor.b, renderTarget.clearColor.a };
+		commandList_->ClearRenderTargetView(renderTarget.rtvHandle, colors, 0, nullptr);
+	}
+}
+
 void DxCommand::ClearDepthStencilView(const D3D12_CPU_DESCRIPTOR_HANDLE& dsvHandle) {
 
 	commandList_->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);

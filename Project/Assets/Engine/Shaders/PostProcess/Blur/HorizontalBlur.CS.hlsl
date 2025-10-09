@@ -2,7 +2,7 @@
 //	include
 //============================================================================
 
-#include "../../../../../Engine/Core/Graphics/PostProcess/PostProcessConfig.h"
+#include "../PostProcessCommon.hlsli"
 
 //============================================================================
 //	CBuffer
@@ -14,13 +14,6 @@ struct BlurParam {
 	float sigma;
 };
 ConstantBuffer<BlurParam> gBlurParam : register(b0);
-
-//============================================================================
-//	buffer
-//============================================================================
-
-RWTexture2D<float4> gOutputTexture : register(u0);
-Texture2D<float4> gInputTexture : register(t0);
 
 //============================================================================
 //	Function
@@ -37,6 +30,24 @@ float Gaussian(float x, float sigma) {
 //============================================================================
 [numthreads(THREAD_POSTPROCESS_GROUP, THREAD_POSTPROCESS_GROUP, 1)]
 void main(uint3 DTid : SV_DispatchThreadID) {
+	
+	uint width, height;
+	gInputTexture.GetDimensions(width, height);
+
+	// ピクセル位置
+	uint2 pixelPos = DTid.xy;
+
+	// 範囲外
+	if (pixelPos.x >= width || pixelPos.y >= height) {
+		return;
+	}
+	
+	// フラグが立っていなければ処理しない
+	if (!CheckPixelBitMask(Bit_HorizontalBlur, gMaskTexture[pixelPos])) {
+		
+		gOutputTexture[pixelPos] = gInputTexture.Load(int3(pixelPos, 0));
+		return;
+	}
 	
 	float4 color = 0;
 	float weightSum = 0.0;

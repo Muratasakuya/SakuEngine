@@ -70,8 +70,11 @@ public:
 	void SetAlphaTextureName(const std::string& textureName) { sprite_->SetAlphaTextureName(textureName); }
 	void SetSpriteLayer(SpriteLayer layer) { sprite_->SetLayer(layer); }
 	void SetSpriteLayerIndex(SpriteLayerIndex layerIndex, uint16_t subLayerIndex = 0) { sprite_->SetLayerIndex(layerIndex, subLayerIndex); }
-	void SetPostProcessEnable(bool enable) { sprite_->SetPostProcessEnable(enable); }
 	void SetBlendMode(BlendMode blendMode) { sprite_->SetBlendMode(blendMode); }
+
+	// postEffect
+	void SetPostProcessEnable(bool enable) { sprite_->SetPostProcessEnable(enable); }
+	void SetPostProcessMask(uint32_t mask) { material_->material.postProcessMask = mask; }
 
 	/*---------- getter ----------*/
 
@@ -97,7 +100,6 @@ protected:
 	SpriteMaterial* material_;
 	// sprite
 	Sprite* sprite_;
-
 private:
 	//========================================================================
 	//	private Methods

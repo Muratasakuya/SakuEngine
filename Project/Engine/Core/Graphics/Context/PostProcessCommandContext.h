@@ -24,5 +24,6 @@ public:
 
 	void Execute(PostProcessType type, ID3D12GraphicsCommandList* commandList,
 		class ComputePostProcessor* processor,
-		const D3D12_GPU_DESCRIPTOR_HANDLE& inputTextureGPUHandle);
+		const D3D12_GPU_DESCRIPTOR_HANDLE& inputTextureGPUHandle,
+		const D3D12_GPU_DESCRIPTOR_HANDLE& inputMaskTextureGPUHandle);
 };

@@ -42,6 +42,8 @@ public:
 
 	void SetRenderTargets(const std::optional<RenderTarget>& renderTarget,
 		const std::optional<D3D12_CPU_DESCRIPTOR_HANDLE>& dsvHandle = std::nullopt);
+	void SetRenderTargets(const std::vector<RenderTarget>& renderTargets,
+		const std::optional<D3D12_CPU_DESCRIPTOR_HANDLE>& dsvHandle = std::nullopt);
 
 	void ClearDepthStencilView(const D3D12_CPU_DESCRIPTOR_HANDLE& dsvHandle);
 

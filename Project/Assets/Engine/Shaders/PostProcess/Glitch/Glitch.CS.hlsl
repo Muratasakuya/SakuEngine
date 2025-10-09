@@ -3,7 +3,7 @@
 //============================================================================
 
 #include "../../Math/Math.hlsli"
-#include "../../../../../Engine/Core/Graphics/PostProcess/PostProcessConfig.h"
+#include "../PostProcessCommon.hlsli"
 
 //============================================================================
 //	CBuffer
@@ -24,10 +24,7 @@ ConstantBuffer<GlitchMaterial> gMaterial : register(b0);
 //	Texture
 //============================================================================
 
-RWTexture2D<float4> gOutputTexture : register(u0);
-Texture2D<float4> gRenderTexture : register(t0);
-Texture2D<float> gNoiseTexture : register(t1);
-
+Texture2D<float> gNoiseTexture : register(t2);
 SamplerState gSampler : register(s0);
 
 //============================================================================
@@ -37,10 +34,20 @@ SamplerState gSampler : register(s0);
 void main(uint3 DTid : SV_DispatchThreadID) {
 	
 	uint width, height;
-	gRenderTexture.GetDimensions(width, height);
-	
-	// 範囲外アクセス回避
-	if (DTid.x >= width || DTid.y >= height) {
+	gInputTexture.GetDimensions(width, height);
+
+	// ピクセル位置
+	uint2 pixelPos = DTid.xy;
+
+	// 範囲外
+	if (pixelPos.x >= width || pixelPos.y >= height) {
+		return;
+	}
+
+	// フラグが立っていなければ処理しない
+	if (!CheckPixelBitMask(Bit_Glitch, gMaskTexture[pixelPos])) {
+		
+		gOutputTexture[pixelPos] = gInputTexture.Load(int3(pixelPos, 0));
 		return;
 	}
 	
@@ -56,7 +63,7 @@ void main(uint3 DTid : SV_DispatchThreadID) {
 
 	// 元ピクセルとずらしたピクセル取得
 	int2 srcPos = int2(clamp(int(DTid.x + glitchOffs.x), 0, int(width - 1)),DTid.y);
-	float4 srcColor = gRenderTexture.Load(int3(srcPos, 0));
+	float4 srcColor = gInputTexture.Load(int3(srcPos, 0));
 	
 	// Chromatic Aberration風
 	float2 rgbShift = float2((Hash12(float2(gMaterial.time, srcPos.y)) - 0.5f) * 2.0f,
@@ -68,9 +75,9 @@ void main(uint3 DTid : SV_DispatchThreadID) {
 	int2 offB = clamp(srcPos + int2(-rgbShift), int2(0, 0), int2(width - 1, height - 1));
 
 	float3 col;
-	col.r = gRenderTexture.Load(int3(offR, 0)).r;
+	col.r = gInputTexture.Load(int3(offR, 0)).r;
 	col.g = srcColor.g;
-	col.b = gRenderTexture.Load(int3(offB, 0)).b;
+	col.b = gInputTexture.Load(int3(offB, 0)).b;
 
 	// ホワイトノイズオーバーレイ
 	float noise = gNoiseTexture.SampleLevel(gSampler, uv * 512.0f, 0.0f).r;

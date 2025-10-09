@@ -96,6 +96,8 @@ private:
 	// 描画順制御
 	SpriteLayer layer_;
 	uint16_t layerIndex_ = static_cast<uint16_t>(SpriteLayerIndex::None);
+
+	// ポストエフェクト
 	bool postProcessEnable_;
 
 	// 頂点情報

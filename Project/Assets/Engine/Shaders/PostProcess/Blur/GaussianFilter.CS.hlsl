@@ -2,7 +2,7 @@
 //	include
 //============================================================================
 
-#include "../../../../../Engine/Core/Graphics/PostProcess/PostProcessConfig.h"
+#include "../PostProcessCommon.hlsli"
 
 //============================================================================
 //	Constant
@@ -37,26 +37,26 @@ struct GaussParameter {
 ConstantBuffer<GaussParameter> gGauss : register(b0);
 
 //============================================================================
-//	buffer
-//============================================================================
-
-RWTexture2D<float4> gOutputTexture : register(u0);
-Texture2D<float4> gTexture : register(t0);
-
-//============================================================================
 //	Main
 //============================================================================
 [numthreads(THREAD_POSTPROCESS_GROUP, THREAD_POSTPROCESS_GROUP, 1)]
 void main(uint3 DTid : SV_DispatchThreadID) {
 	
 	uint width, height;
-	gTexture.GetDimensions(width, height);
+	gInputTexture.GetDimensions(width, height);
 
 	// ピクセル位置
 	uint2 pixelPos = DTid.xy;
 
 	// 範囲外ならスキップ
 	if (pixelPos.x >= width || pixelPos.y >= height) {
+		return;
+	}
+	
+	// フラグが立っていなければ処理しない
+	if (!CheckPixelBitMask(Bit_GaussianFilter, gMaskTexture[pixelPos])) {
+
+		gOutputTexture[pixelPos] = gInputTexture.Load(int3(pixelPos, 0));
 		return;
 	}
 
@@ -87,7 +87,7 @@ void main(uint3 DTid : SV_DispatchThreadID) {
 			int2 samplePos = clamp(pixelPos + offset, int2(0, 0), int2(width - 1, height - 1));
 
 			// テクスチャのサンプル
-			float3 sampleColor = gTexture.Load(int3(samplePos, 0)).rgb;
+			float3 sampleColor = gInputTexture.Load(int3(samplePos, 0)).rgb;
 
 			// カーネル値を掛ける
 			blurredColor += sampleColor * kernel3x3[i][j];

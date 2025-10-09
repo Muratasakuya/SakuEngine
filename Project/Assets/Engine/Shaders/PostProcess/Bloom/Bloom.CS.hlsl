@@ -2,7 +2,7 @@
 //	include
 //============================================================================
 
-#include "../../../../../Engine/Core/Graphics/PostProcess/PostProcessConfig.h"
+#include "../PostProcessCommon.hlsli"
 
 //============================================================================
 //	CBuffer
@@ -14,13 +14,6 @@ cbuffer Parameter : register(b0) {
 	int radius;
 	float sigma;
 };
-
-//============================================================================
-//	buffer
-//============================================================================
-
-Texture2D<float4> gInputTexture : register(t0);
-RWTexture2D<float4> gOutputTexture : register(u0);
 
 //============================================================================
 //	Function
@@ -48,6 +41,13 @@ void main(uint3 DTid : SV_DispatchThreadID) {
 	float4 sceneColor = gInputTexture.Load(int3(pixelPos, 0));
 	// ”ÍˆÍŠO
 	if (pixelPos.x >= width || pixelPos.y >= height) {
+		return;
+	}
+	
+	// ƒtƒ‰ƒO‚ª—§‚Á‚Ä‚¢‚È‚¯‚ê‚Îˆ—‚µ‚È‚¢
+	if (!CheckPixelBitMask(Bit_Bloom, gMaskTexture[pixelPos])) {
+
+		gOutputTexture[pixelPos] = sceneColor;
 		return;
 	}
 

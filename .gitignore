@@ -84,6 +84,8 @@ StyleCopReport.xml
 # *.pidb
 # *.svclog
 # *.scc
+
+imgui.ini
 Project/Log/engine.log
 Project/Log/assetCheck.log
 

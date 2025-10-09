@@ -40,8 +40,12 @@ public:
 	void Create(const std::vector<PostProcessType>& processes);
 
 	// postProcess実行
-	void Execute(const D3D12_GPU_DESCRIPTOR_HANDLE& inputSRVGPUHandle, DxCommand* dxCommand);
-	void ExecuteDebugScene(const D3D12_GPU_DESCRIPTOR_HANDLE& inputSRVGPUHandle, DxCommand* dxCommand);
+	void Execute(DxCommand* dxCommand,
+		const D3D12_GPU_DESCRIPTOR_HANDLE& inputSRVGPUHandle,      // 色
+		const D3D12_GPU_DESCRIPTOR_HANDLE& inputMaskSRVGPUHandle); // ポストエフェクトマスク
+	void ExecuteDebugScene(DxCommand* dxCommand,
+		const D3D12_GPU_DESCRIPTOR_HANDLE& inputSRVGPUHandle,      // 色
+		const D3D12_GPU_DESCRIPTOR_HANDLE& inputMaskSRVGPUHandle); // ポストエフェクトマスク
 
 	// 最終的なtextureをframeBufferに描画する
 	void RenderFrameBuffer(DxCommand* dxCommand);

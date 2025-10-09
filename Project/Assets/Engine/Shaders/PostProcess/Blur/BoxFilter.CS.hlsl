@@ -2,7 +2,7 @@
 //	include
 //============================================================================
 
-#include "../../../../../Engine/Core/Graphics/PostProcess/PostProcessConfig.h"
+#include "../PostProcessCommon.hlsli"
 
 //============================================================================
 //	Constant
@@ -27,13 +27,6 @@ static const float kKernel5x5[5][5] = {
 };
 
 //============================================================================
-//	buffer
-//============================================================================
-
-RWTexture2D<float4> gOutputTexture : register(u0);
-Texture2D<float4> gInputTexture : register(t0);
-
-//============================================================================
 //	Main
 //============================================================================
 [numthreads(THREAD_POSTPROCESS_GROUP, THREAD_POSTPROCESS_GROUP, 1)]
@@ -47,6 +40,13 @@ void main(uint3 DTid : SV_DispatchThreadID) {
 
 	// ‰æ‘œ”ÍˆÍŠO‚È‚çˆ—‚µ‚È‚¢
 	if (pixelPos.x >= width || pixelPos.y >= height) {
+		return;
+	}
+	
+	// ƒtƒ‰ƒO‚ª—§‚Á‚Ä‚¢‚È‚¯‚ê‚Îˆ—‚µ‚È‚¢
+	if (!CheckPixelBitMask(Bit_BoxFilter, gMaskTexture[pixelPos])) {
+		
+		gOutputTexture[pixelPos] = gInputTexture.Load(int3(pixelPos, 0));
 		return;
 	}
 

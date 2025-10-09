@@ -13,10 +13,16 @@
 
 void PostProcessCommandContext::Execute(PostProcessType type,
 	ID3D12GraphicsCommandList* commandList, ComputePostProcessor* processor,
-	const D3D12_GPU_DESCRIPTOR_HANDLE& inputTextureGPUHandle) {
+	const D3D12_GPU_DESCRIPTOR_HANDLE& inputTextureGPUHandle,
+	const D3D12_GPU_DESCRIPTOR_HANDLE& inputMaskTextureGPUHandle) {
 
 	UINT threadGroupCountX = DxUtils::RoundUp(static_cast<UINT>(processor->GetTextureSize().x), THREAD_POSTPROCESS_GROUP);
 	UINT threadGroupCountY = DxUtils::RoundUp(static_cast<UINT>(processor->GetTextureSize().y), THREAD_POSTPROCESS_GROUP);
+
+	// 共通設定
+	commandList->SetComputeRootDescriptorTable(0, processor->GetUAVGPUHandle());
+	commandList->SetComputeRootDescriptorTable(1, inputTextureGPUHandle);
+	commandList->SetComputeRootDescriptorTable(2, inputMaskTextureGPUHandle);
 
 	// typeごとに処理
 	switch (type) {
@@ -34,8 +40,6 @@ void PostProcessCommandContext::Execute(PostProcessType type,
 	case PostProcessType::LuminanceBasedOutline:
 	case PostProcessType::CRTDisplay:
 
-		commandList->SetComputeRootDescriptorTable(0, processor->GetUAVGPUHandle());
-		commandList->SetComputeRootDescriptorTable(1, inputTextureGPUHandle);
 		commandList->Dispatch(threadGroupCountX, threadGroupCountY, 1);
 		break;
 	case PostProcessType::Dissolve:
@@ -43,9 +47,7 @@ void PostProcessCommandContext::Execute(PostProcessType type,
 	case PostProcessType::Lut:
 	case PostProcessType::Glitch:
 
-		commandList->SetComputeRootDescriptorTable(0, processor->GetUAVGPUHandle());
-		commandList->SetComputeRootDescriptorTable(1, inputTextureGPUHandle);
-		commandList->SetComputeRootDescriptorTable(2, processor->GetProcessTextureGPUHandle());
+		commandList->SetComputeRootDescriptorTable(3, processor->GetProcessTextureGPUHandle());
 		commandList->Dispatch(threadGroupCountX, threadGroupCountY, 1);
 		break;
 	}

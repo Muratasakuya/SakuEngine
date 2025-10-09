@@ -2,14 +2,7 @@
 //	include
 //============================================================================
 
-#include "../../../../../Engine/Core/Graphics/PostProcess/PostProcessConfig.h"
-
-//============================================================================
-//	buffer
-//============================================================================
-
-RWTexture2D<float4> gOutputTexture : register(u0);
-Texture2D<float4> gTexture : register(t0);
+#include "../PostProcessCommon.hlsli"
 
 //============================================================================
 //	Main
@@ -18,7 +11,7 @@ Texture2D<float4> gTexture : register(t0);
 void main(uint3 DTid : SV_DispatchThreadID) {
 	
 	uint width, height;
-	gTexture.GetDimensions(width, height);
+	gInputTexture.GetDimensions(width, height);
 
 	// ピクセル位置
 	uint2 pixelPos = DTid.xy;
@@ -29,7 +22,7 @@ void main(uint3 DTid : SV_DispatchThreadID) {
 	}
 
 	// テクスチャのサンプル
-	float4 color = gTexture.Load(int3(pixelPos, 0));
+	float4 color = gInputTexture.Load(int3(pixelPos, 0));
 	// α値を1.0fに固定
 	gOutputTexture[pixelPos] = float4(color.rgb, 1.0f);
 }

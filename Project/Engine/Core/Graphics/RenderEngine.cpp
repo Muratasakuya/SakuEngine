@@ -40,16 +40,17 @@ void RenderEngine::InitRenderTextrue(ID3D12Device8* device) {
 	RTVDescriptor* rtvDescriptor = rtvDescriptor_.get();
 	SRVDescriptor* srvDescriptor = srvDescriptor_.get();
 
-	renderTextures_[ViewType::Main] = std::make_unique<RenderTexture>();
-	renderTextures_[ViewType::Main]->Create(
-		// サイズ
-		Config::kWindowWidth, Config::kWindowHeight,
-		// 色
+	// マルチRTVを作成
+	multiRenderTextures_[ViewType::Main] = std::make_unique<MultiRenderTexture>();
+	MultiRenderTexture* mainRenderTexrure = multiRenderTextures_[ViewType::Main].get();
+	mainRenderTexrure->Init(device, rtvDescriptor, srvDescriptor,
+		Config::kWindowWidth, Config::kWindowHeight);
+	// 色
+	mainRenderTexrure->AddColorTarget(Config::kRenderTextureRTVFormat,
 		Color(Config::kWindowClearColor[0], Config::kWindowClearColor[1],
-			Config::kWindowClearColor[2], Config::kWindowClearColor[3]),
-		// RTVフォーマット
-		Config::kRenderTextureRTVFormat,
-		device, rtvDescriptor, srvDescriptor);
+			Config::kWindowClearColor[2], Config::kWindowClearColor[3]));
+	// ポストエフェクトマスク
+	mainRenderTexrure->AddMaskTarget(DXGI_FORMAT_R16_UINT);
 
 #if defined(_DEBUG) || defined(_DEVELOPBUILD)
 
@@ -62,17 +63,18 @@ void RenderEngine::InitRenderTextrue(ID3D12Device8* device) {
 		Config::kSwapChainRTVFormat,
 		device, srvDescriptor);
 
-	// デバッグ視点用
-	renderTextures_[ViewType::Debug] = std::make_unique<RenderTexture>();
-	renderTextures_[ViewType::Debug]->Create(
-		// サイズ
-		Config::kWindowWidth, Config::kWindowHeight,
-		// 色
+	// デバッグ視点用マルチRTVを作成
+	// マルチRTVを作成
+	multiRenderTextures_[ViewType::Debug] = std::make_unique<MultiRenderTexture>();
+	MultiRenderTexture* debugRenderTexrure = multiRenderTextures_[ViewType::Debug].get();
+	debugRenderTexrure->Init(device, rtvDescriptor, srvDescriptor,
+		Config::kWindowWidth, Config::kWindowHeight);
+	// 色
+	debugRenderTexrure->AddColorTarget(Config::kRenderTextureRTVFormat,
 		Color(Config::kWindowClearColor[0], Config::kWindowClearColor[1],
-			Config::kWindowClearColor[2], Config::kWindowClearColor[3]),
-		// RTVフォーマット
-		Config::kRenderTextureRTVFormat,
-		device, rtvDescriptor, srvDescriptor);
+			Config::kWindowClearColor[2], Config::kWindowClearColor[3]));
+	// ポストエフェクトマスク
+	debugRenderTexrure->AddMaskTarget(DXGI_FORMAT_R16_UINT);
 #endif
 
 	// SRV作成
@@ -182,25 +184,26 @@ void RenderEngine::UpdateGPUBuffer(SceneView* sceneView, bool enableMesh) {
 
 #if defined(_DEBUG) || defined(_DEVELOPBUILD)
 
-	const RenderTarget renderTarget = renderTextures_[ViewType::Debug]->GetRenderTarget();
+	const uint32_t renderWidth = multiRenderTextures_[ViewType::Debug]->GetWidth();
+	const uint32_t renderHeigth = multiRenderTextures_[ViewType::Debug]->GetHeight();
 	Vector2 pixelInput = Vector2::AnyInit(0.0f);
 	if (Input::GetInstance()->IsMouseOnView(InputViewArea::Scene)) {
 
 		pixelInput = Input::GetInstance()->GetMousePosInView(InputViewArea::Scene).value();
 	}
-	pixelPicker_->Update(sceneView, Vector2(static_cast<float>(renderTarget.width),
-		static_cast<float>(renderTarget.height)), pixelInput);
+	pixelPicker_->Update(sceneView, Vector2(static_cast<float>(renderWidth),
+		static_cast<float>(renderHeigth)), pixelInput);
 #endif
 }
 
 void RenderEngine::Rendering(ViewType type, bool enableMesh) {
 
-	BeginRenderTarget(renderTextures_[type].get());
+	BeginRenderTarget(multiRenderTextures_[type].get());
 
 	// 描画処理
 	Renderers(type, enableMesh);
 
-	EndRenderTarget(renderTextures_[type].get());
+	EndRenderTarget(multiRenderTextures_[type].get());
 }
 
 void RenderEngine::BeginPostProcess() {
@@ -292,30 +295,61 @@ void RenderEngine::EndRenderFrameBuffer() {
 	imguiManager_->Draw(dxCommand_->GetCommandList());
 
 	// ComputeShader -> RenderTarget
-	dxCommand_->TransitionBarriers({ renderTextures_[ViewType::Debug]->GetResource() },
-		D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET);
+	{
+		std::vector<ID3D12Resource*> resources{};
+		resources.reserve(multiRenderTextures_[ViewType::Debug]->GetAttachments().size());
+		for (const auto& attachment : multiRenderTextures_[ViewType::Debug]->GetAttachments()) {
+
+			resources.push_back(attachment.texture->GetResource());
+		}
+		// ComputeShader -> RenderTarget
+		dxCommand_->TransitionBarriers(resources, D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE,
+			D3D12_RESOURCE_STATE_RENDER_TARGET);
+	}
 #endif // _DEBUG
 
-	// ComputeShader -> RenderTarget
-	dxCommand_->TransitionBarriers({ renderTextures_[ViewType::Main]->GetResource() },
-		D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET);
+	{
+		std::vector<ID3D12Resource*> resources{};
+		resources.reserve(multiRenderTextures_[ViewType::Main]->GetAttachments().size());
+		for (const auto& attachment : multiRenderTextures_[ViewType::Main]->GetAttachments()) {
+
+			resources.push_back(attachment.texture->GetResource());
+		}
+		// ComputeShader -> RenderTarget
+		dxCommand_->TransitionBarriers(resources, D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE,
+			D3D12_RESOURCE_STATE_RENDER_TARGET);
+	}
+
 	// Present -> RenderTarget
 	dxCommand_->TransitionBarriers({ dxSwapChain_->GetCurrentResource() },
 		D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
 }
 
-void RenderEngine::BeginRenderTarget(RenderTexture* renderTexture) {
+void RenderEngine::BeginRenderTarget(MultiRenderTexture* multiRenderTexture) {
 
-	const RenderTarget renderTarget = renderTexture->GetRenderTarget();
+	// 描画RTVをセット
+	std::vector<RenderTarget> renderTargets{};
+	for (const auto& attachment : multiRenderTexture->GetAttachments()) {
 
-	dxCommand_->SetRenderTargets(renderTarget, dsvDescriptor_->GetFrameCPUHandle());
+		renderTargets.push_back(attachment.renderTarget);
+	}
+	dxCommand_->SetRenderTargets(renderTargets, dsvDescriptor_->GetFrameCPUHandle());
 	dxCommand_->ClearDepthStencilView(dsvDescriptor_->GetFrameCPUHandle());
-	dxCommand_->SetViewportAndScissor(renderTarget.width, renderTarget.height);
+
+	const uint32_t renderWidth = multiRenderTexture->GetWidth();
+	const uint32_t renderHeigth = multiRenderTexture->GetHeight();
+	dxCommand_->SetViewportAndScissor(renderWidth, renderHeigth);
 }
 
-void RenderEngine::EndRenderTarget(RenderTexture* renderTexture) {
+void RenderEngine::EndRenderTarget(MultiRenderTexture* multiRenderTexture) {
 
+	std::vector<ID3D12Resource*> resources{};
+	resources.reserve(multiRenderTexture->GetAttachments().size());
+	for (const auto& attachment : multiRenderTexture->GetAttachments()) {
+
+		resources.push_back(attachment.texture->GetResource());
+	}
 	// RenderTarget -> ComputeShader
-	dxCommand_->TransitionBarriers({ renderTexture->GetResource() },
-		D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE);
+	dxCommand_->TransitionBarriers(resources, D3D12_RESOURCE_STATE_RENDER_TARGET,
+		D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE);
 }

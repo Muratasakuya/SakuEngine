@@ -44,7 +44,7 @@ void SpriteRenderer::ApplyPostProcessRendering(SpriteLayer layer,
 	// frameBufferへの描画処理
 	// pipeline設定
 	commandList->SetGraphicsRootSignature(pipelines_[RenderMode::ApplyPostProcess]->GetRootSignature());
-	commandList->SetPipelineState(pipelines_[RenderMode::ApplyPostProcess]->GetGraphicsPipeline(kBlendModeNormal));
+	commandList->SetPipelineState(pipelines_[RenderMode::ApplyPostProcess]->GetGraphicsPipeline());
 
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
@@ -106,7 +106,7 @@ void SpriteRenderer::IrrelevantRendering(SceneConstBuffer* sceneBuffer, DxComman
 	// frameBufferへの描画処理
 	// pipeline設定
 	commandList->SetGraphicsRootSignature(pipelines_[RenderMode::IrrelevantPostProcess]->GetRootSignature());
-	commandList->SetPipelineState(pipelines_[RenderMode::IrrelevantPostProcess]->GetGraphicsPipeline(kBlendModeNormal));
+	commandList->SetPipelineState(pipelines_[RenderMode::IrrelevantPostProcess]->GetGraphicsPipeline());
 
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
