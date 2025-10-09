@@ -2,7 +2,7 @@
 //	include
 //============================================================================
 
-#include "../../../../../Engine/Core/Graphics/PostProcess/PostProcessConfig.h"
+#include "../PostProcessCommon.hlsli"
 
 //============================================================================
 //	Constant
@@ -42,21 +42,13 @@ struct OutlineMaterial {
 	
 	float3 color;
 };
-
 ConstantBuffer<OutlineMaterial> gMaterial : register(b0);
-
-//============================================================================
-//	RWStructuredBuffer
-//============================================================================
-
-RWTexture2D<float4> gOutputTexture : register(u0);
 
 //============================================================================
 //	Texture
 //============================================================================
 
-Texture2D<float4> gRenderTexture : register(t0);
-Texture2D<float> gDepthTexture : register(t1);
+Texture2D<float> gDepthTexture : register(t2);
 SamplerState gSamplerLinear : register(s0);
 SamplerState gSamplerPoint : register(s1);
 
@@ -67,10 +59,15 @@ SamplerState gSamplerPoint : register(s1);
 void main(uint3 DTid : SV_DispatchThreadID) {
 
 	uint width, height;
-	gRenderTexture.GetDimensions(width, height);
+	gInputTexture.GetDimensions(width, height);
 	
 	 // ピクセル位置
 	uint2 pixelPos = DTid.xy;
+	
+	// フラグが立っていなければ処理しない
+	if (!CheckPixelBitMask(Bit_DepthBasedOutline, gMaskTexture[pixelPos])) {
+		return;
+	}
 
 	// 画像範囲外チェック
 	if (pixelPos.x >= width || pixelPos.y >= height) {
@@ -108,7 +105,7 @@ void main(uint3 DTid : SV_DispatchThreadID) {
 
 	// 元カラーと合成して出力
 	float2 uv = (float2(pixelPos) + 0.5f) / float2(width, height);
-	float4 srcColor = gRenderTexture.SampleLevel(gSamplerLinear, uv, 0);
+	float4 srcColor = gInputTexture.SampleLevel(gSamplerLinear, uv, 0);
 
 	float3 finalColor = lerp(gMaterial.color, srcColor.rgb, 1.0f - weight);
 

@@ -3,7 +3,7 @@
 //============================================================================
 
 #include "../../Math/Math.hlsli"
-#include "../../../../../Engine/Core/Graphics/PostProcess/PostProcessConfig.h"
+#include "../PostProcessCommon.hlsli"
 
 //============================================================================
 //	CBuffer
@@ -34,9 +34,6 @@ ConstantBuffer<CRTMaterial> gMaterial : register(b0);
 //============================================================================
 //	Texture
 //============================================================================
-
-RWTexture2D<float4> gOutputTexture : register(u0);
-Texture2D<float4> gRenderTexture : register(t0);
 
 SamplerState gSampler : register(s0);
 
@@ -118,9 +115,9 @@ float3 ApplyAberration(float2 uv, float aberr) {
 	float2 c = uv - 0.5f;
 	float2 dir = normalize(c + 1e-6f);
 	float2 duv = dir * aberr; // テクセル単位
-	float r = gRenderTexture.SampleLevel(gSampler, uv + duv, 0).r;
-	float g = gRenderTexture.SampleLevel(gSampler, uv, 0).g;
-	float b = gRenderTexture.SampleLevel(gSampler, uv - duv, 0).b;
+	float r = gInputTexture.SampleLevel(gSampler, uv + duv, 0).r;
+	float g = gInputTexture.SampleLevel(gSampler, uv, 0).g;
+	float b = gInputTexture.SampleLevel(gSampler, uv - duv, 0).b;
 	return float3(r, g, b);
 }
 
@@ -140,9 +137,19 @@ float3 AddGrain(float3 col, float2 uv, float time, float amount) {
 [numthreads(THREAD_POSTPROCESS_GROUP, THREAD_POSTPROCESS_GROUP, 1)]
 void main(uint3 DTid : SV_DispatchThreadID) {
 	
-	// 範囲外アクセス回避
-	if (DTid.x >= (uint) gMaterial.resolution.x ||
-		DTid.y >= (uint) gMaterial.resolution.y) {
+	uint width, height;
+	gInputTexture.GetDimensions(width, height);
+
+	// ピクセル位置
+	uint2 pixelPos = DTid.xy;
+
+	// フラグが立っていなければ処理しない
+	if (!CheckPixelBitMask(Bit_CRTDisplay, gMaskTexture[pixelPos])) {
+		return;
+	}
+
+	// 範囲外
+	if (pixelPos.x >= width || pixelPos.y >= height) {
 		return;
 	}
 
@@ -163,7 +170,7 @@ void main(uint3 DTid : SV_DispatchThreadID) {
 		color = ApplyAberration(suv, gMaterial.aberration * gMaterial.invResolution.x);
 	} else {
 		
-		color = gRenderTexture.SampleLevel(gSampler, suv, 0).rgb;
+		color = gInputTexture.SampleLevel(gSampler, suv, 0).rgb;
 	}
 
 	// 走査線

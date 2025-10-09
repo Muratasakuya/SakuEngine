@@ -36,11 +36,8 @@ void SpriteBufferSystem::Update(ObjectPoolManager& ObjectPoolManager) {
 		// spriteの更新処理
 		sprite->UpdateVertex(*transform);
 
-		// マテリアルにポストエフェクトマスクを設定
-		material->material.postEffectMask = sprite->GetPostEffectMask();
-
 		// mapに追加
-		spriteDataMap_[sprite->GetLayer()].push_back(SpriteData(transform, material, sprite));
+		spriteDataMap_[sprite->GetLayer()].emplace_back(SpriteData(transform, material, sprite));
 	}
 
 	// 描画順インデックスでソートを行う

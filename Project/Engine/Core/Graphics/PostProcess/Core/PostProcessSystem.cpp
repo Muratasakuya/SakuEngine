@@ -181,24 +181,6 @@ void PostProcessSystem::Create(const std::vector<PostProcessType>& processes) {
 
 void PostProcessSystem::Update() {
 
-	// scene情報が必要な場合のみ
-	if (Algorithm::Find(activeProcesses_, PostProcessType::DepthBasedOutline, false)) {
-
-		auto* buffer = static_cast<PostProcessBuffer<DepthBasedOutlineForGPU>*>(
-			buffers_[PostProcessType::DepthBasedOutline].get());
-
-		const auto& parameter = buffer->GetParameter();
-
-		// 渡す値の設定
-		DepthBasedOutlineForGPU parama{};
-		parama.projectionInverse = Matrix4x4::Inverse(sceneView_->GetCamera()->GetProjectionMatrix());
-		parama.edgeScale = parameter.edgeScale;
-		parama.threshold = parameter.threshold;
-		parama.color = parameter.color;
-
-		buffer->SetParameter(&parama, sizeof(DepthBasedOutlineForGPU));
-	}
-
 	// バッファ更新クラスでGPUバッファを更新する
 	ApplyUpdatersToBuffers();
 }
@@ -445,7 +427,7 @@ void PostProcessSystem::CreateCBuffer(PostProcessType type) {
 	case PostProcessType::Bloom: {
 
 		auto buffer = std::make_unique<PostProcessBuffer<BloomForGPU>>();
-		buffer->Init(device_, 2);
+		buffer->Init(device_, 3);
 
 		buffers_[type] = std::move(buffer);
 		break;
@@ -453,7 +435,7 @@ void PostProcessSystem::CreateCBuffer(PostProcessType type) {
 	case PostProcessType::HorizontalBlur: {
 
 		auto buffer = std::make_unique<PostProcessBuffer<HorizonBlurForGPU>>();
-		buffer->Init(device_, 2);
+		buffer->Init(device_, 3);
 
 		buffers_[type] = std::move(buffer);
 		break;
@@ -461,7 +443,7 @@ void PostProcessSystem::CreateCBuffer(PostProcessType type) {
 	case PostProcessType::VerticalBlur: {
 
 		auto buffer = std::make_unique<PostProcessBuffer<VerticalBlurForGPU>>();
-		buffer->Init(device_, 2);
+		buffer->Init(device_, 3);
 
 		buffers_[type] = std::move(buffer);
 		break;
@@ -469,7 +451,7 @@ void PostProcessSystem::CreateCBuffer(PostProcessType type) {
 	case PostProcessType::RadialBlur: {
 
 		auto buffer = std::make_unique<PostProcessBuffer<RadialBlurForGPU>>();
-		buffer->Init(device_, 2);
+		buffer->Init(device_, 3);
 
 		buffers_[type] = std::move(buffer);
 		break;
@@ -477,7 +459,7 @@ void PostProcessSystem::CreateCBuffer(PostProcessType type) {
 	case PostProcessType::GaussianFilter: {
 
 		auto buffer = std::make_unique<PostProcessBuffer<GaussianFilterForGPU>>();
-		buffer->Init(device_, 2);
+		buffer->Init(device_, 3);
 
 		buffers_[type] = std::move(buffer);
 		break;
@@ -489,7 +471,7 @@ void PostProcessSystem::CreateCBuffer(PostProcessType type) {
 	case PostProcessType::Dissolve: {
 
 		auto buffer = std::make_unique<PostProcessBuffer<DissolveForGPU>>();
-		buffer->Init(device_, 3);
+		buffer->Init(device_, 4);
 
 		buffers_[type] = std::move(buffer);
 		break;
@@ -497,7 +479,7 @@ void PostProcessSystem::CreateCBuffer(PostProcessType type) {
 	case PostProcessType::Random: {
 
 		auto buffer = std::make_unique<PostProcessBuffer<RandomForGPU>>();
-		buffer->Init(device_, 2);
+		buffer->Init(device_, 3);
 
 		buffers_[type] = std::move(buffer);
 		break;
@@ -505,7 +487,7 @@ void PostProcessSystem::CreateCBuffer(PostProcessType type) {
 	case PostProcessType::Vignette: {
 
 		auto buffer = std::make_unique<PostProcessBuffer<VignetteForGPU>>();
-		buffer->Init(device_, 2);
+		buffer->Init(device_, 3);
 
 		buffers_[type] = std::move(buffer);
 		break;
@@ -521,7 +503,7 @@ void PostProcessSystem::CreateCBuffer(PostProcessType type) {
 	case PostProcessType::LuminanceBasedOutline: {
 
 		auto buffer = std::make_unique<PostProcessBuffer<LuminanceBasedOutlineForGPU>>();
-		buffer->Init(device_, 2);
+		buffer->Init(device_, 3);
 
 		buffers_[type] = std::move(buffer);
 		break;
@@ -529,7 +511,7 @@ void PostProcessSystem::CreateCBuffer(PostProcessType type) {
 	case PostProcessType::DepthBasedOutline: {
 
 		auto buffer = std::make_unique<PostProcessBuffer<DepthBasedOutlineForGPU>>();
-		buffer->Init(device_, 3);
+		buffer->Init(device_, 4);
 
 		buffers_[type] = std::move(buffer);
 		// 更新クラスを自動追加
@@ -539,7 +521,7 @@ void PostProcessSystem::CreateCBuffer(PostProcessType type) {
 	case PostProcessType::Lut: {
 
 		auto buffer = std::make_unique<PostProcessBuffer<LutForGPU>>();
-		buffer->Init(device_, 3);
+		buffer->Init(device_, 4);
 
 		buffers_[type] = std::move(buffer);
 		break;
@@ -547,7 +529,7 @@ void PostProcessSystem::CreateCBuffer(PostProcessType type) {
 	case PostProcessType::Glitch: {
 
 		auto buffer = std::make_unique<PostProcessBuffer<GlitchForGPU>>();
-		buffer->Init(device_, 3);
+		buffer->Init(device_, 4);
 
 		buffers_[type] = std::move(buffer);
 		break;
@@ -555,7 +537,7 @@ void PostProcessSystem::CreateCBuffer(PostProcessType type) {
 	case PostProcessType::CRTDisplay: {
 
 		auto buffer = std::make_unique<PostProcessBuffer<CRTDisplayForGPU>>();
-		buffer->Init(device_, 2);
+		buffer->Init(device_, 3);
 
 		buffers_[type] = std::move(buffer);
 		break;

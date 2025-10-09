@@ -2,7 +2,7 @@
 //	include
 //============================================================================
 
-#include "../../../../../Engine/Core/Graphics/PostProcess/PostProcessConfig.h"
+#include "../PostProcessCommon.hlsli"
 
 //============================================================================
 //	CBuffer
@@ -18,9 +18,7 @@ cbuffer Params : register(b0) {
 //	buffer
 //============================================================================
 
-RWTexture2D<float4> gOutputTexture : register(u0);
-Texture2D<float4> gInputTexture : register(t0);
-Texture3D<float4> gLutTexture : register(t1);
+Texture3D<float4> gLutTexture : register(t2);
 SamplerState gSampler : register(s0);
 
 //============================================================================
@@ -32,8 +30,16 @@ void main(uint3 DTid : SV_DispatchThreadID) {
 	uint width, height;
 	gInputTexture.GetDimensions(width, height);
 	
-	// 範囲外アクセス防止
-	if (DTid.x >= width || DTid.y >= height) {
+	// ピクセル位置
+	uint2 pixelPos = DTid.xy;
+
+	// フラグが立っていなければ処理しない
+	if (!CheckPixelBitMask(Bit_Lut, gMaskTexture[pixelPos])) {
+		return;
+	}
+	
+	// 範囲外
+	if (pixelPos.x >= width || pixelPos.y >= height) {
 		return;
 	}
 	

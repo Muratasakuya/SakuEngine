@@ -2,7 +2,7 @@
 //	include
 //============================================================================
 
-#include "../../../../../Engine/Core/Graphics/PostProcess/PostProcessConfig.h"
+#include "../PostProcessCommon.hlsli"
 
 //============================================================================
 //	Constant
@@ -27,13 +27,6 @@ static const float kKernel5x5[5][5] = {
 };
 
 //============================================================================
-//	buffer
-//============================================================================
-
-RWTexture2D<float4> gOutputTexture : register(u0);
-Texture2D<float4> gInputTexture : register(t0);
-
-//============================================================================
 //	Main
 //============================================================================
 [numthreads(THREAD_POSTPROCESS_GROUP, THREAD_POSTPROCESS_GROUP, 1)]
@@ -44,6 +37,11 @@ void main(uint3 DTid : SV_DispatchThreadID) {
 	
 	 // ピクセル位置
 	uint2 pixelPos = DTid.xy;
+	
+	// フラグが立っていなければ処理しない
+	if (!CheckPixelBitMask(Bit_BoxFilter, gMaskTexture[pixelPos])) {
+		return;
+	}
 
 	// 画像範囲外なら処理しない
 	if (pixelPos.x >= width || pixelPos.y >= height) {

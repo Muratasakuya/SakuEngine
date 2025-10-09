@@ -27,7 +27,7 @@ cbuffer Material : register(b0) {
 	uint useAlphaColor;
 	float emissiveIntensity;
 	float alphaReference;
-	uint postEffectMask;
+	uint postProcessMask;
 };
 
 //============================================================================
@@ -84,7 +84,7 @@ PSOutput main(VSOutput input) {
 	output.color.rgb += emission * textureColor.rgb;
 	
 	// マスク値を出力
-	output.mask = postEffectMask;
+	output.mask = postProcessMask;
 
 	return output;
 }

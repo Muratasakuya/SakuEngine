@@ -7,6 +7,7 @@
     ],
     "RootParameter": [
         { "RootIndex": 0, "Type": "TABLE", "Visibility": "COMPUTE", "DescriptorRange": { "Type": "UAV", "BaseShaderRegister": 0 } },
-        { "RootIndex": 1, "Type": "TABLE", "Visibility": "COMPUTE", "DescriptorRange": { "Type": "SRV", "BaseShaderRegister": 0 } }
+        { "RootIndex": 1, "Type": "TABLE", "Visibility": "COMPUTE", "DescriptorRange": { "Type": "SRV", "BaseShaderRegister": 0 } },
+        { "RootIndex": 2, "Type": "TABLE", "Visibility": "COMPUTE", "DescriptorRange": { "Type": "SRV", "BaseShaderRegister": 1 } }
     ]
 }
