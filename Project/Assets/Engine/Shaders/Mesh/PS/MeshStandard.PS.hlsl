@@ -11,6 +11,7 @@
 struct PSOutput {
 	
 	float4 color : SV_TARGET0;
+	uint mask : SV_TARGET1;
 };
 
 //============================================================================
@@ -88,6 +89,9 @@ PSOutput main(MSOutput input) {
 			output.color.rgb *= lighting.shadowRate;
 		}
 	}
+	
+	// マスク値を出力
+	output.mask = material.postProcessMask;
 	
 	return output;
 }

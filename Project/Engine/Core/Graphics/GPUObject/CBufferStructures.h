@@ -41,6 +41,8 @@ struct MaterialForGPU {
 	Vector3 emissionColor;
 
 	Matrix4x4 uvTransform;
+
+	uint32_t postProcessMask;
 };
 
 struct LightingForGPU {

@@ -20,8 +20,10 @@ struct Material {
 	
 	float emissiveIntensity;
 	float3 emissionColor;
-	
+		
 	float4x4 uvTransform;
+
+	uint postProcessMask;
 };
 
 struct Lighting {

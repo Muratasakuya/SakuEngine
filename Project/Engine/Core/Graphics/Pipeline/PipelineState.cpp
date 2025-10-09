@@ -237,7 +237,24 @@ void PipelineState::CreateVertexPipeline(const std::string& fileName, const Json
 		DxBlendState dxBlendState;
 		D3D12_RENDER_TARGET_BLEND_DESC blendState;
 		dxBlendState.Create(BlendMode::kBlendModeNormal, blendState);
-		pipelineDesc.BlendState.RenderTarget[0] = blendState;
+		for (uint32_t i = 0; i < numRT; ++i) {
+
+			const DXGI_FORMAT format = pipelineDesc.RTVFormats[i];
+			// SVTargetが色出力
+			const bool isColorFloat =
+				(format == DXGI_FORMAT_R32G32B32A32_FLOAT) ||
+				(format == DXGI_FORMAT_R8G8B8A8_UNORM_SRGB);
+			if (isColorFloat) {
+
+				pipelineDesc.BlendState.RenderTarget[i] = blendState;
+				pipelineDesc.BlendState.RenderTarget[i].BlendEnable = TRUE;
+			} else {
+
+				// 非カラー出力はブレンド無効
+				pipelineDesc.BlendState.RenderTarget[i] = {};
+				pipelineDesc.BlendState.RenderTarget[i].BlendEnable = FALSE;
+			}
+		}
 
 		// 生成
 		graphicsPipelinepipelineStates_[BlendMode::kBlendModeNormal] = nullptr;
@@ -297,6 +314,7 @@ void PipelineState::CreateMeshPipeline(const std::string& fileName, const Json& 
 		}
 	}
 	pipelineDesc.NumRenderTargets = numRT;
+	pipelineDesc.BlendState.IndependentBlendEnable = (1 < numRT) ? TRUE : FALSE;
 
 	pipelineDesc.pRootSignature = rootSignature_.Get();
 
@@ -364,10 +382,26 @@ void PipelineState::CreateMeshPipeline(const std::string& fileName, const Json& 
 		DxBlendState dxBlendState;
 		D3D12_RENDER_TARGET_BLEND_DESC blendState;
 		dxBlendState.Create(BlendMode::kBlendModeNormal, blendState);
-		pipelineDesc.BlendState.RenderTarget[0] = blendState;
+		for (uint32_t i = 0; i < numRT; ++i) {
+
+			const DXGI_FORMAT format = pipelineDesc.RTVFormats[i];
+			// SVTargetが色出力
+			const bool isColorFloat =
+				(format == DXGI_FORMAT_R32G32B32A32_FLOAT) ||
+				(format == DXGI_FORMAT_R8G8B8A8_UNORM_SRGB);
+			if (isColorFloat) {
+
+				pipelineDesc.BlendState.RenderTarget[i] = blendState;
+				pipelineDesc.BlendState.RenderTarget[i].BlendEnable = TRUE;
+			} else {
+
+				// 非カラー出力はブレンド無効
+				pipelineDesc.BlendState.RenderTarget[i] = {};
+				pipelineDesc.BlendState.RenderTarget[i].BlendEnable = FALSE;
+			}
+		}
 
 		pipelineDesc.RasterizerState = rasterizerDesc;
-		pipelineDesc.BlendState.RenderTarget[0] = blendState;
 		pipelineDesc.DepthStencilState = depthDesc;
 		pipelineDesc.SampleDesc = sampleDesc;
 
