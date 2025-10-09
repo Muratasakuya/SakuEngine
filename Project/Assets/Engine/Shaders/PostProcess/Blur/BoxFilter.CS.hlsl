@@ -37,14 +37,16 @@ void main(uint3 DTid : SV_DispatchThreadID) {
 	
 	 // ピクセル位置
 	uint2 pixelPos = DTid.xy;
-	
-	// フラグが立っていなければ処理しない
-	if (!CheckPixelBitMask(Bit_BoxFilter, gMaskTexture[pixelPos])) {
-		return;
-	}
 
 	// 画像範囲外なら処理しない
 	if (pixelPos.x >= width || pixelPos.y >= height) {
+		return;
+	}
+	
+	// フラグが立っていなければ処理しない
+	if (!CheckPixelBitMask(Bit_BoxFilter, gMaskTexture[pixelPos])) {
+		
+		gOutputTexture[pixelPos] = gInputTexture.Load(int3(pixelPos, 0));
 		return;
 	}
 

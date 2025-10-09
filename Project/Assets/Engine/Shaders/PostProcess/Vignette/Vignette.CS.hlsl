@@ -10,8 +10,8 @@
 
 struct VignetteParameter {
 	
-	float scale;  // スケール調整
-	float power;  // 乗算パラメータ
+	float scale; // スケール調整
+	float power; // 乗算パラメータ
 	float3 color; // 色
 };
 ConstantBuffer<VignetteParameter> gVignette : register(b0);
@@ -28,13 +28,15 @@ void main(uint3 DTid : SV_DispatchThreadID) {
 	// ピクセル位置
 	uint2 pixelPos = DTid.xy;
 	
-	// フラグが立っていなければ処理しない
-	if (!CheckPixelBitMask(Bit_Vignette, gMaskTexture[pixelPos])) {
+	// 範囲外
+	if (pixelPos.x >= width || pixelPos.y >= height) {
 		return;
 	}
 	
-	// 範囲外
-	if (pixelPos.x >= width || pixelPos.y >= height) {
+	// フラグが立っていなければ処理しない
+	if (!CheckPixelBitMask(Bit_Vignette, gMaskTexture[pixelPos])) {
+
+		gOutputTexture[pixelPos] = gInputTexture.Load(int3(pixelPos, 0));
 		return;
 	}
 

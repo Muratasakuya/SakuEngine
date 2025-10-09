@@ -35,16 +35,19 @@ void main(uint3 DTid : SV_DispatchThreadID) {
 
 	// ピクセル位置
 	uint2 pixelPos = DTid.xy;
-
-	// フラグが立っていなければ処理しない
-	if (!CheckPixelBitMask(Bit_Dissolve, gMaskTexture[pixelPos])) {
-		return;
-	}
 	
 	// 範囲外なら何もしない
 	if (pixelPos.x >= width || pixelPos.y >= height) {
 		return;
 	}
+	
+	// フラグが立っていなければ処理しない
+	if (!CheckPixelBitMask(Bit_Dissolve, gMaskTexture[pixelPos])) {
+		
+		gOutputTexture[pixelPos] = gInputTexture.Load(int3(pixelPos, 0));
+		return;
+	}
+	
 	// マスクテクスチャの取得
 	float mask = gDissolveMaskTexture.SampleLevel(gSampler, (float2(pixelPos) + 0.5f) / float2(width, height), 0).r;
 	

@@ -36,16 +36,18 @@ void main(uint3 DTid : SV_DispatchThreadID) {
 
 	// 現在処理中のピクセル
 	int2 pixelPos = int2(DTid.xy);
-	
-	// フラグが立っていなければ処理しない
-	if (!CheckPixelBitMask(Bit_Bloom, gMaskTexture[pixelPos])) {
-		return;
-	}
 
 	// 元カラー保持
 	float4 sceneColor = gInputTexture.Load(int3(pixelPos, 0));
 	// 範囲外
 	if (pixelPos.x >= width || pixelPos.y >= height) {
+		return;
+	}
+	
+	// フラグが立っていなければ処理しない
+	if (!CheckPixelBitMask(Bit_Bloom, gMaskTexture[pixelPos])) {
+
+		gOutputTexture[pixelPos] = sceneColor;
 		return;
 	}
 
