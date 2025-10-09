@@ -11,6 +11,7 @@
 struct PSOutput {
 
 	float4 color : SV_TARGET0;
+	uint mask : SV_TARGET1;
 };
 
 //============================================================================
@@ -26,6 +27,7 @@ cbuffer Material : register(b0) {
 	uint useAlphaColor;
 	float emissiveIntensity;
 	float alphaReference;
+	uint postEffectMask;
 };
 
 //============================================================================
@@ -64,6 +66,9 @@ PSOutput main(VSOutput input) {
 	output.color.rgb = color.rgb * textureColor.rgb;
 	// α値
 	output.color.a = color.a * input.color.a * textureColor.a;
+	if (output.color.a <= 0.0f) {
+		discard;
+	}
 	
 	//頂点カラー適応
 	if (useVertexColor == 1) {
@@ -77,6 +82,9 @@ PSOutput main(VSOutput input) {
 	float3 emission = emissionColor * emissiveIntensity;
 	// emissionを加算
 	output.color.rgb += emission * textureColor.rgb;
+	
+	// マスク値を出力
+	output.mask = postEffectMask;
 
 	return output;
 }

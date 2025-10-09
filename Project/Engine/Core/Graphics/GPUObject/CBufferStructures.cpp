@@ -70,6 +70,7 @@ void SpriteMaterialForGPU::Init() {
 	alphaReference = 0.0f;
 	emissionColor = Vector3::AnyInit(1.0f);
 	uvTransform = Matrix4x4::MakeIdentity4x4();
+	postEffectMask = 0;
 }
 
 void SpriteMaterialForGPU::ImGui() {

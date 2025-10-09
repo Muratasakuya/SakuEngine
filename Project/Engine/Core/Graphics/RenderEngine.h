@@ -5,6 +5,7 @@
 //============================================================================
 #include <Engine/Core/Graphics/DxObject/DxSwapChain.h>
 #include <Engine/Core/Graphics/PostProcess/Texture/RenderTexture.h>
+#include <Engine/Core/Graphics/PostProcess/Texture/MultiRenderTexture.h>
 #include <Engine/Core/Graphics/Descriptors/RTVDescriptor.h>
 #include <Engine/Core/Graphics/Descriptors/DSVDescriptor.h>
 #include <Engine/Core/Graphics/Descriptors/SRVDescriptor.h>
@@ -77,7 +78,7 @@ public:
 
 	DxSwapChain* GetDxSwapChain() const { return dxSwapChain_.get(); }
 
-	RenderTexture* GetRenderTexture(ViewType type) const { return renderTextures_.at(type).get(); }
+	RenderTexture* GetRenderTexture(ViewType type, uint32_t index) const { return multiRenderTextures_.at(type)->GetRenderTexture(index); }
 
 	const D3D12_GPU_DESCRIPTOR_HANDLE& GetDepthGPUHandle() const { return dsvDescriptor_->GetFrameGPUHandle(); }
 	const D3D12_GPU_DESCRIPTOR_HANDLE& GetRenderTextureGPUHandle() const { return guiRenderTexture_->GetGPUHandle(); }
@@ -94,8 +95,9 @@ private:
 	std::unique_ptr<DxSwapChain> dxSwapChain_;
 
 	// renderTexture
-	std::unordered_map<ViewType, std::unique_ptr<RenderTexture>> renderTextures_;
-	std::unique_ptr<GuiRenderTexture> guiRenderTexture_; // frameBufferからコピーする用
+	std::unordered_map<ViewType, std::unique_ptr<MultiRenderTexture>> multiRenderTextures_;
+	// frameBufferからコピーする用
+	std::unique_ptr<GuiRenderTexture> guiRenderTexture_;
 
 	// descriptor
 	std::unique_ptr<RTVDescriptor> rtvDescriptor_;
@@ -127,6 +129,6 @@ private:
 	void Renderers(ViewType type, bool enableMesh);
 
 	// command
-	void BeginRenderTarget(RenderTexture* renderTexture);
-	void EndRenderTarget(RenderTexture* renderTexture);
+	void BeginRenderTarget(MultiRenderTexture* multiRenderTexture);
+	void EndRenderTarget(MultiRenderTexture* multiRenderTexture);
 };

@@ -213,6 +213,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <SubType>
       </SubType>
     </ClCompile>
+    <ClCompile Include="Engine\Core\Graphics\PostProcess\Texture\MultiRenderTexture.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="Engine\Editor\ActionProgress\ActionProgressMonitor.cpp">
       <SubType>
       </SubType>
@@ -1017,6 +1021,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       </SubType>
     </ClInclude>
     <ClInclude Include="Engine\Core\Graphics\PostProcess\PostProcessConfig.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Engine\Core\Graphics\PostProcess\Texture\MultiRenderTexture.h">
       <SubType>
       </SubType>
     </ClInclude>

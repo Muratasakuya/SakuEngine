@@ -27,25 +27,25 @@ struct RenderTarget {
 
 enum BlendMode {
 
-	kBlendModeNormal,    // 通常αブレンド
-	kBlendModeAdd,       // 加算
-	kBlendModeSubtract,  // 減算
-	kBlendModeMultiply,  // 乗算
-	kBlendModeScreen,    // スクリーン
+	Normal,    // 通常αブレンド
+	Add,       // 加算
+	Subtract,  // 減算
+	Multiply,  // 乗算
+	Screen,    // スクリーン
 
-	BlendCount
+	Count
 };
-constexpr std::array<BlendMode, static_cast<size_t>(BlendMode::BlendCount)>
+constexpr std::array<BlendMode, static_cast<size_t>(BlendMode::Count)>
 CreateBlendModeTypes() {
-	std::array<BlendMode, static_cast<size_t>(BlendMode::BlendCount)> types = {};
-	for (uint32_t i = 0; i < static_cast<uint32_t>(BlendMode::BlendCount); ++i) {
+	std::array<BlendMode, static_cast<size_t>(BlendMode::Count)> types = {};
+	for (uint32_t i = 0; i < static_cast<uint32_t>(BlendMode::Count); ++i) {
 		types[i] = static_cast<BlendMode>(i);
 	}
 	return types;
 }
-static constexpr uint32_t blendModeNum = static_cast<uint32_t>(BlendMode::BlendCount);
+static constexpr uint32_t blendModeNum = static_cast<uint32_t>(BlendMode::Count);
 static constexpr
-std::array<BlendMode, static_cast<size_t>(BlendMode::BlendCount)>
+std::array<BlendMode, static_cast<size_t>(BlendMode::Count)>
 blendModeTypes = CreateBlendModeTypes();
 
 namespace Blend {

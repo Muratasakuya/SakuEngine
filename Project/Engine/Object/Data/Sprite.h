@@ -8,6 +8,7 @@
 #include <Engine/Core/Graphics/GPUObject/VertexBuffer.h>
 #include <Engine/Core/Graphics/GPUObject/IndexBuffer.h>
 #include <Engine/Core/Graphics/DxLib/DxStructures.h>
+#include <Engine/Core/Graphics/PostProcess/PostProcessType.h>
 
 // directX
 #include <Externals/DirectXTex/DirectXTex.h>
@@ -61,6 +62,7 @@ public:
 	void SetLayer(SpriteLayer layer) { layer_ = layer; }
 	void SetLayerIndex(SpriteLayerIndex layerIndex, uint16_t subLayerIndex) { layerIndex_ = static_cast<uint16_t>(layerIndex) + subLayerIndex; }
 	void SetPostProcessEnable(bool enable) { postProcessEnable_ = enable; }
+	void SetPostEffectMask(uint8_t mask) { postEffectMask_ = mask; }
 	void SetBlendMode(BlendMode blendMode) { blendMode_ = blendMode; }
 
 	static uint32_t GetIndexNum() { return kIndexNum_; }
@@ -68,6 +70,7 @@ public:
 	SpriteLayer GetLayer() const { return layer_; }
 	uint16_t GetLayerIndex() const { return static_cast<uint16_t>(layerIndex_); }
 	bool GetPostProcessEnable() const { return postProcessEnable_; }
+	uint8_t GetPostEffectMask() const { return postEffectMask_; }
 	bool UseAlphaTexture() const { return alphaTextureName_.has_value(); }
 	BlendMode GetBlendMode() const { return blendMode_; }
 
@@ -96,11 +99,14 @@ private:
 	// 描画順制御
 	SpriteLayer layer_;
 	uint16_t layerIndex_ = static_cast<uint16_t>(SpriteLayerIndex::None);
+
+	// ポストエフェクト
 	bool postProcessEnable_;
+	uint8_t postEffectMask_ = static_cast<uint8_t>(PostEffectBit::None);
 
 	// 頂点情報
 	std::vector<SpriteVertexData> vertexData_;
-	BlendMode blendMode_ = BlendMode::kBlendModeNormal;
+	BlendMode blendMode_ = BlendMode::Normal;
 
 	// buffer
 	VertexBuffer<SpriteVertexData> vertexBuffer_;

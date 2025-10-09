@@ -69,6 +69,22 @@ void PipelineState::Create(const std::string& fileName, ID3D12Device8* device,
 	}
 }
 
+DXGI_FORMAT PipelineState::GetFormatFromString(const std::string& name) const {
+
+	if (name == "R32G32B32A32_FLOAT") return DXGI_FORMAT_R32G32B32A32_FLOAT;
+	if (name == "R8G8B8A8_UNORM_SRGB") return DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+
+	if (name == "R32_FLOAT") return DXGI_FORMAT_R32_FLOAT;
+
+	if (name == "R16_UNORM") return DXGI_FORMAT_R16_UNORM;
+	if (name == "R8_UNORM") return DXGI_FORMAT_R8_UNORM;
+
+	if (name == "R16_UINT") return DXGI_FORMAT_R16_UINT;
+	if (name == "R8_UINT") return DXGI_FORMAT_R8_UINT;
+
+	return DXGI_FORMAT_UNKNOWN;
+}
+
 ID3D12PipelineState* PipelineState::GetGraphicsPipeline(BlendMode blendMode) const {
 
 	return graphicsPipelinepipelineStates_[blendMode].Get();
@@ -126,7 +142,6 @@ void PipelineState::CreateVertexPipeline(const std::string& fileName, const Json
 	pipelineDesc.DepthStencilState = depthDesc;
 	pipelineDesc.SampleDesc.Count = 1;
 	pipelineDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
-	pipelineDesc.NumRenderTargets = 1;
 
 	// inputLayoutがあれば設定する
 	if (inputDesc.has_value()) {
@@ -141,7 +156,6 @@ void PipelineState::CreateVertexPipeline(const std::string& fileName, const Json
 	const auto& stateJson = json["PipelineState"][0];
 	std::string topologyType = stateJson.value("TopologyType", "TRIANGLE");
 	std::string dsvFormat = stateJson["DSVFormat"];
-	std::string rtvFormat = stateJson["RTVFormats"];
 	std::string blendMode = stateJson["BlendMode"];
 
 	if (topologyType == "TRIANGLE") {
@@ -160,26 +174,49 @@ void PipelineState::CreateVertexPipeline(const std::string& fileName, const Json
 		pipelineDesc.DSVFormat = DXGI_FORMAT_D32_FLOAT;
 	}
 
-	if (rtvFormat == "R32G32B32A32_FLOAT") {
+	UINT numRT = 0;
+	const auto& rtvNode = stateJson["RTVFormats"];
+	if (rtvNode.is_string()) {
 
-		pipelineDesc.RTVFormats[0] = DXGI_FORMAT_R32G32B32A32_FLOAT;
-	} else if (rtvFormat == "R8G8B8A8_UNORM_SRGB") {
+		pipelineDesc.RTVFormats[0] = GetFormatFromString(rtvNode.get<std::string>());
+		numRT = 1;
+	} else if (rtvNode.is_array()) {
 
-		pipelineDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
-	} else if (rtvFormat == "R32_FLOAT") {
+		numRT = (UINT)std::min<size_t>(rtvNode.size(), D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT);
+		for (UINT i = 0; i < numRT; ++i) {
 
-		pipelineDesc.RTVFormats[0] = DXGI_FORMAT_R32_FLOAT;
+			pipelineDesc.RTVFormats[i] = GetFormatFromString(rtvNode[i].get<std::string>());
+		}
 	}
+	pipelineDesc.NumRenderTargets = numRT;
+	pipelineDesc.BlendState.IndependentBlendEnable = (1 < numRT) ? TRUE : FALSE;
 
 	// 全てのblendModeで作成
 	if (blendMode == "ALL") {
-		for (const auto& blend : Algorithm::GetEnumArray(BlendMode::BlendCount)) {
+		for (const auto& blend : Algorithm::GetEnumArray(BlendMode::Count)) {
 
 			// BlendState
 			DxBlendState dxBlendState;
 			D3D12_RENDER_TARGET_BLEND_DESC blendState;
 			dxBlendState.Create(static_cast<BlendMode>(blend), blendState);
-			pipelineDesc.BlendState.RenderTarget[0] = blendState;
+			for (uint32_t i = 0; i < numRT; ++i) {
+
+				const DXGI_FORMAT format = pipelineDesc.RTVFormats[i];
+				// SVTargetが色出力
+				const bool isColorFloat =
+					(format == DXGI_FORMAT_R32G32B32A32_FLOAT) ||
+					(format == DXGI_FORMAT_R8G8B8A8_UNORM_SRGB);
+				if (isColorFloat) {
+
+					pipelineDesc.BlendState.RenderTarget[i] = blendState;
+					pipelineDesc.BlendState.RenderTarget[i].BlendEnable = TRUE;
+				} else {
+
+					// 非カラー出力はブレンド無効
+					pipelineDesc.BlendState.RenderTarget[i] = {};
+					pipelineDesc.BlendState.RenderTarget[i].BlendEnable = FALSE;
+				}
+			}
 
 			// 生成
 			graphicsPipelinepipelineStates_[blend] = nullptr;
@@ -199,14 +236,14 @@ void PipelineState::CreateVertexPipeline(const std::string& fileName, const Json
 		// BlendState
 		DxBlendState dxBlendState;
 		D3D12_RENDER_TARGET_BLEND_DESC blendState;
-		dxBlendState.Create(static_cast<BlendMode>(kBlendModeNormal), blendState);
+		dxBlendState.Create(static_cast<BlendMode>(Normal), blendState);
 		pipelineDesc.BlendState.RenderTarget[0] = blendState;
 
 		// 生成
-		graphicsPipelinepipelineStates_[kBlendModeNormal] = nullptr;
+		graphicsPipelinepipelineStates_[Normal] = nullptr;
 		HRESULT hr = device->CreateGraphicsPipelineState(
 			&pipelineDesc,
-			IID_PPV_ARGS(&graphicsPipelinepipelineStates_[kBlendModeNormal]));
+			IID_PPV_ARGS(&graphicsPipelinepipelineStates_[Normal]));
 		if (FAILED(hr)) {
 
 			const std::string& file = "FileName: " + fileName + "\n";
@@ -232,12 +269,10 @@ void PipelineState::CreateMeshPipeline(const std::string& fileName, const Json& 
 
 	D3DX12_MESH_SHADER_PIPELINE_STATE_DESC pipelineDesc{};
 
-	pipelineDesc.NumRenderTargets = 1;
 	pipelineDesc.SampleMask = UINT_MAX;
 
 	const auto& stateJson = json["PipelineState"][0];
 	std::string dsvFormat = stateJson["DSVFormat"];
-	std::string rtvFormat = stateJson["RTVFormats"];
 	std::string blendMode = stateJson["BlendMode"];
 	if (dsvFormat == "D24_UNORM_S8_UINT") {
 
@@ -247,16 +282,21 @@ void PipelineState::CreateMeshPipeline(const std::string& fileName, const Json& 
 		pipelineDesc.DSVFormat = DXGI_FORMAT_D32_FLOAT;
 	}
 
-	if (rtvFormat == "R32G32B32A32_FLOAT") {
+	UINT numRT = 0;
+	const auto& rtvNode = stateJson["RTVFormats"];
+	if (rtvNode.is_string()) {
 
-		pipelineDesc.RTVFormats[0] = DXGI_FORMAT_R32G32B32A32_FLOAT;
-	} else if (rtvFormat == "R8G8B8A8_UNORM_SRGB") {
+		pipelineDesc.RTVFormats[0] = GetFormatFromString(rtvNode.get<std::string>());
+		numRT = 1;
+	} else if (rtvNode.is_array()) {
 
-		pipelineDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
-	} else if (rtvFormat == "R32_FLOAT") {
+		numRT = (UINT)std::min<size_t>(rtvNode.size(), D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT);
+		for (UINT i = 0; i < numRT; ++i) {
 
-		pipelineDesc.RTVFormats[0] = DXGI_FORMAT_R32_FLOAT;
+			pipelineDesc.RTVFormats[i] = GetFormatFromString(rtvNode[i].get<std::string>());
+		}
 	}
+	pipelineDesc.NumRenderTargets = numRT;
 
 	pipelineDesc.pRootSignature = rootSignature_.Get();
 
@@ -272,16 +312,32 @@ void PipelineState::CreateMeshPipeline(const std::string& fileName, const Json& 
 
 	// 全てのblendModeで作成
 	if (blendMode == "ALL") {
-		for (const auto& blend : Algorithm::GetEnumArray(BlendMode::BlendCount)) {
+		for (const auto& blend : Algorithm::GetEnumArray(BlendMode::Count)) {
 
 			// BlendState
 			DxBlendState dxBlendState;
 			D3D12_RENDER_TARGET_BLEND_DESC blendState;
 			dxBlendState.Create(static_cast<BlendMode>(blend), blendState);
-			pipelineDesc.BlendState.RenderTarget[0] = blendState;
+			for (uint32_t i = 0; i < numRT; ++i) {
+
+				const DXGI_FORMAT format = pipelineDesc.RTVFormats[i];
+				// SVTargetが色出力
+				const bool isColorFloat =
+					(format == DXGI_FORMAT_R32G32B32A32_FLOAT) ||
+					(format == DXGI_FORMAT_R8G8B8A8_UNORM_SRGB);
+				if (isColorFloat) {
+
+					pipelineDesc.BlendState.RenderTarget[i] = blendState;
+					pipelineDesc.BlendState.RenderTarget[i].BlendEnable = TRUE;
+				} else {
+
+					// 非カラー出力はブレンド無効
+					pipelineDesc.BlendState.RenderTarget[i] = {};
+					pipelineDesc.BlendState.RenderTarget[i].BlendEnable = FALSE;
+				}
+			}
 
 			pipelineDesc.RasterizerState = rasterizerDesc;
-			pipelineDesc.BlendState.RenderTarget[0] = blendState;
 			pipelineDesc.DepthStencilState = depthDesc;
 			pipelineDesc.SampleDesc = sampleDesc;
 
@@ -307,7 +363,7 @@ void PipelineState::CreateMeshPipeline(const std::string& fileName, const Json& 
 		// BlendState
 		DxBlendState dxBlendState;
 		D3D12_RENDER_TARGET_BLEND_DESC blendState;
-		dxBlendState.Create(static_cast<BlendMode>(kBlendModeNormal), blendState);
+		dxBlendState.Create(static_cast<BlendMode>(Normal), blendState);
 		pipelineDesc.BlendState.RenderTarget[0] = blendState;
 
 		pipelineDesc.RasterizerState = rasterizerDesc;
@@ -323,7 +379,7 @@ void PipelineState::CreateMeshPipeline(const std::string& fileName, const Json& 
 
 		// 生成
 		HRESULT hr = device->CreatePipelineState(&streamDesc,
-			IID_PPV_ARGS(graphicsPipelinepipelineStates_[kBlendModeNormal].GetAddressOf()));
+			IID_PPV_ARGS(graphicsPipelinepipelineStates_[Normal].GetAddressOf()));
 		if (FAILED(hr)) {
 
 			const std::string& file = "FileName: " + fileName + "\n";

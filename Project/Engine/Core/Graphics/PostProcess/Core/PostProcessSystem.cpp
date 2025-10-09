@@ -216,7 +216,8 @@ void PostProcessSystem::ApplyUpdatersToBuffers() {
 	}
 }
 
-void PostProcessSystem::Execute(const D3D12_GPU_DESCRIPTOR_HANDLE& inputSRVGPUHandle, DxCommand* dxCommand) {
+void PostProcessSystem::Execute(DxCommand* dxCommand, const D3D12_GPU_DESCRIPTOR_HANDLE& inputSRVGPUHandle,
+	const D3D12_GPU_DESCRIPTOR_HANDLE& inputMaskSRVGPUHandle) {
 
 	// なにもプロセスがない場合はα値がバグらないようにcopyを行う
 	if (activeProcesses_.empty()) {
@@ -238,7 +239,8 @@ void PostProcessSystem::Execute(const D3D12_GPU_DESCRIPTOR_HANDLE& inputSRVGPUHa
 			// buffer設定
 			ExecuteCBuffer(commandList, process);
 			// 実行
-			commandContext.Execute(process, commandList, processors_[process].get(), inputGPUHandle);
+			commandContext.Execute(process, commandList, processors_[process].get(),
+				inputGPUHandle, inputMaskSRVGPUHandle);
 
 			BeginTransition(process, dxCommand);
 
@@ -270,8 +272,8 @@ void PostProcessSystem::BeginTransition(PostProcessType process, DxCommand* dxCo
 	}
 }
 
-void PostProcessSystem::ExecuteDebugScene(
-	const D3D12_GPU_DESCRIPTOR_HANDLE& inputSRVGPUHandle, DxCommand* dxCommand) {
+void PostProcessSystem::ExecuteDebugScene(DxCommand* dxCommand, const D3D12_GPU_DESCRIPTOR_HANDLE& inputSRVGPUHandle,
+	const D3D12_GPU_DESCRIPTOR_HANDLE& inputMaskSRVGPUHandle) {
 
 	auto commandList = dxCommand->GetCommandList();
 	PostProcessCommandContext commandContext{};
@@ -279,7 +281,8 @@ void PostProcessSystem::ExecuteDebugScene(
 	// pipeline設定
 	pipeline_->SetPipeline(commandList, PostProcessType::CopyTexture);
 	// 実行
-	commandContext.Execute(PostProcessType::CopyTexture, commandList, copyTextureProcess_.get(), inputSRVGPUHandle);
+	commandContext.Execute(PostProcessType::CopyTexture, commandList,
+		copyTextureProcess_.get(), inputSRVGPUHandle, inputMaskSRVGPUHandle);
 
 	// UnorderedAccess -> PixelShader
 	dxCommand->TransitionBarriers({ copyTextureProcess_->GetOutputTextureResource() },

@@ -22,7 +22,7 @@ void BossEnemyAttackSign::Init() {
 		// スプライト設定
 		sign->SetPostProcessEnable(true);
 		sign->SetSpriteLayer(SpriteLayer::PostModel);
-		sign->SetBlendMode(BlendMode::kBlendModeAdd);
+		sign->SetBlendMode(BlendMode::Add);
 		sign->SetSize(Vector2::AnyInit(0.0f));
 		// 色
 		sign->SetColor(Color::Convert(0xF06C0AFF));

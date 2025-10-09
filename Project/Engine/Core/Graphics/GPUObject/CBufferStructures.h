@@ -67,6 +67,7 @@ struct SpriteMaterialForGPU {
 	int32_t useAlphaColor;
 	float emissiveIntensity;
 	float alphaReference;
+	uint8_t postEffectMask;
 
 	void Init();
 	void ImGui();
