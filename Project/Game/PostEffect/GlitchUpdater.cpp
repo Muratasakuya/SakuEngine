@@ -68,8 +68,12 @@ void GlitchUpdater::Update() {
 				// 更新しない状態にする
 				bufferData_.intensity = 0.0f;
 				currentState_ = State::None;
-				// 処理が終了次第無効にする
-				PostProcessSystem::GetInstance()->RemoveProcess(GetType());
+
+				if (isAutoReomoveProcess_) {
+
+					// 処理が終了次第無効にする
+					PostProcessSystem::GetInstance()->RemoveProcess(GetType());
+				}
 			}
 		}
 		break;
@@ -96,6 +100,8 @@ void GlitchUpdater::ImGui() {
 	ImGui::Text("currentCount:  %d / %d", currentCount_, maxRandomCount_);
 
 	ImGui::SeparatorText("Edit");
+
+	ImGui::Checkbox("isAutoReomoveProcess", &isAutoReomoveProcess_);
 
 	timer_.ImGui("Timer");
 	convergenceTimer_.ImGui("ConvergenceTimer");

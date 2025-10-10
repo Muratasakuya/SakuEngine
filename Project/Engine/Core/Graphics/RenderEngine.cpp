@@ -50,7 +50,7 @@ void RenderEngine::InitRenderTextrue(ID3D12Device8* device) {
 		Color(Config::kWindowClearColor[0], Config::kWindowClearColor[1],
 			Config::kWindowClearColor[2], Config::kWindowClearColor[3]));
 	// ポストエフェクトマスク
-	mainRenderTexrure->AddMaskTarget(DXGI_FORMAT_R16_UINT);
+	mainRenderTexrure->AddMaskTarget(DXGI_FORMAT_R32G32B32A32_UINT);
 
 #if defined(_DEBUG) || defined(_DEVELOPBUILD)
 
@@ -74,7 +74,7 @@ void RenderEngine::InitRenderTextrue(ID3D12Device8* device) {
 		Color(Config::kWindowClearColor[0], Config::kWindowClearColor[1],
 			Config::kWindowClearColor[2], Config::kWindowClearColor[3]));
 	// ポストエフェクトマスク
-	debugRenderTexrure->AddMaskTarget(DXGI_FORMAT_R16_UINT);
+	debugRenderTexrure->AddMaskTarget(DXGI_FORMAT_R32G32B32A32_UINT);
 #endif
 
 	// SRV作成

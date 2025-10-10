@@ -42,7 +42,8 @@ void PostProcessSystem::Finalize() {
 void PostProcessSystem::AddProcess(PostProcessType process) {
 
 	// 追加
-	if (Algorithm::Find(initProcesses_, process, true)) {
+	if (Algorithm::Find(initProcesses_, process, true) &&
+		!Algorithm::Find(activeProcesses_, process, false)) {
 
 		activeProcesses_.push_back(process);
 	}

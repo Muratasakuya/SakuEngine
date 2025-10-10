@@ -72,6 +72,7 @@ void PipelineState::Create(const std::string& fileName, ID3D12Device8* device,
 DXGI_FORMAT PipelineState::GetFormatFromString(const std::string& name) const {
 
 	if (name == "R32G32B32A32_FLOAT") return DXGI_FORMAT_R32G32B32A32_FLOAT;
+	if (name == "R32G32B32A32_UINT") return DXGI_FORMAT_R32G32B32A32_UINT;
 	if (name == "R8G8B8A8_UNORM_SRGB") return DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 
 	if (name == "R32_FLOAT") return DXGI_FORMAT_R32_FLOAT;
@@ -213,7 +214,7 @@ void PipelineState::CreateVertexPipeline(const std::string& fileName, const Json
 				} else {
 
 					// 非カラー出力はブレンド無効
-					pipelineDesc.BlendState.RenderTarget[i] = {};
+					pipelineDesc.BlendState.RenderTarget[i].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
 					pipelineDesc.BlendState.RenderTarget[i].BlendEnable = FALSE;
 				}
 			}
@@ -251,7 +252,7 @@ void PipelineState::CreateVertexPipeline(const std::string& fileName, const Json
 			} else {
 
 				// 非カラー出力はブレンド無効
-				pipelineDesc.BlendState.RenderTarget[i] = {};
+				pipelineDesc.BlendState.RenderTarget[i].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
 				pipelineDesc.BlendState.RenderTarget[i].BlendEnable = FALSE;
 			}
 		}
@@ -350,7 +351,7 @@ void PipelineState::CreateMeshPipeline(const std::string& fileName, const Json& 
 				} else {
 
 					// 非カラー出力はブレンド無効
-					pipelineDesc.BlendState.RenderTarget[i] = {};
+					pipelineDesc.BlendState.RenderTarget[i].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
 					pipelineDesc.BlendState.RenderTarget[i].BlendEnable = FALSE;
 				}
 			}
@@ -396,7 +397,7 @@ void PipelineState::CreateMeshPipeline(const std::string& fileName, const Json& 
 			} else {
 
 				// 非カラー出力はブレンド無効
-				pipelineDesc.BlendState.RenderTarget[i] = {};
+				pipelineDesc.BlendState.RenderTarget[i].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
 				pipelineDesc.BlendState.RenderTarget[i].BlendEnable = FALSE;
 			}
 		}

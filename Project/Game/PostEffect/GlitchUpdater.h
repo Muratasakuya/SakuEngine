@@ -57,6 +57,8 @@ private:
 
 	// 現在の状態
 	State currentState_;
+	// 自動でpostProcessのリストから消すか
+	bool isAutoReomoveProcess_ = true;
 
 	// 時間経過
 	StateTimer timer_;            // 1処理にかかる時間

@@ -11,7 +11,7 @@
 struct PSOutput {
 
 	float4 color : SV_TARGET0;
-	uint mask : SV_TARGET1;
+	uint4 mask : SV_TARGET1;
 };
 
 //============================================================================
@@ -67,6 +67,8 @@ PSOutput main(VSOutput input) {
 	// α値
 	output.color.a = color.a * input.color.a * textureColor.a;
 	if (output.color.a <= 0.0f) {
+
+		output.mask = 0;
 		discard;
 	}
 	
@@ -84,7 +86,7 @@ PSOutput main(VSOutput input) {
 	output.color.rgb += emission * textureColor.rgb;
 	
 	// マスク値を出力
-	output.mask = postProcessMask;
+	output.mask = uint4(postProcessMask, 0, 0, 0);
 
 	return output;
 }

@@ -106,6 +106,10 @@ void Material::ImGui(float itemSize) {
 
 	ImGui::SliderInt("enableDithering", &enableDithering, 0, 1);
 
+	ImGui::SeparatorText("PostProcess");
+
+	ImGui::Text("postProcessMask: %d", postProcessMask);
+
 	ImGui::PopItemWidth();
 }
 

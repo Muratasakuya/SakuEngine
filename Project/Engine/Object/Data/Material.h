@@ -92,6 +92,9 @@ public:
 	// uv
 	Matrix4x4 uvMatrix;
 	UVTransform uvTransform;
+
+	// 適応するポストエフェクトのビット
+	uint32_t postProcessMask;
 private:
 	//========================================================================
 	//	private Methods

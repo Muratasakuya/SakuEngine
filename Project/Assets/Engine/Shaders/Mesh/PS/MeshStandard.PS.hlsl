@@ -11,7 +11,7 @@
 struct PSOutput {
 	
 	float4 color : SV_TARGET0;
-	uint mask : SV_TARGET1;
+	uint4 mask : SV_TARGET1;
 };
 
 //============================================================================
@@ -27,6 +27,9 @@ PSOutput main(MSOutput input) {
 	// bufferアクセス
 	Material material = gMaterials[id];
 	Lighting lighting = gLightings[id];
+	
+	// マスク値を出力
+	output.mask = uint4(material.postProcessMask, 0, 0, 0);
 	
 	// ディザ抜き処理を行うか
 	if (material.enableDithering == 1) {
@@ -89,9 +92,6 @@ PSOutput main(MSOutput input) {
 			output.color.rgb *= lighting.shadowRate;
 		}
 	}
-	
-	// マスク値を出力
-	output.mask = material.postProcessMask;
 	
 	return output;
 }

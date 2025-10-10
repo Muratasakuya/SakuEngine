@@ -3,6 +3,7 @@
 //============================================================================
 //	include
 //============================================================================
+#include <Engine/Core/Graphics/PostProcess/PostProcessBit.h>
 #include <Engine/Utility/Enum/ObjectUpdateMode.h>
 
 // data

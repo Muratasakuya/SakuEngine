@@ -76,7 +76,6 @@ public:
 	void SetDebugViewBone(bool enable) { animation_->SetDebugViewBone(enable); }
 	void SetPlaybackSpeed(float playbackSpeed) { animation_->SetPlaybackSpeed(playbackSpeed); }
 	void SetCurrentAnimTime(float time) { animation_->SetCurrentAnimTime(time); }
-
 	void ResetAnimation();
 	Vector3 GetJointWorldPos(const std::string& jointName) const;
 	bool IsAnimationFinished() const { return animation_->IsAnimationFinished(); }
@@ -87,6 +86,9 @@ public:
 	float GetEventTime(const std::string& animName, const std::string& keyEvent, uint32_t frameIndex) const;
 	float GetPlaybackSpeed() const { return animation_->GetPlaybackSpeed(); }
 	const std::string& GetCurrentAnimationName() const { return animation_->GetCurrentAnimationName(); }
+
+	// postProcess
+	void SetPostProcessMask(uint32_t mask, std::optional<uint32_t> meshIndex = std::nullopt);
 
 	/*---------- getter ----------*/
 

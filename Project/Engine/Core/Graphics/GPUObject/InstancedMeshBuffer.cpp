@@ -179,7 +179,8 @@ void InstancedMeshBuffer::SetUploadData(const std::string& name,
 			materials[meshIndex].enableDithering,
 			materials[meshIndex].emissiveIntensity,
 			materials[meshIndex].emissionColor,
-			materials[meshIndex].uvMatrix));
+			materials[meshIndex].uvMatrix,
+			materials[meshIndex].postProcessMask));
 		// lighting
 		meshGroups_[name].lightingUploadData[meshIndex].emplace_back(LightingForGPU(
 			materials[meshIndex].enableLighting,

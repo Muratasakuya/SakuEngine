@@ -69,6 +69,8 @@ struct SpriteMaterialForGPU {
 	int32_t useAlphaColor;
 	float emissiveIntensity;
 	float alphaReference;
+
+	// 適応するポストエフェクトのビット
 	uint32_t postProcessMask;
 
 	void Init();

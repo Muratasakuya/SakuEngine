@@ -215,6 +215,21 @@ float GameObject3D::GetEventTime(const std::string& animName,
 	return animation_->GetEventTime(animName, keyEvent, frameIndex);
 }
 
+void GameObject3D::SetPostProcessMask(uint32_t mask, std::optional<uint32_t> meshIndex) {
+
+	// meshIndexが設定されている場合のみ指定して設定
+	if (meshIndex.has_value()) {
+
+		(*materials_)[meshIndex.value()].postProcessMask = mask;
+	} else {
+
+		for (auto& material : *materials_) {
+
+			material.postProcessMask = mask;
+		}
+	}
+}
+
 void GameObject3D::UpdateMatrix() {
 
 	transform_->UpdateMatrix();

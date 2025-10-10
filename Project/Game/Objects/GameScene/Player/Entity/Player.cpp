@@ -3,9 +3,9 @@
 //============================================================================
 //	include
 //============================================================================
-#include <Game/Objects/GameScene/Enemy/Boss/Entity/BossEnemy.h>
 #include <Engine/Utility/Random/RandomGenerator.h>
 #include <Engine/Utility/Enum/EnumAdapter.h>
+#include <Game/Objects/GameScene/Enemy/Boss/Entity/BossEnemy.h>
 
 //============================================================================
 //	Player classMethods
@@ -127,6 +127,8 @@ void Player::DerivedInit() {
 
 	// json適応
 	ApplyJson();
+
+	SetPostProcessMask(Bit_Bloom | Bit_DepthBasedOutline | Bit_Glitch | Bit_Grayscale);
 }
 
 void Player::SetBossEnemy(const BossEnemy* bossEnemy) {

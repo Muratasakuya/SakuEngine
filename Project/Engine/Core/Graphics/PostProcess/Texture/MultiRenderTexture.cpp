@@ -28,7 +28,7 @@ void MultiRenderTexture::AddColorTarget(DXGI_FORMAT format, const Color& color) 
 
 void MultiRenderTexture::AddMaskTarget(DXGI_FORMAT format) {
 
-	AddAttachment(format, Color::Black(0.0f));
+	AddAttachment(format, Color::Green(1.0f));
 }
 
 void MultiRenderTexture::AddAttachment(DXGI_FORMAT format, const Color& color) {

@@ -149,7 +149,7 @@ void main(uint3 DTid : SV_DispatchThreadID) {
 	}
 	
 	// ƒtƒ‰ƒO‚ª—§‚Á‚Ä‚¢‚È‚¯‚ê‚Îˆ—‚µ‚È‚¢
-	if (!CheckPixelBitMask(Bit_CRTDisplay, gMaskTexture[pixelPos])) {
+	if (!CheckPixelBitMask(Bit_CRTDisplay, gMaskTexture[pixelPos].r)) {
 		
 		gOutputTexture[pixelPos] = gInputTexture.Load(int3(pixelPos, 0));
 		return;
