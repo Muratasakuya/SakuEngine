@@ -76,6 +76,7 @@ private:
 	// 使用するオブジェクト
 	std::unique_ptr<GameObject2D> background_;     // 背景
 	std::unique_ptr<GameTimerDisplay> resultTime_; // 時間表示
+	std::unique_ptr<GameObject2D> glitchArea_;     // グリッチ適応エリア
 	std::unique_ptr<GameObject2D> clearText_;      // クリア文字表示
 	std::unique_ptr<GameButton> leftButton_;       // 左ボタン
 	std::unique_ptr<GameButton> rightButton_;      // 右ボタン
@@ -102,6 +103,9 @@ private:
 	float timerOffsetX_;          // タイマーの間の間隔X
 	Vector2 timerSize_;           // タイマーのサイズ
 	Vector2 timerSymbolSize_;     // タイマーの記号のサイズ
+
+	// グリッチ適応エリア
+	Vector2 glitchAreaSize_;
 
 	// クリア文字
 	std::unique_ptr<SimpleAnimation<Vector2>> clearPosAnim_;

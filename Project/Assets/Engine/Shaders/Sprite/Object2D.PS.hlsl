@@ -45,6 +45,9 @@ PSOutput main(VSOutput input) {
 	
 	PSOutput output;
 	
+	// マスク値を出力
+	output.mask = uint4(postProcessMask, 0, 0, 0);
+	
 	float4 transformUV = mul(float4(input.texcoord, 0.0f, 1.0f), uvTransform);
 	
 	// alpha値の参照を専用のテクスチャから取得する
@@ -67,8 +70,6 @@ PSOutput main(VSOutput input) {
 	// α値
 	output.color.a = color.a * input.color.a * textureColor.a;
 	if (output.color.a <= 0.0f) {
-
-		output.mask = 0;
 		discard;
 	}
 	
@@ -84,9 +85,6 @@ PSOutput main(VSOutput input) {
 	float3 emission = emissionColor * emissiveIntensity;
 	// emissionを加算
 	output.color.rgb += emission * textureColor.rgb;
-	
-	// マスク値を出力
-	output.mask = uint4(postProcessMask, 0, 0, 0);
 
 	return output;
 }

@@ -155,6 +155,14 @@ void GameTimerDisplay::SetAlpha(float alpha) {
 	}
 }
 
+void GameTimerDisplay::SetPostProcessMask(uint32_t mask) {
+
+	for (size_t i = 0; i < elements_.size(); ++i) {
+
+		elements_[i].sprite->SetPostProcessMask(mask);
+	}
+}
+
 void GameTimerDisplay::GetDigitSize(const std::string& name) {
 
 	// 仮作成して画像サイズを取得して破棄する

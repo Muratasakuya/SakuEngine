@@ -25,8 +25,19 @@ void GameResultDisplay::Init() {
 	background_->SetSize(Vector2(Config::kWindowWidthf, Config::kWindowHeightf));
 	background_->SetUVScaleX(96.0f);
 	background_->SetUVScaleY(80.0f);
+	// グレースケールを適応
+	background_->SetPostProcessMask(Bit_Grayscale);
 	// 最初は表示しない
 	background_->SetAlpha(0.0f);
+
+	// グリッチ適応エリア
+	glitchArea_ = std::make_unique<GameObject2D>();
+	glitchArea_->Init("bgCheckerboard", "glitchArea", "GameResultDisplay");
+	glitchArea_->SetCenterTranslation();
+	// 最初は表示しない
+	glitchArea_->SetAlpha(0.0f);
+	// グリッチを適応
+	glitchArea_->SetPostProcessMask(Bit_Glitch);
 
 	// 時間表示
 	resultTime_ = std::make_unique<GameTimerDisplay>();
@@ -34,6 +45,8 @@ void GameResultDisplay::Init() {
 		"toughnessTimeSymbol", "resultTime", "GameResultDisplay");
 	// 最初は表示しない
 	resultTime_->SetAlpha(0.0f);
+	// グリッチを適応
+	resultTime_->SetPostProcessMask(Bit_Glitch);
 
 	// クリア文字表示
 	clearText_ = std::make_unique<GameObject2D>();
@@ -113,6 +126,7 @@ void GameResultDisplay::StartDisplay() {
 	currentState_ = State::BeginTime;
 	resultTime_->SetAlpha(1.0f);
 	background_->SetColor(Color(0.034f, 0.034f, 0.034f, 0.741f));
+	glitchArea_->SetAlpha(0.001f);
 	randomDisplayTimer_.Reset();
 	randomSwitchIndex_ = 0;
 
@@ -198,6 +212,9 @@ void GameResultDisplay::UpdateBeginTime() {
 		// 待ち時間
 		displayWaitTimer_.Update();
 		if (0.5f < displayWaitTimer_.t_) {
+
+			// グリッチ適応終了
+			glitchArea_->SetAlpha(0.0f);
 
 			resultTime_->SetAlpha(0.0f);
 			resultTime_->SetOffset(Vector2(timerOffsetX_ / timeResultOffsetScale_, 0.0f));
@@ -317,7 +334,6 @@ void GameResultDisplay::ImGui() {
 	ImGui::Text("switch %d / %d", randomSwitchIndex_, randomSwitchCount_);
 
 	if (EnumAdapter<State>::Combo("currentState", &currentState_)) {
-
 		if (currentState_ == State::BeginTime) {
 
 			clearPosAnim_->Reset();
@@ -338,17 +354,24 @@ void GameResultDisplay::ImGui() {
 				return std::pow(u, randomSwitchBias_); };
 			nextSwitchT_ = (randomSwitchCount_ > 0) ? calcThreshold(0) : 1.0f;
 
+			glitchArea_->SetAlpha(0.001f);
+			glitchArea_->SetSize(glitchAreaSize_);
+
 			resultTime_->SetAlpha(1.0f);
 			resultTime_->SetOffset(Vector2(timerOffsetX_, 0.0f));
 			resultTime_->SetTranslation(timerTranslation_);
 			resultTime_->SetTimerSize(timerSize_);
 			resultTime_->SetSymbolSize(timerSymbolSize_);
+
+			// グリッチを発生させる
+			PostProcessSystem::GetInstance()->Start(PostProcessType::Glitch);
 		}
 	}
 
 	ImGui::SeparatorText("BeginTime");
 	{
 
+		ImGui::DragFloat2("glitchAreaSize", &glitchAreaSize_.x, 0.1f);
 		ImGui::DragFloat("timeResultOffsetScale", &timeResultOffsetScale_, 0.01f);
 		ImGui::DragFloat("timeResultSizeScale", &timeResultSizeScale_, 0.01f);
 		if (ImGui::DragFloat2("timerTranslation", &timerTranslation_.x, 1.0f)) {
@@ -424,6 +447,7 @@ void GameResultDisplay::ApplyJson() {
 	timerSize_ = Vector2::FromJson(data.value("timerSize_", Json()));
 	timerSymbolSize_ = Vector2::FromJson(data.value("timerSymbolSize_", Json()));
 	buttonSize_ = Vector2::FromJson(data.value("buttonSize_", Json()));
+	glitchAreaSize_ = Vector2::FromJson(data.value("glitchAreaSize_", Json()));
 	randomDisplayTimer_.FromJson(data["RandomDisplayTime"]);
 	displayWaitTimer_.FromJson(data.value("DisplayWaitTime", Json()));
 
@@ -434,6 +458,7 @@ void GameResultDisplay::ApplyJson() {
 	resultTime_->SetSymbolSize(timerSymbolSize_);
 	leftButton_->SetSize(buttonSize_);
 	rightButton_->SetSize(buttonSize_);
+	glitchArea_->SetSize(glitchAreaSize_);
 
 	clearPosAnim_->FromJson(data.value("ClearPosAnim", Json()));
 	clearSizeAnim_->FromJson(data.value("ClearSizeAnim", Json()));
@@ -460,6 +485,7 @@ void GameResultDisplay::SaveJson() {
 	data["timerSize_"] = timerSize_.ToJson();
 	data["timerSymbolSize_"] = timerSymbolSize_.ToJson();
 	data["buttonSize_"] = buttonSize_.ToJson();
+	data["glitchAreaSize_"] = glitchAreaSize_.ToJson();
 	randomDisplayTimer_.ToJson(data["RandomDisplayTime"]);
 	displayWaitTimer_.ToJson(data["DisplayWaitTime"]);
 

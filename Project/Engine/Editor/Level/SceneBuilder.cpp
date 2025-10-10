@@ -208,6 +208,9 @@ void SceneBuilder::ApplyMaterial(GameObject3D& object, const Json& data) {
 	}
 
 	object.ApplyMaterial(data);
+
+	// マテリアルの共通設定
+	object.SetPostProcessMask(Bit_Bloom | Bit_RadialBlur | Bit_Glitch | Bit_Grayscale | Bit_Vignette);
 }
 
 void SceneBuilder::ApplyCollision(GameObject3D& object, const Json& data) {
