@@ -11,6 +11,7 @@
 struct PSOutput {
 	
 	float4 color : SV_TARGET0;
+	uint4 mask : SV_TARGET1;
 };
 
 //============================================================================
@@ -30,6 +31,8 @@ struct Material {
 	float noiseAlphaReference;
 
 	float4x4 uvTransform;
+	
+	uint postProcessMask;
 };
 
 struct TextureInfo {
@@ -134,6 +137,9 @@ PSOutput main(MSOutput input) {
 	
 	// α値
 	output.color.a = material.color.a * textureColor.a * input.vertexColor.a;
+
+	// マスク値を出力
+	output.mask = uint4(material.postProcessMask, 0, 0, 0);
 	
 	return output;
 }

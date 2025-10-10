@@ -75,6 +75,7 @@ public:
 		const std::string& label, ImTextureID textureId, const ImVec2& size);
 
 	static const DragPayload* DragDropPayload(PendingType expectedType);
+	static std::string DragDropPayloadString(PendingType expectedType);
 
 	// 配列のstringをComboで表示する
 	static bool ComboFromStrings(const char* label, int* currentIndex,

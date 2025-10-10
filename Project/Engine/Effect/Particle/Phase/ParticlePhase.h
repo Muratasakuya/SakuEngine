@@ -75,6 +75,8 @@ private:
 	float duration_;
 	// 現在の経過時間
 	float elapsed_;
+	// 適応するポストエフェクトのビット
+	uint32_t postProcessMask_;
 	// emitterとして処理しない
 	bool notEmit_ = false;
 

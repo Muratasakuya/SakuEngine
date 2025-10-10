@@ -177,20 +177,24 @@ void ICPUParticleSpawnModule::DragAndDropTexture() {
 	// 使用しているtextureの名前を表示
 	ImGuiHelper::ImageButtonWithLabel("texture", textureName_,
 		(ImTextureID)asset_->GetGPUHandle(textureName_).ptr, { imageSize, imageSize });
-	if (const auto* payload = ImGuiHelper::DragDropPayload(PendingType::Texture)) {
+
+	std::string textureName = ImGuiHelper::DragDropPayloadString(PendingType::Texture);
+	if (!textureName.empty()) {
 
 		// textureを設定
-		textureName_ = payload->name;
+		textureName_ = textureName;
 		// indexを設定
 		textureInfo_.colorTextureIndex = asset_->GetTextureGPUIndex(textureName_);
 	}
 	ImGui::SameLine();
 	ImGuiHelper::ImageButtonWithLabel("noiseTexture", noiseTextureName_,
 		(ImTextureID)asset_->GetGPUHandle(noiseTextureName_).ptr, { imageSize, imageSize });
-	if (const auto* payload = ImGuiHelper::DragDropPayload(PendingType::Texture)) {
+
+	std::string noiseTextureName = ImGuiHelper::DragDropPayloadString(PendingType::Texture);
+	if (!noiseTextureName.empty()) {
 
 		// textureを設定
-		noiseTextureName_ = payload->name;
+		noiseTextureName_ = noiseTextureName;
 		// indexを設定
 		textureInfo_.noiseTextureIndex = asset_->GetTextureGPUIndex(noiseTextureName_);
 	}

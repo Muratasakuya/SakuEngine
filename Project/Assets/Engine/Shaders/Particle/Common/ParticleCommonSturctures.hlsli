@@ -16,6 +16,7 @@ struct Transform {
 struct Material {
 	
 	float4 color;
+	uint postProcessMask;
 };
 
 struct Particle {

@@ -1,6 +1,11 @@
 #include "ParticlePhase.h"
 
 //============================================================================
+//	include
+//============================================================================
+#include <Engine/Utility/Helper/ImGuiHelper.h>
+
+//============================================================================
 //	ParticlePhase classMethods
 //============================================================================
 
@@ -13,6 +18,7 @@ void ParticlePhase::Init(Asset* asset, ParticlePrimitiveType primitiveType) {
 
 	// 初期化値
 	duration_ = 0.8f;
+	postProcessMask_ = Bit_Bloom | Bit_RadialBlur | Bit_Glitch | Bit_Vignette;
 
 	// 基本的なモジュールは設定
 	AddUpdater(ParticleUpdateModuleID::Velocity);
@@ -47,6 +53,9 @@ void ParticlePhase::Emit(std::list<CPUParticle::ParticleData>& particles) {
 }
 
 void ParticlePhase::UpdateParticle(CPUParticle::ParticleData& particle, float deltaTime) {
+
+	// ポストプロセスのビットを設定
+	particle.material.postProcessMask = postProcessMask_;
 
 	// 更新処理
 	for (const auto& updater : updaters_) {
@@ -192,6 +201,15 @@ void ParticlePhase::ImGui() {
 		}
 
 		//============================================================================
+		//	PostProcess
+		//============================================================================
+		if (ImGui::BeginTabItem("PostProcess")) {
+
+			ImGuiHelper::EditPostProcessMask(postProcessMask_);
+			ImGui::EndTabItem();
+		}
+
+		//============================================================================
 		//	Spawners
 		//============================================================================
 		if (ImGui::BeginTabItem("Spawner")) {
@@ -329,6 +347,7 @@ Json ParticlePhase::ToJson() const {
 
 	data["duration"] = duration_;
 	data["notEmit"] = notEmit_;
+	data["postProcessMask_"] = postProcessMask_;
 
 	//============================================================================
 	//	SpawnerParameters
@@ -358,6 +377,8 @@ void ParticlePhase::FromJson(const Json& data) {
 
 	duration_ = data.value("duration", 0.8f);
 	notEmit_ = data.value("notEmit", false);
+	uint32_t initBit = Bit_Bloom | Bit_RadialBlur | Bit_Glitch | Bit_Vignette;
+	postProcessMask_ = data.value("postProcessMask_", initBit);
 
 	//============================================================================
 	//	SpawnerParameters

@@ -295,18 +295,22 @@ void GPUParticleGroup::ImGui(ID3D12Device* device) {
 			// 使用しているtextureの名前を表示
 			ImGuiHelper::ImageButtonWithLabel("texture", textureName_,
 				(ImTextureID)asset_->GetGPUHandle(textureName_).ptr, { imageSize, imageSize });
-			if (const auto* payload = ImGuiHelper::DragDropPayload(PendingType::Texture)) {
+
+			std::string textureName = ImGuiHelper::DragDropPayloadString(PendingType::Texture);
+			if (!textureName.empty()) {
 
 				// textureを設定
-				textureName_ = payload->name;
+				textureName_ = textureName;
 			}
 			ImGui::SameLine();
 			ImGuiHelper::ImageButtonWithLabel("noiseTexture", noiseTextureName_,
 				(ImTextureID)asset_->GetGPUHandle(noiseTextureName_).ptr, { imageSize, imageSize });
-			if (const auto* payload = ImGuiHelper::DragDropPayload(PendingType::Texture)) {
+
+			std::string noiseTextureName = ImGuiHelper::DragDropPayloadString(PendingType::Texture);
+			if (!noiseTextureName.empty()) {
 
 				// textureを設定
-				noiseTextureName_ = payload->name;
+				noiseTextureName_ = noiseTextureName;
 			}
 
 			ImGui::Separator();
@@ -341,6 +345,11 @@ void GPUParticleGroup::ImGui(ID3D12Device* device) {
 		if (ImGui::BeginTabItem("Material")) {
 
 			ImGui::ColorEdit4("color", &emitter_.common.color.r);
+			ImGui::EndTabItem();
+		}
+		if (ImGui::BeginTabItem("PostProcess")) {
+
+			ImGuiHelper::EditPostProcessMask(emitter_.common.postProcessMask);
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem("Updater")) {
@@ -530,6 +539,7 @@ Json GPUParticleGroup::ToJson() const {
 	data["common"]["moveSpeed"] = emitter_.common.moveSpeed;
 	data["common"]["scale"] = emitter_.common.scale.ToJson();
 	data["common"]["color"] = emitter_.common.color.ToJson();
+	data["common"]["postProcessMask"] = emitter_.common.postProcessMask;
 
 	switch (emitter_.shape) {
 	case ParticleEmitterShape::Sphere:
@@ -597,6 +607,8 @@ void GPUParticleGroup::FromJson(const Json& data) {
 	emitter_.common.moveSpeed = commonData.value("moveSpeed", 1.0f);
 	emitter_.common.scale = emitter_.common.scale.FromJson(commonData["scale"]);
 	emitter_.common.color = emitter_.common.color.FromJson(commonData["color"]);
+	uint32_t initBit = Bit_Bloom | Bit_RadialBlur | Bit_Glitch | Bit_Vignette;
+	emitter_.common.postProcessMask = commonData.value("postProcessMask", initBit);
 
 	switch (emitter_.shape) {
 	case ParticleEmitterShape::Sphere: {

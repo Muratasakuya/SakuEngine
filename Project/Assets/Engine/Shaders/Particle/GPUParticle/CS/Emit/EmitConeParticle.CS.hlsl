@@ -94,7 +94,8 @@ void main(uint3 DTid : SV_DispatchThreadID) {
 			
 		Material material = (Material) 0;
 		material.color = gEmitterCommon.color;
-			
+		material.postProcessMask = gEmitterCommon.postProcessMask;
+
 		// ’l‚ğİ’è
 		gParticles[particleIndex] = particle;
 		gTransform[particleIndex] = transform;

@@ -112,6 +112,27 @@ const DragPayload* ImGuiHelper::DragDropPayload(PendingType expectedType) {
 	return nullptr;
 }
 
+std::string ImGuiHelper::DragDropPayloadString(PendingType expectedType) {
+
+	if (!ImGui::BeginDragDropTarget()) {
+		return "";
+	}
+
+	const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(kDragPayloadId);
+	if (payload) {
+		auto* dragPayload = static_cast<const DragPayload*>(payload->Data);
+		if (dragPayload && dragPayload->type == expectedType) {
+
+			std::string name = dragPayload->name;
+			ImGui::EndDragDropTarget();
+			return name;
+		}
+	}
+
+	ImGui::EndDragDropTarget();
+	return "";
+}
+
 bool ImGuiHelper::ComboFromStrings(const char* label, int* currentIndex,
 	const std::vector<std::string>& items, int popupMaxHeightInItems) {
 
@@ -319,7 +340,7 @@ bool ImGuiHelper::EditPostProcessMask(uint32_t& ioMask) {
 		ImVec2(0.0f, 0.0f), true, ImGuiWindowFlags_HorizontalScrollbar);
 
 	// 列挙を順にチェックボックス表示
-	const uint32_t n = static_cast<uint32_t>(EnumAdapter<PostProcessType>::GetEnumCount());
+	constexpr uint32_t n = static_cast<uint32_t>(EnumAdapter<PostProcessType>::GetEnumCount());
 	for (uint32_t i = 0; i < n; ++i) {
 
 		const auto t = EnumAdapter<PostProcessType>::GetValue(i);

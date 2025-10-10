@@ -12,4 +12,6 @@ struct EmitterCommon {
 	float3 scale;
 	
 	float4 color;
+	
+	uint postProcessMask;
 };

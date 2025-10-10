@@ -4,6 +4,7 @@
 //	include
 //============================================================================
 #include <Engine/Core/Graphics/GPUObject/DxConstBuffer.h>
+#include <Engine/Core/Graphics/PostProcess/PostProcessBit.h>
 #include <Engine/MathLib/MathUtils.h>
 
 //============================================================================
@@ -32,6 +33,8 @@ struct ParticleEmitterCommon {
 
 	Color color;
 
+	// 適応するポストエフェクトのビット
+	uint32_t postProcessMask;
 	void Init() {
 
 		// 初期値
@@ -42,6 +45,9 @@ struct ParticleEmitterCommon {
 
 		scale = Vector3::AnyInit(0.4f);
 		color = Color::White();
+
+		// デフォルトでかけるポストプロセス
+		postProcessMask = Bit_Bloom | Bit_RadialBlur | Bit_Glitch | Bit_Vignette;
 	}
 };
 
