@@ -20,7 +20,6 @@ void BossEnemyAttackSign::Init() {
 		sign->Init("redCircle", "bossEnemyAttackSign", "BossEnemyHUD");
 
 		// スプライト設定
-		sign->SetPostProcessEnable(true);
 		sign->SetSpriteLayer(SpriteLayer::PostModel);
 		sign->SetBlendMode(BlendMode::kBlendModeAdd);
 		sign->SetSize(Vector2::AnyInit(0.0f));

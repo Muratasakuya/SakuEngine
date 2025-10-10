@@ -36,10 +36,18 @@ public:
 
 	//--------- enum class ---------------------------------------------------
 
+	// 描画シーン
 	enum class ViewType {
 
 		Main,  //メイン
 		Debug, // デバッグ視点用
+	};
+
+	// RTVの描画
+	enum class SVTarget {
+
+		Color,           // 色
+		PostProcessMask, // ポストプロセスのビットマスク
 	};
 public:
 	//========================================================================
@@ -78,7 +86,7 @@ public:
 
 	DxSwapChain* GetDxSwapChain() const { return dxSwapChain_.get(); }
 
-	RenderTexture* GetRenderTexture(ViewType type, uint32_t index) const { return multiRenderTextures_.at(type)->GetRenderTexture(index); }
+	RenderTexture* GetRenderTexture(ViewType type, SVTarget target) const;
 
 	const D3D12_GPU_DESCRIPTOR_HANDLE& GetDepthGPUHandle() const { return dsvDescriptor_->GetFrameGPUHandle(); }
 	const D3D12_GPU_DESCRIPTOR_HANDLE& GetRenderTextureGPUHandle() const { return guiRenderTexture_->GetGPUHandle(); }
@@ -131,4 +139,10 @@ private:
 	// command
 	void BeginRenderTarget(MultiRenderTexture* multiRenderTexture);
 	void EndRenderTarget(MultiRenderTexture* multiRenderTexture);
+
+	// helper
+	MultiRenderTexture* CreateViewMRT(ViewType type, ID3D12Device8* device);
+	void AddDefaultAttachments(MultiRenderTexture* multiRenderTexture);
+	void CreateGuiRenderTexture(ID3D12Device8* device);
+	void CreateDepthSRV();
 };

@@ -163,6 +163,7 @@ void Framework::Update() {
 
 	// 非同期読み込みの更新
 	asset_->PumpAsyncLoads();
+	// 読み込みがすべて終了したら次のシーンを初期化
 	if (sceneManager_->ConsumeNeedInitNextScene()) {
 
 		PostProcessSystem::GetInstance()->ClearProcess();
@@ -259,8 +260,10 @@ void Framework::RenderPath(DxCommand* dxCommand) {
 
 	// postProcess処理実行
 	postProcessSystem->Execute(dxCommand,
-		renderEngine_->GetRenderTexture(RenderEngine::ViewType::Main, 0)->GetSRVGPUHandle(),  // 0.色
-		renderEngine_->GetRenderTexture(RenderEngine::ViewType::Main, 1)->GetSRVGPUHandle()); // 1.マスク
+		renderEngine_->GetRenderTexture(RenderEngine::ViewType::Main,
+			RenderEngine::SVTarget::Color)->GetSRVGPUHandle(),            // 0.色
+		renderEngine_->GetRenderTexture(RenderEngine::ViewType::Main,
+			RenderEngine::SVTarget::PostProcessMask)->GetSRVGPUHandle()); // 1.マスク
 
 	renderEngine_->EndPostProcess();
 
@@ -272,8 +275,10 @@ void Framework::RenderPath(DxCommand* dxCommand) {
 	renderEngine_->Rendering(RenderEngine::ViewType::Debug, meshEnable);
 
 	postProcessSystem->ExecuteDebugScene(dxCommand,
-		renderEngine_->GetRenderTexture(RenderEngine::ViewType::Debug, 0)->GetSRVGPUHandle(),  // 0.色
-		renderEngine_->GetRenderTexture(RenderEngine::ViewType::Debug, 1)->GetSRVGPUHandle()); // 1.マスク
+		renderEngine_->GetRenderTexture(RenderEngine::ViewType::Debug,
+			RenderEngine::SVTarget::Color)->GetSRVGPUHandle(),            // 0.色
+		renderEngine_->GetRenderTexture(RenderEngine::ViewType::Debug,
+			RenderEngine::SVTarget::PostProcessMask)->GetSRVGPUHandle()); // 1.マスク
 #endif
 	//========================================================================
 	//	draw: frameBuffer

@@ -14,19 +14,8 @@
 // front
 class DxCommand;
 class SceneConstBuffer;
-
-//============================================================================
-//	enum class
-//============================================================================
-
-// 描画モード
-enum class RenderMode {
-
-	IrrelevantPostProcess,
-	ApplyPostProcess,
-
-	Count
-};
+class SRVDescriptor;
+class DxShaderCompiler;
 
 //============================================================================
 //	SpriteRenderer class
@@ -40,13 +29,9 @@ public:
 	SpriteRenderer() = default;
 	~SpriteRenderer() = default;
 
-	void Init(ID3D12Device8* device, class SRVDescriptor* srvDescriptor,
-		class DxShaderCompiler* shaderCompiler);
+	void Init(ID3D12Device8* device, SRVDescriptor* srvDescriptor, DxShaderCompiler* shaderCompiler);
 
-	// postProcessをかける
-	void ApplyPostProcessRendering(SpriteLayer layer, SceneConstBuffer* sceneBuffer, DxCommand* dxCommand);
-	// postProcessをかけない
-	void IrrelevantRendering(SceneConstBuffer* sceneBuffer, DxCommand* dxCommand);
+	void Rendering(SpriteLayer layer, SceneConstBuffer* sceneBuffer, DxCommand* dxCommand);
 private:
 	//========================================================================
 	//	private Methods
@@ -54,5 +39,5 @@ private:
 
 	//--------- variables ----------------------------------------------------
 
-	std::unordered_map<RenderMode, std::unique_ptr<PipelineState>> pipelines_;
+	std::unique_ptr<PipelineState> pipeline_;
 };

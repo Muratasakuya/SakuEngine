@@ -74,14 +74,6 @@ void GameDigitDisplay::SetDigitSize(uint32_t digitIndex, const Vector2& size) {
 	}
 }
 
-void GameDigitDisplay::SetPostProcessEnable(bool apply) {
-
-	for (uint32_t index = 0; index < digitSprites_.size(); ++index) {
-
-		digitSprites_[index]->SetPostProcessEnable(apply);
-	}
-}
-
 void GameDigitDisplay::SetAlpha(float alpha) {
 
 	for (uint32_t index = 0; index < digitSprites_.size(); ++index) {

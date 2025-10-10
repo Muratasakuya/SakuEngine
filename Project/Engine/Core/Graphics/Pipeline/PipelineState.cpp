@@ -9,6 +9,7 @@
 #include <Engine/Core/Graphics/Pipeline/DxInputLayout.h>
 #include <Engine/Core/Graphics/Pipeline/DxDepthRaster.h>
 #include <Engine/Core/Graphics/Pipeline/DxBlendState.h>
+#include <Engine/Utility/Enum/EnumAdapter.h>
 
 //============================================================================
 //	PipelineState classMethods
@@ -230,14 +231,7 @@ PipelineState::Formats PipelineState::ParseFormatsFromJson(const Json& stateJson
 	Formats formt{};
 
 	// DSVの設定
-	const std::string dsvFormat = stateJson.value("DSVFormat", "");
-	if (dsvFormat == "D24_UNORM_S8_UINT") {
-
-		formt.dsv = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	} else if (dsvFormat == "D32_FLOAT") {
-
-		formt.dsv = DXGI_FORMAT_D32_FLOAT;
-	}
+	formt.dsv = GetFormatFromString(stateJson["DSVFormat"].get<std::string>());
 
 	// RTVの設定
 	const auto& rtvNode = stateJson["RTVFormats"];
@@ -291,19 +285,8 @@ void PipelineState::BuildBlendStateForMode(D3D12_BLEND_DESC& outDesc, BlendMode 
 
 DXGI_FORMAT PipelineState::GetFormatFromString(const std::string& name) const {
 
-	if (name == "R32G32B32A32_FLOAT") return DXGI_FORMAT_R32G32B32A32_FLOAT;
-	if (name == "R32G32B32A32_UINT") return DXGI_FORMAT_R32G32B32A32_UINT;
-	if (name == "R8G8B8A8_UNORM_SRGB") return DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
-
-	if (name == "R32_FLOAT") return DXGI_FORMAT_R32_FLOAT;
-
-	if (name == "R16_UNORM") return DXGI_FORMAT_R16_UNORM;
-	if (name == "R8_UNORM") return DXGI_FORMAT_R8_UNORM;
-
-	if (name == "R16_UINT") return DXGI_FORMAT_R16_UINT;
-	if (name == "R8_UINT") return DXGI_FORMAT_R8_UINT;
-
-	return DXGI_FORMAT_UNKNOWN;
+	std::string fullName = "DXGI_FORMAT_" + name;
+	return EnumAdapter<DXGI_FORMAT>::FromString(fullName).value();
 }
 
 ID3D12PipelineState* PipelineState::GetGraphicsPipeline(BlendMode blendMode) const {

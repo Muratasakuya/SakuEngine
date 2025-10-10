@@ -17,6 +17,53 @@
 //	RenderEngine classMethods
 //============================================================================
 
+MultiRenderTexture* RenderEngine::CreateViewMRT(ViewType type, ID3D12Device8* device) {
+
+	// 初期化
+	auto multiRenderTexture = std::make_unique<MultiRenderTexture>();
+	multiRenderTexture->Init(device, rtvDescriptor_.get(), srvDescriptor_.get(),
+		Config::kWindowWidth, Config::kWindowHeight);
+	multiRenderTextures_[type] = std::move(multiRenderTexture);
+	return multiRenderTextures_[type].get();
+}
+
+void RenderEngine::AddDefaultAttachments(MultiRenderTexture* multiRenderTexture) {
+
+	// SVTarget_n
+	// 0: 色
+	multiRenderTexture->AddColorTarget(Config::kRenderTextureRTVFormat,
+		Color(Config::kWindowClearColor[0], Config::kWindowClearColor[1],
+			Config::kWindowClearColor[2], Config::kWindowClearColor[3]));
+	// 1: ポストプロセスマスク
+	multiRenderTexture->AddMaskTarget(DXGI_FORMAT_R32G32B32A32_UINT);
+}
+
+void RenderEngine::CreateGuiRenderTexture(ID3D12Device8* device) {
+
+	// gui用texture作成
+	guiRenderTexture_ = std::make_unique<GuiRenderTexture>();
+	guiRenderTexture_->Create(
+		// サイズ
+		Config::kWindowWidth, Config::kWindowHeight,
+		// RTVフォーマット
+		Config::kSwapChainRTVFormat,
+		device, srvDescriptor_.get());
+}
+
+void RenderEngine::CreateDepthSRV() {
+
+	// SRV作成
+	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
+	srvDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
+	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.Texture2D.MipLevels = 1;
+
+	uint32_t srvIndex = 0;
+	srvDescriptor_->CreateSRV(srvIndex, dsvDescriptor_->GetResource(), srvDesc);
+	dsvDescriptor_->SetFrameGPUHandle(srvDescriptor_->GetGPUHandle(srvIndex));
+}
+
 void RenderEngine::InitDescriptor(ID3D12Device8* device) {
 
 	// RTV初期化
@@ -37,56 +84,28 @@ void RenderEngine::InitDescriptor(ID3D12Device8* device) {
 
 void RenderEngine::InitRenderTextrue(ID3D12Device8* device) {
 
-	RTVDescriptor* rtvDescriptor = rtvDescriptor_.get();
-	SRVDescriptor* srvDescriptor = srvDescriptor_.get();
-
 	// マルチRTVを作成
-	multiRenderTextures_[ViewType::Main] = std::make_unique<MultiRenderTexture>();
-	MultiRenderTexture* mainRenderTexrure = multiRenderTextures_[ViewType::Main].get();
-	mainRenderTexrure->Init(device, rtvDescriptor, srvDescriptor,
-		Config::kWindowWidth, Config::kWindowHeight);
-	// 色
-	mainRenderTexrure->AddColorTarget(Config::kRenderTextureRTVFormat,
-		Color(Config::kWindowClearColor[0], Config::kWindowClearColor[1],
-			Config::kWindowClearColor[2], Config::kWindowClearColor[3]));
-	// ポストエフェクトマスク
-	mainRenderTexrure->AddMaskTarget(DXGI_FORMAT_R32G32B32A32_UINT);
+	// Main
+	AddDefaultAttachments(CreateViewMRT(ViewType::Main, device));
 
 #if defined(_DEBUG) || defined(_DEVELOPBUILD)
 
 	// gui用texture作成
-	guiRenderTexture_ = std::make_unique<GuiRenderTexture>();
-	guiRenderTexture_->Create(
-		// サイズ
-		Config::kWindowWidth, Config::kWindowHeight,
-		// RTVフォーマット
-		Config::kSwapChainRTVFormat,
-		device, srvDescriptor);
+	CreateGuiRenderTexture(device);
 
 	// デバッグ視点用マルチRTVを作成
-	// マルチRTVを作成
-	multiRenderTextures_[ViewType::Debug] = std::make_unique<MultiRenderTexture>();
-	MultiRenderTexture* debugRenderTexrure = multiRenderTextures_[ViewType::Debug].get();
-	debugRenderTexrure->Init(device, rtvDescriptor, srvDescriptor,
-		Config::kWindowWidth, Config::kWindowHeight);
-	// 色
-	debugRenderTexrure->AddColorTarget(Config::kRenderTextureRTVFormat,
-		Color(Config::kWindowClearColor[0], Config::kWindowClearColor[1],
-			Config::kWindowClearColor[2], Config::kWindowClearColor[3]));
-	// ポストエフェクトマスク
-	debugRenderTexrure->AddMaskTarget(DXGI_FORMAT_R32G32B32A32_UINT);
+	// Debug
+	AddDefaultAttachments(CreateViewMRT(ViewType::Debug, device));
 #endif
 
-	// SRV作成
-	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
-	srvDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
-	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-	srvDesc.Texture2D.MipLevels = 1;
+	// 深度SRVを作成
+	CreateDepthSRV();
+}
 
-	uint32_t srvIndex = 0;
-	srvDescriptor_->CreateSRV(srvIndex, dsvDescriptor_->GetResource(), srvDesc);
-	dsvDescriptor_->SetFrameGPUHandle(srvDescriptor_->GetGPUHandle(srvIndex));
+RenderTexture* RenderEngine::GetRenderTexture(ViewType type, SVTarget target) const {
+
+	uint32_t index = static_cast<uint32_t>(target);
+	return multiRenderTextures_.at(type)->GetRenderTexture(index);
 }
 
 void RenderEngine::InitRenderer(ID3D12Device8* device, DxShaderCompiler* shaderCompiler) {
@@ -228,9 +247,9 @@ void RenderEngine::Renderers(ViewType type, bool enableMesh) {
 	// srvDescriptorHeap設定
 	dxCommand_->SetDescriptorHeaps({ srvDescriptor_->GetDescriptorHeap() });
 
-	// sprite描画、postPrecess適用
+	// sprite描画
 	// model描画前
-	spriteRenderer_->ApplyPostProcessRendering(SpriteLayer::PreModel, sceneBuffer_.get(), dxCommand_);
+	spriteRenderer_->Rendering(SpriteLayer::PreModel, sceneBuffer_.get(), dxCommand_);
 
 	if (isDebugEnable) {
 
@@ -253,9 +272,9 @@ void RenderEngine::Renderers(ViewType type, bool enableMesh) {
 		LineRenderer::GetInstance()->ExecuteLine(isDebugEnable, LineType::DepthIgnore);
 	}
 
-	// sprite描画、postPrecess適用
+	// sprite描画
 	// model描画後
-	spriteRenderer_->ApplyPostProcessRendering(SpriteLayer::PostModel, sceneBuffer_.get(), dxCommand_);
+	spriteRenderer_->Rendering(SpriteLayer::PostModel, sceneBuffer_.get(), dxCommand_);
 
 	// ピッキング処理、左クリックしたときのみ更新
 	if (Input::GetInstance()->IsMouseOnView(InputViewArea::Scene)) {
@@ -279,9 +298,6 @@ void RenderEngine::BeginRenderFrameBuffer() {
 }
 
 void RenderEngine::EndRenderFrameBuffer() {
-
-	// sprite描画、postPrecessを適用しない
-	spriteRenderer_->IrrelevantRendering(sceneBuffer_.get(), dxCommand_);
 
 #if defined(_DEBUG) || defined(_DEVELOPBUILD)
 

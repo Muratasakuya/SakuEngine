@@ -32,8 +32,6 @@ void GameResultDisplay::Init() {
 	resultTime_ = std::make_unique<GameTimerDisplay>();
 	resultTime_->Init("dd:dd:dd", "toughnessNumber",
 		"toughnessTimeSymbol", "resultTime", "GameResultDisplay");
-	// ポストエフェクト有効
-	resultTime_->SetPostProcessEnable(true);
 	// 最初は表示しない
 	resultTime_->SetAlpha(0.0f);
 

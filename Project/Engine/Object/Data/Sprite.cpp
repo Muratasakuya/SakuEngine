@@ -4,6 +4,7 @@
 //	include
 //============================================================================
 #include <Engine/Asset/Asset.h>
+#include <Engine/Utility/Enum/EnumAdapter.h>
 
 // imgui
 #include <imgui.h>
@@ -23,7 +24,6 @@ Sprite::Sprite(ID3D12Device* device, Asset* asset,
 	metadata_ = asset_->GetMetaData(textureName_);
 
 	layer_ = SpriteLayer::PostModel;
-	postProcessEnable_ = false;
 
 	// buffer作成
 	InitBuffer(device);
@@ -138,27 +138,10 @@ void Sprite::SetMetaDataTextureSize(Transform2D& transform) {
 
 void Sprite::ImGui(float itemSize) {
 
-	if (ImGui::Checkbox("postProcessEnable", &postProcessEnable_)) {
-
-		if (!postProcessEnable_) {
-
-			// postProcessをかけないとき、
-			// frameBufferに直接描画するのでmodelの後になる
-			layer_ = SpriteLayer::PostModel;
-		}
-	}
-
 	ImGui::PushItemWidth(itemSize);
-	const char* layerItems[] = {
-		"PreModel",
-		"PostModel",
-	};
-	int layerIndex = static_cast<int>(layer_);
+	
+	EnumAdapter<SpriteLayer>::Combo("SpriteLayer", &layer_);
 
-	if (ImGui::Combo("SpriteLayer", &layerIndex, layerItems, IM_ARRAYSIZE(layerItems))) {
-
-		layer_ = static_cast<SpriteLayer>(layerIndex);
-	}
 	ImGui::PopItemWidth();
 }
 

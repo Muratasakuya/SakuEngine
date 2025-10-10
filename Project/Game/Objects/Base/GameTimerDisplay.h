@@ -39,8 +39,6 @@ public:
 	void SetSymbolSize(const Vector2& size);
 
 	void SetAlpha(float alpha);
-
-	void SetPostProcessEnable(bool enable);
 private:
 	//========================================================================
 	//	private Methods

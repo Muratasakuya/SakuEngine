@@ -73,7 +73,6 @@ public:
 	void SetBlendMode(BlendMode blendMode) { sprite_->SetBlendMode(blendMode); }
 
 	// postEffect
-	void SetPostProcessEnable(bool enable) { sprite_->SetPostProcessEnable(enable); }
 	void SetPostProcessMask(uint32_t mask) { material_->material.postProcessMask = mask; }
 
 	/*---------- getter ----------*/
