@@ -199,12 +199,17 @@
                     "type": "Repeat"
                 }
             },
+            "ReturnTimer": {
+                "easeingType_": "EaseInSine",
+                "target_": 0.800000011920929
+            },
             "Timer": {
                 "easeingType_": "EaseOutCubic",
                 "target_": 0.18000000715255737
             },
             "move_.end": 1.600000023841858,
-            "move_.start": 0.6399999856948853
+            "move_.start": 0.6399999856948853,
+            "useReturnTimer_": false
         },
         "decelLerp_": {
             "Loop": {
@@ -213,19 +218,22 @@
                     "type": "Repeat"
                 }
             },
+            "ReturnTimer": {
+                "easeingType_": "EaseInSine",
+                "target_": 0.800000011920929
+            },
             "Timer": {
                 "easeingType_": "EaseInSine",
                 "target_": 0.18000000715255737
             },
             "move_.end": 0.8600000143051147,
-            "move_.start": 1.600000023841858
+            "move_.start": 1.600000023841858,
+            "useReturnTimer_": false
         },
         "nextAnimDuration_": 0.017999999225139618,
         "rotationLerpRate_": 0.18000000715255737
     },
     "Idle": {
-        "blurEasingType_": 10,
-        "blurTime_": 0.18000000715255737,
         "nextAnimDuration_": 0.20000000298023224
     },
     "Parry": {
@@ -251,9 +259,9 @@
         },
         "MoveJump": {
             "easeingType_": "EaseOutQuint",
-            "moveValue": 22.0,
+            "moveValue": -8.600000381469727,
             "nextAnim": 0.0,
-            "target_": 0.6600000262260437
+            "target_": 0.30000001192092896
         },
         "ReturnMove": {
             "easeingType_": "EaseOutQuad",
@@ -281,8 +289,6 @@
         "rotationLerpRate_": 0.3199999928474426
     },
     "StunAttack": {
-        "blurEasingType_": 10,
-        "blurTime_": 0.1599999964237213,
         "enemyDistance_": -48.0,
         "entryEasingType_": 16,
         "entryTime_": 0.3199999928474426,
@@ -292,15 +298,10 @@
         "targetTranslationY_": 4.0
     },
     "SwitchAlly": {
-        "blurEasingType_": 10,
-        "blurTime_": 0.1599999964237213,
         "deltaTimeScaleEasingType_": 0,
         "deltaTimeScaleTime_": 0.20000000298023224,
         "deltaTimeScale_": 0.23999999463558197,
-        "switchAllyTime_": 3.0,
-        "targetRadialBlur_.center.y": 0.800000011920929,
-        "targetRadialBlur_.numSamples": 8,
-        "targetRadialBlur_.width": 0.014000000432133675
+        "switchAllyTime_": 3.0
     },
     "Walk": {
         "moveDecay_": 0.4399999976158142,
