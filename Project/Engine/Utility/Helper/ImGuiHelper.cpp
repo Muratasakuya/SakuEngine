@@ -9,6 +9,9 @@
 #include <Engine/Object/System/Systems/TagSystem.h>
 #include <Engine/Object/Data/Transform.h>
 #include <Engine/Utility/Json/JsonAdapter.h>
+#include <Engine/Utility/Enum/EnumAdapter.h>
+#include <Engine/Core/Graphics/PostProcess/PostProcessType.h>
+#include <Engine/Core/Graphics/PostProcess/PostProcessBit.h>
 
 // windows
 #include <commdlg.h>
@@ -17,6 +20,44 @@
 //============================================================================
 //	ImGuiHelper classMethods
 //============================================================================
+
+namespace {
+	// PostProcessTypeの対応ビット
+	constexpr uint32_t ToBit(PostProcessType type) {
+		switch (type) {
+		case PostProcessType::Bloom:                 return static_cast<uint32_t>(Bit_Bloom);
+		case PostProcessType::HorizontalBlur:        return static_cast<uint32_t>(Bit_HorizontalBlur);
+		case PostProcessType::VerticalBlur:          return static_cast<uint32_t>(Bit_VerticalBlur);
+		case PostProcessType::RadialBlur:            return static_cast<uint32_t>(Bit_RadialBlur);
+		case PostProcessType::GaussianFilter:        return static_cast<uint32_t>(Bit_GaussianFilter);
+		case PostProcessType::BoxFilter:             return static_cast<uint32_t>(Bit_BoxFilter);
+		case PostProcessType::Dissolve:              return static_cast<uint32_t>(Bit_Dissolve);
+		case PostProcessType::Random:                return static_cast<uint32_t>(Bit_Random);
+		case PostProcessType::Vignette:              return static_cast<uint32_t>(Bit_Vignette);
+		case PostProcessType::Grayscale:             return static_cast<uint32_t>(Bit_Grayscale);
+		case PostProcessType::SepiaTone:             return static_cast<uint32_t>(Bit_SepiaTone);
+		case PostProcessType::LuminanceBasedOutline: return static_cast<uint32_t>(Bit_LuminanceBasedOutline);
+		case PostProcessType::DepthBasedOutline:     return static_cast<uint32_t>(Bit_DepthBasedOutline);
+		case PostProcessType::Lut:                   return static_cast<uint32_t>(Bit_Lut);
+		case PostProcessType::Glitch:                return static_cast<uint32_t>(Bit_Glitch);
+		case PostProcessType::CRTDisplay:            return static_cast<uint32_t>(Bit_CRTDisplay);
+			// マスク対象外
+		case PostProcessType::CopyTexture:
+		case PostProcessType::Count:
+		default: return 0u;
+		}
+	}
+	// 全てのビット
+	constexpr uint32_t kAllBits =
+		static_cast<uint32_t>(Bit_Bloom) | static_cast<uint32_t>(Bit_HorizontalBlur)
+		| static_cast<uint32_t>(Bit_VerticalBlur) | static_cast<uint32_t>(Bit_RadialBlur)
+		| static_cast<uint32_t>(Bit_GaussianFilter) | static_cast<uint32_t>(Bit_BoxFilter)
+		| static_cast<uint32_t>(Bit_Dissolve) | static_cast<uint32_t>(Bit_Random)
+		| static_cast<uint32_t>(Bit_Vignette) | static_cast<uint32_t>(Bit_Grayscale)
+		| static_cast<uint32_t>(Bit_SepiaTone) | static_cast<uint32_t>(Bit_LuminanceBasedOutline)
+		| static_cast<uint32_t>(Bit_DepthBasedOutline) | static_cast<uint32_t>(Bit_Lut)
+		| static_cast<uint32_t>(Bit_Glitch) | static_cast<uint32_t>(Bit_CRTDisplay);
+}
 
 void ImGuiHelper::ImageButtonWithLabel(const char* id,
 	const std::string& label, ImTextureID textureId, const ImVec2& size) {
@@ -255,4 +296,54 @@ bool ImGuiHelper::OpenJsonDialog(std::string& outRelPath) {
 		return true;
 	}
 	return false;
+}
+
+bool ImGuiHelper::EditPostProcessMask(uint32_t& ioMask) {
+
+	ImGui::Text("BitValue: %d", ioMask);
+
+	bool changed = false;
+	// クイック操作
+	if (ImGui::SmallButton("All")) {
+		ioMask = kAllBits;
+		changed = true;
+	}
+	ImGui::SameLine();
+	if (ImGui::SmallButton("None")) {
+
+		ioMask = 0u;
+		changed = true;
+	}
+
+	ImGui::BeginChild(ImGui::GetID("##PostFxMaskChild"),
+		ImVec2(0.0f, 0.0f), true, ImGuiWindowFlags_HorizontalScrollbar);
+
+	// 列挙を順にチェックボックス表示
+	const uint32_t n = static_cast<uint32_t>(EnumAdapter<PostProcessType>::GetEnumCount());
+	for (uint32_t i = 0; i < n; ++i) {
+
+		const auto t = EnumAdapter<PostProcessType>::GetValue(i);
+		const uint32_t bit = ToBit(t);
+		// 対応していないビットは処理しない
+		if (bit == 0u) {
+
+			continue;
+		}
+
+		bool value = (ioMask & bit) != 0u;
+		const char* name = EnumAdapter<PostProcessType>::GetEnumName(i);
+		if (ImGui::Checkbox(name, &value)) {
+			if (value) {
+
+				ioMask |= bit;
+			} else {
+
+				ioMask &= ~bit;
+			}
+			changed = true;
+		}
+	}
+
+	ImGui::EndChild();
+	return changed;
 }

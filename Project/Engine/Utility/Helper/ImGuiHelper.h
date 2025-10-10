@@ -108,6 +108,9 @@ public:
 		const char* prefixOnSave, JsonSaveState& ioState, std::string& outRelPath);
 	// jsonの読み込みファイルダイアログ
 	static bool OpenJsonDialog(std::string& outRelPath);
+
+	// ポストプロセスのマスクの設定
+	static bool EditPostProcessMask(uint32_t& ioMask);
 };
 
 //============================================================================

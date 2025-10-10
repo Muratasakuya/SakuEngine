@@ -6,6 +6,7 @@
 #include <Engine/Asset/Asset.h>
 #include <Engine/Utility/Timer/GameTimer.h>
 #include <Engine/Utility/Json/JsonAdapter.h>
+#include <Engine/Utility/Helper/ImGuiHelper.h>
 
 // imgui
 #include <imgui.h>
@@ -108,7 +109,7 @@ void Material::ImGui(float itemSize) {
 
 	ImGui::SeparatorText("PostProcess");
 
-	ImGui::Text("postProcessMask: %d", postProcessMask);
+	ImGuiHelper::EditPostProcessMask(postProcessMask);
 
 	ImGui::PopItemWidth();
 }
@@ -231,6 +232,10 @@ void SpriteMaterial::ImGui(float itemSize) {
 	ImGui::DragFloat2("uvTranslate", &uvTransform.translation.x, 0.1f);
 	ImGui::SliderAngle("uvRotate", &uvTransform.rotate.z);
 	ImGui::DragFloat2("uvScale", &uvTransform.scale.x, 0.1f);
+
+	ImGui::SeparatorText("PostProcess");
+
+	ImGuiHelper::EditPostProcessMask(material.postProcessMask);
 
 	ImGui::PopItemWidth();
 }
