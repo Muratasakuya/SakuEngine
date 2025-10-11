@@ -19,12 +19,12 @@
         },
         "offsetTranslation_": {
             "x": 4.344025239406933e-44,
-            "y": 6.402082920074463,
-            "z": -51.58128356933594
+            "y": 8.001999855041504,
+            "z": -58.077999114990234
         },
         "offsetXLerpRate_": 0.01600000075995922,
         "offsetYLerpRate_": 0.01600000075995922,
-        "offsetZLerpRate_": 0.07999999821186066,
+"offsetZLerpRate_": 0.07999999821186066,
         "padSensitivity_": {
             "x": 0.03200000151991844,
             "y": 0.04800000041723251
@@ -36,39 +36,6 @@
         "rotatePlusParam_.clampThreshold": 0.3199999928474426,
         "rotatePlusParam_.offsetZNear": -38.0,
         "rotateZLerpRate_": 0.03999999910593033
-    },
-    "Parry": {
-        "easingType_": 10,
-        "lerpRate_": 0.6399999856948853,
-        "lerpTime_": 0.12999999523162842,
-        "targetFovY_": 1.0,
-        "targetOffsetTranslation_": {
-            "x": 2.0999999046325684,
-            "y": 7.5,
-            "z": -16.0
-        },
-        "targetRotate_": {
-            "x": -0.07999999821186066,
-            "y": -6.803716659545898,
-            "z": -0.03999999910593033
-        },
-        "waitTime_": 0.800000011920929
-    },
-    "ParryAttack": {
-        "easingType_": 14,
-        "lerpRate_": 0.800000011920929,
-        "lerpTime_": 1.399999976158142,
-        "targetFovY_": 0.5400000214576721,
-        "targetOffsetTranslation_": {
-            "x": 1.2000000476837158,
-            "y": 7.199999809265137,
-            "z": -54.0
-        },
-        "targetRotate_": {
-            "x": 0.29600000381469727,
-            "y": -1.7566534280776978,
-            "z": 0.0
-        }
     },
     "Shake": {
         "shakeEasingType_": 14,

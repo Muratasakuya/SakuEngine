@@ -6,6 +6,7 @@
 #include <Engine/Core/Graphics/PostProcess/Core/PostProcessSystem.h>
 #include <Engine/Utility/Timer/GameTimer.h>
 #include <Game/Objects/GameScene/Player/Entity/Player.h>
+#include <Game/Camera/Follow/FollowCamera.h>
 
 //============================================================================
 //	PlayerIdleState classMethods
@@ -18,6 +19,9 @@ void PlayerIdleState::Enter(Player& player) {
 
 	canExit_ = false;
 	player.SetNextAnimation("player_idle", true, nextAnimDuration_);
+
+	// カメラ制御をプレイヤーに委ねる
+	followCamera_->SetLookAlwaysTarget(false);
 }
 
 void PlayerIdleState::Update([[maybe_unused]] Player& player) {
