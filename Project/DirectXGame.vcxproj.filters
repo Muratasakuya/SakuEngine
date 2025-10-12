@@ -561,31 +561,31 @@
     <ClCompile Include="Engine\Effect\Particle\Module\Spawner\ParticleSpawnSphereModule.cpp">
       <Filter>Engine\Effect\Particle\Module\Spawner</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Effect\Particle\Module\Updater\ParticleUpdateAlphaReferenceModule.cpp">
+    <ClCompile Include="Engine\Effect\Particle\Module\Updater\Material\ParticleUpdateAlphaReferenceModule.cpp">
       <Filter>Engine\Effect\Particle\Module\Updater</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Effect\Particle\Module\Updater\ParticleUpdateColorModule.cpp">
+    <ClCompile Include="Engine\Effect\Particle\Module\Updater\Material\ParticleUpdateColorModule.cpp">
       <Filter>Engine\Effect\Particle\Module\Updater</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Effect\Particle\Module\Updater\ParticleUpdateEmissiveModule.cpp">
+    <ClCompile Include="Engine\Effect\Particle\Module\Updater\Material\ParticleUpdateEmissiveModule.cpp">
       <Filter>Engine\Effect\Particle\Module\Updater</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Effect\Particle\Module\Updater\ParticleUpdateGravityModule.cpp">
+    <ClCompile Include="Engine\Effect\Particle\Module\Updater\Move\ParticleUpdateGravityModule.cpp">
       <Filter>Engine\Effect\Particle\Module\Updater</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Effect\Particle\Module\Updater\ParticleUpdatePrimitiveModule.cpp">
+    <ClCompile Include="Engine\Effect\Particle\Module\Updater\Primitive\ParticleUpdatePrimitiveModule.cpp">
       <Filter>Engine\Effect\Particle\Module\Updater</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Effect\Particle\Module\Updater\ParticleUpdateRotationModule.cpp">
+    <ClCompile Include="Engine\Effect\Particle\Module\Updater\Transform\ParticleUpdateRotationModule.cpp">
       <Filter>Engine\Effect\Particle\Module\Updater</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Effect\Particle\Module\Updater\ParticleUpdateScaleModule.cpp">
+    <ClCompile Include="Engine\Effect\Particle\Module\Updater\Transform\ParticleUpdateScaleModule.cpp">
       <Filter>Engine\Effect\Particle\Module\Updater</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Effect\Particle\Module\Updater\ParticleUpdateUVModule.cpp">
+    <ClCompile Include="Engine\Effect\Particle\Module\Updater\Material\ParticleUpdateUVModule.cpp">
       <Filter>Engine\Effect\Particle\Module\Updater</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Effect\Particle\Module\Updater\ParticleUpdateVelocityModule.cpp">
+    <ClCompile Include="Engine\Effect\Particle\Module\Updater\Move\ParticleUpdateVelocityModule.cpp">
       <Filter>Engine\Effect\Particle\Module\Updater</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Effect\Particle\Phase\ParticlePhase.cpp">
@@ -1338,31 +1338,31 @@
     <ClInclude Include="Engine\Effect\Particle\Module\Spawner\ParticleSpawnSphereModule.h">
       <Filter>Engine\Effect\Particle\Module\Spawner</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Effect\Particle\Module\Updater\ParticleUpdateAlphaReferenceModule.h">
+    <ClInclude Include="Engine\Effect\Particle\Module\Updater\Material\ParticleUpdateAlphaReferenceModule.h">
       <Filter>Engine\Effect\Particle\Module\Updater</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Effect\Particle\Module\Updater\ParticleUpdateColorModule.h">
+    <ClInclude Include="Engine\Effect\Particle\Module\Updater\Material\ParticleUpdateColorModule.h">
       <Filter>Engine\Effect\Particle\Module\Updater</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Effect\Particle\Module\Updater\ParticleUpdateEmissiveModule.h">
+    <ClInclude Include="Engine\Effect\Particle\Module\Updater\Material\ParticleUpdateEmissiveModule.h">
       <Filter>Engine\Effect\Particle\Module\Updater</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Effect\Particle\Module\Updater\ParticleUpdateGravityModule.h">
+    <ClInclude Include="Engine\Effect\Particle\Module\Updater\Move\ParticleUpdateGravityModule.h">
       <Filter>Engine\Effect\Particle\Module\Updater</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Effect\Particle\Module\Updater\ParticleUpdatePrimitiveModule.h">
+    <ClInclude Include="Engine\Effect\Particle\Module\Updater\Primitive\ParticleUpdatePrimitiveModule.h">
       <Filter>Engine\Effect\Particle\Module\Updater</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Effect\Particle\Module\Updater\ParticleUpdateRotationModule.h">
+    <ClInclude Include="Engine\Effect\Particle\Module\Updater\Transform\ParticleUpdateRotationModule.h">
       <Filter>Engine\Effect\Particle\Module\Updater</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Effect\Particle\Module\Updater\ParticleUpdateScaleModule.h">
+    <ClInclude Include="Engine\Effect\Particle\Module\Updater\Transform\ParticleUpdateScaleModule.h">
       <Filter>Engine\Effect\Particle\Module\Updater</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Effect\Particle\Module\Updater\ParticleUpdateUVModule.h">
+    <ClInclude Include="Engine\Effect\Particle\Module\Updater\Material\ParticleUpdateUVModule.h">
       <Filter>Engine\Effect\Particle\Module\Updater</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Effect\Particle\Module\Updater\ParticleUpdateVelocityModule.h">
+    <ClInclude Include="Engine\Effect\Particle\Module\Updater\Move\ParticleUpdateVelocityModule.h">
       <Filter>Engine\Effect\Particle\Module\Updater</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Effect\Particle\ParticleConfig.h">
@@ -2139,11 +2139,11 @@
     <None Include="Assets\Engine\Shaders\Skybox\Skybox.hlsli">
       <Filter>Assets\Engine\Shaders\Skybox</Filter>
     </None>
-    <ClCompile Include="Engine\Effect\Particle\Module\Updater\ParticleUpdateLifeTimeModule.cpp" />
+    <ClCompile Include="Engine\Effect\Particle\Module\Updater\Time\ParticleUpdateLifeTimeModule.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Core\Graphics\PostProcess\PostProcessBit.h" />
-    <ClInclude Include="Engine\Effect\Particle\Module\Updater\ParticleUpdateLifeTimeModule.h" />
+    <ClInclude Include="Engine\Effect\Particle\Module\Updater\Time\ParticleUpdateLifeTimeModule.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Engine\Shaders\PostProcess\PostProcessCommon.hlsli" />

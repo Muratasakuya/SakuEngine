@@ -271,35 +271,35 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Effect\Particle\Module\Spawner\ParticleSpawnSphereModule.cpp">
       <SubType />
     </ClCompile>
-    <ClCompile Include="Engine\Effect\Particle\Module\Updater\ParticleUpdateAlphaReferenceModule.cpp">
+    <ClCompile Include="Engine\Effect\Particle\Module\Updater\Material\ParticleUpdateAlphaReferenceModule.cpp">
       <SubType />
     </ClCompile>
-    <ClCompile Include="Engine\Effect\Particle\Module\Updater\ParticleUpdateColorModule.cpp">
+    <ClCompile Include="Engine\Effect\Particle\Module\Updater\Material\ParticleUpdateColorModule.cpp">
       <SubType />
     </ClCompile>
-    <ClCompile Include="Engine\Effect\Particle\Module\Updater\ParticleUpdateEmissiveModule.cpp">
+    <ClCompile Include="Engine\Effect\Particle\Module\Updater\Material\ParticleUpdateEmissiveModule.cpp">
       <SubType />
     </ClCompile>
-    <ClCompile Include="Engine\Effect\Particle\Module\Updater\ParticleUpdateGravityModule.cpp">
+    <ClCompile Include="Engine\Effect\Particle\Module\Updater\Move\ParticleUpdateGravityModule.cpp">
       <SubType />
     </ClCompile>
-    <ClCompile Include="Engine\Effect\Particle\Module\Updater\ParticleUpdateLifeTimeModule.cpp">
+    <ClCompile Include="Engine\Effect\Particle\Module\Updater\Time\ParticleUpdateLifeTimeModule.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="Engine\Effect\Particle\Module\Updater\ParticleUpdatePrimitiveModule.cpp">
+    <ClCompile Include="Engine\Effect\Particle\Module\Updater\Primitive\ParticleUpdatePrimitiveModule.cpp">
       <SubType />
     </ClCompile>
-    <ClCompile Include="Engine\Effect\Particle\Module\Updater\ParticleUpdateRotationModule.cpp">
+    <ClCompile Include="Engine\Effect\Particle\Module\Updater\Transform\ParticleUpdateRotationModule.cpp">
       <SubType />
     </ClCompile>
-    <ClCompile Include="Engine\Effect\Particle\Module\Updater\ParticleUpdateScaleModule.cpp">
+    <ClCompile Include="Engine\Effect\Particle\Module\Updater\Transform\ParticleUpdateScaleModule.cpp">
       <SubType />
     </ClCompile>
-    <ClCompile Include="Engine\Effect\Particle\Module\Updater\ParticleUpdateUVModule.cpp">
+    <ClCompile Include="Engine\Effect\Particle\Module\Updater\Material\ParticleUpdateUVModule.cpp">
       <SubType />
     </ClCompile>
-    <ClCompile Include="Engine\Effect\Particle\Module\Updater\ParticleUpdateVelocityModule.cpp">
+    <ClCompile Include="Engine\Effect\Particle\Module\Updater\Move\ParticleUpdateVelocityModule.cpp">
       <SubType />
     </ClCompile>
     <ClCompile Include="Engine\Effect\Particle\Phase\ParticlePhase.cpp">
@@ -920,35 +920,35 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Effect\Particle\Module\Spawner\ParticleSpawnSphereModule.h">
       <SubType />
     </ClInclude>
-    <ClInclude Include="Engine\Effect\Particle\Module\Updater\ParticleUpdateAlphaReferenceModule.h">
+    <ClInclude Include="Engine\Effect\Particle\Module\Updater\Material\ParticleUpdateAlphaReferenceModule.h">
       <SubType />
     </ClInclude>
-    <ClInclude Include="Engine\Effect\Particle\Module\Updater\ParticleUpdateColorModule.h">
+    <ClInclude Include="Engine\Effect\Particle\Module\Updater\Material\ParticleUpdateColorModule.h">
       <SubType />
     </ClInclude>
-    <ClInclude Include="Engine\Effect\Particle\Module\Updater\ParticleUpdateEmissiveModule.h">
+    <ClInclude Include="Engine\Effect\Particle\Module\Updater\Material\ParticleUpdateEmissiveModule.h">
       <SubType />
     </ClInclude>
-    <ClInclude Include="Engine\Effect\Particle\Module\Updater\ParticleUpdateGravityModule.h">
+    <ClInclude Include="Engine\Effect\Particle\Module\Updater\Move\ParticleUpdateGravityModule.h">
       <SubType />
     </ClInclude>
-    <ClInclude Include="Engine\Effect\Particle\Module\Updater\ParticleUpdateLifeTimeModule.h">
+    <ClInclude Include="Engine\Effect\Particle\Module\Updater\Time\ParticleUpdateLifeTimeModule.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Engine\Effect\Particle\Module\Updater\ParticleUpdatePrimitiveModule.h">
+    <ClInclude Include="Engine\Effect\Particle\Module\Updater\Primitive\ParticleUpdatePrimitiveModule.h">
       <SubType />
     </ClInclude>
-    <ClInclude Include="Engine\Effect\Particle\Module\Updater\ParticleUpdateRotationModule.h">
+    <ClInclude Include="Engine\Effect\Particle\Module\Updater\Transform\ParticleUpdateRotationModule.h">
       <SubType />
     </ClInclude>
-    <ClInclude Include="Engine\Effect\Particle\Module\Updater\ParticleUpdateScaleModule.h">
+    <ClInclude Include="Engine\Effect\Particle\Module\Updater\Transform\ParticleUpdateScaleModule.h">
       <SubType />
     </ClInclude>
-    <ClInclude Include="Engine\Effect\Particle\Module\Updater\ParticleUpdateUVModule.h">
+    <ClInclude Include="Engine\Effect\Particle\Module\Updater\Material\ParticleUpdateUVModule.h">
       <SubType />
     </ClInclude>
-    <ClInclude Include="Engine\Effect\Particle\Module\Updater\ParticleUpdateVelocityModule.h">
+    <ClInclude Include="Engine\Effect\Particle\Module\Updater\Move\ParticleUpdateVelocityModule.h">
       <SubType />
     </ClInclude>
     <ClInclude Include="Engine\Effect\Particle\ParticleConfig.h">

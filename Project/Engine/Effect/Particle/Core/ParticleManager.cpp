@@ -21,16 +21,21 @@
 #include <Engine/Effect/Particle/Module/Spawner/ParticleSpawnConeModule.h>
 #include <Engine/Effect/Particle/Module/Spawner/ParticleSpawnPolygonVertexModule.h>
 // Updater
-#include <Engine/Effect/Particle/Module/Updater/ParticleUpdateLifeTimeModule.h>
-#include <Engine/Effect/Particle/Module/Updater/ParticleUpdateColorModule.h>
-#include <Engine/Effect/Particle/Module/Updater/ParticleUpdateVelocityModule.h>
-#include <Engine/Effect/Particle/Module/Updater/ParticleUpdateRotationModule.h>
-#include <Engine/Effect/Particle/Module/Updater/ParticleUpdateScaleModule.h>
-#include <Engine/Effect/Particle/Module/Updater/ParticleUpdateUVModule.h>
-#include <Engine/Effect/Particle/Module/Updater/ParticleUpdateGravityModule.h>
-#include <Engine/Effect/Particle/Module/Updater/ParticleUpdateEmissiveModule.h>
-#include <Engine/Effect/Particle/Module/Updater/ParticleUpdateAlphaReferenceModule.h>
-#include <Engine/Effect/Particle/Module/Updater/ParticleUpdatePrimitiveModule.h>
+// Material
+#include <Engine/Effect/Particle/Module/Updater/Material/ParticleUpdateColorModule.h>
+#include <Engine/Effect/Particle/Module/Updater/Material/ParticleUpdateEmissiveModule.h>
+#include <Engine/Effect/Particle/Module/Updater/Material/ParticleUpdateAlphaReferenceModule.h>
+#include <Engine/Effect/Particle/Module/Updater/Material/ParticleUpdateUVModule.h>
+// Move
+#include <Engine/Effect/Particle/Module/Updater/Move/ParticleUpdateVelocityModule.h>
+#include <Engine/Effect/Particle/Module/Updater/Move/ParticleUpdateGravityModule.h>
+// Primitive
+#include <Engine/Effect/Particle/Module/Updater/Primitive/ParticleUpdatePrimitiveModule.h>
+// Time
+#include <Engine/Effect/Particle/Module/Updater/Time/ParticleUpdateLifeTimeModule.h>
+// Transform
+#include <Engine/Effect/Particle/Module/Updater/Transform/ParticleUpdateRotationModule.h>
+#include <Engine/Effect/Particle/Module/Updater/Transform/ParticleUpdateScaleModule.h>
 
 //============================================================================
 //	ParticleManager classMethods
