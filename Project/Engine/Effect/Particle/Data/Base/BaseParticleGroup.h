@@ -32,6 +32,11 @@ protected:
 
 	//--------- variables ----------------------------------------------------
 
+	// ゲームで使用するか
+	bool useGame_;
+	// ゲームで使用する際のパーティクル最大数(最大数作る必要がないものがあるため)
+	int gameMaxParticleCount_;
+
 	// emitter
 	Vector3 emitterRotation_;     // 回転(すべて共通)
 	std::optional<Matrix4x4> setRotationMatrix_;

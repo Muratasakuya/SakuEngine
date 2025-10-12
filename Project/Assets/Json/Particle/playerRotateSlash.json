@@ -2,11 +2,13 @@
     "CPUGroups": [
         {
             "blendMode": "kBlendModeAdd",
+            "gameMaxParticleCount_": 8,
             "name": "rotate_blueLightning",
             "phases": [
                 {
                     "duration": 0.800000011920929,
                     "notEmit": false,
+                    "postProcessMask_": 16649,
                     "spawn": {
                         "params": {
                             "common": {
@@ -65,7 +67,7 @@
                             "radius": 0.20000000298023224,
                             "translation": {
                                 "x": 0.0,
-                                "y": 10.000003814697266,
+                                "y": 0.0,
                                 "z": 0.0
                             }
                         },
@@ -315,11 +317,13 @@
         },
         {
             "blendMode": "kBlendModeAdd",
+            "gameMaxParticleCount_": 8,
             "name": "rotateSlash",
             "phases": [
                 {
                     "duration": 0.800000011920929,
                     "notEmit": false,
+                    "postProcessMask_": 16649,
                     "spawn": {
                         "params": {
                             "common": {
@@ -378,7 +382,7 @@
                             "radius": 0.20000000298023224,
                             "translation": {
                                 "x": 0.0,
-                                "y": 10.000003814697266,
+                                "y": 0.0,
                                 "z": 0.0
                             }
                         },
@@ -628,11 +632,13 @@
         },
         {
             "blendMode": "kBlendModeAdd",
+            "gameMaxParticleCount_": 8,
             "name": "rotate_redLightning",
             "phases": [
                 {
                     "duration": 0.800000011920929,
                     "notEmit": false,
+                    "postProcessMask_": 16649,
                     "spawn": {
                         "params": {
                             "common": {
@@ -691,7 +697,7 @@
                             "radius": 0.20000000298023224,
                             "translation": {
                                 "x": 0.0,
-                                "y": 10.000003814697266,
+                                "y": 0.0,
                                 "z": 0.0
                             }
                         },

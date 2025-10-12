@@ -103,6 +103,7 @@ private:
 
 	// system名
 	std::string name_;
+	std::string loadFileName_;
 
 	// GPU
 	std::vector<NameGroup<GPUParticleGroup>> gpuGroups_;

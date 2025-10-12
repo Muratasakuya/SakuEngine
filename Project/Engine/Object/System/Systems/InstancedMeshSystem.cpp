@@ -157,11 +157,14 @@ float InstancedMeshSystem::GetBuildProgressForScene(Scene scene) const {
 
 void InstancedMeshSystem::CreateStaticMesh(const std::string& modelName) {
 
+	// 最大instance数
+	const uint32_t kMaxInstanceNum = 128;
+
 	// meshの作成、登録
 	meshRegistry_->RegisterMesh(modelName, false, 0);
 	// instancingデータ作成
 	instancedBuffer_->Create(meshRegistry_->GetMeshes().at(modelName).get(),
-		modelName, Config::kMaxInstanceNum);
+		modelName, kMaxInstanceNum);
 }
 
 void InstancedMeshSystem::CreateSkinnedMesh(const std::string& modelName) {

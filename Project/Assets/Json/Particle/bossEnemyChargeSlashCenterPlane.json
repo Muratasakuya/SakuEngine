@@ -2,11 +2,13 @@
     "CPUGroups": [
         {
             "blendMode": "kBlendModeAdd",
+            "gameMaxParticleCount_": 16,
             "name": "centerPlane",
             "phases": [
                 {
                     "duration": 4.0,
                     "notEmit": false,
+                    "postProcessMask_": 16649,
                     "spawn": {
                         "params": {
                             "common": {
@@ -50,7 +52,7 @@
                             "radius": 0.019999999552965164,
                             "translation": {
                                 "x": 0.0,
-                                "y": 6.400000095367432,
+                                "y": 0.0,
                                 "z": 0.0
                             }
                         },

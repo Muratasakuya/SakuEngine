@@ -2,11 +2,13 @@
     "CPUGroups": [
         {
             "blendMode": "kBlendModeAdd",
+            "gameMaxParticleCount_": 8,
             "name": "centerCircle",
             "phases": [
                 {
                     "duration": 0.800000011920929,
                     "notEmit": false,
+                    "postProcessMask_": 16649,
                     "spawn": {
                         "params": {
                             "common": {
@@ -168,11 +170,13 @@
         },
         {
             "blendMode": "kBlendModeAdd",
+            "gameMaxParticleCount_": 512,
             "name": "dispersion",
             "phases": [
                 {
                     "duration": 0.800000011920929,
                     "notEmit": false,
+                    "postProcessMask_": 16649,
                     "spawn": {
                         "params": {
                             "common": {

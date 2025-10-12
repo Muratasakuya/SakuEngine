@@ -30,10 +30,12 @@ void CPUParticleGroup::Create(ID3D12Device* device,
 	textureInfoBuffer_.CreateSRVBuffer(device, kMaxCPUParticles);
 }
 
-void CPUParticleGroup::CreateFromJson(ID3D12Device* device, Asset* asset, const Json& data) {
+void CPUParticleGroup::CreateFromJson(ID3D12Device* device, Asset* asset, const Json& data, bool useGame) {
 
 	asset_ = nullptr;
 	asset_ = asset;
+
+	useGame_ = useGame;
 
 	// 初期化値
 	// 全ての形状を初期化しておく
@@ -42,12 +44,16 @@ void CPUParticleGroup::CreateFromJson(ID3D12Device* device, Asset* asset, const 
 	// jsonからデータ取得
 	FromJson(data, asset_);
 
+	// 作成するバッファの数
+	bool isUseGame = useGame_ && gameMaxParticleCount_ != 0;
+	uint32_t maxParticle = isUseGame ? gameMaxParticleCount_ : kMaxCPUParticles;
+
 	// buffer作成
-	BaseParticleGroup::CreatePrimitiveBuffer(device, primitiveBuffer_.type, kMaxCPUParticles);
+	BaseParticleGroup::CreatePrimitiveBuffer(device, primitiveBuffer_.type, maxParticle);
 	// structuredBuffer(SRV)
-	transformBuffer_.CreateSRVBuffer(device, kMaxCPUParticles);
-	materialBuffer_.CreateSRVBuffer(device, kMaxCPUParticles);
-	textureInfoBuffer_.CreateSRVBuffer(device, kMaxCPUParticles);
+	transformBuffer_.CreateSRVBuffer(device, maxParticle);
+	materialBuffer_.CreateSRVBuffer(device, maxParticle);
+	textureInfoBuffer_.CreateSRVBuffer(device, maxParticle);
 }
 
 void CPUParticleGroup::Update() {
@@ -185,7 +191,7 @@ void CPUParticleGroup::UpdateTransferData(uint32_t particleIndex,
 		break;
 	}
 	case ParticlePrimitiveType::Ring: {
-		
+
 		transferPrimitives_.ring[particleIndex] = particle.primitive.ring;
 		break;
 	}
@@ -281,8 +287,8 @@ void CPUParticleGroup::AddPhase() {
 
 void CPUParticleGroup::ImGui() {
 
-	ImGui::Text("numInstance: %d / %d", numInstance_, kMaxCPUParticles);
-
+	ImGui::Text("numInstance: %d / %d", numInstance_, useGame_ ? gameMaxParticleCount_ : kMaxCPUParticles);
+	ImGui::Checkbox("useGame", &useGame_);
 	ImGui::SeparatorText("Phases");
 
 	// 追加ボタン
@@ -290,8 +296,6 @@ void CPUParticleGroup::ImGui() {
 
 		AddPhase();
 	}
-
-	ImGui::SeparatorText("Parent");
 
 	if (!phases_.empty()) {
 
@@ -327,6 +331,7 @@ void CPUParticleGroup::ImGui() {
 		ImGui::PushItemWidth(160.0f);
 
 		EnumAdapter<BlendMode>::Combo("blendMode", &blendMode_);
+		ImGui::DragInt("gameMaxParticleCount", &gameMaxParticleCount_, 1, 0, kMaxCPUParticles);
 
 		phases_[selectedPhase_]->ImGui();
 
@@ -347,6 +352,7 @@ Json CPUParticleGroup::ToJson() const {
 	data["blendMode"] = EnumAdapter<BlendMode>::ToString(blendMode_);
 
 	data["textureName"] = textureName_;
+	data["gameMaxParticleCount_"] = gameMaxParticleCount_;
 
 	//============================================================================
 	//	PhasesParameters
@@ -371,6 +377,7 @@ void CPUParticleGroup::FromJson(const Json& data, Asset* asset) {
 	blendMode_ = blendMode.value();
 
 	textureName_ = data.value("textureName", "circle");
+	gameMaxParticleCount_ = data.value("gameMaxParticleCount_", 0);
 
 	//============================================================================
 	//	PhasesParameters

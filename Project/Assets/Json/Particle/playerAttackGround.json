@@ -2,11 +2,13 @@
     "CPUGroups": [
         {
             "blendMode": "kBlendModeAdd",
+            "gameMaxParticleCount_": 4,
             "name": "baseGround",
             "phases": [
                 {
                     "duration": 0.800000011920929,
                     "notEmit": false,
+                    "postProcessMask_": 16649,
                     "spawn": {
                         "params": {
                             "common": {
@@ -31,7 +33,7 @@
                                 "noiseTextureName": "redCircle",
                                 "primitive": {
                                     "plane": {
-                                        "mode": "XZ",
+                                        "mode": "XY",
                                         "pivot": {
                                             "x": 0.5,
                                             "y": 0.5
@@ -183,11 +185,13 @@
         },
         {
             "blendMode": "kBlendModeAdd",
+            "gameMaxParticleCount_": 4,
             "name": "outWave",
             "phases": [
                 {
                     "duration": 0.800000011920929,
                     "notEmit": false,
+                    "postProcessMask_": 16649,
                     "spawn": {
                         "params": {
                             "common": {
@@ -319,8 +323,20 @@
                                 "crescent": {
                                     "startDivide": 8,
                                     "startEndAngle": 2.6179940700531006,
+                                    "startInnerColor": {
+                                        "a": 1.0,
+                                        "b": 1.0,
+                                        "g": 1.0,
+                                        "r": 1.0
+                                    },
                                     "startInnerRadius": 2.0,
                                     "startLattice": 0.5,
+                                    "startOuterColor": {
+                                        "a": 1.0,
+                                        "b": 1.0,
+                                        "g": 1.0,
+                                        "r": 1.0
+                                    },
                                     "startOuterRadius": 4.0,
                                     "startPivot": {
                                         "x": 0.5,
@@ -331,8 +347,20 @@
                                     "startUVMode": 1,
                                     "targetDivide": 8,
                                     "targetEndAngle": 2.6179940700531006,
+                                    "targetInnerColor": {
+                                        "a": 1.0,
+                                        "b": 1.0,
+                                        "g": 1.0,
+                                        "r": 1.0
+                                    },
                                     "targetInnerRadius": 2.0,
                                     "targetLattice": 0.5,
+                                    "targetOuterColor": {
+                                        "a": 1.0,
+                                        "b": 1.0,
+                                        "g": 1.0,
+                                        "r": 1.0
+                                    },
                                     "targetOuterRadius": 4.0,
                                     "targetPivot": {
                                         "x": 0.5,
@@ -386,6 +414,22 @@
                         {
                             "params": {
                                 "easingType": "EaseOutExpo",
+                                "rotation": {
+                                    "start": 0.0,
+                                    "target": 0.0
+                                },
+                                "scale": {
+                                    "start": {
+                                        "x": 1.0,
+                                        "y": 1.0,
+                                        "z": 1.0
+                                    },
+                                    "target": {
+                                        "x": 1.0,
+                                        "y": 1.0,
+                                        "z": 1.0
+                                    }
+                                },
                                 "scrollValue": {
                                     "x": 0.0,
                                     "y": 0.03999999910593033
@@ -414,11 +458,13 @@
         },
         {
             "blendMode": "kBlendModeAdd",
+            "gameMaxParticleCount_": 4,
             "name": "centerCircle",
             "phases": [
                 {
                     "duration": 0.800000011920929,
                     "notEmit": false,
+                    "postProcessMask_": 16649,
                     "spawn": {
                         "params": {
                             "common": {
@@ -443,7 +489,7 @@
                                 "noiseTextureName": "circle1",
                                 "primitive": {
                                     "plane": {
-                                        "mode": "XZ",
+                                        "mode": "XY",
                                         "pivot": {
                                             "x": 0.5,
                                             "y": 0.5
@@ -558,11 +604,13 @@
         },
         {
             "blendMode": "kBlendModeAdd",
+            "gameMaxParticleCount_": 4,
             "name": "centerFlash",
             "phases": [
                 {
                     "duration": 0.800000011920929,
                     "notEmit": false,
+                    "postProcessMask_": 16649,
                     "spawn": {
                         "params": {
                             "common": {
@@ -587,7 +635,7 @@
                                 "noiseTextureName": "circle1",
                                 "primitive": {
                                     "plane": {
-                                        "mode": "XZ",
+                                        "mode": "XY",
                                         "pivot": {
                                             "x": 0.5,
                                             "y": 0.5

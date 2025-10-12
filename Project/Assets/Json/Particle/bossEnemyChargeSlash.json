@@ -2,11 +2,13 @@
     "CPUGroups": [
         {
             "blendMode": "kBlendModeAdd",
+            "gameMaxParticleCount_": 16,
             "name": "slash",
             "phases": [
                 {
                     "duration": 4.0,
                     "notEmit": false,
+                    "postProcessMask_": 16649,
                     "spawn": {
                         "params": {
                             "common": {
@@ -64,9 +66,9 @@
                             },
                             "radius": 0.10000000149011612,
                             "translation": {
-                                "x": 11.751376152038574,
-                                "y": 6.40000057220459,
-                                "z": -2.430055618286133
+                                "x": 0.0,
+                                "y": 0.0,
+                                "z": 0.0
                             }
                         },
                         "type": "Sphere"
@@ -252,6 +254,18 @@
                                 "rotation": {
                                     "start": 0.0,
                                     "target": 0.0
+                                },
+                                "scale": {
+                                    "start": {
+                                        "x": 1.0,
+                                        "y": 1.0,
+                                        "z": 1.0
+                                    },
+                                    "target": {
+                                        "x": 1.0,
+                                        "y": 1.0,
+                                        "z": 1.0
+                                    }
                                 },
                                 "scrollValue": {
                                     "x": 0.0,

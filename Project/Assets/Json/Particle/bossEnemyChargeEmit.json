@@ -2,11 +2,13 @@
     "CPUGroups": [
         {
             "blendMode": "kBlendModeAdd",
+            "gameMaxParticleCount_": 8,
             "name": "flash",
             "phases": [
                 {
                     "duration": 1.0,
                     "notEmit": false,
+                    "postProcessMask_": 16649,
                     "spawn": {
                         "params": {
                             "common": {
@@ -44,9 +46,9 @@
                             },
                             "radius": 0.0,
                             "translation": {
-                                "x": 1.3761539459228516,
-                                "y": 5.400001049041748,
-                                "z": 3.7558226585388184
+                                "x": 0.0,
+                                "y": 0.0,
+                                "z": 0.0
                             }
                         },
                         "type": "Sphere"

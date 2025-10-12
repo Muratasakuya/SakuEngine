@@ -2,11 +2,13 @@
     "CPUGroups": [
         {
             "blendMode": "kBlendModeAdd",
+            "gameMaxParticleCount_": 64,
             "name": "centerStar",
             "phases": [
                 {
                     "duration": 1.0,
                     "notEmit": false,
+                    "postProcessMask_": 16649,
                     "spawn": {
                         "params": {
                             "common": {
@@ -168,11 +170,13 @@
         },
         {
             "blendMode": "kBlendModeAdd",
+            "gameMaxParticleCount_": 64,
             "name": "centerCircle",
             "phases": [
                 {
                     "duration": 1.0,
                     "notEmit": false,
+                    "postProcessMask_": 16649,
                     "spawn": {
                         "params": {
                             "common": {
@@ -334,11 +338,13 @@
         },
         {
             "blendMode": "kBlendModeAdd",
+            "gameMaxParticleCount_": 64,
             "name": "outCircle",
             "phases": [
                 {
                     "duration": 1.0,
                     "notEmit": false,
+                    "postProcessMask_": 16649,
                     "spawn": {
                         "params": {
                             "common": {

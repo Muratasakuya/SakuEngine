@@ -2,11 +2,13 @@
     "CPUGroups": [
         {
             "blendMode": "kBlendModeAdd",
+            "gameMaxParticleCount_": 128,
             "name": "slash",
             "phases": [
                 {
                     "duration": 1.0,
                     "notEmit": false,
+                    "postProcessMask_": 16649,
                     "spawn": {
                         "params": {
                             "common": {
@@ -17,7 +19,7 @@
                                     "valueType": 0
                                 },
                                 "lifeTime": {
-                                    "constant": 0.44,
+                                    "constant": 0.4399999976158142,
                                     "randomMax": 0.800000011920929,
                                     "randomMin": 0.800000011920929,
                                     "valueType": 0
@@ -247,6 +249,18 @@
                                     "start": 0.0,
                                     "target": 0.0
                                 },
+                                "scale": {
+                                    "start": {
+                                        "x": 1.0,
+                                        "y": 1.0,
+                                        "z": 1.0
+                                    },
+                                    "target": {
+                                        "x": 1.0,
+                                        "y": 1.0,
+                                        "z": 1.0
+                                    }
+                                },
                                 "scrollValue": {
                                     "x": 0.0,
                                     "y": 0.07000000029802322
@@ -299,11 +313,13 @@
         },
         {
             "blendMode": "kBlendModeAdd",
+            "gameMaxParticleCount_": 128,
             "name": "lightning",
             "phases": [
                 {
                     "duration": 1.0,
                     "notEmit": false,
+                    "postProcessMask_": 16649,
                     "spawn": {
                         "params": {
                             "common": {
@@ -314,7 +330,7 @@
                                     "valueType": 0
                                 },
                                 "lifeTime": {
-                                    "constant": 0.44,
+                                    "constant": 0.4399999976158142,
                                     "randomMax": 0.800000011920929,
                                     "randomMin": 0.800000011920929,
                                     "valueType": 0
@@ -543,6 +559,18 @@
                                 "rotation": {
                                     "start": 0.0,
                                     "target": 0.0
+                                },
+                                "scale": {
+                                    "start": {
+                                        "x": 1.0,
+                                        "y": 1.0,
+                                        "z": 1.0
+                                    },
+                                    "target": {
+                                        "x": 1.0,
+                                        "y": 1.0,
+                                        "z": 1.0
+                                    }
                                 },
                                 "scrollValue": {
                                     "x": 0.0,

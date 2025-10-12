@@ -2,11 +2,13 @@
     "CPUGroups": [
         {
             "blendMode": "kBlendModeAdd",
+            "gameMaxParticleCount_": 16,
             "name": "centerCircle",
             "phases": [
                 {
                     "duration": 0.800000011920929,
                     "notEmit": false,
+                    "postProcessMask_": 16649,
                     "spawn": {
                         "params": {
                             "common": {
@@ -49,9 +51,9 @@
                             },
                             "radius": 0.0,
                             "translation": {
-                                "x": -96.75701141357422,
-                                "y": 3.799999952316284,
-                                "z": -108.67432403564453
+                                "x": 0.0,
+                                "y": 0.0,
+                                "z": 0.0
                             }
                         },
                         "type": "Sphere"
@@ -168,11 +170,13 @@
         },
         {
             "blendMode": "kBlendModeAdd",
+            "gameMaxParticleCount_": 16,
             "name": "centerFlashLight",
             "phases": [
                 {
                     "duration": 0.800000011920929,
                     "notEmit": false,
+                    "postProcessMask_": 16649,
                     "spawn": {
                         "params": {
                             "common": {
@@ -215,9 +219,9 @@
                             },
                             "radius": 0.0,
                             "translation": {
-                                "x": -96.75701141357422,
-                                "y": 3.799999952316284,
-                                "z": -108.67432403564453
+                                "x": 0.0,
+                                "y": 0.0,
+                                "z": 0.0
                             }
                         },
                         "type": "Sphere"
@@ -334,11 +338,13 @@
         },
         {
             "blendMode": "kBlendModeAdd",
+            "gameMaxParticleCount_": 512,
             "name": "dispersion",
             "phases": [
                 {
                     "duration": 0.800000011920929,
                     "notEmit": false,
+                    "postProcessMask_": 16649,
                     "spawn": {
                         "params": {
                             "common": {
@@ -381,9 +387,9 @@
                             },
                             "radius": 0.20000000298023224,
                             "translation": {
-                                "x": -96.75701141357422,
-                                "y": 3.799999952316284,
-                                "z": -108.67432403564453
+                                "x": 0.0,
+                                "y": 0.0,
+                                "z": 0.0
                             }
                         },
                         "type": "Sphere"
@@ -478,11 +484,13 @@
         },
         {
             "blendMode": "kBlendModeAdd",
+            "gameMaxParticleCount_": 64,
             "name": "fieldStar",
             "phases": [
                 {
                     "duration": 0.800000011920929,
                     "notEmit": false,
+                    "postProcessMask_": 16649,
                     "spawn": {
                         "params": {
                             "common": {
@@ -529,14 +537,14 @@
                                 "z": 0.0
                             },
                             "size": {
-                                "x": 4.0,
+                                "x": 2.0,
                                 "y": 2.0,
-                                "z": 4.0
+                                "z": 2.0
                             },
                             "translation": {
-                                "x": -96.75701141357422,
-                                "y": 3.799999952316284,
-                                "z": -108.67432403564453
+                                "x": 0.0,
+                                "y": 0.0,
+                                "z": 0.0
                             }
                         },
                         "type": "Box"
@@ -667,11 +675,13 @@
         },
         {
             "blendMode": "kBlendModeAdd",
+            "gameMaxParticleCount_": 16,
             "name": "centerFlash",
             "phases": [
                 {
                     "duration": 0.800000011920929,
                     "notEmit": false,
+                    "postProcessMask_": 16649,
                     "spawn": {
                         "params": {
                             "common": {
@@ -714,9 +724,9 @@
                             },
                             "radius": 0.0,
                             "translation": {
-                                "x": -96.75701141357422,
-                                "y": 3.799999952316284,
-                                "z": -108.67432403564453
+                                "x": 0.0,
+                                "y": 0.0,
+                                "z": 0.0
                             }
                         },
                         "type": "Sphere"

@@ -2,11 +2,13 @@
     "CPUGroups": [
         {
             "blendMode": "kBlendModeAdd",
+            "gameMaxParticleCount_": 8,
             "name": "slash",
             "phases": [
                 {
                     "duration": 1.0,
                     "notEmit": false,
+                    "postProcessMask_": 16649,
                     "spawn": {
                         "params": {
                             "common": {
@@ -65,7 +67,7 @@
                             "radius": 0.20000000298023224,
                             "translation": {
                                 "x": 0.0,
-                                "y": 22.25,
+                                "y": 0.0,
                                 "z": 0.0
                             }
                         },
@@ -243,6 +245,22 @@
                         {
                             "params": {
                                 "easingType": "EaseOutQuint",
+                                "rotation": {
+                                    "start": 0.0,
+                                    "target": 0.0
+                                },
+                                "scale": {
+                                    "start": {
+                                        "x": 1.0,
+                                        "y": 1.0,
+                                        "z": 1.0
+                                    },
+                                    "target": {
+                                        "x": 1.0,
+                                        "y": 1.0,
+                                        "z": 1.0
+                                    }
+                                },
                                 "scrollValue": {
                                     "x": 0.0,
                                     "y": 0.0

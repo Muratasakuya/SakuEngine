@@ -8,6 +8,7 @@
 #include <Engine/Utility/Timer/GameTimer.h>
 #include <Engine/Utility/Enum/EnumAdapter.h>
 #include <Engine/Utility/Json/JsonAdapter.h>
+#include <Engine/Utility/Helper/Algorithm.h>
 
 // imgui
 #include <imgui.h>
@@ -350,6 +351,15 @@ void ParticleSystem::ImGuiSystemParameter() {
 		ImGui::Text("%.3f / %.3f", allEmitTimer_, allEmitTime_);
 		ImGui::DragFloat("emit", &allEmitTime_, 0.01f);
 	}
+
+	ImGui::SeparatorText("Config");
+
+	if (!loadFileName_.empty()) {
+		if (ImGui::Selectable(loadFileName_.c_str())) {
+
+			ImGui::SetClipboardText(loadFileName_.c_str());
+		}
+	}
 }
 
 void ParticleSystem::ImGuiSelectedGroupEditor() {
@@ -449,16 +459,18 @@ void ParticleSystem::SaveJson() {
 void ParticleSystem::LoadJson(const std::optional<std::string>& filePath, bool useGame) {
 
 	Json data;
-	std::string fileName = static_cast<std::string>(fileBuffer_);
+	loadFileName_ = static_cast<std::string>(fileBuffer_);
 	if (filePath.has_value()) {
 
-		fileName = filePath.value();
+		loadFileName_ = filePath.value();
 	}
-	if (!JsonAdapter::LoadCheck(fileName, data)) {
+	if (!JsonAdapter::LoadCheck(loadFileName_, data)) {
 		return;
 	}
 	// リセット
 	fileBuffer_[0] = '\0';
+	// Particle/を削除
+	loadFileName_ = Algorithm::RemoveSubstring(loadFileName_, "Particle/");
 
 	// 設定
 	useGame_ = useGame;
@@ -490,6 +502,6 @@ void ParticleSystem::LoadJson(const std::optional<std::string>& filePath, bool u
 
 		auto& group = cpuGroups_.emplace_back();
 		group.name = groupData.value("name", "");
-		group.group.CreateFromJson(device_, asset_, groupData);
+		group.group.CreateFromJson(device_, asset_, groupData, useGame_);
 	}
 }
