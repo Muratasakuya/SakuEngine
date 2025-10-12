@@ -134,7 +134,7 @@ private:
 	// layout
 	float comboWidth_ = 104.0f;
 	float itemWidth_ = 160.0f;
-	ImVec2 buttonSize_ = ImVec2(88.0f, 24.0f);
+	ImVec2 buttonSize_ = ImVec2(66.0f, 24.0f);
 
 	//--------- functions ----------------------------------------------------
 

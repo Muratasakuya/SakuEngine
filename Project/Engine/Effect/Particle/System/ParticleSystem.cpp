@@ -231,7 +231,7 @@ void ParticleSystem::ImGuiGroupAdd() {
 	ImGui::PushItemWidth(comboWidth_);
 
 	EnumAdapter<ParticleType>::Combo("Type", &particleType_);
-	EnumAdapter<ParticlePrimitiveType>::Combo("Primitive", &primitiveType_);
+	EnumAdapter<ParticlePrimitiveType>::Combo("Prim", &primitiveType_);
 
 	ImGui::PopItemWidth();
 
@@ -365,6 +365,12 @@ void ParticleSystem::ImGuiSystemParameter() {
 void ParticleSystem::ImGuiSelectedGroupEditor() {
 
 	ImGui::PushItemWidth(itemWidth_);
+
+	if (ImGui::CollapsingHeader("System Parameter")) {
+
+		ImGuiSystemParameter();
+		ImGui::Separator();
+	}
 
 	if (0 <= selected_.index) {
 		if (selected_.type == ParticleType::GPU) {

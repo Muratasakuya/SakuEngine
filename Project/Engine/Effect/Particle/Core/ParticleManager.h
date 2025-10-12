@@ -60,8 +60,8 @@ private:
 	int renamingSystem_ = -1;     // 改名中のシステムインデックス
 	char renameBuffer_[128] = {}; // 入力用バッファ
 	// layout
-	float leftColumnWidth_ = 196.0f;
-	ImVec2 leftUpChildSize_ = ImVec2(leftColumnWidth_, 84.0f);
+	float leftColumnWidth_ = 152.0f;
+	ImVec2 leftUpChildSize_ = ImVec2(leftColumnWidth_, 122.0f);
 	ImVec2 leftCenterChildSize_ = ImVec2(leftColumnWidth_, 122.0f);
 	float rightUpChildSizeY_ = leftUpChildSize_.y;
 	float rightCenterChildSizeY_ = leftCenterChildSize_.y;
@@ -75,8 +75,8 @@ private:
 	void AddSystem();
 	void RemoveSystem();
 
-	void DrawLeftChild();
-	void DrawRightChild();
+	void DrawSystemTab();
+	void DrawSystemGroupTab();
 
 	void DrawSystemAdd();
 	void DrawSystemSelect();
