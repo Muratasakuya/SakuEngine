@@ -10,6 +10,8 @@
 // c++
 #include <memory>
 #include <vector>
+// front
+class ParticleUpdateLifeTimeModule;
 
 //============================================================================
 //	ParticlePhase class
@@ -61,6 +63,7 @@ public:
 	//--------- accessor -----------------------------------------------------
 
 	float GetLifeTime() const;
+	const ParticleUpdateLifeTimeModule* GetLifeTimeModule() const;
 private:
 	//========================================================================
 	//	private Methods

@@ -5,6 +5,7 @@
 //============================================================================
 #include <Engine/Effect/Particle/ParticleConfig.h>
 #include <Engine/Utility/Timer/GameTimer.h>
+#include <Engine/Effect/Particle/Module/Updater/Time/ParticleUpdateLifeTimeModule.h>
 
 //============================================================================
 //	CPUParticleGroup classMethods
@@ -139,22 +140,52 @@ void CPUParticleGroup::UpdatePhase() {
 
 		// 削除、フェーズ判定処理
 		if (particle.lifeTime <= particle.currentTime) {
-			// 次のフェーズがあれば次に移る
-			if (particle.phaseIndex + 1 < phases_.size()) {
 
-				// フェーズを進める
-				++particle.phaseIndex;
-				// リセット
+			// 寿命終了後、モードに応じて処理
+			auto* lifeModule = phases_[particle.phaseIndex]->GetLifeTimeModule();
+			switch (lifeModule->GetEndMode()) {
+			case ParticleLifeEndMode::Advance: {
+
+				// 次のフェーズがあれば次に移る
+				if (particle.phaseIndex + 1 < phases_.size()) {
+
+					// フェーズを進める
+					++particle.phaseIndex;
+					// リセット
+					particle.currentTime = 0.0f;
+					particle.progress = 0.0f;
+					// 次のフェーズの生存時間で初期化
+					particle.lifeTime = phases_[particle.phaseIndex]->GetLifeTime();
+					continue;
+				} else {
+
+					// 削除
+					it = particles_.erase(it);
+					continue;
+				}
+				break;
+			}
+			case ParticleLifeEndMode::Clamp: {
+
+				// 最大でとどめ続ける
+				particle.currentTime = particle.lifeTime;
+				particle.progress = 1.0f;
+				break;
+			}
+			case ParticleLifeEndMode::Reset: {
+
+				// 同じフェーズを再度処理
 				particle.currentTime = 0.0f;
 				particle.progress = 0.0f;
-				// 次のフェーズの生存時間で初期化
 				particle.lifeTime = phases_[particle.phaseIndex]->GetLifeTime();
-				continue;
-			} else {
+				break;
+			}
+			case ParticleLifeEndMode::Kill: {
 
 				// 削除
 				it = particles_.erase(it);
-				continue;
+				break;
+			}
 			}
 		}
 
