@@ -21,6 +21,7 @@ void ParticlePhase::Init(Asset* asset, ParticlePrimitiveType primitiveType) {
 	postProcessMask_ = Bit_Bloom | Bit_RadialBlur | Bit_Glitch | Bit_Vignette;
 
 	// 基本的なモジュールは設定
+	AddUpdater(ParticleUpdateModuleID::LifeTime);
 	AddUpdater(ParticleUpdateModuleID::Velocity);
 	AddUpdater(ParticleUpdateModuleID::Rotation);
 	AddUpdater(ParticleUpdateModuleID::Scale);

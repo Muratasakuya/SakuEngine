@@ -2139,9 +2139,11 @@
     <None Include="Assets\Engine\Shaders\Skybox\Skybox.hlsli">
       <Filter>Assets\Engine\Shaders\Skybox</Filter>
     </None>
+    <ClCompile Include="Engine\Effect\Particle\Module\Updater\ParticleUpdateLifeTimeModule.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Core\Graphics\PostProcess\PostProcessBit.h" />
+    <ClInclude Include="Engine\Effect\Particle\Module\Updater\ParticleUpdateLifeTimeModule.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Engine\Shaders\PostProcess\PostProcessCommon.hlsli" />

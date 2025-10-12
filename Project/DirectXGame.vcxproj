@@ -283,6 +283,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Effect\Particle\Module\Updater\ParticleUpdateGravityModule.cpp">
       <SubType />
     </ClCompile>
+    <ClCompile Include="Engine\Effect\Particle\Module\Updater\ParticleUpdateLifeTimeModule.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="Engine\Effect\Particle\Module\Updater\ParticleUpdatePrimitiveModule.cpp">
       <SubType />
     </ClCompile>
@@ -927,6 +931,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </ClInclude>
     <ClInclude Include="Engine\Effect\Particle\Module\Updater\ParticleUpdateGravityModule.h">
       <SubType />
+    </ClInclude>
+    <ClInclude Include="Engine\Effect\Particle\Module\Updater\ParticleUpdateLifeTimeModule.h">
+      <SubType>
+      </SubType>
     </ClInclude>
     <ClInclude Include="Engine\Effect\Particle\Module\Updater\ParticleUpdatePrimitiveModule.h">
       <SubType />

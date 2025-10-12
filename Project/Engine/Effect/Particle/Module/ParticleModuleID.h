@@ -18,6 +18,7 @@ enum class ParticleSpawnModuleID {
 // 更新処理
 enum class ParticleUpdateModuleID {
 
+	LifeTime,
 	Color,
 	Velocity,
 	Rotation,

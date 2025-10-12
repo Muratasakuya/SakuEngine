@@ -121,10 +121,6 @@ void CPUParticleGroup::UpdatePhase() {
 		// フェーズインデックスが範囲外にならないように制御
 		particle.phaseIndex = (std::min)(particle.phaseIndex, static_cast<uint32_t>(phases_.size() - 1));
 
-		// 時間を進める
-		particle.currentTime += deltaTime;
-		particle.progress = particle.currentTime / particle.lifeTime;
-
 		// 現在のフェーズで更新
 		phases_[particle.phaseIndex]->UpdateParticle(particle, deltaTime);
 

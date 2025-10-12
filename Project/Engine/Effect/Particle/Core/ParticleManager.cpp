@@ -21,6 +21,7 @@
 #include <Engine/Effect/Particle/Module/Spawner/ParticleSpawnConeModule.h>
 #include <Engine/Effect/Particle/Module/Spawner/ParticleSpawnPolygonVertexModule.h>
 // Updater
+#include <Engine/Effect/Particle/Module/Updater/ParticleUpdateLifeTimeModule.h>
 #include <Engine/Effect/Particle/Module/Updater/ParticleUpdateColorModule.h>
 #include <Engine/Effect/Particle/Module/Updater/ParticleUpdateVelocityModule.h>
 #include <Engine/Effect/Particle/Module/Updater/ParticleUpdateRotationModule.h>
@@ -103,6 +104,7 @@ void ParticleManager::RegisterModules() {
 
 	auto& uRegistry = UpdateModuleRegistry::GetInstance();
 
+	uRegistry.Register<ParticleUpdateLifeTimeModule>();
 	uRegistry.Register<ParticleUpdateColorModule>();
 	uRegistry.Register<ParticleUpdateVelocityModule>();
 	uRegistry.Register<ParticleUpdateRotationModule>();
