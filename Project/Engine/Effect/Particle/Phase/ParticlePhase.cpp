@@ -4,6 +4,7 @@
 //	include
 //============================================================================
 #include <Engine/Utility/Helper/ImGuiHelper.h>
+#include <Engine/Utility/Helper/Algorithm.h>
 
 //============================================================================
 //	ParticlePhase classMethods
@@ -400,5 +401,19 @@ void ParticlePhase::FromJson(const Json& data) {
 		const auto& updateID = EnumAdapter<ParticleUpdateModuleID>::FromString(updateData["type"]);
 		AddUpdater(updateID.value());
 		updaters_.back()->FromJson(updateData["params"]);
+	}
+
+	// 設定されていなければ今はデフォルトで設定されるようにする
+	bool isFound = false;
+	for (const auto& updater : updaters_) {
+		if (updater->GetID() == ParticleUpdateModuleID::LifeTime) {
+
+			isFound = true;
+			break;
+		}
+	}
+	if (!isFound) {
+
+		AddUpdater(ParticleUpdateModuleID::LifeTime);
 	}
 }

@@ -2140,10 +2140,20 @@
       <Filter>Assets\Engine\Shaders\Skybox</Filter>
     </None>
     <ClCompile Include="Engine\Effect\Particle\Module\Updater\Time\ParticleUpdateLifeTimeModule.cpp" />
+    <ClCompile Include="Engine\Effect\Particle\Module\Updater\Primitive\Derived\ParticleRingUpdater.cpp" />
+    <ClCompile Include="Engine\Effect\Particle\Module\Updater\Primitive\Derived\ParticlePlaneUpdater.cpp" />
+    <ClCompile Include="Engine\Effect\Particle\Module\Updater\Primitive\Derived\ParticleCylinderUpdater.cpp" />
+    <ClCompile Include="Engine\Effect\Particle\Module\Updater\Primitive\Derived\ParticleCrescentUpdater.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Core\Graphics\PostProcess\PostProcessBit.h" />
     <ClInclude Include="Engine\Effect\Particle\Module\Updater\Time\ParticleUpdateLifeTimeModule.h" />
+    <ClInclude Include="Engine\Effect\Particle\Module\Updater\Primitive\Interface\IParticlePrimitiveUpdater.h" />
+    <ClInclude Include="Engine\Effect\Particle\Module\Updater\Primitive\Interface\BaseParticlePrimitiveUpdater.h" />
+    <ClInclude Include="Engine\Effect\Particle\Module\Updater\Primitive\Derived\ParticleRingUpdater.h" />
+    <ClInclude Include="Engine\Effect\Particle\Module\Updater\Primitive\Derived\ParticlePlaneUpdater.h" />
+    <ClInclude Include="Engine\Effect\Particle\Module\Updater\Primitive\Derived\ParticleCylinderUpdater.h" />
+    <ClInclude Include="Engine\Effect\Particle\Module\Updater\Primitive\Derived\ParticleCrescentUpdater.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Engine\Shaders\PostProcess\PostProcessCommon.hlsli" />

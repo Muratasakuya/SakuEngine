@@ -36,6 +36,8 @@ protected:
 	bool useGame_;
 	// ゲームで使用する際のパーティクル最大数(最大数作る必要がないものがあるため)
 	int gameMaxParticleCount_;
+	// バッファ作成した数
+	uint32_t createInstanceCount_;
 
 	// emitter
 	Vector3 emitterRotation_;     // 回転(すべて共通)

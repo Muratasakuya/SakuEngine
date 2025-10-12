@@ -22,6 +22,9 @@ void CPUParticleGroup::Create(ID3D12Device* device,
 
 	blendMode_ = BlendMode::kBlendModeAdd;
 
+	// 作成するバッファの数
+	createInstanceCount_ = kMaxCPUParticles;
+
 	// buffer作成
 	BaseParticleGroup::CreatePrimitiveBuffer(device, primitiveType, kMaxCPUParticles);
 	// structuredBuffer(SRV)
@@ -46,14 +49,14 @@ void CPUParticleGroup::CreateFromJson(ID3D12Device* device, Asset* asset, const 
 
 	// 作成するバッファの数
 	bool isUseGame = useGame_ && gameMaxParticleCount_ != 0;
-	uint32_t maxParticle = isUseGame ? gameMaxParticleCount_ : kMaxCPUParticles;
+	createInstanceCount_ = isUseGame ? gameMaxParticleCount_ : kMaxCPUParticles;
 
 	// buffer作成
-	BaseParticleGroup::CreatePrimitiveBuffer(device, primitiveBuffer_.type, maxParticle);
+	BaseParticleGroup::CreatePrimitiveBuffer(device, primitiveBuffer_.type, createInstanceCount_);
 	// structuredBuffer(SRV)
-	transformBuffer_.CreateSRVBuffer(device, maxParticle);
-	materialBuffer_.CreateSRVBuffer(device, maxParticle);
-	textureInfoBuffer_.CreateSRVBuffer(device, maxParticle);
+	transformBuffer_.CreateSRVBuffer(device, createInstanceCount_);
+	materialBuffer_.CreateSRVBuffer(device, createInstanceCount_);
+	textureInfoBuffer_.CreateSRVBuffer(device, createInstanceCount_);
 }
 
 void CPUParticleGroup::Update() {
@@ -109,6 +112,16 @@ void CPUParticleGroup::UpdatePhase() {
 	}
 
 	const float deltaTime = GameTimer::GetDeltaTime();
+
+	// particleの数を最大数に制限する
+	if (createInstanceCount_ < particles_.size()) {
+
+		// 古いの要素から削除する
+		// it = std::next particles_.size() - createInstanceCount分イテレータを進める
+		auto last = std::next(particles_.begin(), particles_.size() - createInstanceCount_);
+		// beginからlastまでの要素を削除
+		particles_.erase(particles_.begin(), last);
+	}
 
 	// 転送データのリサイズ
 	ResizeTransferData(static_cast<uint32_t>(particles_.size()));
@@ -284,7 +297,6 @@ void CPUParticleGroup::AddPhase() {
 void CPUParticleGroup::ImGui() {
 
 	ImGui::Text("numInstance: %d / %d", numInstance_, useGame_ ? gameMaxParticleCount_ : kMaxCPUParticles);
-	ImGui::Checkbox("useGame", &useGame_);
 	ImGui::SeparatorText("Phases");
 
 	// 追加ボタン
