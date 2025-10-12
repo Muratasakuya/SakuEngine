@@ -316,12 +316,24 @@ void CPUParticleGroup::ResizeTransferData(uint32_t size) {
 
 void CPUParticleGroup::AddPhase() {
 
+	// この時点で1つ以上あるか
+	bool hasPhase = !phases_.empty();
+
 	// phase追加
 	phases_.emplace_back(std::make_unique<ParticlePhase>());
 	ParticlePhase* phase = phases_.back().get();
 	phase->Init(asset_, primitiveBuffer_.type);
-	phase->SetSpawner(ParticleSpawnModuleID::Sphere);
 
+	// phaseが1つ以上ある時、同期して作成するか
+	if (hasPhase && isSynchPhase_) {
+
+		// 現在選択中のphaseをjson出力してそのデータから作成する
+		Json data = phases_[selectedPhase_]->ToJson();
+		phase->FromJson(data);
+	} else {
+
+		phase->SetSpawner(ParticleSpawnModuleID::Sphere);
+	}
 	selectedPhase_ = static_cast<int>(phases_.size() - 1);
 }
 
@@ -335,6 +347,8 @@ void CPUParticleGroup::ImGui() {
 
 		AddPhase();
 	}
+	ImGui::SameLine();
+	ImGui::Checkbox("isSynchPhase", &isSynchPhase_);
 
 	if (!phases_.empty()) {
 

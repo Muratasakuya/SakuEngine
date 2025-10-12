@@ -171,6 +171,11 @@ void BossEnemyAnimationEffect::UpdateEmit(BossEnemy& bossEnemy) {
 				chargeEmit_.translation);
 			chargeEmit_.effect->Emit();
 		}
+
+		// 集まってくるエフェクト
+		GameEffectCommandHelper::SendSpawnerBillboard(*chargeCircle_.effect,
+			static_cast<const BaseCamera&>(*followCamera_));
+		chargeCircle_.effect->Emit();
 		break;
 	}
 	case BossEnemyAnimationEffect::AnimationKey::ContinuousAttack: {
@@ -189,11 +194,6 @@ void BossEnemyAnimationEffect::UpdateEmit(BossEnemy& bossEnemy) {
 }
 
 void BossEnemyAnimationEffect::UpdateAlways() {
-
-	// 集まってくるエフェクト
-	GameEffectCommandHelper::SendSpawnerBillboard(*chargeCircle_.effect,
-		static_cast<const BaseCamera&>(*followCamera_));
-	chargeCircle_.effect->Emit();
 }
 
 void BossEnemyAnimationEffect::EmitChargeEffect(const BossEnemy& bossEnemy) {

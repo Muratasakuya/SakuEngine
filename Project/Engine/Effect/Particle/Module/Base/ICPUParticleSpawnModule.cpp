@@ -38,6 +38,17 @@ void ICPUParticleSpawnModule::SetCommonData(CPUParticle::ParticleData& particle)
 	particle.lifeTime = lifeTime_.GetValue();
 
 	// テクスチャ情報
+#if defined(_DEBUG) || defined(_DEVELOPBUILD)
+	// indexが0はあり得ないのでもう一度取得する
+	if (particle.textureInfo.colorTextureIndex == 0) {
+
+		textureInfo_.colorTextureIndex = asset_->GetTextureGPUIndex(textureName_);
+	}
+	if (particle.textureInfo.noiseTextureIndex == 0) {
+
+		textureInfo_.noiseTextureIndex = asset_->GetTextureGPUIndex(noiseTextureName_);
+	}
+#endif
 	particle.textureInfo = textureInfo_;
 
 	// プリミティブ
@@ -286,10 +297,10 @@ void ICPUParticleSpawnModule::FromCommonJson(const Json& data) {
 
 	// 存在していなければ読み込む
 	if (!asset_->SearchTexture(textureName_)) {
-		asset_->LoadTexture(textureName_, AssetLoadType::Async);
+		asset_->LoadTexture(textureName_, AssetLoadType::Synch);
 	}
 	if (!asset_->SearchTexture(noiseTextureName_)) {
-		asset_->LoadTexture(noiseTextureName_, AssetLoadType::Async);
+		asset_->LoadTexture(noiseTextureName_, AssetLoadType::Synch);
 	}
 
 	textureInfo_.colorTextureIndex = asset_->GetTextureGPUIndex(textureName_);

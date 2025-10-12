@@ -4,6 +4,7 @@
 //	include
 //============================================================================
 #include <Engine/Effect/Particle/Module/Base/ICPUParticleUpdateModule.h>
+#include <Engine/Utility/Material/SerialUVScroll.h>
 #include <Engine/Utility/Enum/Easing.h>
 
 //============================================================================
@@ -48,7 +49,8 @@ private:
 	enum class UpdateType {
 
 		Lerp,
-		Scroll
+		Scroll,
+		Serial
 	};
 
 	//--------- variables ----------------------------------------------------
@@ -60,6 +62,9 @@ private:
 
 	// スクロール加算値
 	Vector2 scrollValue_;
+
+	// 連番アニメーション
+	SerialUVScroll serialScroll_;
 
 	EasingType easing_;
 	UpdateType updateType_;

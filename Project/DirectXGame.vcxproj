@@ -535,6 +535,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Scene\Camera\DebugCamera.cpp">
       <SubType />
     </ClCompile>
+    <ClCompile Include="Engine\Utility\Material\SerialUVScroll.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="Engine\Utility\Timer\StateTimer.cpp">
       <SubType />
     </ClCompile>
@@ -1254,6 +1258,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </ClInclude>
     <ClInclude Include="Engine\Scene\Camera\DebugCamera.h">
       <SubType />
+    </ClInclude>
+    <ClInclude Include="Engine\Utility\Material\SerialUVScroll.h">
+      <SubType>
+      </SubType>
     </ClInclude>
     <ClInclude Include="Engine\Utility\Object\ObjectMode.h">
       <SubType />

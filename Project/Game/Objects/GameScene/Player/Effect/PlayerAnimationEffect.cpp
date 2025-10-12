@@ -172,6 +172,10 @@ void PlayerAnimationEffect::UpdateEmit(Player& player) {
 			// フラグで発生
 			GameEffectCommandHelper::SendSpawnerEmit(*rightSword_.sparkEffect, true);
 		}
+
+		// 集まってくるエフェクト
+		leftSword_.sparkEffect->Emit();
+		rightSword_.sparkEffect->Emit();
 		break;
 	}
 	case PlayerAnimationEffect::AnimationKey::Attack_4th: {
@@ -205,10 +209,6 @@ void PlayerAnimationEffect::UpdateEmit(Player& player) {
 }
 
 void PlayerAnimationEffect::UpdateAlways() {
-
-	// 集まってくるエフェクト
-	leftSword_.sparkEffect->Emit();
-	rightSword_.sparkEffect->Emit();
 
 	// 前回のフレームの値を保持
 	preAnimationKey_ = currentAnimationKey_;

@@ -22,12 +22,17 @@ void ParticleUpdateUVModule::Execute(
 	CPUParticle::ParticleData& particle, [[maybe_unused]] float deltaTime) {
 
 	Vector3 translation{};
+	Vector3 scale{};
 	switch (updateType_) {
 	case ParticleUpdateUVModule::UpdateType::Lerp:
 
 		// UV座標補間
 		translation = Vector3::Lerp(translation_.start,
 			translation_.target, EasedValue(easing_, particle.progress));
+
+		// スケール
+		scale = Vector3::Lerp(scale_.start,
+			scale_.target, EasedValue(easing_, particle.progress));
 		break;
 	case ParticleUpdateUVModule::UpdateType::Scroll:
 
@@ -35,15 +40,22 @@ void ParticleUpdateUVModule::Execute(
 		translation = particle.material.uvTransform.GetTranslationValue();
 		translation.x += scrollValue_.x;
 		translation.y += scrollValue_.y;
+
+		// スケール
+		scale = Vector3::Lerp(scale_.start,
+			scale_.target, EasedValue(easing_, particle.progress));
 		break;
+	case UpdateType::Serial: {
+
+		// 連番アニメーション
+		serialScroll_.Update(particle.progress, translation, scale);
+		break;
+	}
 	}
 
 	// 回転
 	float rotationZ = std::lerp(rotation_.start,
 		rotation_.target, EasedValue(easing_, particle.progress));
-	// スケール
-	Vector3 scale = Vector3::Lerp(scale_.start,
-		scale_.target, EasedValue(easing_, particle.progress));
 
 	// uvMatrixの更新
 	particle.material.uvTransform = Matrix4x4::MakeAffineMatrix(
@@ -67,6 +79,10 @@ void ParticleUpdateUVModule::ImGui() {
 	case ParticleUpdateUVModule::UpdateType::Scroll:
 
 		ImGui::DragFloat2("scrollValue", &scrollValue_.x, 0.01f);
+		break;
+	case ParticleUpdateUVModule::UpdateType::Serial:
+
+		serialScroll_.ImGui();
 		break;
 	}
 
@@ -99,6 +115,8 @@ Json ParticleUpdateUVModule::ToJson() {
 
 	data["scrollValue"] = scrollValue_.ToJson();
 
+	serialScroll_.ToJson(data["serial"]);
+
 	return data;
 }
 
@@ -127,4 +145,6 @@ void ParticleUpdateUVModule::FromJson(const Json& data) {
 	}
 
 	scrollValue_ = scrollValue_.FromJson(data["scrollValue"]);
+
+	serialScroll_.FromJson(data.value("serial", Json()));
 }
