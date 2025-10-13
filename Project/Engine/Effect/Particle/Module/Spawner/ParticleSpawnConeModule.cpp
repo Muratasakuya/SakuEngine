@@ -81,6 +81,9 @@ void ParticleSpawnConeModule::Execute(std::list<CPUParticle::ParticleData>& part
 		particle.velocity = direction * moveSpeed_.GetValue();
 		particle.transform.translation = rotatedBasePoint;
 
+		// 発生した瞬間の座標を記録
+		particle.spawnTranlation = particle.transform.translation;
+
 		// 追加
 		particles.push_back(particle);
 	}

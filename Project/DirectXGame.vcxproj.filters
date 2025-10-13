@@ -2145,6 +2145,7 @@
     <ClCompile Include="Engine\Effect\Particle\Module\Updater\Primitive\Derived\ParticleCylinderUpdater.cpp" />
     <ClCompile Include="Engine\Effect\Particle\Module\Updater\Primitive\Derived\ParticleCrescentUpdater.cpp" />
     <ClCompile Include="Engine\Utility\Material\SerialUVScroll.cpp" />
+    <ClCompile Include="Engine\Effect\Particle\Module\Updater\Move\ParticleUpdateNoiseForceModule.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Core\Graphics\PostProcess\PostProcessBit.h" />
@@ -2156,6 +2157,7 @@
     <ClInclude Include="Engine\Effect\Particle\Module\Updater\Primitive\Derived\ParticleCylinderUpdater.h" />
     <ClInclude Include="Engine\Effect\Particle\Module\Updater\Primitive\Derived\ParticleCrescentUpdater.h" />
     <ClInclude Include="Engine\Utility\Material\SerialUVScroll.h" />
+    <ClInclude Include="Engine\Effect\Particle\Module\Updater\Move\ParticleUpdateNoiseForceModule.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Engine\Shaders\PostProcess\PostProcessCommon.hlsli" />

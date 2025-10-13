@@ -77,6 +77,9 @@ void ParticleSpawnHemisphereModule::Execute(std::list<CPUParticle::ParticleData>
 		particle.velocity = rotatedDirection * moveSpeed_.GetValue();
 		particle.transform.translation = emitter_.translation + rotatedDirection * emitter_.radius;
 
+		// 発生した瞬間の座標を記録
+		particle.spawnTranlation = particle.transform.translation;
+
 		// 追加
 		particles.push_back(particle);
 	}

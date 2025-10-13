@@ -70,6 +70,9 @@ void ParticleSpawnBoxModule::Execute(std::list<CPUParticle::ParticleData>& parti
 		particle.velocity = forward * moveSpeed_.GetValue();
 		particle.transform.translation = emitter_.rotationMatrix.TransformPoint(GetRandomPoint()) + emitter_.translation;
 
+		// 発生した瞬間の座標を記録
+		particle.spawnTranlation = particle.transform.translation;
+
 		// 追加
 		particles.push_back(particle);
 	}
