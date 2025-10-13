@@ -112,6 +112,19 @@ void ParticleSystem::UpdateAllEmit() {
 		return;
 	}
 
+	// まだパーティクルを処理しているときはタイマーを進めない
+	bool cpuBusy = false;
+	for (const auto& group : cpuGroups_) {
+		if (0 < group.group.GetNumInstance()) {
+
+			cpuBusy = true;
+			break;
+		}
+	}
+	if (cpuBusy) {
+		return;
+	}
+
 	// 時間経過で全て発生させる
 	allEmitTimer_ += GameTimer::GetDeltaTime();
 	if (allEmitTime_ < allEmitTimer_) {
@@ -190,9 +203,11 @@ void ParticleSystem::HandleCopyPaste() {
 		if (selected_.type == ParticleType::GPU) {
 
 			copyGroup_.data = gpuGroups_[selected_.index].group.ToJson();
+			copyGroup_.primitiveType = gpuGroups_[selected_.index].group.GetPrimitiveType();
 		} else if (selected_.type == ParticleType::CPU) {
 
 			copyGroup_.data = cpuGroups_[selected_.index].group.ToJson();
+			copyGroup_.primitiveType = cpuGroups_[selected_.index].group.GetPrimitiveType();
 		}
 		copyGroup_.hasData = true;
 	}
@@ -211,7 +226,7 @@ void ParticleSystem::HandleCopyPaste() {
 
 			auto& group = cpuGroups_.emplace_back();
 			group.name = "particle" + std::to_string(nextGroupId_);
-			group.group.Create(device_, asset_, primitiveType_);
+			group.group.Create(device_, asset_, copyGroup_.primitiveType);
 			group.group.FromJson(copyGroup_.data, asset_);
 		}
 		copyGroup_.hasData = false;

@@ -118,8 +118,8 @@ void ParticleSpawnBoxModule::FromJson(const Json& data) {
 	// 共通設定
 	ICPUParticleSpawnModule::FromCommonJson(data);
 
-	emitterRotation_.FromJson(data["emitterRotation"]);
+	emitterRotation_ = Vector3::FromJson(data["emitterRotation"]);
 
-	emitter_.size.FromJson(data["size"]);
-	emitter_.translation.FromJson(data["translation"]);
+	emitter_.size = Vector3::FromJson(data["size"]);
+	emitter_.translation = Vector3::FromJson(data["translation"]);
 }

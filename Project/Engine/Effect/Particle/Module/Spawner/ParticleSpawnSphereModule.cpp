@@ -102,5 +102,5 @@ void ParticleSpawnSphereModule::FromJson(const Json& data) {
 	ICPUParticleSpawnModule::FromCommonJson(data);
 
 	emitter_.radius = data.value("radius", 1.0f);
-	emitter_.translation.FromJson(data["translation"]);
+	emitter_.translation = Vector3::FromJson(data["translation"]);
 }

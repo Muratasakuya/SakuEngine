@@ -597,8 +597,8 @@ void ParticleSpawnPolygonVertexModule::FromJson(const Json& data) {
 	vertexCount_ = data.value("vertexCount", 3);
 	scale_ = data.value("scale", 1.0f);
 
-	emitterRotation_.FromJson(data["emitterRotation"]);
-	translation_.FromJson(data["translation"]);
+	emitterRotation_ = Vector3::FromJson(data["emitterRotation"]);
+	translation_ = Vector3::FromJson(data["translation"]);
 
 	emitPerVertex_.ApplyJson(data, "emitPerVertex");
 	interpolateSpacing_.ApplyJson(data, "interpolateSpacing");

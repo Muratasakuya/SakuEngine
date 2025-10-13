@@ -93,6 +93,7 @@ private:
 
 		bool hasData;
 		ParticleType type;
+		ParticlePrimitiveType primitiveType;
 		Json data;
 	};
 
