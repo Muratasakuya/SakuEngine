@@ -78,7 +78,8 @@ private:
 	std::optional<RequestState> request_;
 
 	// パリィ
-	std::unique_ptr<GameEffect> parryEffect_;
+	// エフェクト、エンジン機能変更中...
+	//std::unique_ptr<GameEffect> parryEffect_;
 
 	//--------- functions ----------------------------------------------------
 

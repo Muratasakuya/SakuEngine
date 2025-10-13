@@ -64,8 +64,9 @@ void Player::InitAnimations() {
 	animation_->Update(transform_->matrix.world);
 
 	// アニメーションに合わせて発生させるエフェクト
-	animationEffect_ = std::make_unique<PlayerAnimationEffect>();
-	animationEffect_->Init(*this);
+	// エフェクト、エンジン機能変更中...
+	/*animationEffect_ = std::make_unique<PlayerAnimationEffect>();
+	animationEffect_->Init(*this);*/
 }
 
 void Player::InitCollision() {
@@ -245,7 +246,8 @@ void Player::Update() {
 	attackCollision_->Update(*transform_);
 
 	// エフェクトの更新
-	animationEffect_->Update(*this);
+	// エフェクト、エンジン機能変更中...
+	//animationEffect_->Update(*this);
 }
 
 void Player::CheckBossEnemyStun() {
@@ -363,7 +365,8 @@ void Player::DerivedImGui() {
 		// ---- Effect ---------------------------------------------------
 		if (ImGui::BeginTabItem("Effect")) {
 
-			animationEffect_->ImGui(*this);
+			// エフェクト、エンジン機能変更中...
+			//animationEffect_->ImGui(*this);
 			ImGui::EndTabItem();
 		}
 		ImGui::EndTabBar();

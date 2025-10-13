@@ -221,6 +221,8 @@ namespace CPUParticle {
 
 		// 発生したときの座標
 		Vector3 spawnTranlation;
+		// 回転の保持
+		Quaternion rotation;
 
 		// bufferを更新するデータ
 		// 移動速度

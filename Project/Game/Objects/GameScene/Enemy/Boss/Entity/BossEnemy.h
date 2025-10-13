@@ -97,8 +97,8 @@ private:
 	// HUD
 	std::unique_ptr<BossEnemyHUD> hudSprites_;
 
-	// エフェクト
-	std::unique_ptr<BossEnemyAnimationEffect> animationEffect_;
+	// エフェクト、エンジン機能変更中...
+	//std::unique_ptr<BossEnemyAnimationEffect> animationEffect_;
 
 	// parameters
 	Transform3D initTransform_; // 初期化時の値

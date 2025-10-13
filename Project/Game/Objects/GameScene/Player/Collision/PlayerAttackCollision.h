@@ -69,8 +69,8 @@ private:
 	float currentTimer_; // 現在の経過時間、全部共通
 	float reHitTimer_;   // 多段ヒット経過時間
 
-	// ヒットエフェクト
-	std::unique_ptr<GameEffect> hitEffect_;
+	// エフェクト、エンジン機能変更中...
+	//std::unique_ptr<GameEffect> hitEffect_;
 
 	// editor
 	PlayerState editingState_;

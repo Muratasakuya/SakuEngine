@@ -52,8 +52,9 @@ void BossEnemy::InitAnimations() {
 	animation_->Update(transform_->matrix.world);
 
 	// アニメーションに合わせて発生させるエフェクト
-	animationEffect_ = std::make_unique<BossEnemyAnimationEffect>();
-	animationEffect_->Init(*this);
+	// エフェクト、エンジン機能変更中...
+	/*animationEffect_ = std::make_unique<BossEnemyAnimationEffect>();
+	animationEffect_->Init(*this);*/
 }
 
 void BossEnemy::InitCollision() {
@@ -146,7 +147,8 @@ void BossEnemy::SetFollowCamera(const FollowCamera* followCamera) {
 
 	stateController_->SetFollowCamera(followCamera);
 	hudSprites_->SetFollowCamera(followCamera);
-	animationEffect_->SetFollowCamera(followCamera);
+	// エフェクト、エンジン機能変更中...
+	//animationEffect_->SetFollowCamera(followCamera);
 }
 
 void BossEnemy::SetAlpha(float alpha) {
@@ -257,7 +259,8 @@ void BossEnemy::UpdatePlayGame() {
 	attackCollision_->Update(*transform_);
 
 	// エフェクトの更新
-	animationEffect_->Update(*this);
+	// エフェクト、エンジン機能変更中...
+	//animationEffect_->Update(*this);
 
 	// デバッグ用コマンド
 	DebugCommand();
@@ -522,7 +525,8 @@ void BossEnemy::DerivedImGui() {
 
 		if (ImGui::BeginTabItem("Effect")) {
 
-			animationEffect_->ImGui(*this);
+			// エフェクト、エンジン機能変更中...
+			//animationEffect_->ImGui(*this);
 			ImGui::EndTabItem();
 		}
 

@@ -277,7 +277,7 @@ void ParticleSystem::ImGuiGroupSelect() {
 			const bool isSelected = (selected_.type == type && selected_.index == i);
 
 			// 表示名
-			std::string label = std::format("[{}] {}", EnumAdapter<ParticleType>::ToString(type), vec[i].name);
+			std::string label = std::format("[{}]{}", EnumAdapter<ParticleType>::ToString(type), vec[i].name);
 			ImGui::PushID(id);
 			if (ImGui::Selectable(label.c_str(), isSelected,
 				ImGuiSelectableFlags_AllowDoubleClick)) {
@@ -286,21 +286,34 @@ void ParticleSystem::ImGuiGroupSelect() {
 			}
 
 			// ダブルクリックで改名開始
+			bool startRenameThisFrame = false;
 			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0)) {
 
 				renaming_ = { type, i };
 				strcpy_s(renameBuffer_, vec[i].name.c_str());
+				startRenameThisFrame = true;
 			}
 
 			// 改名中
 			if (renaming_.type == type && renaming_.index == i) {
 
-				ImGui::SameLine();
-				ImGui::SetNextItemWidth(-FLT_MIN);
-				if (ImGui::InputText("##rename", renameBuffer_, sizeof(renameBuffer_),
-					ImGuiInputTextFlags_AutoSelectAll | ImGuiInputTextFlags_EnterReturnsTrue) ||
-					(!ImGui::IsItemActive() && ImGui::IsItemDeactivated())) {
+				ImGui::Spacing();
+				ImGui::Indent(ImGui::GetStyle().FramePadding.x);
 
+				if (startRenameThisFrame) {
+
+					ImGui::SetKeyboardFocusHere();
+				}
+
+				ImGui::SameLine();
+				ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
+				bool submitted = ImGui::InputText("##rename", renameBuffer_, sizeof(renameBuffer_),
+					ImGuiInputTextFlags_AutoSelectAll | ImGuiInputTextFlags_EnterReturnsTrue);
+
+				ImGui::Unindent(ImGui::GetStyle().FramePadding.x);
+				if (submitted || ImGui::IsItemDeactivatedAfterEdit()) {
+
+					// リネーム終了
 					vec[i].name = renameBuffer_;
 					renaming_ = { ParticleType::GPU, -1 };
 				}

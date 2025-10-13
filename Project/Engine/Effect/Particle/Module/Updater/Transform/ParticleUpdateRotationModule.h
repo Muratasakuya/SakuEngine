@@ -46,9 +46,9 @@ private:
 	// 更新の種類
 	enum class UpdateType {
 
-		Lerp,
-		ConstantAdd,
-		MoveToDirection
+		Slerp,           // 補間
+		AngularVelocity, // 角速度
+		LookToVelocity   // 速度方向を向く
 	};
 
 	// 回転軸の固定
@@ -63,28 +63,27 @@ private:
 	//--------- variables ----------------------------------------------------
 
 	// 回転補間
-	ParticleCommon::LerpValue<Vector3> lerpRotation_;
+	ParticleCommon::LerpValue<Quaternion> lerpRotation_;
 
 	// 回転加算
-	Vector3 addRotation_;
-
-	// 回転固定
-	Vector3 lockAxis_;
+	Vector3 angleAxis_;      // 軸
+	float angleSpeedRadian_; // 回転速度
 
 	// 外部設定
-	std::optional<Vector3> setRotation_;
-	std::optional<Matrix4x4> setRotationMatrix_;
+	std::optional<Quaternion> setRotation_;
 
 	// ビルボードの種類
 	ParticleBillboardType billboardType_;
-
 	EasingType easing_;
 	UpdateType updateType_;
+
+	// 回転固定
 	LockAxisType lockAxisType_;
+	float lockAxisAngle_;
 
 	//--------- functions ----------------------------------------------------
 
-	Vector3 UpdateRotation(CPUParticle::ParticleData& particle) const;
-	Vector3 LockAxis(const Vector3& rotation);
-	void UpdateMatrix(CPUParticle::ParticleData& particle, const Vector3& rotation);
+	Quaternion UpdateRotation(CPUParticle::ParticleData& particle, float deltaTime) const;
+	Quaternion LockAxis(const Quaternion& rotation) const;
+	void UpdateMatrix(CPUParticle::ParticleData& particle, const Quaternion& rotation);
 };
