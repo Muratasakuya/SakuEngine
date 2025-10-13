@@ -106,7 +106,8 @@ private:
 	std::unique_ptr<BossEnemyBladeCollision> singleBlade_;
 	float singleBladeMoveSpeed_; // 刃の進む速度
 	// エフェクト
-	std::unique_ptr<BossEnemySingleBladeEffect> singleBladeEffect_;
+	// エフェクト、エンジン機能変更中...
+	//std::unique_ptr<BossEnemySingleBladeEffect> singleBladeEffect_;
 	float singleBladeEffectScalingValue_;
 
 	//--------- functions ----------------------------------------------------

@@ -26,8 +26,9 @@ void BossEnemyRushAttackState::InitBlade() {
 	singleBlade_ = std::make_unique<BossEnemyBladeCollision>();
 	singleBlade_->Init("singleBlade_Rush");
 	// エフェクト
-	singleBladeEffect_ = std::make_unique<BossEnemySingleBladeEffect>();
-	singleBladeEffect_->Init(singleBlade_->GetTransform(), "Rush");
+	// エフェクト、エンジン機能変更中...
+	/*singleBladeEffect_ = std::make_unique<BossEnemySingleBladeEffect>();
+	singleBladeEffect_->Init(singleBlade_->GetTransform(), "Rush");*/
 }
 
 BossEnemyRushAttackState::BossEnemyRushAttackState() {
@@ -73,7 +74,8 @@ void BossEnemyRushAttackState::UpdateAlways([[maybe_unused]] BossEnemy& bossEnem
 	singleBlade_->Update();
 
 	// エフェクトの更新処理
-	singleBladeEffect_->Update();
+	// エフェクト、エンジン機能変更中...
+	//singleBladeEffect_->Update();
 }
 
 void BossEnemyRushAttackState::Update(BossEnemy& bossEnemy) {
@@ -250,8 +252,9 @@ void BossEnemyRushAttackState::EmitSingleBlade(const BossEnemy& bossEnemy) {
 	singleBlade_->EmitEffect(pos, velocity);
 
 	// エフェクトを発生
-	singleBladeEffect_->EmitEffect(singleBlade_->GetTransform(),
-		singleBladeEffectScalingValue_);
+	// エフェクト、エンジン機能変更中...
+	/*singleBladeEffect_->EmitEffect(singleBlade_->GetTransform(),
+		singleBladeEffectScalingValue_);*/
 }
 
 void BossEnemyRushAttackState::Exit(BossEnemy& bossEnemy) {
@@ -343,7 +346,8 @@ void BossEnemyRushAttackState::ImGui(const BossEnemy& bossEnemy) {
 	if (ImGui::CollapsingHeader("Blade Effect")) {
 
 		ImGui::DragFloat("singleBladeScaling", &singleBladeEffectScalingValue_, 0.01f);
-		singleBladeEffect_->ImGui();
+		// エフェクト、エンジン機能変更中...
+		//singleBladeEffect_->ImGui();
 	}
 }
 

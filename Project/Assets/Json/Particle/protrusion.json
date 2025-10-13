@@ -1,25 +1,25 @@
 {
     "CPUGroups": [
         {
-            "blendMode": "kBlendModeAdd",
-            "gameMaxParticleCount_": 16,
-            "name": "slash",
+            "blendMode": "kBlendModeScreen",
+            "gameMaxParticleCount_": 4,
+            "name": "particle2",
             "phases": [
                 {
-                    "duration": 4.0,
+                    "duration": 2.0,
                     "notEmit": false,
                     "postProcessMask_": 16649,
                     "spawn": {
                         "params": {
                             "common": {
                                 "emitCount": {
-                                    "constant": 2,
+                                    "constant": 1,
                                     "randomMax": 4,
                                     "randomMin": 4,
                                     "valueType": 0
                                 },
                                 "lifeTime": {
-                                    "constant": 4.0,
+                                    "constant": 1.0,
                                     "randomMax": 0.800000011920929,
                                     "randomMin": 0.800000011920929,
                                     "valueType": 0
@@ -61,19 +61,25 @@
                                     "shape": "Crescent"
                                 },
                                 "samplerType": 0,
-                                "textureName": "bossEnemySlash",
+                                "textureName": "white",
                                 "useNoiseTexture": 0
                             },
                             "radius": 0.10000000149011612,
                             "translation": {
-                                "x": 0.0,
-                                "y": 0.0,
+                                "x": 4.449999809265137,
+                                "y": 25.299999237060547,
                                 "z": 0.0
                             }
                         },
                         "type": "Sphere"
                     },
                     "updaters": [
+                        {
+                            "params": {
+                                "endMode_": "Advance"
+                            },
+                            "type": "LifeTime"
+                        },
                         {
                             "params": null,
                             "type": "Velocity"
@@ -100,12 +106,12 @@
                                     }
                                 },
                                 "lockAxis": {
-                                    "x": 1.5700000524520874,
+                                    "x": 0.0,
                                     "y": 0.0,
                                     "z": 0.0
                                 },
-                                "lockAxisType": "AxisX",
-                                "updateType": "Lerp"
+                                "lockAxisType": "None",
+                                "updateType": "Slerp"
                             },
                             "type": "Rotation"
                         },
@@ -118,14 +124,14 @@
                                 },
                                 "scale": {
                                     "start": {
-                                        "x": 3.200000047683716,
-                                        "y": 6.0,
-                                        "z": 2.0
+                                        "x": 4.0,
+                                        "y": 4.0,
+                                        "z": 4.0
                                     },
                                     "target": {
-                                        "x": 3.200000047683716,
-                                        "y": 6.0,
-                                        "z": 2.0
+                                        "x": 4.0,
+                                        "y": 4.0,
+                                        "z": 4.0
                                     }
                                 }
                             },
@@ -158,54 +164,54 @@
                         {
                             "params": {
                                 "crescent": {
-                                    "startDivide": 8,
-                                    "startEndAngle": 3.140000104904175,
+                                    "startDivide": 3,
+                                    "startEndAngle": -1.100000023841858,
                                     "startInnerColor": {
                                         "a": 1.0,
-                                        "b": 0.5094128847122192,
-                                        "g": 0.0967579036951065,
-                                        "r": 0.011621885001659393
+                                        "b": 0.6151300668716431,
+                                        "g": 0.04096558317542076,
+                                        "r": 0.8763561248779297
                                     },
-                                    "startInnerRadius": 2.0,
+                                    "startInnerRadius": 4.380000114440918,
                                     "startLattice": 0.5,
                                     "startOuterColor": {
                                         "a": 1.0,
-                                        "b": 0.5094128847122192,
-                                        "g": 0.011621885001659393,
-                                        "r": 0.29577895998954773
+                                        "b": 0.5173898935317993,
+                                        "g": 0.2865506708621979,
+                                        "r": 0.02624918892979622
                                     },
                                     "startOuterRadius": 4.0,
                                     "startPivot": {
                                         "x": 0.5,
-                                        "y": 0.5
+                                        "y": 1.0
                                     },
-                                    "startStartAngle": 0.0,
-                                    "startThickness": 3.200000047683716,
-                                    "startUVMode": 0,
-                                    "targetDivide": 8,
-                                    "targetEndAngle": 3.140000104904175,
+                                    "startStartAngle": -1.100000023841858,
+                                    "startThickness": 0.10000000149011612,
+                                    "startUVMode": 1,
+                                    "targetDivide": 3,
+                                    "targetEndAngle": 1.0180000066757202,
                                     "targetInnerColor": {
                                         "a": 1.0,
-                                        "b": 0.5094128847122192,
-                                        "g": 0.0967579036951065,
-                                        "r": 0.011621885001659393
+                                        "b": 0.6151300668716431,
+                                        "g": 0.04096558317542076,
+                                        "r": 0.8763561248779297
                                     },
-                                    "targetInnerRadius": 2.0,
+                                    "targetInnerRadius": 3.0199999809265137,
                                     "targetLattice": 0.5,
                                     "targetOuterColor": {
                                         "a": 1.0,
-                                        "b": 0.5094128847122192,
-                                        "g": 0.011621885001659393,
-                                        "r": 0.29577895998954773
+                                        "b": 0.5173898935317993,
+                                        "g": 0.2865506708621979,
+                                        "r": 0.02624918892979622
                                     },
                                     "targetOuterRadius": 4.0,
                                     "targetPivot": {
                                         "x": 0.5,
-                                        "y": 0.5
+                                        "y": 1.0
                                     },
-                                    "targetStartAngle": 0.0,
-                                    "targetThickness": 3.200000047683716,
-                                    "targetUVMode": 0
+                                    "targetStartAngle": -1.100000023841858,
+                                    "targetThickness": 1.7899999618530273,
+                                    "targetUVMode": 1
                                 },
                                 "cylinder": {
                                     "startBottomRadius": 4.0,
@@ -250,64 +256,18 @@
                         },
                         {
                             "params": {
-                                "easingType": "EaseInSine",
-                                "rotation": {
-                                    "start": 0.0,
-                                    "target": 0.0
-                                },
-                                "scale": {
-                                    "start": {
-                                        "x": 1.0,
-                                        "y": 1.0,
-                                        "z": 1.0
-                                    },
-                                    "target": {
-                                        "x": 1.0,
-                                        "y": 1.0,
-                                        "z": 1.0
-                                    }
-                                },
-                                "scrollValue": {
-                                    "x": 0.0,
-                                    "y": 0.0
-                                },
-                                "translation": {
-                                    "start": {
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "target": {
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    }
-                                },
-                                "updateType": "Scroll"
-                            },
-                            "type": "UV"
-                        },
-                        {
-                            "params": {
                                 "color": {
-                                    "start": {
-                                        "x": 0.16985280811786652,
-                                        "y": 0.06684702634811401,
-                                        "z": 0.4017230272293091
-                                    },
-                                    "target": {
-                                        "x": 0.16985280811786652,
-                                        "y": 0.06684702634811401,
-                                        "z": 0.4017230272293091
-                                    }
+                                    "start": 0.3199999928474426,
+                                    "target": 0.3199999928474426
                                 },
                                 "easingType": "EaseInSine",
-                                "intencity": {
-                                    "start": 0.20000000298023224,
-                                    "target": 0.20000000298023224
-                                }
+                                "noise": {
+                                    "start": 0.0,
+                                    "target": 0.5
+                                },
+                                "useNoiseTexture": false
                             },
-                            "type": "Emissive"
+                            "type": "AlphaReference"
                         }
                     ]
                 }
@@ -316,6 +276,6 @@
             "textureName": ""
         }
     ],
-    "name": "bossEnemyChargeSlash",
-    "primitiveType": "Plane"
+    "name": "protrusion",
+    "primitiveType": "Crescent"
 }

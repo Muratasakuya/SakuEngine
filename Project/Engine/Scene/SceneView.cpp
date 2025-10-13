@@ -72,9 +72,9 @@ void SceneView::UpdateLight() {
 	// pointLight、spotLightのデバッグ表示
 #if defined(_DEBUG) || defined(_DEVELOPBUILD)
 	// point
-	DisplayPointLight();
+	//DisplayPointLight();
 	// spot
-	DisplaySpotLight();
+	//DisplaySpotLight();
 #endif
 }
 

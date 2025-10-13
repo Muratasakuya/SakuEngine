@@ -7,6 +7,7 @@
 #include <Engine/Effect/Particle/Structures/ParticleValue.h>
 #include <Engine/Core/Graphics/GPUObject/DxStructuredBuffer.h>
 #include <Engine/Core/Graphics/DxLib/DxStructures.h>
+#include <Engine/Object/Data/Transform.h>
 #include <Engine/Utility/Enum/Easing.h>
 #include <Engine/MathLib/MathUtils.h>
 
@@ -217,6 +218,11 @@ namespace CPUParticle {
 		float progress;
 		// 現在のフェーズ
 		uint32_t phaseIndex;
+
+		// 発生したときの座標
+		Vector3 spawnTranlation;
+		// 回転の保持
+		Quaternion rotation;
 
 		// bufferを更新するデータ
 		// 移動速度

@@ -4,6 +4,8 @@
 //	include
 //============================================================================
 #include <Engine/Utility/Helper/ImGuiHelper.h>
+#include <Engine/Utility/Helper/Algorithm.h>
+#include <Engine/Effect/Particle/Module/Updater/Time/ParticleUpdateLifeTimeModule.h>
 
 //============================================================================
 //	ParticlePhase classMethods
@@ -138,6 +140,11 @@ void ParticlePhase::AddUpdater(ParticleUpdateModuleID id) {
 
 void ParticlePhase::RemoveUpdater(uint32_t index) {
 
+	// ライフタイム管理クラスは削除不可
+	const auto& it = *(updaters_.begin() + index);
+	if (it->GetID() == ParticleUpdateModuleID::LifeTime) {
+		return;
+	}
 	updaters_.erase(updaters_.begin() + index);
 }
 
@@ -159,6 +166,17 @@ float ParticlePhase::GetLifeTime() const {
 
 	// 現在有効なemitterから取得
 	return spawner_->GetLifeTime();
+}
+
+const ParticleUpdateLifeTimeModule* ParticlePhase::GetLifeTimeModule() const {
+
+	for (const auto& updater : updaters_) {
+		if (updater->GetID() == ParticleUpdateModuleID::LifeTime) {
+
+			return static_cast<const ParticleUpdateLifeTimeModule*>(updater.get());
+		}
+	}
+	return nullptr;
 }
 
 void ParticlePhase::ImGui() {
@@ -400,5 +418,19 @@ void ParticlePhase::FromJson(const Json& data) {
 		const auto& updateID = EnumAdapter<ParticleUpdateModuleID>::FromString(updateData["type"]);
 		AddUpdater(updateID.value());
 		updaters_.back()->FromJson(updateData["params"]);
+	}
+
+	// 設定されていなければ今はデフォルトで設定されるようにする
+	bool isFound = false;
+	for (const auto& updater : updaters_) {
+		if (updater->GetID() == ParticleUpdateModuleID::LifeTime) {
+
+			isFound = true;
+			break;
+		}
+	}
+	if (!isFound) {
+
+		AddUpdater(ParticleUpdateModuleID::LifeTime);
 	}
 }

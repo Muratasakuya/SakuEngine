@@ -28,8 +28,9 @@ void PlayerAttackCollision::Init() {
 	weaponBody_->SetTargetType(ColliderType::Type_BossEnemy);
 
 	// effect作成
-	hitEffect_ = std::make_unique<GameEffect>();
-	hitEffect_->CreateParticleSystem("Particle/playerHitEffect.json");
+	// エフェクト、エンジン機能変更中...
+	/*hitEffect_ = std::make_unique<GameEffect>();
+	hitEffect_->CreateParticleSystem("Particle/playerHitEffect.json");*/
 }
 
 void PlayerAttackCollision::Update(const Transform3D& transform) {
@@ -106,17 +107,18 @@ void PlayerAttackCollision::OnCollisionEnter(const CollisionBody* collisionBody)
 
 		// 座標を設定してparticleを発生
 		// 状態別で形状の値を設定
-		const auto& offset = std::get<CollisionShape::OBB>(bodyOffsets_.front());
+		//const auto& offset = std::get<CollisionShape::OBB>(bodyOffsets_.front());
 
 		// コマンドに設定
-		ParticleCommand command{};
-		command.target = ParticleCommandTarget::Spawner;
-		command.id = ParticleCommandID::SetTranslation;
-		command.value = transform_->translation + offset.center;
+		// エフェクト、エンジン機能変更中...
+		//ParticleCommand command{};
+		//command.target = ParticleCommandTarget::Spawner;
+		//command.id = ParticleCommandID::SetTranslation;
+		//command.value = transform_->translation + offset.center;
 
-		// 発生させる
-		hitEffect_->SendCommand(command);
-		hitEffect_->Emit();
+		//// 発生させる
+		//hitEffect_->SendCommand(command);
+		//hitEffect_->Emit();
 	}
 }
 

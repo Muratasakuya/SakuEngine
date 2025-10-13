@@ -81,6 +81,9 @@ void ParticleSpawnConeModule::Execute(std::list<CPUParticle::ParticleData>& part
 		particle.velocity = direction * moveSpeed_.GetValue();
 		particle.transform.translation = rotatedBasePoint;
 
+		// 発生した瞬間の座標を記録
+		particle.spawnTranlation = particle.transform.translation;
+
 		// 追加
 		particles.push_back(particle);
 	}
@@ -131,10 +134,10 @@ void ParticleSpawnConeModule::FromJson(const Json& data) {
 	// 共通設定
 	ICPUParticleSpawnModule::FromCommonJson(data);
 
-	emitterRotation_.FromJson(data["emitterRotation"]);
+	emitterRotation_ = Vector3::FromJson(data["emitterRotation"]);
 
 	emitter_.baseRadius = data.value("baseRadius", 1.0f);
 	emitter_.topRadius = data.value("topRadius", 0.5f);
 	emitter_.height = data.value("height", 1.0f);
-	emitter_.translation.FromJson(data["translation"]);
+	emitter_.translation = Vector3::FromJson(data["translation"]);
 }

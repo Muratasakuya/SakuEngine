@@ -77,6 +77,9 @@ void ParticleSpawnHemisphereModule::Execute(std::list<CPUParticle::ParticleData>
 		particle.velocity = rotatedDirection * moveSpeed_.GetValue();
 		particle.transform.translation = emitter_.translation + rotatedDirection * emitter_.radius;
 
+		// 発生した瞬間の座標を記録
+		particle.spawnTranlation = particle.transform.translation;
+
 		// 追加
 		particles.push_back(particle);
 	}
@@ -122,8 +125,8 @@ void ParticleSpawnHemisphereModule::FromJson(const Json& data) {
 	// 共通設定
 	ICPUParticleSpawnModule::FromCommonJson(data);
 
-	emitterRotation_.FromJson(data["emitterRotation"]);
+	emitterRotation_ = Vector3::FromJson(data["emitterRotation"]);
 
 	emitter_.radius = data.value("radius", 1.0f);
-	emitter_.translation.FromJson(data["translation"]);
+	emitter_.translation = Vector3::FromJson(data["translation"]);
 }

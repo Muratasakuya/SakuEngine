@@ -2,37 +2,16 @@
     "CPUGroups": [
         {
             "blendMode": "kBlendModeAdd",
-            "name": "dispersion",
+            "gameMaxParticleCount_": 0,
+            "name": "particle1",
             "phases": [
                 {
-                    "duration": 0.0,
+                    "duration": 0.009999999776482582,
                     "notEmit": false,
+                    "postProcessMask_": 16648,
                     "spawn": {
                         "params": {
-                            "MultiSpawn": {
-                                "easeingType_": "EaseInSine",
-                                "target_": 0.0
-                            },
-                            "SelfUpdater": {
-                                "AnimTimer": {
-                                    "easeingType_": "EaseInSine",
-                                    "target_": 0.36000001430511475
-                                },
-                                "rotationEasing": "EaseOutSine",
-                                "scaleEasing": "EaseOutExpo",
-                                "startRotation": {
-                                    "x": 0.0,
-                                    "y": 0.0,
-                                    "z": 0.0
-                                },
-                                "startScale": 8.0,
-                                "targetRotation": {
-                                    "x": 0.0,
-                                    "y": 14.220000267028809,
-                                    "z": 0.0
-                                },
-                                "targetScale": 8.0
-                            },
+                            "baseRadius": 0.05000000074505806,
                             "common": {
                                 "emitCount": {
                                     "constant": 1,
@@ -41,15 +20,15 @@
                                     "valueType": 0
                                 },
                                 "lifeTime": {
-                                    "constant": 0.12300000339746475,
-                                    "randomMax": 0.3619999885559082,
-                                    "randomMin": 0.09000000357627869,
+                                    "constant": 0.800000011920929,
+                                    "randomMax": 1.0,
+                                    "randomMin": 1.0,
                                     "valueType": 1
                                 },
                                 "moveSpeed": {
-                                    "constant": 54.0,
-                                    "randomMax": 72.0,
-                                    "randomMin": 40.0,
+                                    "constant": 1.600000023841858,
+                                    "randomMax": 9.0,
+                                    "randomMin": 9.0,
                                     "valueType": 1
                                 },
                                 "noiseTextureName": "noise",
@@ -71,45 +50,28 @@
                                 "textureName": "redCircle",
                                 "useNoiseTexture": 0
                             },
-                            "emitPerVertex": {
-                                "constant": 1,
-                                "randomMax": 4,
-                                "randomMin": 4,
-                                "valueType": 0
-                            },
                             "emitterRotation": {
                                 "x": 0.0,
-                                "y": 14.220000267028809,
-                                "z": 0.0
-                            },
-                            "interpolateSpacing": {
-                                "constant": 3.9079999923706055,
-                                "randomMax": 0.07999999821186066,
-                                "randomMin": 0.07999999821186066,
-                                "valueType": 0
-                            },
-                            "isInterpolate": true,
-                            "isSelfUpdate": true,
-                            "maxConcurrent": 0,
-                            "notMoveEmit": true,
-                            "offsetRotation": {
-                                "x": 0.0,
                                 "y": 0.0,
                                 "z": 0.0
                             },
-                            "scale": 8.0,
-                            "spawnBurstCount": 0,
+                            "height": 2.700000047683716,
+                            "topRadius": 2.0999999046325684,
                             "translation": {
-                                "x": 0.0,
-                                "y": 0.0,
-                                "z": 0.0
-                            },
-                            "useMulti": false,
-                            "vertexCount": 12
+                                "x": 33.900001525878906,
+                                "y": 2.549999952316284,
+                                "z": -344.3999938964844
+                            }
                         },
-                        "type": "PolygonVertex"
+                        "type": "Cone"
                     },
                     "updaters": [
+                        {
+                            "params": {
+                                "endMode_": "Advance"
+                            },
+                            "type": "LifeTime"
+                        },
                         {
                             "params": null,
                             "type": "Velocity"
@@ -141,22 +103,22 @@
                                     "z": 0.0
                                 },
                                 "lockAxisType": "None",
-                                "updateType": "Lerp"
+                                "updateType": "Slerp"
                             },
                             "type": "Rotation"
                         },
                         {
                             "params": {
-                                "easingType": "EaseOutSine",
+                                "easingType": "EaseInExpo",
                                 "loop": {
                                     "loopCount": 1,
                                     "type": "Repeat"
                                 },
                                 "scale": {
                                     "start": {
-                                        "x": 1.659999966621399,
-                                        "y": 1.659999966621399,
-                                        "z": 1.659999966621399
+                                        "x": 12.0,
+                                        "y": 12.0,
+                                        "z": 12.0
                                     },
                                     "target": {
                                         "x": 0.0,
@@ -172,46 +134,24 @@
                                 "color": {
                                     "start": {
                                         "a": 1.0,
-                                        "b": 0.8745098114013672,
-                                        "g": 0.33104345202445984,
-                                        "r": 0.13333332538604736
+                                        "b": 0.8763561248779297,
+                                        "g": 0.23478519916534424,
+                                        "r": 0.07941453903913498
                                     },
                                     "target": {
-                                        "a": 1.0,
-                                        "b": 0.8745098114013672,
-                                        "g": 0.33104345202445984,
-                                        "r": 0.13333332538604736
+                                        "a": 0.0,
+                                        "b": 0.7372549176216125,
+                                        "g": 0.054901961237192154,
+                                        "r": 0.07058823853731155
                                     }
                                 },
-                                "easingType": "EaseOutExpo",
+                                "easingType": "EaseInQuart",
                                 "loop": {
                                     "loopCount": 1,
-                                    "type": "PingPong"
+                                    "type": "Repeat"
                                 }
                             },
                             "type": "Color"
-                        },
-                        {
-                            "params": {
-                                "color": {
-                                    "start": {
-                                        "x": 0.24218249320983887,
-                                        "y": 0.24218249320983887,
-                                        "z": 0.24218249320983887
-                                    },
-                                    "target": {
-                                        "x": 0.24218249320983887,
-                                        "y": 0.24218249320983887,
-                                        "z": 0.24218249320983887
-                                    }
-                                },
-                                "easingType": "EaseInSine",
-                                "intencity": {
-                                    "start": 0.4000000059604645,
-                                    "target": 0.4000000059604645
-                                }
-                            },
-                            "type": "Emissive"
                         }
                     ]
                 }
@@ -220,6 +160,6 @@
             "textureName": ""
         }
     ],
-    "name": "rotateDispersionParticle0",
+    "name": "fieldTorch",
     "primitiveType": "Plane"
 }

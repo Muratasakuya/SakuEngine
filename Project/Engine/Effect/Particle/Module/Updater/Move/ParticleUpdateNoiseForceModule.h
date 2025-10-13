@@ -6,30 +6,17 @@
 #include <Engine/Effect/Particle/Module/Base/ICPUParticleUpdateModule.h>
 
 //============================================================================
-//	ParticleUpdateLifeTimeModule enum class
+//	ParticleUpdateNoiseForceModule class
 //============================================================================
-
-// 寿命が尽きた時の処理
-enum class ParticleLifeEndMode {
-
-	Advance, // 次のフェーズに進む
-	Clamp,   // 最大時間で固定、次にも進まない
-	Reset,   // 時間をリセットして再処理
-	Kill     // 即削除
-};
-
-//============================================================================
-//	ParticleUpdateLifeTimeModule class
-//============================================================================
-class ParticleUpdateLifeTimeModule :
+class ParticleUpdateNoiseForceModule :
 	public ICPUParticleUpdateModule {
 public:
 	//========================================================================
 	//	public Methods
 	//========================================================================
 
-	ParticleUpdateLifeTimeModule() = default;
-	~ParticleUpdateLifeTimeModule() = default;
+	ParticleUpdateNoiseForceModule() = default;
+	~ParticleUpdateNoiseForceModule() = default;
 
 	void Init() override;
 
@@ -43,21 +30,46 @@ public:
 
 	//--------- accessor -----------------------------------------------------
 
-	const char* GetName() const override { return "LifeTime"; }
-
-	ParticleLifeEndMode GetEndMode() const { return endMode_; }
+	const char* GetName() const override { return "NoiseForce"; }
 
 	//-------- registryID ----------------------------------------------------
 
-	static constexpr ParticleUpdateModuleID ID = ParticleUpdateModuleID::LifeTime;
+	static constexpr ParticleUpdateModuleID ID = ParticleUpdateModuleID::NoiseForce;
 	ParticleUpdateModuleID GetID() const override { return ID; }
 private:
 	//========================================================================
 	//	private Methods
 	//========================================================================
 
+	//--------- structure ----------------------------------------------------
+
+	// ノイズの種類
+	enum class NoiseMode {
+
+		Gradient,
+		Curl,
+		Offset,
+	};
+
 	//--------- variables ----------------------------------------------------
 
-	// デフォルトで次のフェーズに進む
-	ParticleLifeEndMode endMode_ = ParticleLifeEndMode::Advance;
+	NoiseMode mode_ = NoiseMode::Curl;
+	int octaves_;
+	float frequency_; // 空間周波数
+	float timeScale_; // 時間の進み
+	float strength_;  // 速度へ加える力の強さ
+	float damping_;   // 速度減衰
+	uint32_t seed_;
+
+	// オフセット用
+	bool anchorToSpawn_ = true;
+	Vector3 offsetAmp_;
+
+	//--------- functions ----------------------------------------------------
+
+	// helper
+	float Noise3(const Vector3& p, uint32_t s) const;      // ノイズ生成
+	float FBm(const Vector3& p, uint32_t s) const;         // オクターブ合成
+	Vector3 GradNoise(const Vector3& p, uint32_t s) const; // ∇fBm
+	Vector3 CurlNoise(const Vector3& p) const;             // ∇×(fBm1,fBm2,fBm3)
 };

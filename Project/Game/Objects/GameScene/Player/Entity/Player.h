@@ -85,8 +85,8 @@ private:
 	std::unique_ptr<PlayerHUD> hudSprites_;
 	std::unique_ptr<PlayerStunHUD> stunHudSprites_;
 
-	// エフェクト
-	std::unique_ptr<PlayerAnimationEffect> animationEffect_;
+	// エフェクト、エンジン機能変更中...
+	//std::unique_ptr<PlayerAnimationEffect> animationEffect_;
 
 	// parameters
 	Transform3D initTransform_; // 初期化時の値

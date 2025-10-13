@@ -29,6 +29,7 @@
 // Move
 #include <Engine/Effect/Particle/Module/Updater/Move/ParticleUpdateVelocityModule.h>
 #include <Engine/Effect/Particle/Module/Updater/Move/ParticleUpdateGravityModule.h>
+#include <Engine/Effect/Particle/Module/Updater/Move/ParticleUpdateNoiseForceModule.h>
 // Primitive
 #include <Engine/Effect/Particle/Module/Updater/Primitive/ParticleUpdatePrimitiveModule.h>
 // Time
@@ -116,6 +117,7 @@ void ParticleManager::RegisterModules() {
 	uRegistry.Register<ParticleUpdateScaleModule>();
 	uRegistry.Register<ParticleUpdateUVModule>();
 	uRegistry.Register<ParticleUpdateGravityModule>();
+	uRegistry.Register<ParticleUpdateNoiseForceModule>();
 	uRegistry.Register<ParticleUpdateEmissiveModule>();
 	uRegistry.Register<ParticleUpdateAlphaReferenceModule>();
 	uRegistry.Register<ParticleUpdatePrimitiveModule>();

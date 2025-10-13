@@ -91,6 +91,7 @@ private:
 
 	// editor
 	int selectedPhase_ = -1;
+	bool isSynchPhase_ = true;
 
 	//--------- functions ----------------------------------------------------
 

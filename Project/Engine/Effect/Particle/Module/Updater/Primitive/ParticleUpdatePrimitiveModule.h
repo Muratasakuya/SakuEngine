@@ -4,6 +4,7 @@
 //	include
 //============================================================================
 #include <Engine/Effect/Particle/Module/Base/ICPUParticleUpdateModule.h>
+#include <Engine/Effect/Particle/Module/Updater/Primitive/Interface/IParticlePrimitiveUpdater.h>
 #include <Engine/Effect/Particle/Structures/ParticleStructures.h>
 #include <Engine/Utility/Enum/Easing.h>
 
@@ -47,16 +48,9 @@ private:
 
 	// 形状、particleの型によって処理を変更
 	ParticlePrimitiveType type_;
-	ParticleCommon::LerpValue<ParticleCommon::PrimitiveData<false>> primitive_;
+	// 各形状の更新クラス配列
+	std::array<std::unique_ptr<IParticlePrimitiveUpdater>,
+		static_cast<uint32_t>(ParticlePrimitiveType::Count)> updaters_;
 
 	EasingType easingType_;
-	ParticlePlaneType planeType_;
-
-	//--------- functions ----------------------------------------------------
-
-	// update
-	void UpdatePlane(CPUParticle::ParticleData& particle);
-	void UpdateRing(CPUParticle::ParticleData& particle);
-	void UpdateCylinder(CPUParticle::ParticleData& particle);
-	void UpdateCrescent(CPUParticle::ParticleData& particle);
 };

@@ -5,6 +5,7 @@
 //============================================================================
 #include <Engine/Effect/Particle/ParticleConfig.h>
 #include <Engine/Utility/Timer/GameTimer.h>
+#include <Engine/Effect/Particle/Module/Updater/Time/ParticleUpdateLifeTimeModule.h>
 
 //============================================================================
 //	CPUParticleGroup classMethods
@@ -21,6 +22,9 @@ void CPUParticleGroup::Create(ID3D12Device* device,
 	emitter_.Init();
 
 	blendMode_ = BlendMode::kBlendModeAdd;
+
+	// 作成するバッファの数
+	createInstanceCount_ = kMaxCPUParticles;
 
 	// buffer作成
 	BaseParticleGroup::CreatePrimitiveBuffer(device, primitiveType, kMaxCPUParticles);
@@ -46,14 +50,14 @@ void CPUParticleGroup::CreateFromJson(ID3D12Device* device, Asset* asset, const 
 
 	// 作成するバッファの数
 	bool isUseGame = useGame_ && gameMaxParticleCount_ != 0;
-	uint32_t maxParticle = isUseGame ? gameMaxParticleCount_ : kMaxCPUParticles;
+	createInstanceCount_ = isUseGame ? gameMaxParticleCount_ : kMaxCPUParticles;
 
 	// buffer作成
-	BaseParticleGroup::CreatePrimitiveBuffer(device, primitiveBuffer_.type, maxParticle);
+	BaseParticleGroup::CreatePrimitiveBuffer(device, primitiveBuffer_.type, createInstanceCount_);
 	// structuredBuffer(SRV)
-	transformBuffer_.CreateSRVBuffer(device, maxParticle);
-	materialBuffer_.CreateSRVBuffer(device, maxParticle);
-	textureInfoBuffer_.CreateSRVBuffer(device, maxParticle);
+	transformBuffer_.CreateSRVBuffer(device, createInstanceCount_);
+	materialBuffer_.CreateSRVBuffer(device, createInstanceCount_);
+	textureInfoBuffer_.CreateSRVBuffer(device, createInstanceCount_);
 }
 
 void CPUParticleGroup::Update() {
@@ -110,6 +114,16 @@ void CPUParticleGroup::UpdatePhase() {
 
 	const float deltaTime = GameTimer::GetDeltaTime();
 
+	// particleの数を最大数に制限する
+	if (createInstanceCount_ < particles_.size()) {
+
+		// 古いの要素から削除する
+		// it = std::next particles_.size() - createInstanceCount分イテレータを進める
+		auto last = std::next(particles_.begin(), particles_.size() - createInstanceCount_);
+		// beginからlastまでの要素を削除
+		particles_.erase(particles_.begin(), last);
+	}
+
 	// 転送データのリサイズ
 	ResizeTransferData(static_cast<uint32_t>(particles_.size()));
 
@@ -126,22 +140,52 @@ void CPUParticleGroup::UpdatePhase() {
 
 		// 削除、フェーズ判定処理
 		if (particle.lifeTime <= particle.currentTime) {
-			// 次のフェーズがあれば次に移る
-			if (particle.phaseIndex + 1 < phases_.size()) {
 
-				// フェーズを進める
-				++particle.phaseIndex;
-				// リセット
+			// 寿命終了後、モードに応じて処理
+			auto* lifeModule = phases_[particle.phaseIndex]->GetLifeTimeModule();
+			switch (lifeModule->GetEndMode()) {
+			case ParticleLifeEndMode::Advance: {
+
+				// 次のフェーズがあれば次に移る
+				if (particle.phaseIndex + 1 < phases_.size()) {
+
+					// フェーズを進める
+					++particle.phaseIndex;
+					// リセット
+					particle.currentTime = 0.0f;
+					particle.progress = 0.0f;
+					// 次のフェーズの生存時間で初期化
+					particle.lifeTime = phases_[particle.phaseIndex]->GetLifeTime();
+					continue;
+				} else {
+
+					// 削除
+					it = particles_.erase(it);
+					continue;
+				}
+				break;
+			}
+			case ParticleLifeEndMode::Clamp: {
+
+				// 最大でとどめ続ける
+				particle.currentTime = particle.lifeTime;
+				particle.progress = 1.0f;
+				break;
+			}
+			case ParticleLifeEndMode::Reset: {
+
+				// 同じフェーズを再度処理
 				particle.currentTime = 0.0f;
 				particle.progress = 0.0f;
-				// 次のフェーズの生存時間で初期化
 				particle.lifeTime = phases_[particle.phaseIndex]->GetLifeTime();
-				continue;
-			} else {
+				break;
+			}
+			case ParticleLifeEndMode::Kill: {
 
 				// 削除
 				it = particles_.erase(it);
-				continue;
+				break;
+			}
 			}
 		}
 
@@ -272,19 +316,30 @@ void CPUParticleGroup::ResizeTransferData(uint32_t size) {
 
 void CPUParticleGroup::AddPhase() {
 
+	// この時点で1つ以上あるか
+	bool hasPhase = !phases_.empty();
+
 	// phase追加
 	phases_.emplace_back(std::make_unique<ParticlePhase>());
 	ParticlePhase* phase = phases_.back().get();
 	phase->Init(asset_, primitiveBuffer_.type);
-	phase->SetSpawner(ParticleSpawnModuleID::Sphere);
 
+	// phaseが1つ以上ある時、同期して作成するか
+	if (hasPhase && isSynchPhase_) {
+
+		// 現在選択中のphaseをjson出力してそのデータから作成する
+		Json data = phases_[selectedPhase_]->ToJson();
+		phase->FromJson(data);
+	} else {
+
+		phase->SetSpawner(ParticleSpawnModuleID::Sphere);
+	}
 	selectedPhase_ = static_cast<int>(phases_.size() - 1);
 }
 
 void CPUParticleGroup::ImGui() {
 
 	ImGui::Text("numInstance: %d / %d", numInstance_, useGame_ ? gameMaxParticleCount_ : kMaxCPUParticles);
-	ImGui::Checkbox("useGame", &useGame_);
 	ImGui::SeparatorText("Phases");
 
 	// 追加ボタン
@@ -292,6 +347,8 @@ void CPUParticleGroup::ImGui() {
 
 		AddPhase();
 	}
+	ImGui::SameLine();
+	ImGui::Checkbox("isSynchPhase", &isSynchPhase_);
 
 	if (!phases_.empty()) {
 

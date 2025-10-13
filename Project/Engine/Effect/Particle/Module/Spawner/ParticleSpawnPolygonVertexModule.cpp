@@ -180,6 +180,8 @@ void ParticleSpawnPolygonVertexModule::EmitForInstance(PolygonInstance& instance
 					ICPUParticleSpawnModule::SetCommonData(particle);
 					particle.velocity = velocity;
 					particle.transform.translation = current[v];
+					// 発生した瞬間の座標を記録
+					particle.spawnTranlation = particle.transform.translation;
 					particles.push_back(particle);
 				}
 				continue;
@@ -199,6 +201,8 @@ void ParticleSpawnPolygonVertexModule::EmitForInstance(PolygonInstance& instance
 					ICPUParticleSpawnModule::SetCommonData(particle);
 					particle.velocity = velocity;
 					particle.transform.translation = pos;
+					// 発生した瞬間の座標を記録
+					particle.spawnTranlation = particle.transform.translation;
 					particles.push_back(particle);
 				}
 			}
@@ -208,6 +212,8 @@ void ParticleSpawnPolygonVertexModule::EmitForInstance(PolygonInstance& instance
 				ICPUParticleSpawnModule::SetCommonData(particle);
 				particle.velocity = velocity;
 				particle.transform.translation = current[v];
+				// 発生した瞬間の座標を記録
+				particle.spawnTranlation = particle.transform.translation;
 				particles.push_back(particle);
 			}
 		}
@@ -230,6 +236,8 @@ void ParticleSpawnPolygonVertexModule::EmitForInstance(PolygonInstance& instance
 				ICPUParticleSpawnModule::SetCommonData(particle);
 				particle.velocity = vellocity;
 				particle.transform.translation = current[i];
+				// 発生した瞬間の座標を記録
+				particle.spawnTranlation = particle.transform.translation;
 				particles.push_back(particle);
 			}
 		}
@@ -376,6 +384,8 @@ void ParticleSpawnPolygonVertexModule::InterpolateEmit(std::list<CPUParticle::Pa
 				// 速度、発生位置
 				particle.velocity = velocity;
 				particle.transform.translation = currentVertices[v];
+				// 発生した瞬間の座標を記録
+				particle.spawnTranlation = particle.transform.translation;
 
 				// 追加
 				particles.push_back(particle);
@@ -403,6 +413,8 @@ void ParticleSpawnPolygonVertexModule::InterpolateEmit(std::list<CPUParticle::Pa
 				// 速度、発生位置
 				particle.velocity = velocity;
 				particle.transform.translation = pos;
+				// 発生した瞬間の座標を記録
+				particle.spawnTranlation = particle.transform.translation;
 
 				// 追加
 				particles.push_back(particle);
@@ -421,6 +433,8 @@ void ParticleSpawnPolygonVertexModule::InterpolateEmit(std::list<CPUParticle::Pa
 			// 速度、発生位置
 			particle.velocity = velocity;
 			particle.transform.translation = currentVertices[v];
+			// 発生した瞬間の座標を記録
+			particle.spawnTranlation = particle.transform.translation;
 
 			// 追加
 			particles.push_back(particle);
@@ -457,6 +471,8 @@ void ParticleSpawnPolygonVertexModule::NoneEmit(std::list<CPUParticle::ParticleD
 			// 速度、発生位置
 			particle.velocity = velocity;
 			particle.transform.translation = currentVertices[cIndex];
+			// 発生した瞬間の座標を記録
+			particle.spawnTranlation = particle.transform.translation;
 
 			// 追加
 			particles.push_back(particle);
@@ -581,8 +597,8 @@ void ParticleSpawnPolygonVertexModule::FromJson(const Json& data) {
 	vertexCount_ = data.value("vertexCount", 3);
 	scale_ = data.value("scale", 1.0f);
 
-	emitterRotation_.FromJson(data["emitterRotation"]);
-	translation_.FromJson(data["translation"]);
+	emitterRotation_ = Vector3::FromJson(data["emitterRotation"]);
+	translation_ = Vector3::FromJson(data["translation"]);
 
 	emitPerVertex_.ApplyJson(data, "emitPerVertex");
 	interpolateSpacing_.ApplyJson(data, "interpolateSpacing");

@@ -53,7 +53,7 @@ Quaternion Quaternion::FromJson(const Json& data) {
 		return Quaternion::IdentityQuaternion();
 	}
 
-	Quaternion quaternion{};
+	Quaternion quaternion = Quaternion::IdentityQuaternion();
 	if (data.is_array() && data.size() == 4) {
 		quaternion.x = data[1].get<float>();
 		quaternion.y = -data[3].get<float>();

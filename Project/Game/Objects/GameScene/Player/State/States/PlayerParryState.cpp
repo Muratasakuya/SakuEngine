@@ -20,8 +20,9 @@ PlayerParryState::PlayerParryState() {
 	isEmitedBlur_ = false;
 
 	// effect作成
-	parryEffect_ = std::make_unique<GameEffect>();
-	parryEffect_->CreateParticleSystem("Particle/parryParticle.json");
+	// エフェクト、エンジン機能変更中...
+	/*parryEffect_ = std::make_unique<GameEffect>();
+	parryEffect_->CreateParticleSystem("Particle/parryParticle.json");*/
 }
 
 void PlayerParryState::Enter(Player& player) {
@@ -76,17 +77,19 @@ void PlayerParryState::UpdateDeltaWaitTime(const Player& player) {
 		GameTimer::SetReturnScaleEnable(true);
 
 		// コマンドに設定
-		ParticleCommand command{};
-		// 座標設定
-		command.target = ParticleCommandTarget::Spawner;
-		command.id = ParticleCommandID::SetTranslation;
-		command.value = player.GetJointWorldPos("leftHand");
-		parryEffect_->SendCommand(command);
+		// エフェクト、エンジン機能変更中...
+		//ParticleCommand command{};
+		//// 座標設定
+		//command.target = ParticleCommandTarget::Spawner;
+		//command.id = ParticleCommandID::SetTranslation;
+		//command.value = player.GetJointWorldPos("leftHand");
+		//parryEffect_->SendCommand(command);
 
 		if (!isEmitedBlur_) {
 
 			// 発生させる
-			parryEffect_->Emit(true);
+			// エフェクト、エンジン機能変更中...
+			//parryEffect_->Emit(true);
 
 			// ブラー手の位置に発生させる
 			postProcess_->Start(PostProcessType::RadialBlur);
@@ -256,7 +259,9 @@ void PlayerParryState::Exit([[maybe_unused]] Player& player) {
 	canExit_ = false;
 	allowAttack_ = false;
 	isEmitedBlur_ = false;
-	parryEffect_->ResetEmitFlag();
+
+	// エフェクト、エンジン機能変更中...
+	//parryEffect_->ResetEmitFlag();
 }
 
 void PlayerParryState::ImGui(const Player& player) {

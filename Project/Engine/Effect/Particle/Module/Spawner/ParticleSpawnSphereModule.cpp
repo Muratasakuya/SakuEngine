@@ -57,6 +57,9 @@ void ParticleSpawnSphereModule::Execute(std::list<CPUParticle::ParticleData>& pa
 		particle.velocity = direction * moveSpeed_.GetValue();
 		particle.transform.translation = emitter_.translation + direction * emitter_.radius;
 
+		// 発生した瞬間の座標を記録
+		particle.spawnTranlation = particle.transform.translation;
+
 		// 追加
 		particles.push_back(particle);
 	}
@@ -99,5 +102,5 @@ void ParticleSpawnSphereModule::FromJson(const Json& data) {
 	ICPUParticleSpawnModule::FromCommonJson(data);
 
 	emitter_.radius = data.value("radius", 1.0f);
-	emitter_.translation.FromJson(data["translation"]);
+	emitter_.translation = Vector3::FromJson(data["translation"]);
 }
