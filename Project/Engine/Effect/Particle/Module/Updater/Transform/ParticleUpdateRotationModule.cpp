@@ -176,16 +176,16 @@ Json ParticleUpdateRotationModule::ToJson() {
 
 void ParticleUpdateRotationModule::FromJson(const Json& data) {
 
-	const auto& easingType = EnumAdapter<EasingType>::FromString(data.value("easingType", ""));
+	const auto& easingType = EnumAdapter<EasingType>::FromString(data.value("easingType", "EaseInSine"));
 	easing_ = easingType.value();
 
-	const auto& billboardType = EnumAdapter<ParticleBillboardType>::FromString(data.value("billboardType", ""));
+	const auto& billboardType = EnumAdapter<ParticleBillboardType>::FromString(data.value("billboardType", "All"));
 	billboardType_ = billboardType.value();
 
-	const auto& updateType = EnumAdapter<UpdateType>::FromString(data.value("updateType", ""));
+	const auto& updateType = EnumAdapter<UpdateType>::FromString(data.value("updateType", "Slerp"));
 	updateType_ = updateType.value();
 
-	const auto& lockAxisType = EnumAdapter<LockAxisType>::FromString(data.value("lockAxisType", ""));
+	const auto& lockAxisType = EnumAdapter<LockAxisType>::FromString(data.value("lockAxisType", "None"));
 	lockAxisType_ = lockAxisType.value();
 
 	// 回転

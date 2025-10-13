@@ -111,7 +111,7 @@
                                     "z": 0.0
                                 },
                                 "lockAxisType": "None",
-                                "updateType": "Lerp"
+                                "updateType": "Slerp"
                             },
                             "type": "Rotation"
                         },

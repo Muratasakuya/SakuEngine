@@ -33,7 +33,7 @@
                                 "noiseTextureName": "noise",
                                 "primitive": {
                                     "plane": {
-                                        "mode": "XZ",
+                                        "mode": "XY",
                                         "pivot": {
                                             "x": 0.5,
                                             "y": 0.5
@@ -67,32 +67,30 @@
                         },
                         {
                             "params": {
-                                "addRotation": {
+                                "angleAxis_": {
                                     "x": 0.0,
                                     "y": 0.0,
                                     "z": 0.009999999776482582
                                 },
+                                "angleSpeedRadian_": 0.0,
                                 "billboardType": "None",
                                 "easingType": "EaseOutExpo",
                                 "lerpRotation": {
                                     "start": {
+                                        "w": 1.0,
                                         "x": 0.0,
                                         "y": 0.0,
                                         "z": 0.0
                                     },
                                     "target": {
+                                        "w": 0.1236485093832016,
                                         "x": 0.0,
-                                        "y": 8.239999771118164,
+                                        "y": 0.9923260807991028,
                                         "z": 0.0
                                     }
                                 },
-                                "lockAxis": {
-                                    "x": 0.0,
-                                    "y": 0.0,
-                                    "z": 0.0
-                                },
                                 "lockAxisType": "None",
-                                "updateType": "Lerp"
+                                "updateType": "Slerp"
                             },
                             "type": "Rotation"
                         },
@@ -194,7 +192,7 @@
                                 "noiseTextureName": "noise",
                                 "primitive": {
                                     "plane": {
-                                        "mode": "XZ",
+                                        "mode": "XY",
                                         "pivot": {
                                             "x": 0.5,
                                             "y": 0.5
@@ -228,32 +226,30 @@
                         },
                         {
                             "params": {
-                                "addRotation": {
+                                "angleAxis_": {
                                     "x": 0.0,
-                                    "y": -0.009999999776482582,
+                                    "y": 0.03999999910593033,
                                     "z": 0.0
                                 },
+                                "angleSpeedRadian_": 0.5199999809265137,
                                 "billboardType": "None",
                                 "easingType": "EaseOutExpo",
                                 "lerpRotation": {
                                     "start": {
+                                        "w": 1.0,
                                         "x": 0.0,
                                         "y": 0.0,
                                         "z": 0.0
                                     },
                                     "target": {
+                                        "w": 1.0,
                                         "x": 0.0,
                                         "y": 0.0,
                                         "z": 0.0
                                     }
                                 },
-                                "lockAxis": {
-                                    "x": 0.0,
-                                    "y": 0.0,
-                                    "z": 0.0
-                                },
                                 "lockAxisType": "None",
-                                "updateType": "ConstantAdd"
+                                "updateType": "AngularVelocity"
                             },
                             "type": "Rotation"
                         },
@@ -364,7 +360,7 @@
                                 "noiseTextureName": "noise",
                                 "primitive": {
                                     "plane": {
-                                        "mode": "XZ",
+                                        "mode": "XY",
                                         "pivot": {
                                             "x": 0.5,
                                             "y": 0.5
@@ -402,32 +398,30 @@
                         },
                         {
                             "params": {
-                                "addRotation": {
+                                "angleAxis_": {
                                     "x": 0.0,
                                     "y": 0.0,
                                     "z": 0.009999999776482582
                                 },
+                                "angleSpeedRadian_": 0.0,
                                 "billboardType": "None",
                                 "easingType": "EaseOutExpo",
                                 "lerpRotation": {
                                     "start": {
+                                        "w": 1.0,
                                         "x": 0.0,
                                         "y": 0.0,
                                         "z": 0.0
                                     },
                                     "target": {
+                                        "w": 1.0,
                                         "x": 0.0,
                                         "y": 0.0,
                                         "z": 0.0
                                     }
                                 },
-                                "lockAxis": {
-                                    "x": 0.0,
-                                    "y": 0.0,
-                                    "z": 0.0
-                                },
                                 "lockAxisType": "None",
-                                "updateType": "Lerp"
+                                "updateType": "Slerp"
                             },
                             "type": "Rotation"
                         },
@@ -571,32 +565,30 @@
                         },
                         {
                             "params": {
-                                "addRotation": {
+                                "angleAxis_": {
                                     "x": 0.0,
                                     "y": 0.0,
                                     "z": 0.0
                                 },
+                                "angleSpeedRadian_": 0.0,
                                 "billboardType": "None",
                                 "easingType": "EaseOutExpo",
                                 "lerpRotation": {
                                     "start": {
+                                        "w": 1.0,
                                         "x": 0.0,
                                         "y": 0.0,
                                         "z": 0.0
                                     },
                                     "target": {
+                                        "w": 1.0,
                                         "x": 0.0,
-                                        "y": 0.7850000262260437,
+                                        "y": 0.0,
                                         "z": 0.0
                                     }
                                 },
-                                "lockAxis": {
-                                    "x": 0.0,
-                                    "y": 0.0,
-                                    "z": 0.0
-                                },
                                 "lockAxisType": "None",
-                                "updateType": "Lerp"
+                                "updateType": "Slerp"
                             },
                             "type": "Rotation"
                         },
@@ -778,7 +770,7 @@
                                 "noiseTextureName": "noise",
                                 "primitive": {
                                     "plane": {
-                                        "mode": "XZ",
+                                        "mode": "XY",
                                         "pivot": {
                                             "x": 0.5,
                                             "y": 0.5
@@ -816,32 +808,30 @@
                         },
                         {
                             "params": {
-                                "addRotation": {
+                                "angleAxis_": {
                                     "x": 0.0,
                                     "y": 0.0,
                                     "z": 0.009999999776482582
                                 },
+                                "angleSpeedRadian_": 0.0,
                                 "billboardType": "None",
                                 "easingType": "EaseOutExpo",
                                 "lerpRotation": {
                                     "start": {
+                                        "w": 1.0,
                                         "x": 0.0,
                                         "y": 0.0,
                                         "z": 0.0
                                     },
                                     "target": {
+                                        "w": 1.0,
                                         "x": 0.0,
                                         "y": 0.0,
                                         "z": 0.0
                                     }
                                 },
-                                "lockAxis": {
-                                    "x": 0.0,
-                                    "y": 0.0,
-                                    "z": 0.0
-                                },
                                 "lockAxisType": "None",
-                                "updateType": "Lerp"
+                                "updateType": "Slerp"
                             },
                             "type": "Rotation"
                         },
@@ -977,32 +967,30 @@
                         },
                         {
                             "params": {
-                                "addRotation": {
+                                "angleAxis_": {
                                     "x": 0.0,
                                     "y": 0.0,
                                     "z": 0.0
                                 },
+                                "angleSpeedRadian_": 0.0,
                                 "billboardType": "All",
                                 "easingType": "EaseInSine",
                                 "lerpRotation": {
                                     "start": {
+                                        "w": 1.0,
                                         "x": 0.0,
                                         "y": 0.0,
                                         "z": 0.0
                                     },
                                     "target": {
+                                        "w": 1.0,
                                         "x": 0.0,
                                         "y": 0.0,
                                         "z": 0.0
                                     }
                                 },
-                                "lockAxis": {
-                                    "x": 0.0,
-                                    "y": 0.0,
-                                    "z": 0.0
-                                },
                                 "lockAxisType": "None",
-                                "updateType": "Lerp"
+                                "updateType": "Slerp"
                             },
                             "type": "Rotation"
                         },
