@@ -14,7 +14,7 @@ namespace LerpKeyframe {
 	// 補間の仕方
 	enum class Type {
 
-		None,   // 通常
+		Linear, // 通常
 		Bezier, // ベジェ曲線
 		Spline, // スプライン曲線
 	};
@@ -148,7 +148,7 @@ namespace LerpKeyframe {
 			return T{};
 		}
 		switch (type) {
-		case Type::None: {
+		case Type::Linear: {
 
 			// 通常の補間
 			if (points.size() == 1) {

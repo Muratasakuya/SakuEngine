@@ -12,6 +12,7 @@
 #include <Engine/Asset/Asset.h>
 #include <Engine/Editor/GameObject/ImGuiObjectEditor.h>
 #include <Engine/Editor/Manager/GameEditorManager.h>
+#include <Engine/Editor/Curve/CurveValueEditor.h>
 #include <Engine/Object/Core/ObjectManager.h>
 #include <Engine/Utility/Timer/GameTimer.h>
 #include <Engine/Utility/Enum/EnumAdapter.h>
@@ -119,6 +120,8 @@ void ImGuiEditor::Display(SceneView* sceneView) {
 	Inspector();
 
 	AssetEdit();
+
+	CurveEdit();
 
 	SelectObjectFocus(sceneView);
 }
@@ -335,11 +338,18 @@ void ImGuiEditor::Inspector() {
 
 void ImGuiEditor::AssetEdit() {
 
-	//AssetEditor::GetInstance()->EditLayout();
-
 	ImGui::Begin("Asset", nullptr, windowFlag_);
 
 	AssetEditor::GetInstance()->ImGui();
+
+	ImGui::End();
+}
+
+void ImGuiEditor::CurveEdit() {
+
+	ImGui::Begin("Curve", nullptr, windowFlag_);
+
+	CurveValueEditor::GetInstance()->Edit();
 
 	ImGui::End();
 }
@@ -363,7 +373,7 @@ void ImGuiEditor::SelectObjectFocus(SceneView* sceneView) {
 
 	// 選択中のオブジェクトIDを設定
 	if (lastAutoFocusId_.has_value()) {
-		
+
 		GameEditorManager::GetInstance()->SetSelectObjectID(*lastAutoFocusId_);
 	}
 }

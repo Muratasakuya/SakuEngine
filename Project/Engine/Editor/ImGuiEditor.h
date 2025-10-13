@@ -113,6 +113,9 @@ private:
 	// asset
 	void AssetEdit();
 
+	// curve
+	void CurveEdit();
+
 	// helper
 	void SelectObjectFocus(SceneView* sceneView);
 	void SetInputArea(InputViewArea viewArea, const ImVec2& imMin, const ImVec2& imSize);

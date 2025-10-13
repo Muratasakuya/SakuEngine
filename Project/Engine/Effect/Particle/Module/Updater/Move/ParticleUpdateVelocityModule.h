@@ -4,6 +4,7 @@
 //	include
 //============================================================================
 #include <Engine/Effect/Particle/Module/Base/ICPUParticleUpdateModule.h>
+#include <Engine/Utility/Curve/CurveValue.h>
 
 //============================================================================
 //	ParticleUpdateVelocityModule class
@@ -41,4 +42,9 @@ private:
 
 	//--------- variables ----------------------------------------------------
 
+	// カーブテスト
+	CurveValue<float> curveFloat_ = CurveValue<float>("Float");
+	CurveValue<Vector2> curveVec2_ = CurveValue<Vector2>("Vector2");
+	CurveValue<Vector3> curveVec3_ = CurveValue<Vector3>("Vector3");
+	CurveValue<Color> curveColor_ = CurveValue<Color>("Color");
 };

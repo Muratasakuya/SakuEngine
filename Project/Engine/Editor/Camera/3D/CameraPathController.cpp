@@ -97,12 +97,6 @@ void CameraPathController::Evaluate(const CameraPathData& data, float t,
 
 		points.emplace_back(keyframe.demoObject->GetTransform().GetWorldPos());
 	}
-
-	if (LerpKeyframe::GetValue<Vector3>(points, t, data.lerpType).Length() <= 28.0f) {
-
-		int a = 0;
-		a++;
-	}
 	outTranslation = LerpKeyframe::GetValue<Vector3>(points, t, data.lerpType);
 
 	// 画角の補間
@@ -112,7 +106,7 @@ void CameraPathController::Evaluate(const CameraPathData& data, float t,
 
 		fovs.emplace_back(keyframe.fovY);
 	}
-	outFovY = LerpKeyframe::GetValue<float>(fovs, t, LerpKeyframe::Type::None);
+	outFovY = LerpKeyframe::GetValue<float>(fovs, t, LerpKeyframe::Type::Linear);
 
 	// 回転の補間
 	// キーフレームが1個なら最初の値を返す

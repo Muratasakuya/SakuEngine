@@ -29,9 +29,6 @@ public:
 	//	public Methods
 	//========================================================================
 
-	AssetEditor() = default;
-	~AssetEditor() = default;
-
 	void Init(Asset* asset);
 
 	void EditLayout();
@@ -108,4 +105,9 @@ private:
 	bool IsModelFile(const std::filesystem::path& path) const;
 	bool IsJsonFile(const std::filesystem::path& path) const;
 	D3D12_GPU_DESCRIPTOR_HANDLE GetIconForEntry(const DirectoryNode& entry) const;
+
+	AssetEditor() = default;
+	~AssetEditor() = default;
+	AssetEditor(const AssetEditor&) = delete;
+	AssetEditor& operator=(const AssetEditor&) = delete;
 };
