@@ -63,6 +63,9 @@ private:
 	//--------- variables ----------------------------------------------------
 
 	// 回転補間
+	// 追加回転数
+	int slerpExtraTurns_ = 0;
+	bool slerpPreferLongArc_ = false;
 	ParticleCommon::LerpValue<Quaternion> lerpRotation_;
 
 	// 回転加算
@@ -83,6 +86,7 @@ private:
 
 	//--------- functions ----------------------------------------------------
 
+	static void ToAxisAngle(const Quaternion& rotation, Vector3& axis, float& angle);
 	Quaternion UpdateRotation(CPUParticle::ParticleData& particle, float deltaTime) const;
 	Quaternion LockAxis(const Quaternion& rotation) const;
 	void UpdateMatrix(CPUParticle::ParticleData& particle, const Quaternion& rotation);

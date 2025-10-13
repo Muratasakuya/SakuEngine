@@ -33,14 +33,51 @@ bool ParticleUpdateRotationModule::SetCommand(const ParticleCommand& command) {
 	return false;
 }
 
+void ParticleUpdateRotationModule::ToAxisAngle(const Quaternion& rotation, Vector3& axis, float& angle) {
+
+	Quaternion normalizedRotate = Quaternion::Normalize(rotation);
+	angle = 2.0f * std::acos(std::clamp(normalizedRotate.w, -1.0f, 1.0f)); // 0, 2π
+	const float sin = std::sqrt((std::max)(
+		0.0f, 1.0f - normalizedRotate.w * normalizedRotate.w)); // sin(angle/2)
+	// 角度ほぼ0.0f
+	if (sin < 1e-6f) {
+
+		axis = Vector3(1.0f, 0.0f, 0.0f);
+	} else {
+
+		axis = Vector3(normalizedRotate.x / sin,
+			normalizedRotate.y / sin, normalizedRotate.z / sin);
+	}
+}
+
 Quaternion ParticleUpdateRotationModule::UpdateRotation(
 	CPUParticle::ParticleData& particle, float deltaTime) const {
 
 	switch (updateType_) {
 	case UpdateType::Slerp: {
 
+		const Quaternion start = Quaternion::Normalize(lerpRotation_.start);
+		const Quaternion target = Quaternion::Normalize(lerpRotation_.target);
+
+		// 回転差分
+		const Quaternion delta = Quaternion::Multiply(Quaternion::Inverse(start), target);
+
+		// 軸角へ
+		Vector3 axis; float angle = 0.0f;
+		ToAxisAngle(delta, axis, angle);
+
+		// 長い方の弧を処理するときは軸を反転する
+		if (slerpPreferLongArc_ && angle > 1e-6f && angle < pi) {
+
+			angle = 2.0f * pi - angle;
+			axis = -axis;
+		}
+		// 追加回転数を角度にかける
+		angle += 2.0f * pi * static_cast<float>(slerpExtraTurns_);
+
 		const float t = EasedValue(easing_, particle.progress);
-		return Quaternion::Slerp(lerpRotation_.start, lerpRotation_.target, t);
+		Quaternion step = Quaternion::MakeAxisAngle(axis, angle * t);
+		return Quaternion::Normalize(Quaternion::Multiply(start, step));
 	}
 	case UpdateType::AngularVelocity: {
 
@@ -138,6 +175,8 @@ void ParticleUpdateRotationModule::ImGui() {
 
 			lerpRotation_.target = Quaternion::Normalize(lerpRotation_.target);
 		}
+		ImGui::DragInt("extraTurns", &slerpExtraTurns_, 1, 0, 20);
+		ImGui::Checkbox("preferLongArc", &slerpPreferLongArc_);
 		Easing::SelectEasingType(easing_, GetName());
 		break;
 	case UpdateType::AngularVelocity:
@@ -170,6 +209,8 @@ Json ParticleUpdateRotationModule::ToJson() {
 	data["lerpRotation"]["target"] = lerpRotation_.target.ToJson();
 	data["angleAxis_"] = angleAxis_.ToJson();
 	data["angleSpeedRadian_"] = angleSpeedRadian_;
+	data["slerpExtraTurns_"] = slerpExtraTurns_;
+	data["slerpPreferLongArc_"] = slerpPreferLongArc_;
 
 	return data;
 }
@@ -192,6 +233,8 @@ void ParticleUpdateRotationModule::FromJson(const Json& data) {
 	const auto& lerpData = data["lerpRotation"];
 	lerpRotation_.start = Quaternion::FromJson(lerpData["start"]);
 	lerpRotation_.target = Quaternion::FromJson(lerpData["target"]);
-	angleAxis_ = Vector3::FromJson(data["addRotation"]);
+	angleAxis_ = Vector3::FromJson(data["angleAxis_"]);
 	angleSpeedRadian_ = data.value("angleSpeedRadian_", 0.0f);
+	slerpExtraTurns_ = data.value("slerpExtraTurns_", 0);
+	slerpPreferLongArc_ = data.value("slerpPreferLongArc_", false);
 }
