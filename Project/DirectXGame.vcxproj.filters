@@ -2164,5 +2164,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Engine\Shaders\PostProcess\PostProcessCommon.hlsli" />
+    <None Include="Assets\Engine\Shaders\Particle\Common\ParticleTrail.hlsli" />
   </ItemGroup>
 </Project>

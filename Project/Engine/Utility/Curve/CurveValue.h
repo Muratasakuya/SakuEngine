@@ -263,9 +263,9 @@ inline bool CurveValue<T>::ImGuiBezier(const char* label, float P[4]) {
 
 	const float avail = ImGui::GetContentRegionAvail().x;
 	const float dim = ImMin(avail, 128.f);
-	ImVec2 Canvas(dim, dim);
+	ImVec2 canvas(dim, dim);
 
-	ImRect bb(Window->DC.CursorPos, Window->DC.CursorPos + Canvas);
+	ImRect bb(Window->DC.CursorPos, Window->DC.CursorPos + canvas);
 	ImGui::ItemSize(bb);
 	if (!ImGui::ItemAdd(bb, 0)) {
 
@@ -275,10 +275,10 @@ inline bool CurveValue<T>::ImGuiBezier(const char* label, float P[4]) {
 	hovered = ImGui::IsMouseHoveringRect(bb.Min, ImVec2(bb.Min.x + avail, bb.Min.y + dim));
 
 	// background grid
-	for (int i = 0; i <= Canvas.x; i += (int)(Canvas.x / 4)) {
+	for (int i = 0; i <= canvas.x; i += (int)(canvas.x / 4)) {
 		DrawList->AddLine(ImVec2(bb.Min.x + i, bb.Min.y), ImVec2(bb.Min.x + i, bb.Max.y), ImGui::GetColorU32(ImGuiCol_TextDisabled));
 	}
-	for (int i = 0; i <= Canvas.y; i += (int)(Canvas.y / 4)) {
+	for (int i = 0; i <= canvas.y; i += (int)(canvas.y / 4)) {
 
 		DrawList->AddLine(ImVec2(bb.Min.x, bb.Min.y + i), ImVec2(bb.Max.x, bb.Min.y + i), ImGui::GetColorU32(ImGuiCol_TextDisabled));
 	}
@@ -304,8 +304,8 @@ inline bool CurveValue<T>::ImGuiBezier(const char* label, float P[4]) {
 		}
 		if (ImGui::IsItemActive() && ImGui::IsMouseDragging(0)) {
 
-			P[i * 2 + 0] += ImGui::GetIO().MouseDelta.x / Canvas.x;
-			P[i * 2 + 1] -= ImGui::GetIO().MouseDelta.y / Canvas.y;
+			P[i * 2 + 0] += ImGui::GetIO().MouseDelta.x / canvas.x;
+			P[i * 2 + 1] -= ImGui::GetIO().MouseDelta.y / canvas.y;
 			P[i * 2 + 0] = std::clamp(P[i * 2 + 0], 0.0f, 1.0f);
 			P[i * 2 + 1] = std::clamp(P[i * 2 + 1], 0.0f, 1.0f);
 			changed = true;

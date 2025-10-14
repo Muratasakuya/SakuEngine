@@ -11,9 +11,4 @@ void ParticleUpdateVelocityModule::Execute(
 }
 
 void ParticleUpdateVelocityModule::ImGui() {
-
-	curveFloat_.EditSelectCurve();
-	curveVec2_.EditSelectCurve();
-	curveVec3_.EditSelectCurve();
-	curveColor_.EditSelectCurve();
 }
