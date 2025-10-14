@@ -32,6 +32,8 @@
 #include <Engine/Effect/Particle/Module/Updater/Move/ParticleUpdateNoiseForceModule.h>
 // Primitive
 #include <Engine/Effect/Particle/Module/Updater/Primitive/ParticleUpdatePrimitiveModule.h>
+// Trail
+#include <Engine/Effect/Particle/Module/Updater/Trail/ParticleUpdateTrailModule.h>
 // Time
 #include <Engine/Effect/Particle/Module/Updater/Time/ParticleUpdateLifeTimeModule.h>
 // Transform
@@ -121,6 +123,7 @@ void ParticleManager::RegisterModules() {
 	uRegistry.Register<ParticleUpdateEmissiveModule>();
 	uRegistry.Register<ParticleUpdateAlphaReferenceModule>();
 	uRegistry.Register<ParticleUpdatePrimitiveModule>();
+	uRegistry.Register<ParticleUpdateTrailModule>();
 }
 
 void ParticleManager::Init(Asset* asset, ID3D12Device8* device,

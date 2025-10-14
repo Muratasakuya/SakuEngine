@@ -6,33 +6,35 @@
 #include <Engine/Effect/Particle/Module/Base/ICPUParticleUpdateModule.h>
 
 //============================================================================
-//	ParticleUpdateVelocityModule class
+//	ParticleUpdateTrailModule class
 //============================================================================
-class ParticleUpdateVelocityModule :
+class ParticleUpdateTrailModule :
 	public ICPUParticleUpdateModule {
 public:
 	//========================================================================
 	//	public Methods
 	//========================================================================
 
-	ParticleUpdateVelocityModule() = default;
-	~ParticleUpdateVelocityModule() = default;
+	ParticleUpdateTrailModule() = default;
+	~ParticleUpdateTrailModule() = default;
+
+	void Init() override;
 
 	void Execute(CPUParticle::ParticleData& particle, float deltaTime) override;
 
 	void ImGui() override;
 
 	// json
-	Json ToJson() override { return Json(); };
-	void FromJson([[maybe_unused]] const Json& data) override {};
+	Json ToJson() override;
+	void FromJson([[maybe_unused]] const Json& data) override;
 
 	//--------- accessor -----------------------------------------------------
 
-	const char* GetName() const override { return "Velocity"; }
+	const char* GetName() const override { return "Trail"; }
 
 	//-------- registryID ----------------------------------------------------
 
-	static constexpr ParticleUpdateModuleID ID = ParticleUpdateModuleID::Velocity;
+	static constexpr ParticleUpdateModuleID ID = ParticleUpdateModuleID::Trail;
 	ParticleUpdateModuleID GetID() const override { return ID; }
 private:
 	//========================================================================
@@ -41,4 +43,5 @@ private:
 
 	//--------- variables ----------------------------------------------------
 
+	ParticleCommon::TrailParam param_;
 };
