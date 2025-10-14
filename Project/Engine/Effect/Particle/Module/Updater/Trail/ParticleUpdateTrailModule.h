@@ -33,12 +33,14 @@ public:
 
 	// json
 	Json ToJson() override;
-	void FromJson([[maybe_unused]] const Json& data) override;
+	void FromJson(const Json& data) override;
 
 	//--------- accessor -----------------------------------------------------
 
 	const char* GetName() const override { return "Trail"; }
-	const ParticleCommon::TrailParam& GetParam() const { return param_; }
+
+	int GetMaxPoints() const { return maxPoints_; }
+	int GetSubdivPerSegment() const { return subdivPerSegment_; }
 
 	//-------- registryID ----------------------------------------------------
 
@@ -51,5 +53,18 @@ private:
 
 	//--------- variables ----------------------------------------------------
 
-	ParticleCommon::TrailParam param_;
+	bool enable_;       // デフォルトでfalse
+	bool isDrawOrigin_; // トレイル元を描画するか
+	bool faceCamera_;   // カメラフェイシング帯
+
+	// 幅
+	ParticleCommon::LerpValue<float> width_;
+	EasingType widthEasing_;
+
+	float lifeTime_;       // 寿命
+	float minDistance_;    // 発生移動距離
+	float minTime_;        // 時間間隔で発生
+	int maxPoints_;        // ノード最大数
+	int subdivPerSegment_; // ノード間のサブ分割数
+	float uvTileLength_;   // タイル長
 };

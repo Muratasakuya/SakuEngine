@@ -363,8 +363,8 @@ void CPUParticleGroup::ResizeTransferData(uint32_t size) {
 		for (const auto& phase : phases_) {
 			if (auto* module = phase->GetTrailModule()) {
 
-				maxPoints = (std::max<uint32_t>)(maxPoints, module->GetParam().maxPoints);
-				subdivision = (std::max<uint32_t>)(subdivision, module->GetParam().subdivPerSegment);
+				maxPoints = (std::max<uint32_t>)(maxPoints, module->GetMaxPoints());
+				subdivision = (std::max<uint32_t>)(subdivision, module->GetSubdivPerSegment());
 			}
 		}
 

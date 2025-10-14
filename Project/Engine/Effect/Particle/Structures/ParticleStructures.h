@@ -137,19 +137,6 @@ namespace ParticleCommon {
 		bool isInitialized = false;   // 初期化済みか
 		float time;                   // サンプル間隔
 	};
-	struct TrailParam {
-
-		bool enable = false;      // デフォルトでfalse
-		bool isDrawOrigin = true; // トレイル元を描画するか
-		float lifeTime;       // 寿命
-		float width;          // 帯の幅
-		float minDistance;    // 発生移動距離
-		float minTime;        // 時間間隔で発生
-		int maxPoints;        // ノード最大数
-		int subdivPerSegment; // ノード間のサブ分割数
-		bool faceCamera;      // カメラフェイシング帯
-		float uvTileLength;   // タイル長
-	};
 
 	// トレイルのGPU転送データ
 	struct TrailHeaderForGPU {

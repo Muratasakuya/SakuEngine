@@ -33,44 +33,47 @@ void main(uint groupThreadId : SV_GroupThreadID, uint groupId : SV_GroupID,
 out vertices MSOutput verts[TRAIL_MAX_VERTS], out indices uint3 polys[TRAIL_MAX_PRIMS]) {
 	
 	const uint instanceIndex = groupId.x;
-	TrailHeader h = gTrailHeaders[instanceIndex];
+	TrailHeader header = gTrailHeaders[instanceIndex];
 
-    // 1) V/T を先に決める（偶数化・上限丸めもここで）
-	uint V = min(h.vertCount, TRAIL_MAX_VERTS);
-	V &= ~1u; // 偶数に
-	if (V < 4)
-		V = 0; // 小さすぎる場合は0で描かない
-	uint T = (V == 0) ? 0 : (V - 2);
-	if (T > TRAIL_MAX_PRIMS) {
-		V = (TRAIL_MAX_PRIMS + 2) & ~1u;
-		T = V - 2;
+	//  頂点、三角形出力すうを偶数に制限
+	uint vertexCount = min(header.vertCount, TRAIL_MAX_VERTS);
+	vertexCount &= ~1u;
+	// 4頂点以下なら描画しないようにする
+	if (vertexCount < 4) {
+
+		vertexCount = 0;
 	}
+	uint primCount = (vertexCount == 0) ? 0 : (vertexCount - 2);
+	if (TRAIL_MAX_PRIMS < primCount) {
+		
+		vertexCount = (TRAIL_MAX_PRIMS + 2) & ~1u;
+		primCount = vertexCount - 2;
+	}
+	SetMeshOutputCounts(vertexCount, primCount);
 
-    // 2) ここで一度だけ呼ぶ
-	SetMeshOutputCounts(V, T);
-
-    // 3) 出力なしなら終了（以降で verts/polys に触らない）
-	if (V == 0)
+	// なにも出力しないなら処理しない
+	if (vertexCount == 0) {
 		return;
-
-	const uint start = h.start;
-
-    // 頂点書き込み（0..V-1 だけ）
-    [loop]
-	for (uint i = 0; i < V; ++i) {
-		TrailVertex v = gTrailVertices[start + i];
-		MSOutput o;
-		o.position = mul(float4(v.worldPos, 1.0f), gCamera.viewProjection);
-		o.texcoord = v.uv;
-		o.vertexColor = v.color;
-		o.instanceID = instanceIndex;
-		verts[i] = o;
 	}
 
-    // インデックス書き込み（0..T-1 だけ）
+	const uint start = header.start;
+
+	// 頂点書き込み
+	for (uint i = 0; i < vertexCount; ++i) {
+		
+		TrailVertex vertex = gTrailVertices[start + i];
+		MSOutput outVertex;
+		outVertex.position = mul(float4(vertex.worldPos, 1.0f), gCamera.viewProjection);
+		outVertex.texcoord = vertex.uv;
+		outVertex.vertexColor = vertex.color;
+		outVertex.instanceID = instanceIndex;
+		verts[i] = outVertex;
+	}
+
+	// インデックス書き込み
 	uint t = 0;
-    [loop]
-	for (uint i = 0; i + 3 < V; i += 2) {
+	for (uint i = 0; i + 3 < vertexCount; i += 2) {
+		
 		polys[t++] = uint3(i, i + 1, i + 2);
 		polys[t++] = uint3(i + 1, i + 3, i + 2);
 	}
