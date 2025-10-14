@@ -180,12 +180,12 @@ const ParticleUpdateLifeTimeModule* ParticlePhase::GetLifeTimeModule() const {
 	return nullptr;
 }
 
-const ParticleUpdateTrailModule* ParticlePhase::GetTrailModule() const {
+ParticleUpdateTrailModule* ParticlePhase::GetTrailModule() const {
 
 	for (const auto& updater : updaters_) {
 		if (updater->GetID() == ParticleUpdateModuleID::Trail) {
 
-			return static_cast<const ParticleUpdateTrailModule*>(updater.get());
+			return static_cast<ParticleUpdateTrailModule*>(updater.get());
 		}
 	}
 	return nullptr;

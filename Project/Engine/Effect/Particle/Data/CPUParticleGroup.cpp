@@ -7,7 +7,6 @@
 #include <Engine/Utility/Timer/GameTimer.h>
 #include <Engine/Effect/Particle/Module/Updater/Time/ParticleUpdateLifeTimeModule.h>
 #include <Engine/Effect/Particle/Module/Updater/Trail/ParticleUpdateTrailModule.h>
-#include <Engine/Scene/SceneView.h>
 
 //============================================================================
 //	CPUParticleGroup classMethods
@@ -267,161 +266,15 @@ void CPUParticleGroup::UpdateTransferData(uint32_t particleIndex,
 	// トレイルの処理を行っている場合のみ
 	if (HasTrailModule()) {
 
-		// パーティクルのトレイルノード
-		const auto& nodes = particle.trailRuntime.nodes;
-
-		// デフォルトは空
-		uint32_t start = static_cast<uint32_t>(transferTrailVertices_.size());
-		uint32_t vertexCount = 0;
-		const ParticleUpdateTrailModule* trailModule = nullptr;
+		// 現在のフェーズのトレイルモジュールを取得
+		ParticleUpdateTrailModule* trailModule = nullptr;
 		if (particle.phaseIndex < phases_.size()) {
 
 			trailModule = phases_[particle.phaseIndex]->GetTrailModule();
 		}
-		// トレイルしないなら頂点数は0にしてセット
-		if (!trailModule || !trailModule->GetParam().enable || nodes.size() < 2) {
-
-			transferTrailHeaders_[particleIndex] = { start, 0 };
-			return;
-		}
-
-		const auto& param = trailModule->GetParam();
-
-		// トレイル元を描画するのか設定する
-		isDrawParticle_ = param.isDrawOrigin;
-
-		// 半分のサイズ
-		const float halfW = 0.5f * param.width;
-		// U(横)方向の距離累積
-		float uAccum = 0.0f;
-		Vector3 prevSide = Vector3(1.0f, 0.0f, 0.0f);
-		for (size_t i = 0; i < nodes.size(); ++i) {
-
-			// 方向ベクトル
-			Vector3 direction;
-			// 現在の座標から前の座標を引いた方向
-			if (i == 0) {
-
-				direction = nodes[1].pos - nodes[0].pos;
-			} else if (i == nodes.size() - 1) {
-
-				direction = nodes[i].pos - nodes[i - 1].pos;
-			} else {
-
-				direction = nodes[i + 1].pos - nodes[i - 1].pos;
-			}
-
-			float directionLength = direction.Length();
-			if (directionLength > 1e-6f) {
-
-				direction /= directionLength;
-			} else {
-
-				direction = Vector3(0.0f, 0.0f, 1.0f);
-			}
-
-			// 帯の左右方向
-			Vector3 side;
-			if (param.faceCamera) {
-
-				const Vector3 cameraPos = sceneView_->GetCamera()->GetTransform().translation;
-
-				// カメラ座標
-				Vector3 center = nodes[i].pos;
-				// パーティクルからカメラ方向
-				Vector3 view = cameraPos - center;
-				float vlen = view.Length();
-				if (vlen > 1e-6f) {
-
-					view /= vlen;
-				} else {
-
-					view = Vector3(0.0f, 0.0f, 1.0f);
-				}
-
-				// カメラ面に帯が立つようにする
-				side = Vector3::Cross(direction, view);
-				if (side.Length() < 1e-8f) {
-
-					const Vector3 up(0.0f, 1.0f, 0.0f);
-					side = Vector3::Cross(direction, up);
-				}
-			} else {
-
-				const Vector3 up(0.0f, 1.0f, 0.0f);
-				side = Vector3::Cross(direction, up);
-			}
-			// 反転しないようにする
-			if (Vector3::Dot(prevSide, side) < 0.0f) {
-
-				side = -side;
-			}
-
-			if (side.Length() < 1e-8f) {
-
-				// 直前を利用
-				side = prevSide;
-			}
-			prevSide = side = side.Normalize();
-
-			// 左右頂点
-			const Vector3 center = nodes[i].pos;
-			const Vector3 leftWorldPos = center - side * halfW;
-			const Vector3 rightWorldPos = center + side * halfW;
-
-			// 頂点カラー、αフェードさせる
-			float fade = 1.0f;
-			if (1e-6f < param.lifeTime) {
-
-				fade = std::clamp(1.0f - nodes[i].age / param.lifeTime, 0.0f, 1.0f);
-			}
-
-			// 元の色+α値フェード
-			Color color = particle.material.color;
-			color.a *= fade;
-
-			// 距離ベースでタイリングする
-			float u = (1e-6f < param.uvTileLength) ? (uAccum / param.uvTileLength) : 0.0f;
-
-			// 左と右の頂点情報をセットして追加
-			ParticleCommon::TrailVertexForGPU leftVertex;
-			ParticleCommon::TrailVertexForGPU rightVertex;
-			// 左
-			leftVertex.worldPos = leftWorldPos;
-			leftVertex.uv = Vector2(u, 0.0f);
-			leftVertex.color = color;
-			// 右
-			rightVertex.worldPos = rightWorldPos;
-			rightVertex.uv = Vector2(u, 1.0f);
-			rightVertex.color = color;
-
-			transferTrailVertices_.push_back(leftVertex);
-			transferTrailVertices_.push_back(rightVertex);
-
-			// 次のノードがあれば距離を加算する
-			if (i + 1 < nodes.size()) {
-
-				uAccum += (nodes[i + 1].pos - nodes[i].pos).Length();
-			}
-		}
-
-		// 偶数個
-		uint32_t end = static_cast<uint32_t>(transferTrailVertices_.size());
-		vertexCount = end - start;
-		if (vertexCount & 1u) {
-
-			transferTrailVertices_.pop_back();
-			--vertexCount;
-		}
-
-		// 4未満ならすべて削除
-		if (vertexCount < 4) {
-
-			// 使わないぶんは戻す
-			transferTrailVertices_.resize(start);
-			vertexCount = 0;
-		}
-		transferTrailHeaders_[particleIndex] = { start, vertexCount };
+		// バッファ転送用のデータを更新
+		trailModule->BuildTransferData(particleIndex, particle,
+			transferTrailHeaders_, transferTrailVertices_, sceneView_);
 	}
 }
 

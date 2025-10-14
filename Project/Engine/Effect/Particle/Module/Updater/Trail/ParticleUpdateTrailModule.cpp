@@ -1,6 +1,11 @@
 #include "ParticleUpdateTrailModule.h"
 
 //============================================================================
+//	include
+//============================================================================
+#include <Engine/Scene/SceneView.h>
+
+//============================================================================
 //	ParticleUpdateTrailModule classMethods
 //============================================================================
 
@@ -84,6 +89,130 @@ void ParticleUpdateTrailModule::Execute(
 		trail.prePos = currentPos;
 		trail.time = 0.0f;
 	}
+}
+
+void ParticleUpdateTrailModule::BuildTransferData(uint32_t particleIndex,
+	const CPUParticle::ParticleData& particle,
+	std::vector<ParticleCommon::TrailHeaderForGPU>& transferTrailHeaders,
+	std::vector<ParticleCommon::TrailVertexForGPU>& transferTrailVertices,
+	const SceneView* sceneView) {
+
+	// パーティクルのトレイルノード
+	const auto& nodes = particle.trailRuntime.nodes;
+
+	// デフォルトは空
+	uint32_t start = static_cast<uint32_t>(transferTrailVertices.size());
+	uint32_t vertexCount = 0;
+
+	// CPUParticleGroup 側のコード互換のため同名変数を用意
+	const ParticleUpdateTrailModule* trailModule = this;
+
+	// トレイルしないなら頂点数は0にしてセット
+	if (!trailModule || !trailModule->GetParam().enable || nodes.size() < 2) {
+		transferTrailHeaders[particleIndex] = { start, 0 };
+		return;
+	}
+
+	// 半分のサイズ
+	const float halfWidth = 0.5f * param_.width;
+	// U(横)方向の距離累積
+	float uAccum = 0.0f;
+	Vector3 prevSide = Vector3(1.0f, 0.0f, 0.0f);
+
+	for (size_t i = 0; i < nodes.size(); ++i) {
+
+		// 方向ベクトル
+		Vector3 direction;
+		// 現在の座標から前の座標を引いた方向
+		if (i == 0) {
+			direction = nodes[1].pos - nodes[0].pos;
+		} else if (i == nodes.size() - 1) {
+			direction = nodes[i].pos - nodes[i - 1].pos;
+		} else {
+			direction = nodes[i + 1].pos - nodes[i - 1].pos;
+		}
+
+		float directionLength = direction.Length();
+		if (directionLength > 1e-6f) {
+			direction /= directionLength;
+		} else {
+			direction = Vector3(0.0f, 0.0f, 1.0f);
+		}
+
+		// 帯の左右方向
+		Vector3 side;
+		if (param_.faceCamera) {
+
+			// カメラ面に帯が立つようにする
+			side = Vector3::Cross(direction, sceneView->GetCamera()->GetTransform().GetForward());
+		} else {
+
+			const Vector3 up(0.0f, 1.0f, 0.0f);
+			side = Vector3::Cross(direction, up);
+		}
+
+		// 反転しないようにする
+		if (Vector3::Dot(prevSide, side) < 0.0f) {
+			side = -side;
+		}
+
+		if (side.Length() < 1e-8f) {
+			// 直前を利用
+			side = prevSide;
+		}
+		prevSide = side = side.Normalize();
+
+		// 左右頂点
+		const Vector3 center = nodes[i].pos;
+		const Vector3 leftWorldPos = center - side * halfWidth;
+		const Vector3 rightWorldPos = center + side * halfWidth;
+
+		// 頂点カラー、αフェードさせる
+		float fade = 1.0f;
+		if (1e-6f < param_.lifeTime) {
+			fade = std::clamp(1.0f - nodes[i].age / param_.lifeTime, 0.0f, 1.0f);
+		}
+
+		// 距離ベースでタイリングする
+		float u = (1e-6f < param_.uvTileLength) ? (uAccum / param_.uvTileLength) : 0.0f;
+
+		// 左と右の頂点情報をセットして追加
+		ParticleCommon::TrailVertexForGPU leftVertex;
+		ParticleCommon::TrailVertexForGPU rightVertex;
+		// 左
+		leftVertex.worldPos = leftWorldPos;
+		leftVertex.uv = Vector2(u, 0.0f);
+		leftVertex.color = particle.material.color;
+		// 右
+		rightVertex.worldPos = rightWorldPos;
+		rightVertex.uv = Vector2(u, 1.0f);
+		rightVertex.color = particle.material.color;
+
+		transferTrailVertices.push_back(leftVertex);
+		transferTrailVertices.push_back(rightVertex);
+
+		// 次のノードがあれば距離を加算する
+		if (i + 1 < nodes.size()) {
+			uAccum += (nodes[i + 1].pos - nodes[i].pos).Length();
+		}
+	}
+
+	// 偶数個に制限、奇数にすると頂点数とポリゴンの数が合わなくなるため
+	uint32_t end = static_cast<uint32_t>(transferTrailVertices.size());
+	vertexCount = end - start;
+	if (vertexCount & 1u) {
+		transferTrailVertices.pop_back();
+		--vertexCount;
+	}
+
+	// 4未満ならすべて削除
+	if (vertexCount < 4) {
+
+		// 使わないぶんは戻す
+		transferTrailVertices.resize(start);
+		vertexCount = 0;
+	}
+	transferTrailHeaders[particleIndex] = { start, vertexCount };
 }
 
 void ParticleUpdateTrailModule::ImGui() {

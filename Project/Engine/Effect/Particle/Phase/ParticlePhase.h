@@ -65,7 +65,7 @@ public:
 
 	float GetLifeTime() const;
 	const ParticleUpdateLifeTimeModule* GetLifeTimeModule() const;
-	const ParticleUpdateTrailModule* GetTrailModule() const;
+	ParticleUpdateTrailModule* GetTrailModule() const;
 
 	bool HasTrailModule() const;
 private:

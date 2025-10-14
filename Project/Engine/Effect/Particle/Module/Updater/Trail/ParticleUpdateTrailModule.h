@@ -5,6 +5,9 @@
 //============================================================================
 #include <Engine/Effect/Particle/Module/Base/ICPUParticleUpdateModule.h>
 
+// front
+class SceneView;
+
 //============================================================================
 //	ParticleUpdateTrailModule class
 //============================================================================
@@ -21,6 +24,10 @@ public:
 	void Init() override;
 
 	void Execute(CPUParticle::ParticleData& particle, float deltaTime) override;
+	void BuildTransferData(uint32_t particleIndex, const CPUParticle::ParticleData& particle,
+		std::vector<ParticleCommon::TrailHeaderForGPU>& transferTrailHeaders,
+		std::vector<ParticleCommon::TrailVertexForGPU>& transferTrailVertices,
+		const SceneView* sceneView);
 
 	void ImGui() override;
 
