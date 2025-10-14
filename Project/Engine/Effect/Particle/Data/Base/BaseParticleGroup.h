@@ -7,6 +7,9 @@
 #include <Engine/Effect/Particle/Structures/ParticleStructures.h>
 #include <Engine/Effect/Particle/Structures/ParticleEmitterStructures.h>
 
+// front
+class SceneView;
+
 //============================================================================
 //	BaseParticleGroup class
 //============================================================================
@@ -21,6 +24,8 @@ public:
 
 	//--------- accessor -----------------------------------------------------
 
+	void SetSceneView(SceneView* sceneView) { sceneView_ = sceneView; }
+
 	// 親の設定
 	void SetParent(bool isSet, const BaseTransform& parent);
 
@@ -31,6 +36,8 @@ protected:
 	//========================================================================
 
 	//--------- variables ----------------------------------------------------
+
+	SceneView* sceneView_;
 
 	// ゲームで使用するか
 	bool useGame_;

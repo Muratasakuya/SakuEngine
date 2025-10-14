@@ -89,11 +89,14 @@ void ParticleUpdateTrailModule::Execute(
 void ParticleUpdateTrailModule::ImGui() {
 
 	ImGui::Checkbox("enable", &param_.enable);
+	ImGui::Checkbox("isDrawOrigin", &param_.isDrawOrigin);
 	ImGui::Checkbox("faceCamera", &param_.faceCamera);
 
 	ImGui::DragFloat("lifeTime", &param_.lifeTime, 0.01f);
 	ImGui::DragFloat("width", &param_.width, 0.01f);
-	ImGui::DragFloat("minDistance", &param_.minDistance, 0.01f);
+
+	// minDistanceが0.0f以下になるとDevice君がRemoveする
+	ImGui::DragFloat("minDistance", &param_.minDistance, 0.01f, 0.01f);
 	ImGui::DragFloat("minTime", &param_.minTime, 0.01f);
 
 	ImGui::DragInt("maxPoints", &param_.maxPoints, 1, 0, 64);
@@ -106,6 +109,7 @@ Json ParticleUpdateTrailModule::ToJson() {
 	Json data;
 
 	data["enable"] = param_.enable;
+	data["isDrawOrigin"] = param_.isDrawOrigin;
 	data["faceCamera"] = param_.faceCamera;
 
 	data["lifeTime"] = param_.lifeTime;
@@ -123,6 +127,7 @@ Json ParticleUpdateTrailModule::ToJson() {
 void ParticleUpdateTrailModule::FromJson(const Json& data) {
 
 	param_.enable = data.value("enable", false);
+	param_.isDrawOrigin = data.value("isDrawOrigin", true);
 	param_.faceCamera = data.value("faceCamera", false);
 
 	param_.lifeTime = data.value("lifeTime", 0.0f);

@@ -117,7 +117,7 @@ Framework::Framework() {
 	// particle管理クラス初期化
 
 	ParticleManager::GetInstance()->Init(asset_.get(),
-		device, srvDescriptor, shaderCompiler);
+		device, srvDescriptor, shaderCompiler, sceneView_.get());
 
 	//------------------------------------------------------------------------
 	// scene管理クラス初期化

@@ -19,7 +19,8 @@ public:
 	//========================================================================
 
 	void Init(Asset* asset, ID3D12Device8* device,
-		SRVDescriptor* srvDescriptor, DxShaderCompiler* shaderCompiler);
+		SRVDescriptor* srvDescriptor, DxShaderCompiler* shaderCompiler,
+		SceneView* sceneView);
 
 	void Update(DxCommand* dxCommand);
 
@@ -47,6 +48,7 @@ private:
 
 	Asset* asset_;
 	ID3D12Device8* device_;
+	SceneView* sceneView_;
 
 	// GPU
 	std::unique_ptr<GPUParticleUpdater> gpuUpdater_;

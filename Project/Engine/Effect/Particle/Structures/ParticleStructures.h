@@ -139,7 +139,8 @@ namespace ParticleCommon {
 	};
 	struct TrailParam {
 
-		bool enable = false;  // デフォルトでfalse
+		bool enable = false;      // デフォルトでfalse
+		bool isDrawOrigin = true; // トレイル元を描画するか
 		float lifeTime;       // 寿命
 		float width;          // 帯の幅
 		float minDistance;    // 発生移動距離

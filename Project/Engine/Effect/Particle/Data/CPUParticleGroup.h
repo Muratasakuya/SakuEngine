@@ -44,6 +44,7 @@ public:
 	BlendMode GetBlendMode() const { return blendMode_; }
 	uint32_t GetNumInstance() const { return numInstance_; }
 	bool HasTrailModule() const;
+	bool IsDrawParticle() const { return isDrawParticle_; }
 
 	const DxStructuredBuffer<ParticleCommon::TransformForGPU>& GetTransformBuffer() const { return transformBuffer_; }
 	const DxStructuredBuffer<ParticleCommon::TrailHeaderForGPU>& GetTrailHeaderBuffer() const { return trailHeaderBuffer_; }
@@ -93,6 +94,7 @@ private:
 	DxStructuredBuffer<CPUParticle::TextureInfoForGPU> textureInfoBuffer_;
 
 	// 描画情報
+	bool isDrawParticle_ = true;
 	BlendMode blendMode_;
 
 	// editor

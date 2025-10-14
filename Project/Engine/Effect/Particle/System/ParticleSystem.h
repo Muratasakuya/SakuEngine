@@ -62,6 +62,7 @@ public:
 	void SetName(const std::string& name) { name_ = name; }
 	void SetGroupName(uint32_t i, const std::string& name) { gpuGroups_[i].name = name; }
 	void SelectGroup(int index) { selected_.index = index; }
+	void SetSceneView(SceneView* sceneView) { sceneView_ = sceneView; }
 	void SetParent(const BaseTransform& parent);
 
 	const std::string& GetName() const { return name_; }
@@ -101,6 +102,7 @@ private:
 
 	ID3D12Device* device_;
 	Asset* asset_;
+	SceneView* sceneView_;
 
 	// system名
 	std::string name_;
