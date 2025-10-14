@@ -43,8 +43,12 @@ public:
 	ParticlePrimitiveType GetPrimitiveType() const { return primitiveBuffer_.type; }
 	BlendMode GetBlendMode() const { return blendMode_; }
 	uint32_t GetNumInstance() const { return numInstance_; }
+	bool HasTrailModule() const;
 
 	const DxStructuredBuffer<ParticleCommon::TransformForGPU>& GetTransformBuffer() const { return transformBuffer_; }
+	const DxStructuredBuffer<ParticleCommon::TrailHeaderForGPU>& GetTrailHeaderBuffer() const { return trailHeaderBuffer_; }
+	const DxStructuredBuffer<ParticleCommon::TrailVertexForGPU>& GetTrailVertexBuffer() const { return trailVertexBuffer_; }
+
 	const DxStructuredBuffer<CPUParticle::MaterialForGPU>& GetMaterialBuffer() const { return materialBuffer_; }
 	const DxStructuredBuffer<CPUParticle::TextureInfoForGPU>& GetTextureInfoBuffer() const { return textureInfoBuffer_; }
 
@@ -81,6 +85,8 @@ private:
 	std::vector<CPUParticle::TextureInfoForGPU> transferTextureInfos_;
 	std::vector<ParticleCommon::TransformForGPU> transferTransforms_;
 	ParticleCommon::PrimitiveData<true> transferPrimitives_;
+	std::vector<ParticleCommon::TrailHeaderForGPU> transferTrailHeaders_;
+	std::vector<ParticleCommon::TrailVertexForGPU> transferTrailVertices_;
 
 	// buffers
 	DxStructuredBuffer<CPUParticle::MaterialForGPU> materialBuffer_;

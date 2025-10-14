@@ -31,6 +31,7 @@ public:
 	//--------- accessor -----------------------------------------------------
 
 	const char* GetName() const override { return "Trail"; }
+	const ParticleCommon::TrailParam& GetParam() const { return param_; }
 
 	//-------- registryID ----------------------------------------------------
 

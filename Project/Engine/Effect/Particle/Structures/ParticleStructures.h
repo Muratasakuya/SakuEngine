@@ -149,6 +149,19 @@ namespace ParticleCommon {
 		bool faceCamera;      // カメラフェイシング帯
 		float uvTileLength;   // タイル長
 	};
+
+	// トレイルのGPU転送データ
+	struct TrailHeaderForGPU {
+
+		uint32_t start;
+		uint32_t vertexCount;
+	};
+	struct TrailVertexForGPU {
+
+		Vector3 worldPos;
+		Vector2 uv;
+		Color color;
+	};
 };
 
 //============================================================================

@@ -185,6 +185,12 @@ void ParticleManager::Rendering(bool debugEnable,
 
 			// 描画処理
 			renderer_->Rendering(debugEnable, group.group, sceneBuffer, dxCommand);
+
+			// トレイルの描画
+			if (group.group.HasTrailModule()) {
+
+				renderer_->RenderingTrail(debugEnable, group.group, sceneBuffer, dxCommand);
+			}
 		}
 	}
 }

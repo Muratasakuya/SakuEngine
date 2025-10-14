@@ -10,7 +10,12 @@
 //	CBuffer
 //============================================================================
 
-ConstantBuffer<PerView> gPerView : register(b0);
+struct Camera {
+	
+	float4x4 viewProjection;
+};
+
+ConstantBuffer<Camera> gCamera : register(b0);
 
 //============================================================================
 //	StructuredBuffer
@@ -25,50 +30,48 @@ StructuredBuffer<TrailVertex> gTrailVertices : register(t1);
 [numthreads(1, 1, 1)]
 [outputtopology("triangle")]
 void main(uint groupThreadId : SV_GroupThreadID, uint groupId : SV_GroupID,
-out vertices MSOutput verts[], out indices uint3 polys[]) {
+out vertices MSOutput verts[TRAIL_MAX_VERTS], out indices uint3 polys[TRAIL_MAX_PRIMS]) {
 	
-	// dispatchMeshでの1次元グループID
-	uint instanceIndex = groupId;
-	// バッファアクセス
-	TrailHeader trailHeader = gTrailHeaders[instanceIndex];
-	
-	uint vertexStart = trailHeader.start;
-	uint vertCount = trailHeader.vertCount;
-	// 4頂点以下なら出力しない
-	if (vertCount < 4 || (vertCount & 1u)) {
-		SetMeshOutputCounts(0, 0);
+	const uint instanceIndex = groupId.x;
+	TrailHeader h = gTrailHeaders[instanceIndex];
+
+    // 1) V/T を先に決める（偶数化・上限丸めもここで）
+	uint V = min(h.vertCount, TRAIL_MAX_VERTS);
+	V &= ~1u; // 偶数に
+	if (V < 4)
+		V = 0; // 小さすぎる場合は0で描かない
+	uint T = (V == 0) ? 0 : (V - 2);
+	if (T > TRAIL_MAX_PRIMS) {
+		V = (TRAIL_MAX_PRIMS + 2) & ~1u;
+		T = V - 2;
+	}
+
+    // 2) ここで一度だけ呼ぶ
+	SetMeshOutputCounts(V, T);
+
+    // 3) 出力なしなら終了（以降で verts/polys に触らない）
+	if (V == 0)
 		return;
-	}
-	
-	// 最大頂点数を超えないように制限
-	const uint kMaxVertex = 256;
-	vertCount = min(vertCount, kMaxVertex);
-	// 出力三角形数
-	uint polyCount = max(0, (int) vertCount - 2);
-	// 頂点数を偶数に制限
-	vertCount &= ~1u;
-	polyCount = (4 <= vertCount) ? (vertCount - 2) : 0;
-	
-	// 頂点出力
-	SetMeshOutputCounts(vertCount, polyCount);
 
-	// 頂点
-	for (uint i = 0; i < vertCount; ++i) {
-		
-		// バッファアクセス
-		TrailVertex vertex = gTrailVertices[trailHeader.start + i];
-		
-		verts[i].position = mul(float4(vertex.worldPos, 1), gPerView.viewProjection);
-		verts[i].texcoord = vertex.uv;
-		verts[i].instanceID = instanceIndex;
-		verts[i].vertexColor = vertex.color;
+	const uint start = h.start;
+
+    // 頂点書き込み（0..V-1 だけ）
+    [loop]
+	for (uint i = 0; i < V; ++i) {
+		TrailVertex v = gTrailVertices[start + i];
+		MSOutput o;
+		o.position = mul(float4(v.worldPos, 1.0f), gCamera.viewProjection);
+		o.texcoord = v.uv;
+		o.vertexColor = v.color;
+		o.instanceID = instanceIndex;
+		verts[i] = o;
 	}
 
-	// インデックス
+    // インデックス書き込み（0..T-1 だけ）
 	uint t = 0;
-	for (uint index = 0; index + 3 < vertCount; index += 2) {
-		
-		polys[t++] = uint3(index, index + 1, index + 2);
-		polys[t++] = uint3(index + 1, index + 3, index + 2);
+    [loop]
+	for (uint i = 0; i + 3 < V; i += 2) {
+		polys[t++] = uint3(i, i + 1, i + 2);
+		polys[t++] = uint3(i + 1, i + 3, i + 2);
 	}
 }

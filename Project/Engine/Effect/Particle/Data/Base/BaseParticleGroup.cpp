@@ -58,8 +58,8 @@ D3D12_GPU_VIRTUAL_ADDRESS BaseParticleGroup::GetPrimitiveBufferAdress() const {
 	return primitiveBuffer_.plane.GetResource()->GetGPUVirtualAddress();
 }
 
-void BaseParticleGroup::CreatePrimitiveBuffer(
-	ID3D12Device* device, ParticlePrimitiveType primitiveType, uint32_t maxParticle) {
+void BaseParticleGroup::CreatePrimitiveBuffer(ID3D12Device* device,
+	ParticlePrimitiveType primitiveType, uint32_t maxParticle) {
 
 	primitiveBuffer_.type = primitiveType;
 
@@ -105,6 +105,17 @@ void BaseParticleGroup::CreatePrimitiveBuffer(
 		primitiveBuffer_.crescent.TransferData(crescents);
 		break;
 	}
+	}
+}
+
+void BaseParticleGroup::CreateTrailBuffer(ID3D12Device* device,
+	ParticlePrimitiveType primitiveType, uint32_t maxParticle) {
+
+	// トレイルに対応しているタイプでのみ作成
+	if (primitiveType == ParticlePrimitiveType::Plane) {
+
+		trailHeaderBuffer_.CreateSRVBuffer(device, maxParticle);
+		trailVertexBuffer_.CreateSRVBuffer(device, maxParticle);
 	}
 }
 

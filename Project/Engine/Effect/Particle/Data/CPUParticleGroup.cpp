@@ -6,6 +6,7 @@
 #include <Engine/Effect/Particle/ParticleConfig.h>
 #include <Engine/Utility/Timer/GameTimer.h>
 #include <Engine/Effect/Particle/Module/Updater/Time/ParticleUpdateLifeTimeModule.h>
+#include <Engine/Effect/Particle/Module/Updater/Trail/ParticleUpdateTrailModule.h>
 
 //============================================================================
 //	CPUParticleGroup classMethods
@@ -28,10 +29,22 @@ void CPUParticleGroup::Create(ID3D12Device* device,
 
 	// buffer作成
 	BaseParticleGroup::CreatePrimitiveBuffer(device, primitiveType, kMaxCPUParticles);
+	BaseParticleGroup::CreateTrailBuffer(device, primitiveBuffer_.type, kMaxCPUParticles);
 	// structuredBuffer(SRV)
 	transformBuffer_.CreateSRVBuffer(device, kMaxCPUParticles);
 	materialBuffer_.CreateSRVBuffer(device, kMaxCPUParticles);
 	textureInfoBuffer_.CreateSRVBuffer(device, kMaxCPUParticles);
+}
+
+bool CPUParticleGroup::HasTrailModule() const {
+
+	// 現在のフェーズがトレイルのモジュールを所持しているかどうか
+	bool hasTrail = false;
+	for (const auto& phase : phases_) {
+
+		hasTrail |= phase->HasTrailModule();
+	}
+	return hasTrail;
 }
 
 void CPUParticleGroup::CreateFromJson(ID3D12Device* device, Asset* asset, const Json& data, bool useGame) {
@@ -54,6 +67,7 @@ void CPUParticleGroup::CreateFromJson(ID3D12Device* device, Asset* asset, const 
 
 	// buffer作成
 	BaseParticleGroup::CreatePrimitiveBuffer(device, primitiveBuffer_.type, createInstanceCount_);
+	BaseParticleGroup::CreateTrailBuffer(device, primitiveBuffer_.type, createInstanceCount_);
 	// structuredBuffer(SRV)
 	transformBuffer_.CreateSRVBuffer(device, createInstanceCount_);
 	materialBuffer_.CreateSRVBuffer(device, createInstanceCount_);
@@ -246,6 +260,123 @@ void CPUParticleGroup::UpdateTransferData(uint32_t particleIndex,
 		break;
 	}
 	}
+
+	// トレイルの処理を行っている場合のみ
+	if (HasTrailModule()) {
+
+		// この粒子の Trail ノード
+		const auto& nodes = particle.trailRuntime.nodes;
+
+		// デフォルトは空（シェーダ側は V<4 を捨てるのでOK）
+		uint32_t start = static_cast<uint32_t>(transferTrailVertices_.size());
+		uint32_t vcount = 0;
+
+		// Trail モジュールのパラメータを取得（例：現在のフェーズから）
+		// 例：ParticlePhase に GetTrailModule() を用意しておき、null ならビルドしない
+		const ParticleUpdateTrailModule* trailMod = nullptr;
+		if (particle.phaseIndex < phases_.size()) {
+			trailMod = phases_[particle.phaseIndex]->GetTrailModule(); // ★用意してください
+		}
+		if (!trailMod || !trailMod->GetParam().enable || nodes.size() < 2) {
+			transferTrailHeaders_[particleIndex] = { start, 0 };
+			return;
+		}
+
+		const auto& prm = trailMod->GetParam(); // width/lifetime/uvTileLength/faceCamera など
+		const float halfW = 0.5f * prm.width;
+
+		// U 方向の距離累積
+		float uAccum = 0.0f;
+
+		// 直前の side を保持（ゼロ除算や不連続時のフォールバックに使う）
+		Vector3 prevSide = Vector3(1, 0, 0);
+
+		for (size_t i = 0; i < nodes.size(); ++i) {
+
+			// 方向ベクトル
+			Vector3 direction;
+			if (i == 0) {
+
+				direction = nodes[1].pos - nodes[0].pos;
+			} else if (i == nodes.size() - 1) {
+
+				direction = nodes[i].pos - nodes[i - 1].pos;
+			} else {
+
+				direction = nodes[i + 1].pos - nodes[i - 1].pos;
+			}
+
+			float dlen = direction.Length();
+			if (dlen > 1e-6f) {
+
+				direction /= dlen;
+			} else {
+
+				direction = Vector3(0.0f, 0.0f, 1.0f);
+			}
+
+			// 帯の左右方向（side）
+			Vector3 side;
+			if (prm.faceCamera) {
+				// カメラフェイシング：viewDir = camera - center
+				// ※ カメラ座標がここに無ければ Y 軸固定にしておく or 渡すようにしてください
+				const Vector3 up(0, 1, 0); // フォールバック
+				side = Vector3::Cross(direction, up);
+			} else {
+				const Vector3 up(0, 1, 0); // 固定Up
+				side = Vector3::Cross(direction, up);
+			}
+			if (side.Length() < 1e-8f) {
+
+				side = prevSide; // 直前を利用
+			}
+			prevSide = side = side.Normalize();
+
+			// 左右頂点
+			const Vector3 center = nodes[i].pos;
+			const Vector3 L = center - side * halfW;
+			const Vector3 R = center + side * halfW;
+
+			// 頂点カラー α フェード（age / lifetime）
+			float fade = 1.0f;
+			if (prm.lifeTime > 1e-6f) fade = std::clamp(1.0f - nodes[i].age / prm.lifeTime, 0.0f, 1.0f);
+
+			Color col = particle.material.color;
+			col.a *= fade;
+
+			// U座標（距離ベースでタイリング）
+			float u = (prm.uvTileLength > 1e-6f) ? (uAccum / prm.uvTileLength) : 0.0f;
+
+			// L, R をプールへ
+			ParticleCommon::TrailVertexForGPU lv, rv;
+			lv.worldPos = L; lv.uv = { u, 0.0f }; lv.color = col;
+			rv.worldPos = R; rv.uv = { u, 1.0f }; rv.color = col;
+
+			transferTrailVertices_.push_back(lv);
+			transferTrailVertices_.push_back(rv);
+
+			// 次の U 用に距離を足す
+			if (i + 1 < nodes.size()) uAccum += (nodes[i + 1].pos - nodes[i].pos).Length();
+		}
+
+		// 偶数個
+		uint32_t end = static_cast<uint32_t>(transferTrailVertices_.size());
+		vcount = end - start;
+		if (vcount & 1u) {
+
+			transferTrailVertices_.pop_back();
+			--vcount;
+		}
+
+		// 4 未満は描かせない
+		if (vcount < 4) {
+			// 使わないぶんは巻き戻す
+			transferTrailVertices_.resize(start);
+			vcount = 0;
+		}
+
+		transferTrailHeaders_[particleIndex] = { start, vcount };
+	}
 }
 
 void CPUParticleGroup::TransferBuffer() {
@@ -279,6 +410,13 @@ void CPUParticleGroup::TransferBuffer() {
 		break;
 	}
 	}
+
+	// トレイルの処理を行っている場合のみ
+	if (HasTrailModule()) {
+
+		trailHeaderBuffer_.TransferData(transferTrailHeaders_);
+		trailVertexBuffer_.TransferData(transferTrailVertices_);
+	}
 }
 
 void CPUParticleGroup::ResizeTransferData(uint32_t size) {
@@ -311,6 +449,36 @@ void CPUParticleGroup::ResizeTransferData(uint32_t size) {
 		transferPrimitives_.crescent.resize(size);
 		break;
 	}
+	}
+
+	// トレイルの処理を行っている場合のみ
+	if (HasTrailModule()) {
+
+		transferTrailHeaders_.resize(size);
+
+		transferTrailVertices_.clear();
+
+		// パラメータから安全側に見積る
+		uint32_t maxPoints = 0;
+		uint32_t subdivision = 0;
+		for (const auto& phase : phases_) {
+			if (auto* module = phase->GetTrailModule()) {
+
+				maxPoints = (std::max<uint32_t>)(maxPoints, module->GetParam().maxPoints);
+				subdivision = (std::max<uint32_t>)(subdivision, module->GetParam().subdivPerSegment);
+			}
+		}
+
+		// 最大頂点数
+		const uint32_t kMaxVertexCount = 256;
+		uint32_t perTrail = 2u * maxPoints * (subdivision + 1u);
+		perTrail = (std::min)(perTrail, kMaxVertexCount);
+		if (perTrail == 0) {
+
+			// 32をデフォルトにしておく
+			perTrail = 32;
+		}
+		transferTrailVertices_.reserve(size * perTrail);
 	}
 }
 

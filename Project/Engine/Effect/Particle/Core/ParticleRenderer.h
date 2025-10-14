@@ -33,14 +33,28 @@ public:
 	void Init(ID3D12Device8* device, Asset* asset,
 		SRVDescriptor* srvDescriptor, DxShaderCompiler* shaderCompiler);
 
+	// GPU
 	void Rendering(bool debugEnable, const GPUParticleGroup& group,
 		SceneConstBuffer* sceneBuffer, DxCommand* dxCommand);
+
+	// CPU
 	void Rendering(bool debugEnable, const CPUParticleGroup& group,
+		SceneConstBuffer* sceneBuffer, DxCommand* dxCommand);
+	void RenderingTrail(bool debugEnable, const CPUParticleGroup& group,
 		SceneConstBuffer* sceneBuffer, DxCommand* dxCommand);
 private:
 	//========================================================================
 	//	private Methods
 	//========================================================================
+
+	//--------- structure ----------------------------------------------------
+
+	// 描画モード
+	enum class RenderMode {
+
+		None,  // 通常
+		Trail, // トレイル
+	};
 
 	//--------- variables ----------------------------------------------------
 
@@ -50,7 +64,10 @@ private:
 	static const uint32_t kPrimitiveCount = static_cast<uint32_t>(ParticlePrimitiveType::Count);
 	static const uint32_t kParticleTypeCount = static_cast<uint32_t>(ParticleType::Count);
 
-	std::array<std::array<std::unique_ptr<PipelineState>, kPrimitiveCount>, kParticleTypeCount> pipelines_;
+	// 描画パイプライン
+	// RenderModeMap: [ParticleType][PrimitiveType]
+	std::unordered_map<RenderMode, std::array<std::array<
+		std::unique_ptr<PipelineState>, kPrimitiveCount>, kParticleTypeCount>> pipelines_;
 
 	//--------- functions ----------------------------------------------------
 
@@ -59,7 +76,7 @@ private:
 		DxShaderCompiler* shaderCompiler);
 
 	// helper
-	void SetPipeline(uint32_t typeIndex, uint32_t primitiveIndex,
+	void SetPipeline(RenderMode mode, uint32_t typeIndex, uint32_t primitiveIndex,
 		ID3D12GraphicsCommandList* commandList, BlendMode blendMode);
 	void ToCompute(bool debugEnable, const GPUParticleGroup& group, DxCommand* dxCommand);
 };

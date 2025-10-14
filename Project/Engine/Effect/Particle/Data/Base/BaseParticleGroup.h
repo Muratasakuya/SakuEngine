@@ -45,8 +45,13 @@ protected:
 	ParticleEmitterData emitter_; // 各形状
 
 	// commonBuffers
+	// 形状
 	ParticleCommon::PrimitiveBufferData primitiveBuffer_;
+	// トランスフォーム
 	DxStructuredBuffer<ParticleCommon::TransformForGPU> transformBuffer_;
+	// トレイル
+	DxStructuredBuffer<ParticleCommon::TrailHeaderForGPU> trailHeaderBuffer_;
+	DxStructuredBuffer<ParticleCommon::TrailVertexForGPU> trailVertexBuffer_;
 
 	// 描画情報
 	BlendMode blendMode_;
@@ -59,6 +64,8 @@ protected:
 
 	// create
 	void CreatePrimitiveBuffer(ID3D12Device* device,
+		ParticlePrimitiveType primitiveType, uint32_t maxParticle);
+	void CreateTrailBuffer(ID3D12Device* device,
 		ParticlePrimitiveType primitiveType, uint32_t maxParticle);
 
 	// emitter
