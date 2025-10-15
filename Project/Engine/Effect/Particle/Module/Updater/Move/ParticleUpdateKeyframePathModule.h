@@ -49,7 +49,9 @@ private:
 	// 補間キー
 	std::vector<Vector3> keys_;
 
-	float swirlRadius_; // 強さ（半径）
+	// 強さ（半径）
+	ParticleCommon::LerpValue<float> swirlRadius_;
+	EasingType swirlRadiusEasing_;
 	float swirlTurns_;  // 0.0fから1.0fの間で何回ループするか
 	float swirlPhase_;  // 角度の初期オフセット
 

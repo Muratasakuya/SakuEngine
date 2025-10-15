@@ -15,7 +15,9 @@ void ParticleUpdateKeyframePathModule::Init() {
 
 	// 初期化値
 	isDrawKeyframe_ = true;
-	swirlRadius_ = 0.0f;
+	swirlRadius_.start = 0.0f;
+	swirlRadius_.target = 0.0f;
+	swirlRadiusEasing_ = EasingType::Linear;
 	swirlTurns_ = 1.0f;
 	swirlPhase_ = 0.0f;
 
@@ -35,6 +37,11 @@ void ParticleUpdateKeyframePathModule::Execute(
 	if (keys_.empty()) {
 		return;
 	}
+
+	// 進捗で渦巻の半径を補間
+	const float eased = EasedValue(swirlRadiusEasing_, particle.progress);
+	const float currentRadius =
+		swirlRadius_.start + (swirlRadius_.target - swirlRadius_.start) * eased;
 
 	// 補間開始時の処理
 	if (!particle.hasKeyPathStart) {
@@ -77,7 +84,7 @@ void ParticleUpdateKeyframePathModule::Execute(
 
 	// 発生した瞬間の位置を角度オフセットで設定する
 	// 
-	if (swirlRadius_ > 0.0f && spawnAngleEnable_ && !particle.hasKeyPathSpawnAngle) {
+	if (currentRadius > 0.0f && spawnAngleEnable_ && !particle.hasKeyPathSpawnAngle) {
 
 		float angle = spawnAngleStart_ + spawnAngleStride_ * static_cast<float>(spawnAngleSerial_++);
 		if (0.0f < spawnAngleJitter_) {
@@ -105,7 +112,7 @@ void ParticleUpdateKeyframePathModule::Execute(
 
 	// 渦巻移動のオフセット計算
 	// 半径の値が入っているときのみ処理
-	if (0.0f < swirlRadius_) {
+	if (0.0f < currentRadius) {
 
 		Vector3 tangent = GetTangent(t);
 		const float dotY = Vector3::Dot(tangent, Vector3(0.0f, 1.0f, 0.0f));
@@ -118,8 +125,8 @@ void ParticleUpdateKeyframePathModule::Execute(
 		float theta = spawnAngle + swirlPhase_ + 2.0f * pi * swirlTurns_ * t;
 
 		// 座標を設定
-		translation = onPath + right * (std::cos(theta) * swirlRadius_) +
-			normal * (std::sin(theta) * swirlRadius_);
+		translation = onPath + right * (std::cos(theta) * currentRadius) +
+			normal * (std::sin(theta) * currentRadius);
 	}
 	particle.transform.translation = translation;
 }
@@ -146,7 +153,10 @@ void ParticleUpdateKeyframePathModule::ImGui() {
 		// 渦巻き
 		ImGui::SeparatorText("Swirl");
 
-		ImGui::DragFloat("swirlRadius", &swirlRadius_, 0.01f);
+		ImGui::DragFloat("startSwirlRadius", &swirlRadius_.start, 0.01f);
+		ImGui::DragFloat("targetSwirlRadius", &swirlRadius_.target, 0.01f);
+		Easing::SelectEasingType(swirlRadiusEasing_, "swirlRadius");
+
 		ImGui::DragFloat("swirlTurns", &swirlTurns_, 0.01f);
 		ImGui::DragFloat("swirlPhase", &swirlPhase_, 0.01f);
 	}
@@ -214,7 +224,9 @@ Json ParticleUpdateKeyframePathModule::ToJson() {
 	data["type_"] = EnumAdapter<LerpKeyframe::Type>::ToString(type_);
 	data["isDrawKeyframe_"] = isDrawKeyframe_;
 
-	data["swirlRadius_"] = swirlRadius_;
+	data["startSwirlRadius"] = swirlRadius_.start;
+	data["targetSwirlRadius"] = swirlRadius_.target;
+	data["swirlRadiusEasing_"] = EnumAdapter<EasingType>::ToString(swirlRadiusEasing_);
 	data["swirlTurns_"] = swirlTurns_;
 	data["swirlPhase_"] = swirlPhase_;
 
@@ -242,7 +254,9 @@ void ParticleUpdateKeyframePathModule::FromJson(const Json& data) {
 
 	isDrawKeyframe_ = data.value("isDrawKeyframe_", isDrawKeyframe_);
 
-	swirlRadius_ = data.value("swirlRadius_", swirlRadius_);
+	swirlRadius_.start = data.value("startSwirlRadius", swirlRadius_.start);
+	swirlRadius_.target = data.value("targetSwirlRadius", swirlRadius_.target);
+	swirlRadiusEasing_ = EnumAdapter<EasingType>::FromString(data.value("swirlRadiusEasing_", "Linear")).value();
 	swirlTurns_ = data.value("swirlTurns_", swirlTurns_);
 	swirlPhase_ = data.value("swirlPhase_", swirlPhase_);
 

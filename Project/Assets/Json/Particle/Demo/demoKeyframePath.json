@@ -156,12 +156,22 @@
                                 "keys": [
                                     {
                                         "x": 0.0,
-                                        "y": 2.9200000762939453,
+                                        "y": 2.0,
                                         "z": 0.0
                                     },
                                     {
                                         "x": 0.0,
-                                        "y": 25.139999389648438,
+                                        "y": 10.0,
+                                        "z": 0.0
+                                    },
+                                    {
+                                        "x": 0.0,
+                                        "y": 18.0,
+                                        "z": 0.0
+                                    },
+                                    {
+                                        "x": 0.0,
+                                        "y": 26.0,
                                         "z": 0.0
                                     }
                                 ],
@@ -170,10 +180,12 @@
                                 "spawnAngleStart_": 0.0,
                                 "spawnAngleStride_": 2.0899999141693115,
                                 "spawnAngleWrap_": true,
+                                "startSwirlRadius": 24.0,
                                 "swirlPhase_": 0.0,
-                                "swirlRadius_": 16.0,
+                                "swirlRadiusEasing_": "EaseInExpo",
                                 "swirlTurns_": 1.0,
-                                "type_": "Linear"
+                                "targetSwirlRadius": 0.0,
+                                "type_": "Spline"
                             },
                             "type": "KeyframePath"
                         },
