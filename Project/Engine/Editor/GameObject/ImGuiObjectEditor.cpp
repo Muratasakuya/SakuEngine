@@ -291,6 +291,8 @@ void ImGuiObjectEditor::GizmoToolbar(const GizmoIcons& icons) {
 	drawButton("T", icons.translate, ImGuizmo::OPERATION::TRANSLATE);
 	drawButton("R", icons.rotate, ImGuizmo::OPERATION::ROTATE);
 	drawButton("S", icons.scale, ImGuizmo::OPERATION::SCALE);
+	ImGui::Separator();
+	ImGui::Checkbox("##", &isPickActive_);
 }
 
 void ImGuiObjectEditor::EditObjects() {

@@ -73,6 +73,7 @@ public:
 	// 外部からフォーカスするIDを設定
 	void SelectById(uint32_t id);
 	std::optional<uint32_t> GetSelected3D() const { return selected3D_; }
+	bool IsPickActive() const { return isPickActive_; }
 
 	// singleton
 	static ImGuiObjectEditor* GetInstance();
@@ -106,12 +107,13 @@ private:
 	int selectedMaterialIndex_ = 0;
 
 	std::optional<uint32_t> selected2D_;
-	int  selectedSpriteIndex_ = 0;
+	int selectedSpriteIndex_ = 0;
 
 	// Guizmo
 	ImGuizmo::OPERATION currentOption_ = ImGuizmo::TRANSLATE;
 	ImGuizmo::MODE currentMode_ = ImGuizmo::WORLD;
 	bool isUsingGuizmo_ = false;
+	bool isPickActive_ = true;
 
 	const float itemWidth_ = 192.0f;
 
