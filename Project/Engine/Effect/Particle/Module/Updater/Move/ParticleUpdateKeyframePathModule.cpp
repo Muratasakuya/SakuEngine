@@ -209,9 +209,12 @@ void ParticleUpdateKeyframePathModule::ImGui() {
 			LineRenderer::GetInstance()->DrawLine3D(
 				prevTranslation, currentTranslation, Color::Cyan());
 			prevTranslation = currentTranslation;
+		}
+
+		for (const auto& key : keys_) {
 
 			// キー位置に球を描画
-			LineRenderer::GetInstance()->DrawSphere(6, 0.8f, currentTranslation,
+			LineRenderer::GetInstance()->DrawSphere(6, 0.8f, key,
 				Color::Cyan());
 		}
 	}

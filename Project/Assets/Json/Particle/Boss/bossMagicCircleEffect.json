@@ -1504,6 +1504,6 @@
             "textureName": ""
         }
     ],
-    "name": "magicCircle",
+    "name": "bossMagicCircleEffect",
     "primitiveType": "Plane"
 }
