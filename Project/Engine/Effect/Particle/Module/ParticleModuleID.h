@@ -31,5 +31,6 @@ enum class ParticleUpdateModuleID {
 	Primitive,
 	NoiseForce,
 	Trail,
+	KeyframePath,
 	Count,
 };

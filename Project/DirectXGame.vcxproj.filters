@@ -2244,8 +2244,12 @@
     <None Include="Assets\Engine\Shaders\Skybox\Skybox.hlsli">
       <Filter>Assets\Engine\Shaders\Skybox</Filter>
     </None>
+    <ClCompile Include="Engine\Effect\Particle\Module\Updater\Move\ParticleUpdateKeyframePathModule.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Engine\Shaders\Particle\CPUParticle\PS\CPUTrailParticle.PS.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Engine\Effect\Particle\Module\Updater\Move\ParticleUpdateKeyframePathModule.h" />
   </ItemGroup>
 </Project>

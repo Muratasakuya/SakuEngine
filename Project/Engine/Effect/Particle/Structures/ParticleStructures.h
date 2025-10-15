@@ -267,6 +267,12 @@ namespace CPUParticle {
 		// 現在のフェーズ
 		uint32_t phaseIndex;
 
+		// キー補間の開始したときの補間t
+		float keyPathStartT = -1.0f;
+		bool hasKeyPathStart = false;
+		float keyPathSpawnAngle = 0.0f;
+		bool hasKeyPathSpawnAngle = false;
+
 		// 発生したときの座標
 		Vector3 spawnTranlation;
 		// 回転の保持

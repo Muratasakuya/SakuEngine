@@ -1,0 +1,233 @@
+{
+    "CPUGroups": [
+        {
+            "blendMode": "kBlendModeAdd",
+            "gameMaxParticleCount_": 0,
+            "name": "particle1",
+            "phases": [
+                {
+                    "duration": 2.0,
+                    "notEmit": false,
+                    "postProcessMask_": 16649,
+                    "spawn": {
+                        "params": {
+                            "common": {
+                                "emitCount": {
+                                    "constant": 3,
+                                    "randomMax": 4,
+                                    "randomMin": 4,
+                                    "valueType": 0
+                                },
+                                "lifeTime": {
+                                    "constant": 2.0,
+                                    "randomMax": 0.800000011920929,
+                                    "randomMin": 0.800000011920929,
+                                    "valueType": 0
+                                },
+                                "moveSpeed": {
+                                    "constant": 1.600000023841858,
+                                    "randomMax": 1.600000023841858,
+                                    "randomMin": 1.600000023841858,
+                                    "valueType": 0
+                                },
+                                "noiseTextureName": "noise",
+                                "primitive": {
+                                    "plane": {
+                                        "mode": "XY",
+                                        "pivot": {
+                                            "x": 0.5,
+                                            "y": 0.5
+                                        },
+                                        "size": {
+                                            "x": 1.0,
+                                            "y": 1.0
+                                        }
+                                    },
+                                    "shape": "Plane"
+                                },
+                                "samplerType_none": 0,
+                                "samplerType_trail": 0,
+                                "textureName": "redCircle",
+                                "trailNoiseTextureName_": "noise",
+                                "trailTextureName_": "white",
+                                "useNoiseTexture_none": 0,
+                                "useNoiseTexture_trail": 0
+                            },
+                            "radius": 2.0,
+                            "translation": {
+                                "x": 0.0,
+                                "y": 2.799999952316284,
+                                "z": 0.0
+                            }
+                        },
+                        "type": "Sphere"
+                    },
+                    "updaters": [
+                        {
+                            "params": {
+                                "endMode_": "Advance"
+                            },
+                            "type": "LifeTime"
+                        },
+                        {
+                            "params": null,
+                            "type": "Velocity"
+                        },
+                        {
+                            "params": {
+                                "angleAxis_": {
+                                    "x": 0.0,
+                                    "y": 0.0,
+                                    "z": 0.0
+                                },
+                                "angleSpeedRadian_": 0.0,
+                                "billboardType": "All",
+                                "easingType": "Linear",
+                                "lerpRotation": {
+                                    "start": {
+                                        "w": 0.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "target": {
+                                        "w": 0.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    }
+                                },
+                                "lockAxisType": "None",
+                                "slerpExtraTurns_": 0,
+                                "slerpPreferLongArc_": false,
+                                "updateType": "Slerp"
+                            },
+                            "type": "Rotation"
+                        },
+                        {
+                            "params": {
+                                "easingType": "Linear",
+                                "loop": {
+                                    "loopCount": 1,
+                                    "type": "Repeat"
+                                },
+                                "scale": {
+                                    "start": {
+                                        "x": 4.0,
+                                        "y": 4.0,
+                                        "z": 4.0
+                                    },
+                                    "target": {
+                                        "x": 4.0,
+                                        "y": 4.0,
+                                        "z": 4.0
+                                    }
+                                }
+                            },
+                            "type": "Scale"
+                        },
+                        {
+                            "params": {
+                                "color": {
+                                    "start": {
+                                        "a": 1.0,
+                                        "b": 0.03722207248210907,
+                                        "g": 0.9601148962974548,
+                                        "r": 0.9112316370010376
+                                    },
+                                    "target": {
+                                        "a": 1.0,
+                                        "b": 0.03722207248210907,
+                                        "g": 0.9601148962974548,
+                                        "r": 0.9112316370010376
+                                    }
+                                },
+                                "easingType": "Linear",
+                                "loop": {
+                                    "loopCount": 1,
+                                    "type": "Repeat"
+                                }
+                            },
+                            "type": "Color"
+                        },
+                        {
+                            "params": {
+                                "isDrawKeyframe_": true,
+                                "keys": [
+                                    {
+                                        "x": 0.0,
+                                        "y": 2.9200000762939453,
+                                        "z": 0.0
+                                    },
+                                    {
+                                        "x": 0.0,
+                                        "y": 25.139999389648438,
+                                        "z": 0.0
+                                    }
+                                ],
+                                "spawnAngleEnable_": true,
+                                "spawnAngleJitter_": 0.0,
+                                "spawnAngleStart_": 0.0,
+                                "spawnAngleStride_": 2.0899999141693115,
+                                "spawnAngleWrap_": true,
+                                "swirlPhase_": 0.0,
+                                "swirlRadius_": 16.0,
+                                "swirlTurns_": 1.0,
+                                "type_": "Linear"
+                            },
+                            "type": "KeyframePath"
+                        },
+                        {
+                            "params": {
+                                "color": {
+                                    "start": {
+                                        "x": 0.980057418346405,
+                                        "y": 0.7803218960762024,
+                                        "z": 0.0301772840321064
+                                    },
+                                    "target": {
+                                        "x": 0.980057418346405,
+                                        "y": 0.7803218960762024,
+                                        "z": 0.0301772840321064
+                                    }
+                                },
+                                "easingType": "Linear",
+                                "intencity": {
+                                    "start": 2.0,
+                                    "target": 2.0
+                                }
+                            },
+                            "type": "Emissive"
+                        },
+                        {
+                            "params": {
+                                "alphaEasing_": "Linear",
+                                "enable": true,
+                                "faceCamera": true,
+                                "isDetaching_": true,
+                                "isDrawOrigin": true,
+                                "isLifeEndDrawOrigin_": false,
+                                "lifeTime": 0.20000000298023224,
+                                "maxPoints": 64,
+                                "minDistance": 0.5699999928474426,
+                                "minTime": 0.0,
+                                "startAlpha": 1.0,
+                                "startWidth": 1.0,
+                                "subdivPerSegment": 0,
+                                "targetAlpha": 0.0,
+                                "targetWidth": 0.30000001192092896,
+                                "uvTileLength": 0.3199999928474426,
+                                "widthEasing_": "EaseOutExpo"
+                            },
+                            "type": "Trail"
+                        }
+                    ]
+                }
+            ],
+            "primitive": "Plane",
+            "textureName": ""
+        }
+    ],
+    "name": "particleSystem1",
+    "primitiveType": "Plane"
+}
