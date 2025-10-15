@@ -4,7 +4,7 @@
         {
             "Type": "Graphics",
             "MeshShader": "PlaneTrailParticle.MS.hlsl",
-            "PixelShader": "CPUParticle.PS.hlsl"
+            "PixelShader": "CPUTrailParticle.PS.hlsl"
         }
     ],
     "RootParameter": [

@@ -214,7 +214,7 @@ void ParticlePhase::ImGui() {
 		//============================================================================
 		if (ImGui::BeginTabItem("Render")) {
 
-			spawner_->ImGuiRenderParam();
+			spawner_->ImGuiRenderParam(HasTrailModule());
 
 			ImGui::EndTabItem();
 		}

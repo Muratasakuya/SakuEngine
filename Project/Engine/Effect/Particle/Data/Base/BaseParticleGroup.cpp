@@ -116,6 +116,7 @@ void BaseParticleGroup::CreateTrailBuffer(ID3D12Device* device,
 
 		trailHeaderBuffer_.CreateSRVBuffer(device, maxParticle);
 		trailVertexBuffer_.CreateSRVBuffer(device, maxParticle);
+		trailTextureInfoBuffer_.CreateSRVBuffer(device, maxParticle);
 	}
 }
 

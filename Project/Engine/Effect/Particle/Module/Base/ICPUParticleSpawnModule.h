@@ -33,7 +33,7 @@ public:
 	virtual void DrawEmitter() {}
 
 	// editor
-	void ImGuiRenderParam();
+	void ImGuiRenderParam(bool hasTrailModule);
 	void ImGuiPrimitiveParam();
 	void ImGuiEmitParam();
 
@@ -67,6 +67,8 @@ protected:
 
 	// TextureInfo、ランダムがないのでそのまま渡す
 	CPUParticle::TextureInfoForGPU textureInfo_;
+	// トレイル
+	ParticleCommon::TrailTextureInfoForGPU trailTextureInfo_;
 
 	// Primtive
 	ParticleCommon::PrimitiveData<false> primitive_;
@@ -76,6 +78,9 @@ protected:
 	const Color emitterLineColor_ = Color::Yellow(0.4f);
 	std::string textureName_;
 	std::string noiseTextureName_;
+	// トレイル
+	std::string trailTextureName_;
+	std::string trailNoiseTextureName_;
 
 	// 親設定
 	const BaseTransform* parentTransform_ = nullptr;
@@ -99,5 +104,5 @@ private:
 	//--------- functions ----------------------------------------------------
 
 	// editor
-	void DragAndDropTexture();
+	void DragAndDropTexture(bool isTrail);
 };

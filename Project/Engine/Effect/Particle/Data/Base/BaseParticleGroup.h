@@ -59,6 +59,7 @@ protected:
 	// トレイル
 	DxStructuredBuffer<ParticleCommon::TrailHeaderForGPU> trailHeaderBuffer_;
 	DxStructuredBuffer<ParticleCommon::TrailVertexForGPU> trailVertexBuffer_;
+	DxStructuredBuffer<ParticleCommon::TrailTextureInfoForGPU> trailTextureInfoBuffer_;
 
 	// 描画情報
 	BlendMode blendMode_;

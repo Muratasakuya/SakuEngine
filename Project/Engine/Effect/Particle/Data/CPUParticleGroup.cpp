@@ -310,17 +310,13 @@ void CPUParticleGroup::UpdateTransferData(uint32_t particleIndex,
 	}
 
 	// トレイルの処理を行っている場合のみ
-	if (HasTrailModule()) {
+	if (ParticleUpdateTrailModule* trailModule = phases_[particle.phaseIndex]->GetTrailModule()) {
 
-		// 現在のフェーズのトレイルモジュールを取得
-		ParticleUpdateTrailModule* trailModule = nullptr;
-		if (particle.phaseIndex < phases_.size()) {
-
-			trailModule = phases_[particle.phaseIndex]->GetTrailModule();
-		}
 		// バッファ転送用のデータを更新
 		trailModule->BuildTransferData(particleIndex, particle,
 			transferTrailHeaders_, transferTrailVertices_, sceneView_);
+		// テクスチャをそのまま渡して更新
+		transferTrailTextureInfos_[particleIndex] = particle.trailTextureInfo;
 
 		// トレイル元を描画するか更新
 		isDrawParticle_ = trailModule->IsDrawOrigin();
@@ -364,6 +360,7 @@ void CPUParticleGroup::TransferBuffer() {
 
 		trailHeaderBuffer_.TransferData(transferTrailHeaders_);
 		trailVertexBuffer_.TransferData(transferTrailVertices_);
+		trailTextureInfoBuffer_.TransferData(transferTrailTextureInfos_);
 	}
 }
 
@@ -403,6 +400,7 @@ void CPUParticleGroup::ResizeTransferData(uint32_t size) {
 	if (HasTrailModule()) {
 
 		transferTrailHeaders_.resize(size);
+		transferTrailTextureInfos_.resize(size);
 
 		transferTrailVertices_.clear();
 

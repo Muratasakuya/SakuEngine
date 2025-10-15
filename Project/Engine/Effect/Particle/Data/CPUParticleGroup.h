@@ -49,6 +49,7 @@ public:
 	const DxStructuredBuffer<ParticleCommon::TransformForGPU>& GetTransformBuffer() const { return transformBuffer_; }
 	const DxStructuredBuffer<ParticleCommon::TrailHeaderForGPU>& GetTrailHeaderBuffer() const { return trailHeaderBuffer_; }
 	const DxStructuredBuffer<ParticleCommon::TrailVertexForGPU>& GetTrailVertexBuffer() const { return trailVertexBuffer_; }
+	const DxStructuredBuffer<ParticleCommon::TrailTextureInfoForGPU>& GetTrailTextureInfoBuffer() const { return trailTextureInfoBuffer_; }
 
 	const DxStructuredBuffer<CPUParticle::MaterialForGPU>& GetMaterialBuffer() const { return materialBuffer_; }
 	const DxStructuredBuffer<CPUParticle::TextureInfoForGPU>& GetTextureInfoBuffer() const { return textureInfoBuffer_; }
@@ -86,8 +87,10 @@ private:
 	std::vector<CPUParticle::TextureInfoForGPU> transferTextureInfos_;
 	std::vector<ParticleCommon::TransformForGPU> transferTransforms_;
 	ParticleCommon::PrimitiveData<true> transferPrimitives_;
+	// トレイル
 	std::vector<ParticleCommon::TrailHeaderForGPU> transferTrailHeaders_;
 	std::vector<ParticleCommon::TrailVertexForGPU> transferTrailVertices_;
+	std::vector<ParticleCommon::TrailTextureInfoForGPU> transferTrailTextureInfos_;
 
 	// buffers
 	DxStructuredBuffer<CPUParticle::MaterialForGPU> materialBuffer_;

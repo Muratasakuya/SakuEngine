@@ -22,11 +22,17 @@ void ICPUParticleSpawnModule::InitCommonData() {
 	// TextureInfo
 	textureInfo_.samplerType = 0;
 	textureInfo_.useNoiseTexture = false;
+	trailTextureInfo_.samplerType = 0;
+	trailTextureInfo_.useNoiseTexture = false;
 	// デフォルトのテクスチャで初期化
 	textureName_ = "circle";
 	noiseTextureName_ = "noise";
+	trailTextureName_ = "white";
+	trailNoiseTextureName_ = "noise";
 	textureInfo_.colorTextureIndex = asset_->GetTextureGPUIndex(textureName_);
 	textureInfo_.noiseTextureIndex = asset_->GetTextureGPUIndex(noiseTextureName_);
+	trailTextureInfo_.colorTextureIndex = asset_->GetTextureGPUIndex(trailTextureName_);
+	trailTextureInfo_.noiseTextureIndex = asset_->GetTextureGPUIndex(trailNoiseTextureName_);
 
 	// 移動速度
 	moveSpeed_ = ParticleValue<float>::SetValue(1.6f);
@@ -48,8 +54,18 @@ void ICPUParticleSpawnModule::SetCommonData(CPUParticle::ParticleData& particle)
 
 		textureInfo_.noiseTextureIndex = asset_->GetTextureGPUIndex(noiseTextureName_);
 	}
+	// トレイル
+	if (particle.trailTextureInfo.colorTextureIndex == 0) {
+
+		trailTextureInfo_.colorTextureIndex = asset_->GetTextureGPUIndex(trailTextureName_);
+	}
+	if (particle.trailTextureInfo.noiseTextureIndex == 0) {
+
+		trailTextureInfo_.noiseTextureIndex = asset_->GetTextureGPUIndex(trailNoiseTextureName_);
+	}
 #endif
 	particle.textureInfo = textureInfo_;
+	particle.trailTextureInfo = trailTextureInfo_;
 
 	// プリミティブ
 	particle.primitive = primitive_;
@@ -100,6 +116,11 @@ void ICPUParticleSpawnModule::ShareCommonParam(ICPUParticleSpawnModule* other) {
 	noiseTextureName_ = other->noiseTextureName_;
 	textureInfo_ = other->textureInfo_;
 
+	// トレイル
+	trailTextureName_ = other->trailTextureName_;
+	trailNoiseTextureName_ = other->trailNoiseTextureName_;
+	trailTextureInfo_ = other->trailTextureInfo_;
+
 	// 移動速度
 	moveSpeed_ = other->moveSpeed_;
 
@@ -116,16 +137,35 @@ void ICPUParticleSpawnModule::ShareCommonParam(ICPUParticleSpawnModule* other) {
 	}
 }
 
-void ICPUParticleSpawnModule::ImGuiRenderParam() {
+void ICPUParticleSpawnModule::ImGuiRenderParam(bool hasTrailModule) {
 
-	ImGui::SeparatorText("Texture");
+	{
+		ImGui::SeparatorText("Texture");
 
-	// ドラッグアンドドロップ処理
-	DragAndDropTexture();
+		// ドラッグアンドドロップ処理
+		ImGui::PushID("None");
+		DragAndDropTexture(false);
+		ImGui::PopID();
 
-	ImGui::DragInt("samplerType", &textureInfo_.samplerType, 1, 0, 1);
-	ImGui::SameLine();
-	ImGui::Text("    : %s", EnumAdapter<ParticleCommon::SamplerType>::GetEnumName(textureInfo_.samplerType));
+		ImGui::DragInt("samplerType##none", &textureInfo_.samplerType, 1, 0, 1);
+		ImGui::SameLine();
+		ImGui::Text("    : %s", EnumAdapter<ParticleCommon::SamplerType>::GetEnumName(textureInfo_.samplerType));
+	}
+	if (!hasTrailModule) {
+		return;
+	}
+	{
+		ImGui::SeparatorText("TrailTexture");
+
+		// ドラッグアンドドロップ処理
+		ImGui::PushID("Trail");
+		DragAndDropTexture(true);
+		ImGui::PopID();
+
+		ImGui::DragInt("samplerType##trail", &trailTextureInfo_.samplerType, 1, 0, 1);
+		ImGui::SameLine();
+		ImGui::Text("    : %s", EnumAdapter<ParticleCommon::SamplerType>::GetEnumName(trailTextureInfo_.samplerType));
+	}
 }
 
 void ICPUParticleSpawnModule::ImGuiPrimitiveParam() {
@@ -180,34 +220,43 @@ void ICPUParticleSpawnModule::ImGuiEmitParam() {
 	moveSpeed_.EditDragValue("moveSpeed");
 }
 
-void ICPUParticleSpawnModule::DragAndDropTexture() {
+void ICPUParticleSpawnModule::DragAndDropTexture(bool isTrail) {
+
+	// 通常
+	std::string& textureName = isTrail ? trailTextureName_ : textureName_;
+	uint32_t& colorIndex = isTrail ? trailTextureInfo_.colorTextureIndex : textureInfo_.colorTextureIndex;
+	// ノイズ
+	std::string& noiseTextureName = isTrail ? trailNoiseTextureName_ : noiseTextureName_;
+	uint32_t& noiseIndex = isTrail ? trailTextureInfo_.noiseTextureIndex : textureInfo_.noiseTextureIndex;
 
 	// 表示サイズ
 	const float imageSize = 88.0f;
+	{
+		ImGuiHelper::ImageButtonWithLabel("texture", textureName,
+			(ImTextureID)asset_->GetGPUHandle(textureName).ptr, { imageSize, imageSize });
 
-	// 使用しているtextureの名前を表示
-	ImGuiHelper::ImageButtonWithLabel("texture", textureName_,
-		(ImTextureID)asset_->GetGPUHandle(textureName_).ptr, { imageSize, imageSize });
+		std::string dragTextureName = ImGuiHelper::DragDropPayloadString(PendingType::Texture);
+		if (!dragTextureName.empty()) {
 
-	std::string textureName = ImGuiHelper::DragDropPayloadString(PendingType::Texture);
-	if (!textureName.empty()) {
-
-		// textureを設定
-		textureName_ = textureName;
-		// indexを設定
-		textureInfo_.colorTextureIndex = asset_->GetTextureGPUIndex(textureName_);
+			// textureを設定
+			textureName = dragTextureName;
+			// indexを設定
+			colorIndex = asset_->GetTextureGPUIndex(textureName);
+		}
 	}
 	ImGui::SameLine();
-	ImGuiHelper::ImageButtonWithLabel("noiseTexture", noiseTextureName_,
-		(ImTextureID)asset_->GetGPUHandle(noiseTextureName_).ptr, { imageSize, imageSize });
+	{
+		ImGuiHelper::ImageButtonWithLabel("noiseTexture", noiseTextureName,
+			(ImTextureID)asset_->GetGPUHandle(noiseTextureName).ptr, { imageSize, imageSize });
 
-	std::string noiseTextureName = ImGuiHelper::DragDropPayloadString(PendingType::Texture);
-	if (!noiseTextureName.empty()) {
+		std::string dragNoiseTextureName = ImGuiHelper::DragDropPayloadString(PendingType::Texture);
+		if (!dragNoiseTextureName.empty()) {
 
-		// textureを設定
-		noiseTextureName_ = noiseTextureName;
-		// indexを設定
-		textureInfo_.noiseTextureIndex = asset_->GetTextureGPUIndex(noiseTextureName_);
+			// textureを設定
+			noiseTextureName = dragNoiseTextureName;
+			// indexを設定
+			noiseIndex = asset_->GetTextureGPUIndex(noiseTextureName);
+		}
 	}
 }
 
@@ -227,11 +276,21 @@ void ICPUParticleSpawnModule::ToCommonJson(Json& data) {
 	//	TextureParameters
 	//============================================================================
 
-	data[key]["textureName"] = textureName_;
-	data[key]["noiseTextureName"] = noiseTextureName_;
+	{
+		data[key]["textureName"] = textureName_;
+		data[key]["noiseTextureName"] = noiseTextureName_;
 
-	data[key]["samplerType"] = textureInfo_.samplerType;
-	data[key]["useNoiseTexture"] = textureInfo_.useNoiseTexture;
+		data[key]["samplerType_none"] = textureInfo_.samplerType;
+		data[key]["useNoiseTexture_none"] = textureInfo_.useNoiseTexture;
+	}
+	// トレイル
+	{
+		data[key]["trailTextureName_"] = trailTextureName_;
+		data[key]["trailNoiseTextureName_"] = trailNoiseTextureName_;
+
+		data[key]["samplerType_trail"] = trailTextureInfo_.samplerType;
+		data[key]["useNoiseTexture_trail"] = trailTextureInfo_.useNoiseTexture;
+	}
 
 	//============================================================================
 	//	PrimitiveParameters
@@ -292,21 +351,41 @@ void ICPUParticleSpawnModule::FromCommonJson(const Json& data) {
 	//	TextureParameters
 	//============================================================================
 
-	textureName_ = data[key]["textureName"].get<std::string>();
-	noiseTextureName_ = data[key]["noiseTextureName"].get<std::string>();
+	{
+		textureName_ = data[key].value("textureName", "circle");
+		noiseTextureName_ = data[key].value("noiseTextureName", "noise");
 
-	// 存在していなければ読み込む
-	if (!asset_->SearchTexture(textureName_)) {
-		asset_->LoadTexture(textureName_, AssetLoadType::Synch);
-	}
-	if (!asset_->SearchTexture(noiseTextureName_)) {
-		asset_->LoadTexture(noiseTextureName_, AssetLoadType::Synch);
-	}
+		// 存在していなければ読み込む
+		if (!asset_->SearchTexture(textureName_)) {
+			asset_->LoadTexture(textureName_, AssetLoadType::Synch);
+		}
+		if (!asset_->SearchTexture(noiseTextureName_)) {
+			asset_->LoadTexture(noiseTextureName_, AssetLoadType::Synch);
+		}
 
-	textureInfo_.colorTextureIndex = asset_->GetTextureGPUIndex(textureName_);
-	textureInfo_.noiseTextureIndex = asset_->GetTextureGPUIndex(noiseTextureName_);
-	textureInfo_.samplerType = data[key]["samplerType"].get<int32_t>();
-	textureInfo_.useNoiseTexture = data[key]["useNoiseTexture"].get<int32_t>();
+		textureInfo_.colorTextureIndex = asset_->GetTextureGPUIndex(textureName_);
+		textureInfo_.noiseTextureIndex = asset_->GetTextureGPUIndex(noiseTextureName_);
+		textureInfo_.samplerType = data[key].value("samplerType_none", 0);
+		textureInfo_.useNoiseTexture = data[key].value("useNoiseTexture_none", 0);
+	}
+	// トレイル
+	{
+		trailTextureName_ = data[key].value("trailTextureName_", "white");
+		trailNoiseTextureName_ = data[key].value("trailNoiseTextureName_", "noise");
+
+		// 存在していなければ読み込む
+		if (!asset_->SearchTexture(trailTextureName_)) {
+			asset_->LoadTexture(trailTextureName_, AssetLoadType::Synch);
+		}
+		if (!asset_->SearchTexture(trailNoiseTextureName_)) {
+			asset_->LoadTexture(trailNoiseTextureName_, AssetLoadType::Synch);
+		}
+
+		trailTextureInfo_.colorTextureIndex = asset_->GetTextureGPUIndex(trailTextureName_);
+		trailTextureInfo_.noiseTextureIndex = asset_->GetTextureGPUIndex(trailNoiseTextureName_);
+		trailTextureInfo_.samplerType = data[key].value("samplerType_trail", 0);
+		trailTextureInfo_.useNoiseTexture = data[key].value("useNoiseTexture_trail", 0);
+	}
 
 	//============================================================================
 	//	PrimitiveParameters

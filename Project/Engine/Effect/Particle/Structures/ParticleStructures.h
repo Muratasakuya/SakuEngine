@@ -140,6 +140,7 @@ namespace ParticleCommon {
 	};
 
 	// トレイルのGPU転送データ
+	// 頂点(MS)
 	struct TrailHeaderForGPU {
 
 		uint32_t start;
@@ -150,6 +151,21 @@ namespace ParticleCommon {
 		Vector3 worldPos;
 		Vector2 uv;
 		Color color;
+	};
+	// マテリアル(PS)
+	struct TrailTextureInfoForGPU {
+
+		// texture
+		uint32_t colorTextureIndex;
+		uint32_t noiseTextureIndex;
+
+		// sampler
+		// 0...WRAP
+		// 1...CLAMP
+		int32_t samplerType;
+
+		// flags
+		int32_t useNoiseTexture;
 	};
 };
 
@@ -266,6 +282,7 @@ namespace CPUParticle {
 		// bufferに渡すデータ
 		MaterialForGPU material;
 		TextureInfoForGPU textureInfo;
+		ParticleCommon::TrailTextureInfoForGPU trailTextureInfo;
 		ParticleCommon::TransformForGPU transform;
 		ParticleCommon::PrimitiveData<false> primitive;
 	};

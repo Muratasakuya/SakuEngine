@@ -195,7 +195,7 @@ void ParticleRenderer::RenderingTrail(bool debugEnable, const CPUParticleGroup& 
 	// material
 	commandList->SetGraphicsRootShaderResourceView(3, group.GetMaterialBuffer().GetResource()->GetGPUVirtualAddress());
 	// textureInfo
-	commandList->SetGraphicsRootShaderResourceView(4, group.GetTextureInfoBuffer().GetResource()->GetGPUVirtualAddress());
+	commandList->SetGraphicsRootShaderResourceView(4, group.GetTrailTextureInfoBuffer().GetResource()->GetGPUVirtualAddress());
 	// texture(bindless)
 	commandList->SetGraphicsRootDescriptorTable(5, srvDescriptor_->GetDescriptorHeap()->GetGPUDescriptorHandleForHeapStart());
 
