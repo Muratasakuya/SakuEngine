@@ -173,9 +173,22 @@ void CPUParticleGroup::UpdatePhase() {
 					continue;
 				} else {
 
-					// 削除
-					it = particles_.erase(it);
-					continue;
+					// トレイルモジュールがあるなら
+					if (HasTrailModule()) {
+
+						auto* trailModule = phases_[particle.phaseIndex]->GetTrailModule();
+						// falseを返せば削除、trueなら消え後処理開始
+						if (!trailModule->OnOwnerLifeEnd(particle)) {
+
+							it = particles_.erase(it);
+							continue;
+						}
+					} else {
+
+						// 削除
+						it = particles_.erase(it);
+						continue;
+					}
 				}
 				break;
 			}
@@ -196,8 +209,22 @@ void CPUParticleGroup::UpdatePhase() {
 			}
 			case ParticleLifeEndMode::Kill: {
 
-				// 削除
-				it = particles_.erase(it);
+				// トレイルモジュールがあるなら
+				if (HasTrailModule()) {
+
+					auto* trailModule = phases_[particle.phaseIndex]->GetTrailModule();
+					// falseを返せば削除、trueなら消え後処理開始
+					if (!trailModule->OnOwnerLifeEnd(particle)) {
+
+						it = particles_.erase(it);
+						continue;
+					}
+				} else {
+
+					// 削除
+					it = particles_.erase(it);
+					continue;
+				}
 				break;
 			}
 			}
@@ -207,6 +234,17 @@ void CPUParticleGroup::UpdatePhase() {
 		// デフォルトでtrue、トレイルで最終決定する
 		isDrawParticle_ = true;
 		UpdateTransferData(particleIndex, *it);
+
+		// トレイル後処理更新中
+		if (HasTrailModule()) {
+
+			auto* trailModule = phases_[particle.phaseIndex]->GetTrailModule();
+			if (&it->trailRuntime.isDetaching && it->trailRuntime.nodes.empty()) {
+
+				it = particles_.erase(it);
+				continue;
+			}
+		}
 
 		// indexを進める
 		++it;
@@ -275,6 +313,9 @@ void CPUParticleGroup::UpdateTransferData(uint32_t particleIndex,
 		// バッファ転送用のデータを更新
 		trailModule->BuildTransferData(particleIndex, particle,
 			transferTrailHeaders_, transferTrailVertices_, sceneView_);
+
+		// トレイル元を描画するか更新
+		isDrawParticle_ = trailModule->IsDrawOrigin();
 	}
 }
 

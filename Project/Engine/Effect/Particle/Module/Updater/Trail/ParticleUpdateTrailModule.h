@@ -23,11 +23,15 @@ public:
 
 	void Init() override;
 
+	// パーティクル、転送データの更新
 	void Execute(CPUParticle::ParticleData& particle, float deltaTime) override;
 	void BuildTransferData(uint32_t particleIndex, const CPUParticle::ParticleData& particle,
 		std::vector<ParticleCommon::TrailHeaderForGPU>& transferTrailHeaders,
 		std::vector<ParticleCommon::TrailVertexForGPU>& transferTrailVertices,
 		const SceneView* sceneView);
+
+	// 追従先が無くなった後の処理を行うか
+	bool OnOwnerLifeEnd(CPUParticle::ParticleData& particle);
 
 	void ImGui() override;
 
@@ -41,6 +45,7 @@ public:
 
 	int GetMaxPoints() const { return maxPoints_; }
 	int GetSubdivPerSegment() const { return subdivPerSegment_; }
+	bool IsDrawOrigin() const { return isDrawOrigin_; }
 
 	//-------- registryID ----------------------------------------------------
 
@@ -56,6 +61,7 @@ private:
 	bool enable_;       // デフォルトでfalse
 	bool isDrawOrigin_; // トレイル元を描画するか
 	bool faceCamera_;   // カメラフェイシング帯
+	bool isDetaching_;  // 追従先が消えた後の処理を行うか
 
 	// 幅
 	ParticleCommon::LerpValue<float> width_;

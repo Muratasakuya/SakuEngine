@@ -136,6 +136,7 @@ namespace ParticleCommon {
 
 		bool isInitialized = false;   // 初期化済みか
 		float time;                   // サンプル間隔
+		bool isDetaching = false;     // 追従先が消えた後の処理を行うか
 	};
 
 	// トレイルのGPU転送データ

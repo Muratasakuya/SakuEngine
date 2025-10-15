@@ -13,7 +13,10 @@
 void ParticleUpdateTrailModule::Init() {
 
 	// 初期化値
-	enable_ = false;  // 最初はfalse
+	enable_ = false;
+	isDetaching_ = false;
+	faceCamera_ = true;
+	isDrawOrigin_ = true;
 	lifeTime_ = 0.8f;
 	width_.start = 0.5f;
 	width_.target = 0.5f;
@@ -24,7 +27,6 @@ void ParticleUpdateTrailModule::Init() {
 
 	maxPoints_ = 64;
 	subdivPerSegment_ = 0;
-	faceCamera_ = true;
 	uvTileLength_ = 0.32f;
 }
 
@@ -43,6 +45,11 @@ void ParticleUpdateTrailModule::Execute(
 
 			trail.nodes.pop_front();
 		}
+	}
+
+	// 追従先のパーティクルが消えた後の処理を行うなら頂点を追加しない
+	if (trail.isDetaching) {
+		return;
 	}
 
 	// 現在の座標
@@ -220,10 +227,22 @@ void ParticleUpdateTrailModule::BuildTransferData(uint32_t particleIndex,
 	transferTrailHeaders[particleIndex] = { start, vertexCount };
 }
 
+bool ParticleUpdateTrailModule::OnOwnerLifeEnd(CPUParticle::ParticleData& particle) {
+
+	// 処理を行わないでそのまま消す
+	if (!enable_ || !isDetaching_) {
+
+		return false;
+	}
+	particle.trailRuntime.isDetaching = true;
+	return true;
+}
+
 void ParticleUpdateTrailModule::ImGui() {
 
 	ImGui::Checkbox("enable", &enable_);
 	ImGui::Checkbox("isDrawOrigin", &isDrawOrigin_);
+	ImGui::Checkbox("isDetaching", &isDetaching_);
 	ImGui::Checkbox("faceCamera", &faceCamera_);
 
 	ImGui::DragFloat("lifeTime", &lifeTime_, 0.01f);
@@ -248,6 +267,7 @@ Json ParticleUpdateTrailModule::ToJson() {
 	data["enable"] = enable_;
 	data["isDrawOrigin"] = isDrawOrigin_;
 	data["faceCamera"] = faceCamera_;
+	data["isDetaching_"] = isDetaching_;
 
 	data["lifeTime"] = lifeTime_;
 	data["startWidth"] = width_.start;
@@ -268,6 +288,7 @@ void ParticleUpdateTrailModule::FromJson(const Json& data) {
 	enable_ = data.value("enable", false);
 	isDrawOrigin_ = data.value("isDrawOrigin", true);
 	faceCamera_ = data.value("faceCamera", false);
+	isDetaching_ = data.value("isDetaching_", false);
 
 	lifeTime_ = data.value("lifeTime", 0.0f);
 	width_.start = data.value("startWidth", 0.5f);
