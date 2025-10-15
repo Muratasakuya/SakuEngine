@@ -220,16 +220,6 @@ void ParticlePhase::ImGui() {
 		}
 
 		//============================================================================
-		//	Primitive
-		//============================================================================
-		if (ImGui::BeginTabItem("Primitive")) {
-
-			spawner_->ImGuiPrimitiveParam();
-
-			ImGui::EndTabItem();
-		}
-
-		//============================================================================
 		//	Emit
 		//============================================================================
 		if (ImGui::BeginTabItem("Emit")) {
@@ -374,7 +364,6 @@ void ParticlePhase::ImGui() {
 
 			ImGui::EndTabItem();
 		}
-
 		ImGui::EndTabBar();
 	}
 }
