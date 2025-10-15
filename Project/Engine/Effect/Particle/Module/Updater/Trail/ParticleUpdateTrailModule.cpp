@@ -278,7 +278,7 @@ void ParticleUpdateTrailModule::ImGui() {
 
 		ImGui::DragFloat("startWidth", &width_.start, 0.01f);
 		ImGui::DragFloat("targetWidth", &width_.target, 0.01f);
-		EnumAdapter<EasingType>::Combo("widthEasing", &widthEasing_);
+		Easing::SelectEasingType(widthEasing_, "widthEasing");
 	}
 	{
 		// α値
@@ -286,7 +286,7 @@ void ParticleUpdateTrailModule::ImGui() {
 
 		ImGui::DragFloat("startAlpha", &alpha_.start, 0.01f);
 		ImGui::DragFloat("targetAlpha", &alpha_.target, 0.01f);
-		EnumAdapter<EasingType>::Combo("alphaEasing", &alphaEasing_);
+		Easing::SelectEasingType(alphaEasing_, "alphaEasing");
 	}
 }
 

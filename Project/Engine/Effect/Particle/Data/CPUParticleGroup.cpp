@@ -247,15 +247,11 @@ void CPUParticleGroup::UpdatePhase() {
 		isDrawParticle_ = true;
 		UpdateTransferData(particleIndex, *it);
 
-		// トレイル後処理更新中
-		if (HasTrailModule()) {
+		// トレイル後処理更新中、ノードがすべてなくなったら
+		if (&it->trailRuntime.isDetaching && it->trailRuntime.nodes.empty()) {
 
-			auto* trailModule = phases_[particle.phaseIndex]->GetTrailModule();
-			if (&it->trailRuntime.isDetaching && it->trailRuntime.nodes.empty()) {
-
-				it = particles_.erase(it);
-				continue;
-			}
+			it = particles_.erase(it);
+			continue;
 		}
 
 		// indexを進める
