@@ -157,6 +157,7 @@ void ParticleSystem::AddGroup() {
 
 		// 追加
 		auto& group = cpuGroups_.emplace_back();
+		group.group.SetSceneView(sceneView_);
 		// 名前の設定
 		group.name = "particle" + std::to_string(++nextGroupId_);
 		// 作成
@@ -165,6 +166,7 @@ void ParticleSystem::AddGroup() {
 
 		// 追加
 		auto& group = gpuGroups_.emplace_back();
+		group.group.SetSceneView(sceneView_);
 		// 名前の設定
 		group.name = "particle" + std::to_string(++nextGroupId_);
 		// 作成
@@ -220,11 +222,13 @@ void ParticleSystem::HandleCopyPaste() {
 		if (copyGroup_.type == ParticleType::GPU) {
 
 			auto& group = gpuGroups_.emplace_back();
+			group.group.SetSceneView(sceneView_);
 			group.name = "particle" + std::to_string(nextGroupId_);
 			group.group.CreateFromJson(device_, asset_, copyGroup_.data);
 		} else if (copyGroup_.type == ParticleType::CPU) {
 
 			auto& group = cpuGroups_.emplace_back();
+			group.group.SetSceneView(sceneView_);
 			group.name = "particle" + std::to_string(nextGroupId_);
 			group.group.Create(device_, asset_, copyGroup_.primitiveType);
 			group.group.FromJson(copyGroup_.data, asset_);
@@ -528,6 +532,7 @@ void ParticleSystem::LoadJson(const std::optional<std::string>& filePath, bool u
 	for (auto& groupData : data["GPUGroups"]) {
 
 		auto& group = gpuGroups_.emplace_back();
+		group.group.SetSceneView(sceneView_);
 		group.name = groupData.value("name", "");
 		group.group.CreateFromJson(device_, asset_, groupData);
 	}
@@ -535,6 +540,7 @@ void ParticleSystem::LoadJson(const std::optional<std::string>& filePath, bool u
 	for (auto& groupData : data["CPUGroups"]) {
 
 		auto& group = cpuGroups_.emplace_back();
+		group.group.SetSceneView(sceneView_);
 		group.name = groupData.value("name", "");
 		group.group.CreateFromJson(device_, asset_, groupData, useGame_);
 	}

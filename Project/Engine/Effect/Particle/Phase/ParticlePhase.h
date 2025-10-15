@@ -12,6 +12,7 @@
 #include <vector>
 // front
 class ParticleUpdateLifeTimeModule;
+class ParticleUpdateTrailModule;
 
 //============================================================================
 //	ParticlePhase class
@@ -64,6 +65,9 @@ public:
 
 	float GetLifeTime() const;
 	const ParticleUpdateLifeTimeModule* GetLifeTimeModule() const;
+	ParticleUpdateTrailModule* GetTrailModule() const;
+
+	bool HasTrailModule() const;
 private:
 	//========================================================================
 	//	private Methods

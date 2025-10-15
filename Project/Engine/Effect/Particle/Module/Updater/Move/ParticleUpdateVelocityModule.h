@@ -4,7 +4,6 @@
 //	include
 //============================================================================
 #include <Engine/Effect/Particle/Module/Base/ICPUParticleUpdateModule.h>
-#include <Engine/Utility/Curve/CurveValue.h>
 
 //============================================================================
 //	ParticleUpdateVelocityModule class

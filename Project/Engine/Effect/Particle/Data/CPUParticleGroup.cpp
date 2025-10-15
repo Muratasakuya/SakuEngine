@@ -6,6 +6,7 @@
 #include <Engine/Effect/Particle/ParticleConfig.h>
 #include <Engine/Utility/Timer/GameTimer.h>
 #include <Engine/Effect/Particle/Module/Updater/Time/ParticleUpdateLifeTimeModule.h>
+#include <Engine/Effect/Particle/Module/Updater/Trail/ParticleUpdateTrailModule.h>
 
 //============================================================================
 //	CPUParticleGroup classMethods
@@ -28,10 +29,22 @@ void CPUParticleGroup::Create(ID3D12Device* device,
 
 	// buffer作成
 	BaseParticleGroup::CreatePrimitiveBuffer(device, primitiveType, kMaxCPUParticles);
+	BaseParticleGroup::CreateTrailBuffer(device, primitiveBuffer_.type, kMaxCPUParticles);
 	// structuredBuffer(SRV)
 	transformBuffer_.CreateSRVBuffer(device, kMaxCPUParticles);
 	materialBuffer_.CreateSRVBuffer(device, kMaxCPUParticles);
 	textureInfoBuffer_.CreateSRVBuffer(device, kMaxCPUParticles);
+}
+
+bool CPUParticleGroup::HasTrailModule() const {
+
+	// 現在のフェーズがトレイルのモジュールを所持しているかどうか
+	bool hasTrail = false;
+	for (const auto& phase : phases_) {
+
+		hasTrail |= phase->HasTrailModule();
+	}
+	return hasTrail;
 }
 
 void CPUParticleGroup::CreateFromJson(ID3D12Device* device, Asset* asset, const Json& data, bool useGame) {
@@ -54,6 +67,7 @@ void CPUParticleGroup::CreateFromJson(ID3D12Device* device, Asset* asset, const 
 
 	// buffer作成
 	BaseParticleGroup::CreatePrimitiveBuffer(device, primitiveBuffer_.type, createInstanceCount_);
+	BaseParticleGroup::CreateTrailBuffer(device, primitiveBuffer_.type, createInstanceCount_);
 	// structuredBuffer(SRV)
 	transformBuffer_.CreateSRVBuffer(device, createInstanceCount_);
 	materialBuffer_.CreateSRVBuffer(device, createInstanceCount_);
@@ -159,9 +173,28 @@ void CPUParticleGroup::UpdatePhase() {
 					continue;
 				} else {
 
-					// 削除
-					it = particles_.erase(it);
-					continue;
+					// トレイルモジュールがあるなら
+					if (HasTrailModule()) {
+
+						auto* trailModule = phases_[particle.phaseIndex]->GetTrailModule();
+						// falseを返せば削除、trueなら消え後処理開始
+						if (trailModule->OnOwnerLifeEnd(particle)) {
+
+							// 描画するかしないかでスケールを設定
+							// trueならそのまま、falseなら0.0f
+							it->transform.scale = trailModule->IsLifeEndDrawOrigin() ?
+								it->transform.scale : Vector3::AnyInit(0.0f);
+						} else {
+
+							it = particles_.erase(it);
+							continue;
+						}
+					} else {
+
+						// 削除
+						it = particles_.erase(it);
+						continue;
+					}
 				}
 				break;
 			}
@@ -182,15 +215,44 @@ void CPUParticleGroup::UpdatePhase() {
 			}
 			case ParticleLifeEndMode::Kill: {
 
-				// 削除
-				it = particles_.erase(it);
+				// トレイルモジュールがあるなら
+				if (HasTrailModule()) {
+
+					auto* trailModule = phases_[particle.phaseIndex]->GetTrailModule();
+					// falseを返せば削除、trueなら消え後処理開始
+					if (trailModule->OnOwnerLifeEnd(particle)) {
+
+						// 描画するかしないかでスケールを設定
+						// trueならそのまま、falseなら0.0f
+						it->transform.scale = trailModule->IsLifeEndDrawOrigin() ?
+							it->transform.scale : Vector3::AnyInit(0.0f);
+					} else {
+
+						it = particles_.erase(it);
+						continue;
+					}
+				} else {
+
+					// 削除
+					it = particles_.erase(it);
+					continue;
+				}
 				break;
 			}
 			}
 		}
 
 		// bufferに渡すデータの更新処理
+		// デフォルトでtrue、トレイルで最終決定する
+		isDrawParticle_ = true;
 		UpdateTransferData(particleIndex, *it);
+
+		// トレイル後処理更新中、ノードがすべてなくなったら
+		if (&it->trailRuntime.isDetaching && it->trailRuntime.nodes.empty()) {
+
+			it = particles_.erase(it);
+			continue;
+		}
 
 		// indexを進める
 		++it;
@@ -246,6 +308,23 @@ void CPUParticleGroup::UpdateTransferData(uint32_t particleIndex,
 		break;
 	}
 	}
+
+	// トレイルの処理を行っている場合のみ
+	if (HasTrailModule()) {
+
+		// 現在のフェーズのトレイルモジュールを取得
+		ParticleUpdateTrailModule* trailModule = nullptr;
+		if (particle.phaseIndex < phases_.size()) {
+
+			trailModule = phases_[particle.phaseIndex]->GetTrailModule();
+		}
+		// バッファ転送用のデータを更新
+		trailModule->BuildTransferData(particleIndex, particle,
+			transferTrailHeaders_, transferTrailVertices_, sceneView_);
+
+		// トレイル元を描画するか更新
+		isDrawParticle_ = trailModule->IsDrawOrigin();
+	}
 }
 
 void CPUParticleGroup::TransferBuffer() {
@@ -279,6 +358,13 @@ void CPUParticleGroup::TransferBuffer() {
 		break;
 	}
 	}
+
+	// トレイルの処理を行っている場合のみ
+	if (HasTrailModule()) {
+
+		trailHeaderBuffer_.TransferData(transferTrailHeaders_);
+		trailVertexBuffer_.TransferData(transferTrailVertices_);
+	}
 }
 
 void CPUParticleGroup::ResizeTransferData(uint32_t size) {
@@ -311,6 +397,36 @@ void CPUParticleGroup::ResizeTransferData(uint32_t size) {
 		transferPrimitives_.crescent.resize(size);
 		break;
 	}
+	}
+
+	// トレイルの処理を行っている場合のみ
+	if (HasTrailModule()) {
+
+		transferTrailHeaders_.resize(size);
+
+		transferTrailVertices_.clear();
+
+		// パラメータから安全側に見積る
+		uint32_t maxPoints = 0;
+		uint32_t subdivision = 0;
+		for (const auto& phase : phases_) {
+			if (auto* module = phase->GetTrailModule()) {
+
+				maxPoints = (std::max<uint32_t>)(maxPoints, module->GetMaxPoints());
+				subdivision = (std::max<uint32_t>)(subdivision, module->GetSubdivPerSegment());
+			}
+		}
+
+		// 最大頂点数
+		const uint32_t kMaxVertexCount = 256;
+		uint32_t perTrail = 2u * maxPoints * (subdivision + 1u);
+		perTrail = (std::min)(perTrail, kMaxVertexCount);
+		if (perTrail == 0) {
+
+			// 32をデフォルトにしておく
+			perTrail = 32;
+		}
+		transferTrailVertices_.reserve(size * perTrail);
 	}
 }
 

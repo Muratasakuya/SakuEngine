@@ -30,5 +30,6 @@ enum class ParticleUpdateModuleID {
 	AlphaReference,
 	Primitive,
 	NoiseForce,
+	Trail,
 	Count,
 };

@@ -52,6 +52,7 @@ public:
 	friend Vector3 operator/(float scalar, const Vector3& v);
 
 	Vector3& operator*=(float scalar);
+	Vector3& operator/=(float scalar);
 
 	Vector3 operator-() const;
 

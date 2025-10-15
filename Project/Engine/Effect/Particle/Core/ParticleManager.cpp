@@ -32,6 +32,8 @@
 #include <Engine/Effect/Particle/Module/Updater/Move/ParticleUpdateNoiseForceModule.h>
 // Primitive
 #include <Engine/Effect/Particle/Module/Updater/Primitive/ParticleUpdatePrimitiveModule.h>
+// Trail
+#include <Engine/Effect/Particle/Module/Updater/Trail/ParticleUpdateTrailModule.h>
 // Time
 #include <Engine/Effect/Particle/Module/Updater/Time/ParticleUpdateLifeTimeModule.h>
 // Transform
@@ -74,6 +76,7 @@ ParticleSystem* ParticleManager::CreateParticleSystem(const std::string& filePat
 	// システム作成
 	std::unique_ptr<ParticleSystem> system = std::make_unique<ParticleSystem>();
 	system->Init(device_, asset_, filePath);
+	system->SetSceneView(sceneView_);
 	// jsonファイルから作成
 	system->LoadJson(filePath, useGame);
 	// 配列に追加
@@ -121,16 +124,21 @@ void ParticleManager::RegisterModules() {
 	uRegistry.Register<ParticleUpdateEmissiveModule>();
 	uRegistry.Register<ParticleUpdateAlphaReferenceModule>();
 	uRegistry.Register<ParticleUpdatePrimitiveModule>();
+	uRegistry.Register<ParticleUpdateTrailModule>();
 }
 
 void ParticleManager::Init(Asset* asset, ID3D12Device8* device,
-	SRVDescriptor* srvDescriptor, DxShaderCompiler* shaderCompiler) {
+	SRVDescriptor* srvDescriptor, DxShaderCompiler* shaderCompiler,
+	SceneView* sceneView) {
 
 	asset_ = nullptr;
 	asset_ = asset;
 
 	device_ = nullptr;
 	device_ = device;
+
+	sceneView_ = nullptr;
+	sceneView_ = sceneView;
 
 	// 各メインモジュール初期化
 	gpuUpdater_ = std::make_unique<GPUParticleUpdater>();
@@ -181,7 +189,16 @@ void ParticleManager::Rendering(bool debugEnable,
 		for (const auto& group : system->GetCPUGroup()) {
 
 			// 描画処理
-			renderer_->Rendering(debugEnable, group.group, sceneBuffer, dxCommand);
+			if (group.group.IsDrawParticle()) {
+
+				renderer_->Rendering(debugEnable, group.group, sceneBuffer, dxCommand);
+			}
+
+			// トレイルの描画
+			if (group.group.HasTrailModule()) {
+
+				renderer_->RenderingTrail(debugEnable, group.group, sceneBuffer, dxCommand);
+			}
 		}
 	}
 }
@@ -193,6 +210,7 @@ void ParticleManager::AddSystem() {
 	// 初期化して追加
 	std::unique_ptr<ParticleSystem> system = std::make_unique<ParticleSystem>();
 	system->Init(device_, asset_, name);
+	system->SetSceneView(sceneView_);
 	systems_.emplace_back(std::move(system));
 }
 

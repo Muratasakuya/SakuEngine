@@ -7,6 +7,9 @@
 #include <Engine/Effect/Particle/Structures/ParticleStructures.h>
 #include <Engine/Effect/Particle/Structures/ParticleEmitterStructures.h>
 
+// front
+class SceneView;
+
 //============================================================================
 //	BaseParticleGroup class
 //============================================================================
@@ -21,6 +24,8 @@ public:
 
 	//--------- accessor -----------------------------------------------------
 
+	void SetSceneView(SceneView* sceneView) { sceneView_ = sceneView; }
+
 	// 親の設定
 	void SetParent(bool isSet, const BaseTransform& parent);
 
@@ -31,6 +36,8 @@ protected:
 	//========================================================================
 
 	//--------- variables ----------------------------------------------------
+
+	SceneView* sceneView_;
 
 	// ゲームで使用するか
 	bool useGame_;
@@ -45,8 +52,13 @@ protected:
 	ParticleEmitterData emitter_; // 各形状
 
 	// commonBuffers
+	// 形状
 	ParticleCommon::PrimitiveBufferData primitiveBuffer_;
+	// トランスフォーム
 	DxStructuredBuffer<ParticleCommon::TransformForGPU> transformBuffer_;
+	// トレイル
+	DxStructuredBuffer<ParticleCommon::TrailHeaderForGPU> trailHeaderBuffer_;
+	DxStructuredBuffer<ParticleCommon::TrailVertexForGPU> trailVertexBuffer_;
 
 	// 描画情報
 	BlendMode blendMode_;
@@ -59,6 +71,8 @@ protected:
 
 	// create
 	void CreatePrimitiveBuffer(ID3D12Device* device,
+		ParticlePrimitiveType primitiveType, uint32_t maxParticle);
+	void CreateTrailBuffer(ID3D12Device* device,
 		ParticlePrimitiveType primitiveType, uint32_t maxParticle);
 
 	// emitter

@@ -6,6 +6,7 @@
 #include <Engine/Utility/Helper/ImGuiHelper.h>
 #include <Engine/Utility/Helper/Algorithm.h>
 #include <Engine/Effect/Particle/Module/Updater/Time/ParticleUpdateLifeTimeModule.h>
+#include <Engine/Effect/Particle/Module/Updater/Trail/ParticleUpdateTrailModule.h>
 
 //============================================================================
 //	ParticlePhase classMethods
@@ -179,6 +180,28 @@ const ParticleUpdateLifeTimeModule* ParticlePhase::GetLifeTimeModule() const {
 	return nullptr;
 }
 
+ParticleUpdateTrailModule* ParticlePhase::GetTrailModule() const {
+
+	for (const auto& updater : updaters_) {
+		if (updater->GetID() == ParticleUpdateModuleID::Trail) {
+
+			return static_cast<ParticleUpdateTrailModule*>(updater.get());
+		}
+	}
+	return nullptr;
+}
+
+bool ParticlePhase::HasTrailModule() const {
+
+	for (const auto& updater : updaters_) {
+		if (updater->GetID() == ParticleUpdateModuleID::Trail) {
+
+			return true;
+		}
+	}
+	return false;
+}
+
 void ParticlePhase::ImGui() {
 
 	ImGui::SeparatorText("Emit Duration");
@@ -192,16 +215,6 @@ void ParticlePhase::ImGui() {
 		if (ImGui::BeginTabItem("Render")) {
 
 			spawner_->ImGuiRenderParam();
-
-			ImGui::EndTabItem();
-		}
-
-		//============================================================================
-		//	Primitive
-		//============================================================================
-		if (ImGui::BeginTabItem("Primitive")) {
-
-			spawner_->ImGuiPrimitiveParam();
 
 			ImGui::EndTabItem();
 		}
@@ -351,7 +364,6 @@ void ParticlePhase::ImGui() {
 
 			ImGui::EndTabItem();
 		}
-
 		ImGui::EndTabBar();
 	}
 }

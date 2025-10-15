@@ -11,6 +11,9 @@
 #include <Engine/Utility/Enum/Easing.h>
 #include <Engine/MathLib/MathUtils.h>
 
+// c++
+#include <deque>
+
 //============================================================================
 //	ParticleStructures
 //============================================================================
@@ -119,6 +122,35 @@ namespace ParticleCommon {
 		ParticleValue<T> start;
 		ParticleValue<T> target;
 	};
+
+	// トレイル位置の情報
+	struct TrailPoint {
+
+		Vector3 pos; // 座標
+		float age;   // 寿命
+	};
+	struct TrailRuntime {
+
+		std::deque<TrailPoint> nodes; // リングバッファ
+		Vector3 prePos;               // 前回のサンプル位置
+
+		bool isInitialized = false;   // 初期化済みか
+		float time;                   // サンプル間隔
+		bool isDetaching = false;     // 追従先が消えた後の処理を行うか
+	};
+
+	// トレイルのGPU転送データ
+	struct TrailHeaderForGPU {
+
+		uint32_t start;
+		uint32_t vertexCount;
+	};
+	struct TrailVertexForGPU {
+
+		Vector3 worldPos;
+		Vector2 uv;
+		Color color;
+	};
 };
 
 //============================================================================
@@ -223,6 +255,9 @@ namespace CPUParticle {
 		Vector3 spawnTranlation;
 		// 回転の保持
 		Quaternion rotation;
+
+		// トレイル
+		ParticleCommon::TrailRuntime trailRuntime;
 
 		// bufferを更新するデータ
 		// 移動速度
