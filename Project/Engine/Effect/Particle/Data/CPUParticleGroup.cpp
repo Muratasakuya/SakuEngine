@@ -441,7 +441,7 @@ void CPUParticleGroup::AddPhase() {
 	phase->Init(asset_, primitiveBuffer_.type);
 
 	// phaseが1つ以上ある時、同期して作成するか
-	if (hasPhase && isSynchPhase_) {
+	if (hasPhase && isSynchPhase_ && 0 <= selectedPhase_) {
 
 		// 現在選択中のphaseをjson出力してそのデータから作成する
 		Json data = phases_[selectedPhase_]->ToJson();

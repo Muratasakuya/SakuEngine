@@ -403,6 +403,7 @@ void ICPUParticleSpawnModule::FromCommonJson(const Json& data) {
 
 		const auto& planeType = EnumAdapter<ParticlePlaneType>::FromString(primitive["plane"]["mode"]);
 		primitive_.plane.mode = static_cast<uint32_t>(planeType.value());
+		planeType_ = static_cast<ParticlePlaneType>(primitive_.plane.mode);
 		break;
 	}
 	case ParticlePrimitiveType::Ring: {
