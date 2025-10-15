@@ -178,7 +178,13 @@ void CPUParticleGroup::UpdatePhase() {
 
 						auto* trailModule = phases_[particle.phaseIndex]->GetTrailModule();
 						// falseを返せば削除、trueなら消え後処理開始
-						if (!trailModule->OnOwnerLifeEnd(particle)) {
+						if (trailModule->OnOwnerLifeEnd(particle)) {
+
+							// 描画するかしないかでスケールを設定
+							// trueならそのまま、falseなら0.0f
+							it->transform.scale = trailModule->IsLifeEndDrawOrigin() ?
+								it->transform.scale : Vector3::AnyInit(0.0f);
+						} else {
 
 							it = particles_.erase(it);
 							continue;
@@ -214,7 +220,13 @@ void CPUParticleGroup::UpdatePhase() {
 
 					auto* trailModule = phases_[particle.phaseIndex]->GetTrailModule();
 					// falseを返せば削除、trueなら消え後処理開始
-					if (!trailModule->OnOwnerLifeEnd(particle)) {
+					if (trailModule->OnOwnerLifeEnd(particle)) {
+
+						// 描画するかしないかでスケールを設定
+						// trueならそのまま、falseなら0.0f
+						it->transform.scale = trailModule->IsLifeEndDrawOrigin() ?
+							it->transform.scale : Vector3::AnyInit(0.0f);
+					} else {
 
 						it = particles_.erase(it);
 						continue;

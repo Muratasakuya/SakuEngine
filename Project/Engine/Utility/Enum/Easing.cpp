@@ -166,6 +166,7 @@ float EaseInOutBounce(float t) {
 float EasedValue(EasingType easingType, float t) {
 
 	switch (easingType) {
+	case EasingType::Linear: return t;
 	case EasingType::EaseInSine: return EaseInSine(t);
 	case EasingType::EaseOutSine: return EaseOutSine(t);
 	case EasingType::EaseInOutSine: return EaseInOutSine(t);
@@ -217,6 +218,11 @@ void Easing::SelectEasingType(EasingType& easingType, const std::string& lebel, 
 
 	int easingIndex = static_cast<int>(easingType);
 	if (ImGui::BeginCombo(("EasingType##" + lebel).c_str(), easingOptions[easingIndex])) {
+
+		if (ImGui::Button("Linear", ImVec2(itemWidth, 24.0f))) {
+
+			easingType = EasingType::Linear;
+		}
 
 		// EaseIn
 		ImGui::PushItemWidth(itemWidth);

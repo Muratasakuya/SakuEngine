@@ -155,15 +155,23 @@
                         },
                         {
                             "params": {
+                                "alphaEasing_": "EaseInSine",
                                 "enable": true,
                                 "faceCamera": true,
-                                "lifeTime": 0.7099999785423279,
+                                "isDetaching_": true,
+                                "isDrawOrigin": true,
+                                "isLifeEndDrawOrigin_": false,
+                                "lifeTime": 1.0199999809265137,
                                 "maxPoints": 64,
                                 "minDistance": 0.3199999928474426,
                                 "minTime": 0.0,
+                                "startAlpha": 1.0,
+                                "startWidth": 0.5,
                                 "subdivPerSegment": 1,
+                                "targetAlpha": 0.0,
+                                "targetWidth": 0.0,
                                 "uvTileLength": 6.400000095367432,
-                                "width": 1.0199999809265137
+                                "widthEasing_": "EaseInSine"
                             },
                             "type": "Trail"
                         },

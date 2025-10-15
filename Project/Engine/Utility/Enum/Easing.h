@@ -44,6 +44,9 @@ float EaseInOutBounce(float t);
 
 enum class EasingType {
 
+	// そのまま
+	Linear,
+
 	// EaseIn
 	EaseInSine,
 	EaseInQuad,

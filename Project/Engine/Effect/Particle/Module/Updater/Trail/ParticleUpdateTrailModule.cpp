@@ -17,9 +17,16 @@ void ParticleUpdateTrailModule::Init() {
 	isDetaching_ = false;
 	faceCamera_ = true;
 	isDrawOrigin_ = true;
+	isLifeEndDrawOrigin_ = true;
 	lifeTime_ = 0.8f;
+
+	// 補間値デフォルト
 	width_.start = 0.5f;
 	width_.target = 0.5f;
+	widthEasing_ = EasingType::Linear;
+	alpha_.start = 1.0f;
+	alpha_.target = 0.0f;
+	alphaEasing_ = EasingType::Linear;
 
 	// 最初は距離でノードを作成するようにする
 	minDistance_ = 0.05f;
@@ -170,9 +177,9 @@ void ParticleUpdateTrailModule::BuildTransferData(uint32_t particleIndex,
 
 		// 各ノードの進捗率
 		float progress = std::clamp(nodes[i].age / lifeTime_, 0.0f, 1.0f);
-		// 色を取得し、αのみ寿命でフェードさせる
+		// 色を取得し、αは補間する
 		Color color = particle.material.color;
-		color.a = 1.0f - progress;
+		color.a = std::lerp(alpha_.start, alpha_.target, EasedValue(alphaEasing_, progress));
 
 		// 幅
 		float lerpedWidth = std::lerp(width_.start,
@@ -240,24 +247,47 @@ bool ParticleUpdateTrailModule::OnOwnerLifeEnd(CPUParticle::ParticleData& partic
 
 void ParticleUpdateTrailModule::ImGui() {
 
-	ImGui::Checkbox("enable", &enable_);
-	ImGui::Checkbox("isDrawOrigin", &isDrawOrigin_);
-	ImGui::Checkbox("isDetaching", &isDetaching_);
-	ImGui::Checkbox("faceCamera", &faceCamera_);
+	{
+		// フラグ
+		ImGui::SeparatorText("Flags");
 
-	ImGui::DragFloat("lifeTime", &lifeTime_, 0.01f);
+		ImGui::Checkbox("enable", &enable_);
+		ImGui::Checkbox("faceCamera", &faceCamera_);
+		ImGui::Checkbox("isDetaching", &isDetaching_);
+		ImGui::Checkbox("isDrawOrigin", &isDrawOrigin_);
+		ImGui::Checkbox("isLifeEndDrawOrigin", &isLifeEndDrawOrigin_);
+	}
+	{
+		// 見た目
+		ImGui::SeparatorText("Appearance");
 
-	ImGui::DragFloat("startWidth", &width_.start, 0.01f);
-	ImGui::DragFloat("targetWidth", &width_.target, 0.01f);
-	EnumAdapter<EasingType>::Combo("widthEasing", &widthEasing_);
+		ImGui::DragFloat("lifeTime", &lifeTime_, 0.01f);
 
-	// minDistanceが0.0f以下になるとDevice君がRemoveする
-	ImGui::DragFloat("minDistance", &minDistance_, 0.01f, 0.01f);
-	ImGui::DragFloat("minTime", &minTime_, 0.01f);
+		// minDistanceが0.0f以下になるとDevice君がRemoveする
+		ImGui::DragFloat("minDistance", &minDistance_, 0.01f, 0.01f);
+		ImGui::DragFloat("minTime", &minTime_, 0.01f);
 
-	ImGui::DragInt("maxPoints", &maxPoints_, 1, 0, 64);
-	ImGui::DragInt("subdivPerSegment", &subdivPerSegment_, 1, 1, 64);
-	ImGui::DragFloat("uvTileLength", &uvTileLength_, 0.01f);
+		ImGui::DragInt("maxPoints", &maxPoints_, 1, 0, 64);
+		ImGui::DragInt("subdivPerSegment", &subdivPerSegment_, 1, 1, 64);
+
+		ImGui::DragFloat("uvTileLength", &uvTileLength_, 0.01f);
+	}
+	{
+		// 幅
+		ImGui::SeparatorText("Width");
+
+		ImGui::DragFloat("startWidth", &width_.start, 0.01f);
+		ImGui::DragFloat("targetWidth", &width_.target, 0.01f);
+		EnumAdapter<EasingType>::Combo("widthEasing", &widthEasing_);
+	}
+	{
+		// α値
+		ImGui::SeparatorText("Alpha");
+
+		ImGui::DragFloat("startAlpha", &alpha_.start, 0.01f);
+		ImGui::DragFloat("targetAlpha", &alpha_.target, 0.01f);
+		EnumAdapter<EasingType>::Combo("alphaEasing", &alphaEasing_);
+	}
 }
 
 Json ParticleUpdateTrailModule::ToJson() {
@@ -268,11 +298,17 @@ Json ParticleUpdateTrailModule::ToJson() {
 	data["isDrawOrigin"] = isDrawOrigin_;
 	data["faceCamera"] = faceCamera_;
 	data["isDetaching_"] = isDetaching_;
+	data["isLifeEndDrawOrigin_"] = isLifeEndDrawOrigin_;
 
 	data["lifeTime"] = lifeTime_;
+
 	data["startWidth"] = width_.start;
 	data["targetWidth"] = width_.target;
 	data["widthEasing_"] = EnumAdapter<EasingType>::ToString(widthEasing_);
+	data["startAlpha"] = alpha_.start;
+	data["targetAlpha"] = alpha_.target;
+	data["alphaEasing_"] = EnumAdapter<EasingType>::ToString(alphaEasing_);
+
 	data["minDistance"] = minDistance_;
 	data["minTime"] = minTime_;
 	data["uvTileLength"] = uvTileLength_;
@@ -289,12 +325,18 @@ void ParticleUpdateTrailModule::FromJson(const Json& data) {
 	isDrawOrigin_ = data.value("isDrawOrigin", true);
 	faceCamera_ = data.value("faceCamera", false);
 	isDetaching_ = data.value("isDetaching_", false);
+	isLifeEndDrawOrigin_ = data.value("isLifeEndDrawOrigin_", false);
 
 	lifeTime_ = data.value("lifeTime", 0.0f);
+
 	width_.start = data.value("startWidth", 0.5f);
 	width_.target = data.value("targetWidth", 0.5f);
 	widthEasing_ = EnumAdapter<EasingType>::FromString(
 		data.value("widthEasing_", "EaseInSine")).value();
+	alpha_.start = data.value("startAlpha", 1.0f);
+	alpha_.target = data.value("targetAlpha", 0.0f);
+	alphaEasing_ = EnumAdapter<EasingType>::FromString(
+		data.value("alphaEasing_", "EaseInSine")).value();
 
 	minDistance_ = data.value("minDistance", 0.0f);
 	minTime_ = data.value("minTime", 0.0f);

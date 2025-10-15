@@ -46,6 +46,7 @@ public:
 	int GetMaxPoints() const { return maxPoints_; }
 	int GetSubdivPerSegment() const { return subdivPerSegment_; }
 	bool IsDrawOrigin() const { return isDrawOrigin_; }
+	bool IsLifeEndDrawOrigin() const { return isLifeEndDrawOrigin_; }
 
 	//-------- registryID ----------------------------------------------------
 
@@ -61,11 +62,17 @@ private:
 	bool enable_;       // デフォルトでfalse
 	bool isDrawOrigin_; // トレイル元を描画するか
 	bool faceCamera_;   // カメラフェイシング帯
-	bool isDetaching_;  // 追従先が消えた後の処理を行うか
+
+	// 追従先のライフタイムが尽きた時のフラグ
+	bool isDetaching_;         // 追従先が消えた後の処理を行うか
+	bool isLifeEndDrawOrigin_; // isDetaching_がtrueになったときトレイル元を描画するか
 
 	// 幅
 	ParticleCommon::LerpValue<float> width_;
 	EasingType widthEasing_;
+	// α値
+	ParticleCommon::LerpValue<float> alpha_;
+	EasingType alphaEasing_;
 
 	float lifeTime_;       // 寿命
 	float minDistance_;    // 発生移動距離
