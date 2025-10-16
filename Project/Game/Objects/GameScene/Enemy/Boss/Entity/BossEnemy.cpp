@@ -135,7 +135,7 @@ void BossEnemy::DerivedInit() {
 	hudSprites_->Update(*this);
 }
 
-void BossEnemy::SetPlayer(const Player* player) {
+void BossEnemy::SetPlayer(Player* player) {
 
 	player_ = nullptr;
 	player_ = player;
@@ -143,9 +143,9 @@ void BossEnemy::SetPlayer(const Player* player) {
 	stateController_->SetPlayer(player);
 }
 
-void BossEnemy::SetFollowCamera(const FollowCamera* followCamera) {
+void BossEnemy::SetFollowCamera(FollowCamera* followCamera) {
 
-	stateController_->SetFollowCamera(followCamera);
+	stateController_->SetFollowCamera(followCamera, *this);
 	hudSprites_->SetFollowCamera(followCamera);
 	// エフェクト、エンジン機能変更中...
 	//animationEffect_->SetFollowCamera(followCamera);
@@ -351,7 +351,7 @@ void BossEnemy::TellParryTiming() {
 void BossEnemy::DerivedImGui() {
 
 	// 文字サイズを設定
-	ImGui::SetWindowFontScale(0.72f);
+	ImGui::SetWindowFontScale(0.64f);
 
 	ImGui::SeparatorText("HP");
 

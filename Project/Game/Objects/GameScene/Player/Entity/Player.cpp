@@ -225,6 +225,11 @@ int Player::GetDamage() const {
 
 void Player::Update() {
 
+	// 更新モードがNotの時は更新しない
+	if (updateMode_ == ObjectUpdateMode::Not) {
+		return;
+	}
+
 	// スタン状態のチェック
 	CheckBossEnemyStun();
 

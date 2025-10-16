@@ -17,15 +17,16 @@
 // 状態の種類
 enum class BossEnemyState {
 
-	Idle,            // 何もしない
-	Teleport,        // 瞬間移動(実際には高速で補間する)
-	Stun,            // スタン状態
-	Falter,          // 怯む
-	LightAttack,     // 弱攻撃
-	StrongAttack,    // 強攻撃
-	ChargeAttack,    // 溜め攻撃
-	RushAttack,      // 突進攻撃
-	ContinuousAttack // 連続攻撃
+	Idle,             // 何もしない
+	Teleport,         // 瞬間移動(実際には高速で補間する)
+	Stun,             // スタン状態
+	Falter,           // 怯む
+	LightAttack,      // 弱攻撃
+	StrongAttack,     // 強攻撃
+	ChargeAttack,     // 溜め攻撃
+	RushAttack,       // 突進攻撃
+	ContinuousAttack, // 連続攻撃
+	GreatAttack,      // 大技攻撃
 };
 
 // テレポートの種類

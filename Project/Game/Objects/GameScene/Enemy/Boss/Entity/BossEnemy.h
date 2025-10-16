@@ -59,8 +59,8 @@ public:
 
 	//--------- accessor -----------------------------------------------------
 
-	void SetPlayer(const Player* player);
-	void SetFollowCamera(const FollowCamera* followCamera);
+	void SetPlayer(Player* player);
+	void SetFollowCamera(FollowCamera* followCamera);
 
 	void SetAlpha(float alpha);
 	void SetCastShadow(bool cast);

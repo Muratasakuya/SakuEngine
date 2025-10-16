@@ -70,6 +70,11 @@ void SkinnedAnimation::Update(const Matrix4x4& worldMatrix) {
 	// 更新方法のインデックスを更新
 	updateModeIndex_ = static_cast<uint32_t>(updateMode_);
 
+	// Notなら処理しない
+	if (updateMode_ == ObjectUpdateMode::Not) {
+		return;
+	}
+
 	//========================================================================
 	// 通常のAnimation再生
 	//========================================================================

@@ -13,5 +13,6 @@ enum class ObjectUpdateMode {
 
 	None,     // 通常更新
 	External, // 外部による更新
+	Not,      // 更新しない
 	Count,
 };

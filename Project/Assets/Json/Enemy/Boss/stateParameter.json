@@ -18,6 +18,55 @@
         "nextAnimDuration_": 0.0,
         "rotationLerpRate_": 0.0
     },
+    "GreatAttack": {
+        "BlowPlayer": {
+            "AnimTranslation": {
+                "Loop": {
+                    "loop": {
+                        "loopCount": 1,
+                        "type": "Repeat"
+                    }
+                },
+                "ReturnTimer": {
+                    "easeingType_": "Linear",
+                    "target_": 0.0
+                },
+                "Timer": {
+                    "easeingType_": "Linear",
+                    "target_": 1.600000023841858
+                },
+                "move_.end": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "move_.start": {
+                    "x": -0.027990153059363365,
+                    "y": 0.0,
+                    "z": -52.3604850769043
+                },
+                "useReturnTimer_": false
+            }
+        },
+        "Charge": {
+            "NextTimer": {
+                "easeingType_": "Linear",
+                "target_": 1.0
+            }
+        },
+        "Execute": {
+            "NextTimer": {
+                "easeingType_": "Linear",
+                "target_": 4.0
+            }
+        },
+        "Finish": {
+            "NextTimer": {
+                "easeingType_": "Linear",
+                "target_": 1.0
+            }
+        }
+    },
     "Idle": {
         "backStepSpeed_": -1.600000023841858,
         "nextAnimDuration_": 0.3199999928474426,

@@ -3,9 +3,10 @@
 //============================================================================
 //	include
 //============================================================================
-#include <Engine/Utility/Timer/GameTimer.h>
 #include <Game/Objects/GameScene/Enemy/Boss/Entity/BossEnemy.h>
+#include <Engine/Input/Input.h>
 #include <Engine/Utility/Random/RandomGenerator.h>
+#include <Engine/Utility/Timer/GameTimer.h>
 #include <Engine/Utility/Json/JsonAdapter.h>
 #include <Engine/Utility/Enum/EnumAdapter.h>
 
@@ -19,6 +20,7 @@
 #include <Game/Objects/GameScene/Enemy/Boss/State/States/BossEnemyChargeAttackState.h>
 #include <Game/Objects/GameScene/Enemy/Boss/State/States/BossEnemyRushAttackState.h>
 #include <Game/Objects/GameScene/Enemy/Boss/State/States/BossEnemyContinuousAttackState.h>
+#include <Game/Objects/GameScene/Enemy/Boss/State/States/GreatAttackState/BossEnemyGreatAttackState.h>
 
 //============================================================================
 //	BossEnemyStateController classMethods
@@ -36,6 +38,7 @@ void BossEnemyStateController::Init(BossEnemy& owner) {
 	states_.emplace(BossEnemyState::ChargeAttack, std::make_unique<BossEnemyChargeAttackState>());
 	states_.emplace(BossEnemyState::RushAttack, std::make_unique<BossEnemyRushAttackState>());
 	states_.emplace(BossEnemyState::ContinuousAttack, std::make_unique<BossEnemyContinuousAttackState>());
+	states_.emplace(BossEnemyState::GreatAttack, std::make_unique<BossEnemyGreatAttackState>());
 
 	// json適応
 	ApplyJson();
@@ -59,7 +62,7 @@ void BossEnemyStateController::Init(BossEnemy& owner) {
 	}
 }
 
-void BossEnemyStateController::SetPlayer(const Player* player) {
+void BossEnemyStateController::SetPlayer(Player* player) {
 
 	// 各状態にplayerをセット
 	for (const auto& state : std::views::values(states_)) {
@@ -68,13 +71,16 @@ void BossEnemyStateController::SetPlayer(const Player* player) {
 	}
 }
 
-void BossEnemyStateController::SetFollowCamera(const FollowCamera* followCamera) {
+void BossEnemyStateController::SetFollowCamera(FollowCamera* followCamera, BossEnemy& owner) {
 
 	// 各状態にfollowCameraをセット
 	for (const auto& state : std::views::values(states_)) {
 
 		state->SetFollowCamera(followCamera);
 	}
+
+	// 大技の状態に個別設定
+	static_cast<BossEnemyGreatAttackState*>(states_[BossEnemyState::GreatAttack].get())->InitState(owner);
 }
 
 void BossEnemyStateController::Update(BossEnemy& owner) {
@@ -142,7 +148,7 @@ void BossEnemyStateController::UpdatePhase() {
 		}
 	}
 
-	// phaseが切り替わったらリセットする
+	// phaseが切り替わったら全てリセットする
 	if (prevPhase_ != currentPhase_) {
 
 		prevPhase_ = currentPhase_;
@@ -159,6 +165,17 @@ void BossEnemyStateController::UpdatePhase() {
 
 			forcedState_.reset();
 		}
+	}
+	// 入力で強制遷移
+	if (Input::GetInstance()->TriggerKey(DIK_F8)) {
+
+		prevPhase_ = currentPhase_;
+		currentComboIndex_ = 0;
+		currentSequenceIndex_ = 0;
+		stateTimer_.Reset();
+
+		// 大技に強制遷移
+		forcedState_ = BossEnemyState::GreatAttack;
 	}
 }
 
@@ -442,7 +459,7 @@ void BossEnemyStateController::ImGui(const BossEnemy& bossEnemy) {
 void BossEnemyStateController::EditStateTable() {
 
 	// editorParameters
-	const ImVec2 buttonSize = ImVec2(136.0f, 30.0f * 0.72f);
+	const ImVec2 buttonSize = ImVec2(136.0f, 30.0f * 0.64f);
 
 	int currentComboID = -1;
 	const auto& curPhaseCombos = stateTable_.phases[currentPhase_].comboIndices;
@@ -467,6 +484,12 @@ void BossEnemyStateController::EditStateTable() {
 	// ComboListテーブル
 	//--------------------------------------------------------------------
 
+	// 共通フラグ
+	const ImGuiTableFlags tableFlags =
+		ImGuiTableFlags_BordersInner |
+		ImGuiTableFlags_Resizable |
+		ImGuiTableFlags_SizingStretchProp;
+
 	ImGui::SeparatorText("Edit Combo");
 
 	// settings
@@ -478,7 +501,7 @@ void BossEnemyStateController::EditStateTable() {
 		stateTable_.combos.emplace_back(BossEnemyCombo{});
 	}
 
-	if (ImGui::BeginTable("##ComboList", 5, ImGuiTableFlags_BordersInner)) {
+	if (ImGui::BeginTable("##ComboList", 5, tableFlags)) {
 
 		ImGui::TableSetupColumn("Combo");     // 0
 		ImGui::TableSetupColumn("Sequence");  // 1
@@ -631,7 +654,7 @@ void BossEnemyStateController::EditStateTable() {
 	// 必要フェーズ数をHP閾値に合わせて調整
 	SyncPhaseCount();
 
-	if (ImGui::BeginTable("##Phases", 5, ImGuiTableFlags_BordersInner)) {
+	if (ImGui::BeginTable("##Phases", 5, tableFlags)) {
 
 		ImGui::TableSetupColumn("Phase");
 		ImGui::TableSetupColumn("Duration");
