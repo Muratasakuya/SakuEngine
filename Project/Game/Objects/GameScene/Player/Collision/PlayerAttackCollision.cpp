@@ -46,7 +46,7 @@ void PlayerAttackCollision::Update(const Transform3D& transform) {
 		currentParameter_->windows.end(),
 		[t = currentTimer_](const TimeWindow& window) {
 			return window.on <= t && t < window.off; });
-	reHitTimer_ = (std::max)(0.0f, reHitTimer_ - GameTimer::GetDeltaTime());
+	reHitTimer_ = (std::max)(0.0f, reHitTimer_ - GameTimer::GetScaledDeltaTime());
 
 	// 遷移可能な状態の時のみ武器状態にする
 	if (isAttack && reHitTimer_ <= 0.0f) {
@@ -75,7 +75,7 @@ void PlayerAttackCollision::Update(const Transform3D& transform) {
 	}
 
 	// 時間を進める
-	currentTimer_ += GameTimer::GetDeltaTime();
+	currentTimer_ += GameTimer::GetScaledDeltaTime();
 
 	// 衝突情報更新
 	Collider::UpdateAllBodies(transform);

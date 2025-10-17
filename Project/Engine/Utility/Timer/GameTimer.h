@@ -3,6 +3,7 @@
 //============================================================================
 //	include
 //============================================================================
+#include <Engine/Utility/Enum/Easing.h>
 
 // c++
 #include <cstdint>
@@ -73,6 +74,7 @@ private:
 	static float deltaTime_;
 
 	static float timeScale_;
+	static EasingType easing_;
 
 	static float lerpSpeed_;
 

@@ -24,6 +24,7 @@ std::vector<float> GameTimer::drawTimes_ = {};
 
 float GameTimer::deltaTime_ = 0.0f;
 float GameTimer::timeScale_ = 1.0f;
+EasingType GameTimer::easing_ = EasingType::Linear;
 float GameTimer::lerpSpeed_ = 1.8f;
 float GameTimer::waitTimer_ = 0.0f;
 float GameTimer::waitTime_ = 0.08f;
@@ -46,10 +47,10 @@ void GameTimer::Update() {
 			if (waitTimer_ >= waitTime_) {
 
 				float t = lerpSpeed_ * deltaTime_;
-				float easedT = EaseOutExpo(t);
+				float easedT = EasedValue(easing_, t);
 
 				timeScale_ += (1.0f - timeScale_) * easedT;
-				if (std::abs(1.0f - timeScale_) < 0.01f) {
+				if (std::fabs(1.0f - timeScale_) < 0.01f) {
 					timeScale_ = 1.0f;
 
 					waitTimer_ = 0.0f;
@@ -62,9 +63,9 @@ void GameTimer::ImGui() {
 
 	ImGui::SeparatorText("Performance");
 	ImGui::Text("frameRate:       %.2f fps", ImGui::GetIO().Framerate); //* フレームレート情報
-	ImGui::Text("deltaTime:       %.3f s", deltaTime_);                  //* ΔTime
-	ImGui::Text("scaledDeltaTime: %.3f s", GetScaledDeltaTime());        //* ScaledΔTime
-	ImGui::Text("totalTime:       %.3f s", GetTotalTime());              //* 合計時間
+	ImGui::Text("deltaTime:       %.3f s", deltaTime_);                 //* ΔTime
+	ImGui::Text("scaledDeltaTime: %.3f s", GetScaledDeltaTime());       //* ScaledΔTime
+	ImGui::Text("totalTime:       %.3f s", GetTotalTime());             //* 合計時間
 
 	ImGui::Text("frameTime:       %.2f ms", GetSmoothedFrameTime());  // ループにかかった時間
 	ImGui::Text("updateTime:      %.2f ms", GetSmoothedUpdateTime()); // 更新処理にかかった時間
