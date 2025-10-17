@@ -225,15 +225,16 @@ void PlayerStateController::UpdateInputState() {
 	const bool isInChain = IsInChain();
 	const bool actionLocked = (inCombat && !canExit) || (inCombat && isInChain);
 
+	// 移動方向
+	const Vector2 move(inputMapper_->GetVector(PlayerInputAction::MoveX),
+		inputMapper_->GetVector(PlayerInputAction::MoveZ));
+	// 動いたかどうか判定
+	const bool isMove = move.Length() > std::numeric_limits<float>::epsilon();
+
 	// 歩き、待機状態の状態遷移
 	{
 		if (!actionLocked) {
-			// 移動方向
-			const Vector2 move(inputMapper_->GetVector(PlayerInputAction::MoveX),
-				inputMapper_->GetVector(PlayerInputAction::MoveZ));
 
-			// 動いたかどうか判定
-			const bool isMove = move.Length() > std::numeric_limits<float>::epsilon();
 			// 移動していた場合は歩き、していなければ待機状態のまま
 			if (isMove) {
 
@@ -254,7 +255,7 @@ void PlayerStateController::UpdateInputState() {
 
 	// ダッシュ、攻撃の状態遷移
 	{
-		if (inputMapper_->IsPressed(PlayerInputAction::Dash)) {
+		if (isMove && inputMapper_->IsPressed(PlayerInputAction::Dash)) {
 
 			Request(PlayerState::Dash);
 		} else {
