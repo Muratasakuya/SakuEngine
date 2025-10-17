@@ -45,7 +45,7 @@ void PlayerDashState::UpdateState() {
 	}
 	case PlayerDashState::State::Sustain: {
 
-		sustainTimer_ += GameTimer::GetDeltaTime();
+		sustainTimer_ += GameTimer::GetScaledDeltaTime();
 
 		// 時間経過後減速させる
 		if (sustainTime_ <= sustainTimer_) {

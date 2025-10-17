@@ -18,7 +18,7 @@ void BossEnemyFalterState::Enter(BossEnemy& bossEnemy) {
 
 void BossEnemyFalterState::Update(BossEnemy& bossEnemy) {
 
-	const float deltaTime = GameTimer::GetDeltaTime();
+	const float deltaTime = GameTimer::GetScaledDeltaTime();
 
 	// 前方ベクトルを取得
 	Vector3 bossPos = bossEnemy.GetTranslation();

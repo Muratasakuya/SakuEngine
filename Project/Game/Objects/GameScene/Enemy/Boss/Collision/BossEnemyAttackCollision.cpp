@@ -72,7 +72,7 @@ void BossEnemyAttackCollision::Update(const Transform3D& transform) {
 
 
 	// 時間を進める
-	currentTimer_ += GameTimer::GetDeltaTime();
+	currentTimer_ += GameTimer::GetScaledDeltaTime();
 
 	// 衝突情報更新
 	Collider::UpdateAllBodies(transform);

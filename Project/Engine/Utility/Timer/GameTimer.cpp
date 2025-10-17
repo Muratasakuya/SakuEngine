@@ -24,8 +24,8 @@ std::vector<float> GameTimer::drawTimes_ = {};
 
 float GameTimer::deltaTime_ = 0.0f;
 float GameTimer::timeScale_ = 1.0f;
-EasingType GameTimer::easing_ = EasingType::Linear;
-float GameTimer::lerpSpeed_ = 1.8f;
+EasingType GameTimer::easing_ = EasingType::EaseOutExpo;
+float GameTimer::lerpSpeed_ = 8.0f;
 float GameTimer::waitTimer_ = 0.0f;
 float GameTimer::waitTime_ = 0.08f;
 bool GameTimer::returnScaleEnable_ = true;

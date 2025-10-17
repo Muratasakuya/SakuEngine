@@ -131,7 +131,7 @@ void BossEnemyStrongAttackState::UpdateAttack2nd(BossEnemy& bossEnemy) {
 
 	if (!reachedPlayer_) {
 
-		lerpTimer_ += GameTimer::GetDeltaTime() * playbackSpeed_;
+		lerpTimer_ += GameTimer::GetScaledDeltaTime() * playbackSpeed_;
 		float lerpT = std::clamp(lerpTimer_ / attack2ndLerpTime_, 0.0f, 1.0f);
 		lerpT = EasedValue(EasingType::EaseOutExpo, lerpT);
 
@@ -158,7 +158,7 @@ void BossEnemyStrongAttackState::UpdateAttack2nd(BossEnemy& bossEnemy) {
 	// animationが終了したら経過時間を進める
 	if (bossEnemy.IsAnimationFinished()) {
 
-		exitTimer_ += GameTimer::GetDeltaTime();
+		exitTimer_ += GameTimer::GetScaledDeltaTime();
 		// 時間経過が過ぎたら遷移可能
 		if (exitTime_ < exitTimer_) {
 
@@ -206,7 +206,7 @@ void BossEnemyStrongAttackState::UpdatePlaybackSpeed(BossEnemy& bossEnemy) {
 	}
 
 	// パリィ処理終了後、補間、アニメーション再生速度を元に戻す
-	returnPlayBackSpeedTimer_ += GameTimer::GetDeltaTime();
+	returnPlayBackSpeedTimer_ += GameTimer::GetScaledDeltaTime();
 	float t = std::clamp(returnPlayBackSpeedTimer_ / returnPlayBackSpeedTime_, 0.0f, 1.0f);
 
 	playbackSpeed_ = std::lerp(parriedPlaybackSpeed_, 1.0f, t);

@@ -15,7 +15,7 @@
 
 void BossEnemyIState::LookTarget(BossEnemy& bossEnemy, const Vector3& target) {
 
-	const float deltaTime = GameTimer::GetDeltaTime();
+	const float deltaTime = GameTimer::GetScaledDeltaTime();
 
 	// 前方ベクトルを取得
 	Vector3 bossPos = bossEnemy.GetTranslation();

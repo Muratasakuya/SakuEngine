@@ -6,6 +6,7 @@
 #include <Engine/Core/Graphics/Renderer/LineRenderer.h>
 #include <Engine/Core/Graphics/PostProcess/Core/PostProcessSystem.h>
 #include <Engine/Utility/Timer/GameTimer.h>
+#include <Engine/Utility/Helper/ImGuiHelper.h>
 #include <Game/Camera/Follow/FollowCamera.h>
 #include <Game/Objects/GameScene/Enemy/Boss/Entity/BossEnemy.h>
 #include <Game/Objects/GameScene/Player/Entity/Player.h>
@@ -104,7 +105,7 @@ void PlayerParryState::UpdateDeltaWaitTime(const Player& player) {
 			Vector2 screenPos = Math::ProjectToScreen(
 				player.GetWeapon(PlayerWeaponType::Left)->GetTransform().GetWorldPos(), *followCamera_).Normalize();
 			blur->SetBlurCenter(screenPos);
-			
+
 			// 発生済み
 			isEmitedBlur_ = true;
 		}
@@ -144,10 +145,8 @@ void PlayerParryState::UpdateAnimation(Player& player) {
 	// 座標補間が終了するまでなにもしない
 	if (!parryLerp_.isFinised) {
 
-		const bool hasAttackRequest =
-			request_.has_value() && request_.value() == RequestState::PlayAnimation;
-		const bool reachedHalf =
-			(parryLerp_.time > 0.0f) && (parryLerp_.timer >= parryLerp_.time * 0.5f);
+		const bool hasAttackRequest = request_.has_value() && request_.value() == RequestState::PlayAnimation;
+		const bool reachedHalf = (parryLerp_.time > 0.0f) && (parryLerp_.timer >= parryLerp_.time * 0.5f);
 		// 半分以上時間経過していれば攻撃アニメーションを行えるようにする
 		if (hasAttackRequest && reachedHalf) {
 
@@ -163,13 +162,16 @@ void PlayerParryState::UpdateAnimation(Player& player) {
 		canExit_ = true;
 		// 元に戻す
 		player.SetReverseWeapon(false, PlayerWeaponType::Left);
+
+		// カメラの回転を戻す
+		followCamera_->StartLookToTarget(FollowCameraTargetType::Player,
+			FollowCameraTargetType::BossEnemy, true, true, std::nullopt, 0.88f);
 		return;
 	}
-
 	switch (request_.value()) {
 	case RequestState::PlayAnimation: {
 
-		// 3段目の攻撃を再生させる
+		// 4段目の攻撃を再生させる
 		player.SetNextAnimation("player_attack_4th", false, nextAnimDuration_);
 
 		// 補間先の座標を再設定する
@@ -212,7 +214,7 @@ Vector3 PlayerParryState::GetLerpTranslation(LerpParameter& lerp) {
 
 	// 時間を進める
 	lerp.timer += GameTimer::GetScaledDeltaTime();
-	float lerpT = lerp.timer / lerp.time;
+	float lerpT = std::clamp(lerp.timer / lerp.time, 0.0f, 1.0f);
 	lerpT = EasedValue(lerp.easingType, lerpT);
 
 	// 座標を補間
@@ -222,7 +224,6 @@ Vector3 PlayerParryState::GetLerpTranslation(LerpParameter& lerp) {
 
 		lerp.isFinised = true;
 	}
-
 	return translation;
 }
 
@@ -250,6 +251,8 @@ Vector3 PlayerParryState::SetLerpValue(Vector3& start, Vector3& target,
 
 void PlayerParryState::Exit([[maybe_unused]] Player& player) {
 
+	GameTimer::SetReturnScaleEnable(true);
+
 	// リセット
 	request_ = std::nullopt;
 	deltaWaitTimer_ = 0.0f;
@@ -270,6 +273,9 @@ void PlayerParryState::ImGui(const Player& player) {
 	ImGui::Text(std::format("allowAttack: {}", allowAttack_).c_str());
 	ImGui::DragFloat("nextAnimDuration", &nextAnimDuration_, 0.001f);
 	ImGui::DragFloat("deltaWaitTime", &deltaWaitTime_, 0.01f);
+
+	ImGuiHelper::ValueText<Vector3>("stratPos", startPos_);
+	ImGuiHelper::ValueText<Vector3>("targetPos", targetPos_);
 
 	LineRenderer* lineRenderer = LineRenderer::GetInstance();
 

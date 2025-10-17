@@ -27,7 +27,7 @@ void BossEnemyIdleState::Update(BossEnemy& bossEnemy) {
 
 	// 後ずさりさせる
 	Vector3 bossPos = bossEnemy.GetTranslation();
-	Vector3 backStepVelocity = bossEnemy.GetTransform().GetBack() * backStepSpeed_ * GameTimer::GetDeltaTime();
+	Vector3 backStepVelocity = bossEnemy.GetTransform().GetBack() * backStepSpeed_ * GameTimer::GetScaledDeltaTime();
 	bossEnemy.SetTranslation(bossPos + backStepVelocity);
 
 	// animationが終了したら遷移可能にする

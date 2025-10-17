@@ -276,6 +276,8 @@ void RenderEngine::Renderers(ViewType type, bool enableMesh) {
 	// model描画後
 	spriteRenderer_->Rendering(SpriteLayer::PostModel, sceneBuffer_.get(), dxCommand_);
 
+#if defined(_DEBUG) || defined(_DEVELOPBUILD)
+
 	// ピッキング処理、左クリックしたときのみ更新
 	if (pixelPicker_->IsActive() && Input::GetInstance()->IsMouseOnView(InputViewArea::Scene)) {
 		if (type == ViewType::Debug &&
@@ -284,6 +286,7 @@ void RenderEngine::Renderers(ViewType type, bool enableMesh) {
 			pixelPicker_->Execute(dxCommand_, meshRenderer_->GetTLASResource());
 		}
 	}
+#endif // _DEBUG
 }
 
 void RenderEngine::BeginRenderFrameBuffer() {

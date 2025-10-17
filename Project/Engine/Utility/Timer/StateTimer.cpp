@@ -16,7 +16,7 @@
 void StateTimer::Update(const std::optional<float>& target) {
 
 	float endTarget = target.has_value() ? target.value() : target_;
-	current_ += GameTimer::GetDeltaTime();
+	current_ += GameTimer::GetScaledDeltaTime();
 	t_ = std::clamp(current_ / endTarget, 0.0f, 1.0f);
 	easedT_ = EasedValue(easeingType_, t_);
 }

@@ -38,7 +38,7 @@ public:
 
 	//--------- accessor -----------------------------------------------------
 
-	static void SetTimeScale(float timeScale, EasingType easing = EasingType::Linear);
+	static void SetTimeScale(float timeScale, EasingType easing = EasingType::EaseOutExpo);
 	static void SetWaitTime(float waitTime, bool isReset = true);
 	static void SetLerpSpeed(float lerpSpeed) { lerpSpeed_ = lerpSpeed; }
 	static void SetReturnScaleEnable(bool enable) { returnScaleEnable_ = enable; }

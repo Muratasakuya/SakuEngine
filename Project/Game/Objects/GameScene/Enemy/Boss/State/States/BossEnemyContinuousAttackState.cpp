@@ -92,7 +92,7 @@ void BossEnemyContinuousAttackState::UpdateAttack(BossEnemy& bossEnemy) {
 
 	if (!reachedPlayer_) {
 
-		lerpTimer_ += GameTimer::GetDeltaTime();
+		lerpTimer_ += GameTimer::GetScaledDeltaTime();
 		float lerpT = std::clamp(lerpTimer_ / lerpTime_, 0.0f, 1.0f);
 		lerpT = EasedValue(EasingType::EaseOutExpo, lerpT);
 
@@ -119,7 +119,7 @@ void BossEnemyContinuousAttackState::UpdateAttack(BossEnemy& bossEnemy) {
 	// animationが終了したら経過時間を進める
 	if (bossEnemy.IsAnimationFinished()) {
 
-		exitTimer_ += GameTimer::GetDeltaTime();
+		exitTimer_ += GameTimer::GetScaledDeltaTime();
 		// 時間経過が過ぎたら遷移可能
 		if (exitTime_ < exitTimer_) {
 
