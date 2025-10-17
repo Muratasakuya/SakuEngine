@@ -118,8 +118,8 @@ void PlayerAttack_2ndState::CalcWayPoints(const Player& player, std::array<Vecto
 	// 目標座標を設定
 	startTranslation_ = player.GetTranslation();
 	const Vector3 enemyPos = bossEnemy_->GetTranslation();
-	Vector3 dir = (enemyPos - startTranslation_).Normalize();
-	targetTranslation_ = enemyPos - dir * attackOffsetTranslation_;
+	Vector3 direction = (enemyPos - startTranslation_).Normalize();
+	targetTranslation_ = enemyPos - direction * attackOffsetTranslation_;
 
 	//距離に応じて振れ幅を変更する
 	const float distance = (*targetTranslation_ - startTranslation_).Length();
@@ -133,8 +133,8 @@ void PlayerAttack_2ndState::CalcWayPoints(const Player& player, std::array<Vecto
 void PlayerAttack_2ndState::CalcWayPointsToTarget(const Vector3& start, const Vector3& target,
 	float leftT, float rightT, float swayLength, std::array<Vector3, kNumSegments>& dstWayPoints) {
 
-	Vector3 dir = (target - start).Normalize();
-	Vector3 right = Vector3::Cross(dir, Vector3(0.0f, 1.0f, 0.0f)).Normalize();
+	Vector3 direction = Vector3(target - start).Normalize();
+	Vector3 right = Vector3::Cross(direction, Vector3(0.0f, 1.0f, 0.0f)).Normalize();
 
 	dstWayPoints[0] = Vector3::Lerp(start, target, leftT) - right * swayLength;  // 左
 	dstWayPoints[1] = Vector3::Lerp(start, target, rightT) + right * swayLength; // 右
