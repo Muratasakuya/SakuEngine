@@ -16,12 +16,12 @@
         "targetCameraRotateX_": 0.05000000074505806
     },
     "Attack_2nd": {
-        "approachForwardDistance_": 34.099998474121094,
+        "approachForwardDistance_": 34.0,
         "approachLeftPointAngle_": 0.09000000357627869,
         "approachRightPointAngle_": 0.6100000143051147,
         "approachSwayLength_": -8.720000267028809,
         "attackLookAtCircleRange_": 164.0,
-        "attackOffsetTranslation_": 8.0,
+        "attackOffsetTranslation_": 10.0,
         "attackPosEaseType_": 14,
         "attackPosLerpCircleRange_": 40.0,
         "attackPosLerpTime_": 0.47999998927116394,

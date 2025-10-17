@@ -46,7 +46,7 @@ void PlayerAttackCollision::Update(const Transform3D& transform) {
 		currentParameter_->windows.end(),
 		[t = currentTimer_](const TimeWindow& window) {
 			return window.on <= t && t < window.off; });
-	reHitTimer_ = (std::max)(0.0f, reHitTimer_ - GameTimer::GetDeltaTime());
+	reHitTimer_ = (std::max)(0.0f, reHitTimer_ - GameTimer::GetScaledDeltaTime());
 
 	// 遷移可能な状態の時のみ武器状態にする
 	if (isAttack && reHitTimer_ <= 0.0f) {
@@ -75,7 +75,7 @@ void PlayerAttackCollision::Update(const Transform3D& transform) {
 	}
 
 	// 時間を進める
-	currentTimer_ += GameTimer::GetDeltaTime();
+	currentTimer_ += GameTimer::GetScaledDeltaTime();
 
 	// 衝突情報更新
 	Collider::UpdateAllBodies(transform);
@@ -104,6 +104,11 @@ void PlayerAttackCollision::OnCollisionEnter(const CollisionBody* collisionBody)
 
 		// 多段ヒットクールタイム設定
 		reHitTimer_ = currentParameter_->hitInterval;
+
+		// タイムスケールを設定する
+		GameTimer::SetWaitTime(currentParameter_->waitTime, true);
+		GameTimer::SetLerpSpeed(currentParameter_->lerpSpeed);
+		GameTimer::SetTimeScale(currentParameter_->timeScale, currentParameter_->timeScaleEasing);
 
 		// 座標を設定してparticleを発生
 		// 状態別で形状の値を設定
@@ -137,6 +142,14 @@ void PlayerAttackCollision::ImGui() {
 	edit |= ImGui::DragFloat3("centerOffset", &parameter.centerOffset.x, 0.01f);
 	edit |= ImGui::DragFloat3("size", &parameter.size.x, 0.01f);
 	edit |= ImGui::DragFloat("hitInterval", &parameter.hitInterval, 0.01f);
+
+	ImGui::SeparatorText("Hit Stop");
+
+	ImGui::DragFloat("timeScale", &parameter.timeScale, 0.01f);
+	ImGui::DragFloat("waitTime", &parameter.waitTime, 0.01f);
+	ImGui::DragFloat("lerpSpeed", &parameter.lerpSpeed, 0.01f);
+	Easing::SelectEasingType(parameter.timeScaleEasing, "TimeScale");
+
 	EditWindowParameter("hitWindows", parameter.windows);
 
 	if (edit) {
@@ -159,6 +172,11 @@ void PlayerAttackCollision::ApplyJson(const Json& data) {
 
 		parameter.centerOffset = JsonAdapter::ToObject<Vector3>(value["centerOffset"]);
 		parameter.size = JsonAdapter::ToObject<Vector3>(value["size"]);
+		parameter.hitInterval = value.value("hitInterval", 0.0f);
+		parameter.timeScale = value.value("timeScale", 1.0f);
+		parameter.waitTime = value.value("waitTime", 0.08f);
+		parameter.lerpSpeed = value.value("lerpSpeed", 1.0f);
+		parameter.timeScaleEasing = EnumAdapter<EasingType>::FromString(data.value("timeScaleEasing", "Linear")).value();
 		parameter.hitInterval = value.value("hitInterval", 0.0f);
 
 		if (value.contains("hitWindows")) {
@@ -191,6 +209,10 @@ void PlayerAttackCollision::SaveJson(Json& data) {
 		value["centerOffset"] = JsonAdapter::FromObject(parameter.centerOffset);
 		value["size"] = JsonAdapter::FromObject(parameter.size);
 		value["hitInterval"] = parameter.hitInterval;
+		value["timeScale"] = parameter.timeScale;
+		value["waitTime"] = parameter.waitTime;
+		value["lerpSpeed"] = parameter.lerpSpeed;
+		value["timeScaleEasing"] = EnumAdapter<EasingType>::ToString(parameter.timeScaleEasing);
 
 		Json windowData = Json::array();
 		{

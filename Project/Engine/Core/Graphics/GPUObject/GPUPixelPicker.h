@@ -31,6 +31,10 @@ public:
 	void Update(SceneView* sceneView, const Vector2& textureSize, const Vector2& input);
 
 	void Execute(DxCommand* dxCommand, ID3D12Resource* tlasResource);
+
+	//--------- accessor -----------------------------------------------------
+
+	bool IsActive() const { return isActivePixelPick_; }
 private:
 	//========================================================================
 	//	private Methods
@@ -62,6 +66,9 @@ private:
 	DxConstBuffer<PickingData> pickingBuffer_;
 	DxReadbackBuffer<int> readbackIDBuffer_;
 	PickingData pickingData_;
+
+	// 処理が有効かどうか
+	bool isActivePixelPick_ = true;
 
 	//--------- functions ----------------------------------------------------
 

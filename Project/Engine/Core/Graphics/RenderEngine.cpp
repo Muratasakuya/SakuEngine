@@ -277,7 +277,7 @@ void RenderEngine::Renderers(ViewType type, bool enableMesh) {
 	spriteRenderer_->Rendering(SpriteLayer::PostModel, sceneBuffer_.get(), dxCommand_);
 
 	// ピッキング処理、左クリックしたときのみ更新
-	if (Input::GetInstance()->IsMouseOnView(InputViewArea::Scene)) {
+	if (pixelPicker_->IsActive() && Input::GetInstance()->IsMouseOnView(InputViewArea::Scene)) {
 		if (type == ViewType::Debug &&
 			Input::GetInstance()->TriggerMouse(MouseButton::Left)) {
 

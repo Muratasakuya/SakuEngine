@@ -50,7 +50,8 @@ void GPUPixelPicker::Update(SceneView* sceneView,
 
 void GPUPixelPicker::Execute(DxCommand* dxCommand, ID3D12Resource* tlasResource) {
 
-	if (tlasResource == nullptr || !ImGuiObjectEditor::GetInstance()->IsPickActive()) {
+	isActivePixelPick_ = ImGuiObjectEditor::GetInstance()->IsPickActive();
+	if (tlasResource == nullptr || !isActivePixelPick_) {
 		return;
 	}
 

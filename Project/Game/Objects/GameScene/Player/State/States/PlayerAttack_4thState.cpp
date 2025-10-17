@@ -36,7 +36,7 @@ void PlayerAttack_4thState::Enter(Player& player) {
 		startPos_ = playerPos;
 		targetPos_ = startPos_ + player.GetTransform().GetForward() * moveValue_;
 	}
-	
+
 	// 回転補間範囲内に入っていたら
 	if (CheckInRange(attackLookAtCircleRange_,
 		Vector3(bossEnemy_->GetTranslation() - playerPos).Length())) {
@@ -195,6 +195,5 @@ void PlayerAttack_4thState::SetSpanUpdate(int objectID) {
 
 		// 補間値を設定
 		moveTimer_.t_ = std::clamp(t, 0.0f, 1.0f);
-		moveTimer_.easedT_ = EasedValue(moveTimer_.easeingType_, moveTimer_.t_);
-		});
+		moveTimer_.easedT_ = EasedValue(moveTimer_.easeingType_, moveTimer_.t_); });
 }
