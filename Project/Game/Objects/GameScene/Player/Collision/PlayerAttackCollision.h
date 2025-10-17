@@ -56,6 +56,12 @@ private:
 		Vector3 size;         // サイズ
 		float hitInterval;    // 多段ヒット
 		std::vector<TimeWindow> windows;
+
+		// ヒットストップ
+		float waitTime;
+		float lerpSpeed;
+		float timeScale;
+		EasingType timeScaleEasing;
 	};
 
 	//--------- variables ----------------------------------------------------

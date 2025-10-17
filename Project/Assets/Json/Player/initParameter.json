@@ -10,14 +10,18 @@
             "hitWindows": [
                 {
                     "offTime": 0.38999998569488525,
-                    "onTime": 0.0
+                    "onTime": 0.10999999940395355
                 }
             ],
+            "lerpSpeed": 1.0,
             "size": {
                 "x": 5.599999904632568,
                 "y": 4.0,
                 "z": 3.5999999046325684
-            }
+            },
+            "timeScale": 1.0,
+            "timeScaleEasing": "Linear",
+            "waitTime": 0.07999999821186066
         },
         "Attack_2nd": {
             "centerOffset": {
@@ -32,11 +36,15 @@
                     "onTime": 0.0
                 }
             ],
+            "lerpSpeed": 1.0,
             "size": {
                 "x": 6.0,
                 "y": 4.0,
                 "z": 4.400000095367432
-            }
+            },
+            "timeScale": 1.0,
+            "timeScaleEasing": "Linear",
+            "waitTime": 0.07999999821186066
         },
         "Attack_3rd": {
             "centerOffset": {
@@ -51,11 +59,15 @@
                     "onTime": 0.0
                 }
             ],
+            "lerpSpeed": 1.0,
             "size": {
                 "x": 3.200000047683716,
                 "y": 6.0,
                 "z": 6.0
-            }
+            },
+            "timeScale": 1.0,
+            "timeScaleEasing": "Linear",
+            "waitTime": 0.07999999821186066
         },
         "Attack_4th": {
             "centerOffset": {
@@ -67,14 +79,18 @@
             "hitWindows": [
                 {
                     "offTime": 0.4000000059604645,
-                    "onTime": 0.019999999552965164
+                    "onTime": 0.05999999865889549
                 }
             ],
+            "lerpSpeed": 8.0,
             "size": {
                 "x": 5.599999904632568,
                 "y": 4.0,
                 "z": 3.5999999046325684
-            }
+            },
+            "timeScale": 0.0,
+            "timeScaleEasing": "EaseOutExpo",
+            "waitTime": 0.00800000037997961
         },
         "Dash": {
             "centerOffset": {
@@ -89,11 +105,15 @@
                     "onTime": 0.0
                 }
             ],
+            "lerpSpeed": 1.0,
             "size": {
                 "x": 0.0,
                 "y": 0.0,
                 "z": 0.0
-            }
+            },
+            "timeScale": 1.0,
+            "timeScaleEasing": "Linear",
+            "waitTime": 0.07999999821186066
         },
         "Idle": {
             "centerOffset": {
@@ -108,11 +128,15 @@
                     "onTime": 0.0
                 }
             ],
+            "lerpSpeed": 1.0,
             "size": {
                 "x": 0.0,
                 "y": 0.0,
                 "z": 0.0
-            }
+            },
+            "timeScale": 1.0,
+            "timeScaleEasing": "Linear",
+            "waitTime": 0.07999999821186066
         },
         "Parry": {
             "centerOffset": {
@@ -127,11 +151,15 @@
                     "onTime": 0.0
                 }
             ],
+            "lerpSpeed": 1.0,
             "size": {
                 "x": 0.0,
                 "y": 0.0,
                 "z": 0.0
-            }
+            },
+            "timeScale": 1.0,
+            "timeScaleEasing": "Linear",
+            "waitTime": 0.07999999821186066
         },
         "SkilAttack": {
             "centerOffset": {
@@ -146,11 +174,15 @@
                     "onTime": 0.019999999552965164
                 }
             ],
+            "lerpSpeed": 1.0,
             "size": {
                 "x": 6.0,
                 "y": 6.0,
                 "z": 6.0
-            }
+            },
+            "timeScale": 1.0,
+            "timeScaleEasing": "Linear",
+            "waitTime": 0.07999999821186066
         },
         "StunAttack": {
             "centerOffset": {
@@ -165,11 +197,15 @@
                     "onTime": 0.0
                 }
             ],
+            "lerpSpeed": 1.0,
             "size": {
                 "x": 0.0,
                 "y": 0.0,
                 "z": 0.0
-            }
+            },
+            "timeScale": 1.0,
+            "timeScaleEasing": "Linear",
+            "waitTime": 0.07999999821186066
         },
         "Walk": {
             "centerOffset": {
@@ -184,11 +220,15 @@
                     "onTime": 0.0
                 }
             ],
+            "lerpSpeed": 1.0,
             "size": {
                 "x": 0.0,
                 "y": 0.0,
                 "z": 0.0
-            }
+            },
+            "timeScale": 1.0,
+            "timeScaleEasing": "Linear",
+            "waitTime": 0.07999999821186066
         }
     },
     "CollisionBody0": {

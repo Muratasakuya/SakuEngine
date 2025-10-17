@@ -38,16 +38,16 @@ public:
 
 	//--------- accessor -----------------------------------------------------
 
+	static void SetTimeScale(float timeScale, EasingType easing = EasingType::Linear);
+	static void SetWaitTime(float waitTime, bool isReset = true);
+	static void SetLerpSpeed(float lerpSpeed) { lerpSpeed_ = lerpSpeed; }
+	static void SetReturnScaleEnable(bool enable) { returnScaleEnable_ = enable; }
+
 	static float GetDeltaTime() { return deltaTime_; }
 	static float GetScaledDeltaTime() { return deltaTime_ * timeScale_; }
 
 	static float GetTotalTime();
-
 	static float GetTimeScale() { return timeScale_; }
-
-	static void SetTimeScale(float timeScale) { timeScale_ = timeScale; }
-
-	static void SetReturnScaleEnable(bool enable) { returnScaleEnable_ = enable; }
 private:
 	//========================================================================
 	//	private Methods

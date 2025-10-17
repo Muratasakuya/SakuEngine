@@ -118,6 +118,18 @@ float GameTimer::GetTotalTime() {
 	return elapsed.count();
 }
 
+void GameTimer::SetTimeScale(float timeScale, EasingType easing) {
+
+	timeScale_ = timeScale;
+	easing_ = easing;
+}
+
+void GameTimer::SetWaitTime(float waitTime, bool isReset) {
+
+	waitTime_ = waitTime;
+	waitTimer_ = isReset ? 0.0f : waitTimer_;
+}
+
 void GameTimer::AddMeasurement(std::vector<float>& buffer, float value) {
 
 	buffer.push_back(value);
