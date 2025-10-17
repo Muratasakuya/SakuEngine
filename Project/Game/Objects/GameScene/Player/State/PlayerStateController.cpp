@@ -207,6 +207,9 @@ void PlayerStateController::Update(Player& owner) {
 		}
 		ptr->UpdateAlways(owner);
 	}
+
+	// Y座標の制限
+	owner.ClampInitPosY();
 }
 
 void PlayerStateController::UpdateInputState() {

@@ -40,11 +40,12 @@ public:
 
 	// エディターによるカメラアニメーション
 	void StartPlayerActionAnim(PlayerState state);
-	void EndPlayerActionAnim(PlayerState state);
+	void EndPlayerActionAnim(PlayerState  state);
 
 	// 視点を注視点に向ける
 	void StartLookToTarget(FollowCameraTargetType from, FollowCameraTargetType to,
-		bool isReset = false, bool isLockTarget = false, float lookTimerRate = 1.0f);
+		bool isReset = false, bool isLockTarget = false,
+		std::optional<float> targetXRotation = std::nullopt, float lookTimerRate = 1.0f);
 	void SetLookAlwaysTarget(bool look) { lookAlwaysTarget_ = look; }
 private:
 	//========================================================================
@@ -67,6 +68,7 @@ private:
 	StateTimer lookTimer_;   // 補間までの時間
 	float lookTimerRate_;    // 目標時間の倍速率
 	float targetXRotation_;  // 目標X回転
+	std::optional<float> anyTargetXRotation_;
 
 	// アニメーションを読み込んだか
 	bool isLoadedAnim_;

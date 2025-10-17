@@ -160,7 +160,7 @@ void BossEnemyStateController::UpdatePhase() {
 		if (currentPhase_ + 1 == stateTable_.phases.size()) {
 
 			// 強制遷移先を設定
-			forcedState_ = BossEnemyState::RushAttack;
+			forcedState_ = BossEnemyState::GreatAttack;
 		} else {
 
 			forcedState_.reset();
@@ -235,6 +235,7 @@ void BossEnemyStateController::UpdateStateTimer() {
 			(current_ == BossEnemyState::StrongAttack) ||
 			(current_ == BossEnemyState::ChargeAttack) ||
 			(current_ == BossEnemyState::RushAttack) ||
+			(current_ == BossEnemyState::GreatAttack) ||
 			(current_ == BossEnemyState::ContinuousAttack);
 		// 攻撃状態空の遷移でかつ強制遷移するなら
 		if (isAttack && phase.autoIdleAfterAttack) {

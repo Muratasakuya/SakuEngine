@@ -76,6 +76,8 @@ protected:
 	bool canExit_ = true;    // 遷移可能かどうか
 	float rotationLerpRate_; // 回転補間割合
 
+	float targetCameraRotateX_; // 目標カメラX軸回転
+
 	//--------- functions ----------------------------------------------------
 
 	// helper

@@ -36,6 +36,9 @@ public:
 
 	void DerivedImGui() override;
 
+	// Y座標の制限
+	void ClampInitPosY();
+
 	/*-------- collision ----------*/
 
 	// 衝突コールバック関数
@@ -100,6 +103,8 @@ private:
 
 	// editor
 	PlayerState editingState_;
+	// フラグで攻撃を受けても食らわないようにする
+	bool isInvincible_ = false;
 
 	//--------- functions ----------------------------------------------------
 

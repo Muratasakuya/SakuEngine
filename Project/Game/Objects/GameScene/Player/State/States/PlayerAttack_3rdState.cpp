@@ -4,6 +4,7 @@
 //	include
 //============================================================================
 #include <Engine/Editor/ActionProgress/ActionProgressMonitor.h>
+#include <Engine/Core/Graphics/Renderer/LineRenderer.h>
 #include <Engine/Utility/Timer/GameTimer.h>
 #include <Engine/Utility/Enum/EnumAdapter.h>
 #include <Game/Camera/Follow/FollowCamera.h>
@@ -29,12 +30,12 @@ void PlayerAttack_3rdState::Enter(Player& player) {
 	player.SetNextAnimation("player_attack_3rd", false, nextAnimDuration_);
 	canExit_ = false;
 
+	// 補間座標を設定
+	backStartPos_ = player.GetTranslation();
+
 	// 敵が攻撃可能範囲にいるかチェック
 	assisted_ = CheckInRange(attackPosLerpCircleRange_,
 		Vector3(bossEnemy_->GetTranslation() - backStartPos_).Length());
-
-	// 補間座標を設定
-	backStartPos_ = player.GetTranslation();
 	Vector3 direction = (bossEnemy_->GetTranslation() - backStartPos_).Normalize();
 	// 補間先がいなければ正面向き
 	if (!assisted_) {
@@ -46,8 +47,13 @@ void PlayerAttack_3rdState::Enter(Player& player) {
 	// Y座標の固定値
 	initPosY_ = player.GetTranslation().y;
 
-	// カメラアニメーション開始
-	followCamera_->StartPlayerActionAnim(PlayerState::Attack_3rd);
+	// 回転補間範囲内に入っていたら
+	if (CheckInRange(attackLookAtCircleRange_,
+		Vector3(bossEnemy_->GetTranslation() - backStartPos_).Length())) {
+
+		// カメラアニメーション開始
+		followCamera_->StartPlayerActionAnim(PlayerState::Attack_3rd);
+	}
 }
 
 void PlayerAttack_3rdState::Update(Player& player) {
@@ -220,13 +226,9 @@ void PlayerAttack_3rdState::StartMoveWeapon(Player& player, PlayerWeaponType typ
 	// 目標座標を設定する
 	if (assisted_) {
 
-		// 敵への向き
-		Vector3 toPlayer = player.GetTranslation() - bossEnemy_->GetTranslation();
-		toPlayer.y = 0.0f;
-		toPlayer = toPlayer.Normalize();
-
 		// Y軸回転オフセットをかける
-		Vector3 rotated = RotateYOffset(toPlayer, weaponParams_[type].offsetRotationY);
+		Vector3 rotated = RotateYOffset(player.GetTransform().GetForward(),
+			weaponParams_[type].offsetRotationY).Normalize();
 
 		// 敵を中心に一定距離だけオフセット
 		weaponParams_[type].targetPos = bossEnemy_->GetTranslation() + rotated * bossEnemyDistance_;
@@ -296,6 +298,9 @@ void PlayerAttack_3rdState::Exit(Player& player) {
 	// 剣の親子付けを戻す
 	player.ResetWeaponTransform(PlayerWeaponType::Left);
 	player.ResetWeaponTransform(PlayerWeaponType::Right);
+
+	// カメラアニメーションを終了させる
+	followCamera_->EndPlayerActionAnim(PlayerState::Attack_3rd);
 }
 
 void PlayerAttack_3rdState::ImGui(const Player& player) {
@@ -330,6 +335,15 @@ void PlayerAttack_3rdState::ImGui(const Player& player) {
 		ImGui::DragFloat3("forward", &debugForward_[type].x);
 
 		ImGui::PopID();
+
+		// 飛ばされる予定の剣の位置
+		Vector3 rotated = RotateYOffset(player.GetTransform().GetForward(),
+			param.offsetRotationY);
+		Vector3 target = bossEnemy_->GetTranslation() + rotated * bossEnemyDistance_;
+		target.y = weaponPosY_;
+
+		LineRenderer::GetInstance()->DrawSphere(6,
+			8.0f, target, Color::Cyan());
 	}
 }
 

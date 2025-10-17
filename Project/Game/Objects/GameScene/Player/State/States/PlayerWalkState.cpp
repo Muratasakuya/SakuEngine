@@ -23,9 +23,6 @@ void PlayerWalkState::Update(Player& player) {
 	UpdateWalk(player);
 	// 回転、進行方向に向かせる
 	SetRotateToDirection(player, move_.Normalize());
-
-	// カメラは常に敵の方向を向くようにする
-	followCamera_->SetLookAlwaysTarget(true);
 }
 
 void PlayerWalkState::UpdateWalk(Player& player) {
@@ -64,9 +61,6 @@ void PlayerWalkState::UpdateWalk(Player& player) {
 }
 
 void PlayerWalkState::Exit([[maybe_unused]] Player& player) {
-
-	// 追従をオフ
-	followCamera_->SetLookAlwaysTarget(true);
 }
 
 void PlayerWalkState::ImGui([[maybe_unused]] const Player& player) {

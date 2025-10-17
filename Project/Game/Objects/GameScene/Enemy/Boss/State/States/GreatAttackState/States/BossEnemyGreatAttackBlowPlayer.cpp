@@ -5,6 +5,7 @@
 //============================================================================
 #include <Game/Objects/GameScene/Enemy/Boss/Entity/BossEnemy.h>
 #include <Game/Objects/GameScene/Player/Entity/Player.h>
+#include <Game/Camera/Follow/FollowCamera.h>
 
 //============================================================================
 //	BossEnemyGreatAttackBlowPlayer classMethods
@@ -26,9 +27,6 @@ void BossEnemyGreatAttackBlowPlayer::Enter() {
 	animTranslation_->SetStart(bossEnemy_->GetTranslation());
 	// 終了座標
 	animTranslation_->SetEnd(Vector3::AnyInit(0.0f));
-
-	// プレイヤーの動きを止める
-	player_->SetUpdateMode(ObjectUpdateMode::Not);
 
 	// アニメーション開始
 	animTranslation_->Start();

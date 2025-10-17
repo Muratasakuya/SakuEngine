@@ -26,19 +26,25 @@ void PlayerAttack_1stState::Enter(Player& player) {
 
 	// 敵が攻撃可能範囲にいるかチェック
 	const Vector3 playerPos = player.GetTranslation();
-	assisted_ = CheckInRange(attackPosLerpCircleRange_,
-		Vector3(bossEnemy_->GetTranslation() - playerPos).Length());
-
 	// 補間座標を設定
-	if (!assisted_) {
+	if (!CheckInRange(attackPosLerpCircleRange_,
+		Vector3(bossEnemy_->GetTranslation() - playerPos).Length())) {
 
 		startPos_ = playerPos;
 		targetPos_ = startPos_ + player.GetTransform().GetForward() * moveValue_;
-	} else {
+	}
+
+	// 回転補間範囲内にいるかどうか
+	assisted_ = CheckInRange(attackLookAtCircleRange_,
+		Vector3(bossEnemy_->GetTranslation() - playerPos).Length());
+	if (assisted_) {
 
 		// カメラの向きを補正させる
 		followCamera_->StartLookToTarget(FollowCameraTargetType::Player,
-			FollowCameraTargetType::BossEnemy);
+			FollowCameraTargetType::BossEnemy, true, true, targetCameraRotateX_);
+
+		startPos_ = playerPos;
+		targetPos_ = startPos_ + player.GetTransform().GetForward() * moveValue_;
 	}
 }
 
@@ -79,6 +85,7 @@ void PlayerAttack_1stState::ImGui(const Player& player) {
 	ImGui::DragFloat("nextAnimDuration", &nextAnimDuration_, 0.001f);
 	ImGui::DragFloat("rotationLerpRate", &rotationLerpRate_, 0.001f);
 	ImGui::DragFloat("exitTime", &exitTime_, 0.01f);
+	ImGui::DragFloat("targetCameraRotateX", &targetCameraRotateX_, 0.01f);
 
 	PlayerBaseAttackState::ImGui(player);
 
@@ -96,6 +103,7 @@ void PlayerAttack_1stState::ApplyJson(const Json& data) {
 
 	moveTimer_.FromJson(data.value("MoveTimer", Json()));
 	moveValue_ = data.value("moveValue_", 1.0f);
+	targetCameraRotateX_ = data.value("targetCameraRotateX_", 0.0f);
 
 	SetActionProgress();
 }
@@ -110,6 +118,7 @@ void PlayerAttack_1stState::SaveJson(Json& data) {
 
 	moveTimer_.ToJson(data["MoveTimer"]);
 	data["moveValue_"] = moveValue_;
+	data["targetCameraRotateX_"] = targetCameraRotateX_;
 }
 
 bool PlayerAttack_1stState::GetCanExit() const {

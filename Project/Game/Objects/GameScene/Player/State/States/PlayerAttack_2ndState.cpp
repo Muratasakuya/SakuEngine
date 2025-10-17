@@ -26,28 +26,33 @@ void PlayerAttack_2ndState::Enter(Player& player) {
 	canExit_ = false;
 
 	// 距離を比較
-	const float dist = (bossEnemy_->GetTranslation() - player.GetTranslation()).Length();
-	approachPhase_ = (dist > attackPosLerpCircleRange_);
+	const Vector3 playerPos = player.GetTranslation();
+	const float distance = (bossEnemy_->GetTranslation() - playerPos).Length();
 
 	// 初期化
 	currentIndex_ = 0;
 	segmentTimer_ = 0.0f;
 	segmentTime_ = attackPosLerpTime_ / 3.0f;
 
-	if (approachPhase_) {
+	if (attackPosLerpCircleRange_ < distance) {
 
 		// 範囲外のとき
 		CalcApproachWayPoints(player, wayPoints_);
-		startTranslation_ = player.GetTranslation();
 	} else {
 
 		// 範囲内のとき
 		CalcWayPoints(player, wayPoints_);
-		startTranslation_ = player.GetTranslation();
+	}
+	startTranslation_ = playerPos;
+
+	// 回転補間させるかの設定
+	approachPhase_ = CheckInRange(attackLookAtCircleRange_,
+		Vector3(bossEnemy_->GetTranslation() - playerPos).Length());
+	if (approachPhase_) {
 
 		// カメラの向きを補正させる
 		followCamera_->StartLookToTarget(FollowCameraTargetType::Player,
-			FollowCameraTargetType::BossEnemy, true, true);
+			FollowCameraTargetType::BossEnemy, true, true, targetCameraRotateX_);
 	}
 }
 
@@ -194,6 +199,8 @@ void PlayerAttack_2ndState::ImGui(const Player& player) {
 	ImGui::DragFloat("nextAnimDuration", &nextAnimDuration_, 0.001f);
 	ImGui::DragFloat("rotationLerpRate", &rotationLerpRate_, 0.001f);
 	ImGui::DragFloat("exitTime", &exitTime_, 0.01f);
+	ImGui::DragFloat("targetCameraRotateX", &targetCameraRotateX_, 0.01f);
+
 	ImGui::DragFloat("swayRate", &swayRate_, 0.01f);
 	ImGui::DragFloat("leftPointAngle", &leftPointAngle_, 0.01f);
 	ImGui::DragFloat("rightPointAngle", &rightPointAngle_, 0.01f);
@@ -245,6 +252,8 @@ void PlayerAttack_2ndState::ApplyJson(const Json& data) {
 	leftPointAngle_ = JsonAdapter::GetValue<float>(data, "leftPointAngle_");
 	rightPointAngle_ = JsonAdapter::GetValue<float>(data, "rightPointAngle_");
 
+	targetCameraRotateX_ = data.value("targetCameraRotateX_", 0.0f);
+
 	approachForwardDistance_ = data.value("approachForwardDistance_", approachForwardDistance_);
 	approachSwayLength_ = data.value("approachSwayLength_", approachSwayLength_);
 	approachLeftPointAngle_ = data.value("approachLeftPointAngle_", approachLeftPointAngle_);
@@ -263,6 +272,7 @@ void PlayerAttack_2ndState::SaveJson(Json& data) {
 	data["swayRate_"] = swayRate_;
 	data["leftPointAngle_"] = leftPointAngle_;
 	data["rightPointAngle_"] = rightPointAngle_;
+	data["targetCameraRotateX_"] = targetCameraRotateX_;
 
 	data["approachForwardDistance_"] = approachForwardDistance_;
 	data["approachSwayLength_"] = approachSwayLength_;

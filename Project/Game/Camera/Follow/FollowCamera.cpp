@@ -87,7 +87,8 @@ void FollowCamera::EndPlayerActionAnim(PlayerState state) {
 }
 
 void FollowCamera::StartLookToTarget(FollowCameraTargetType from,
-	FollowCameraTargetType to, bool isReset, bool isLockTarget, float lookTimerRate) {
+	FollowCameraTargetType to, bool isReset, bool isLockTarget,
+	std::optional<float> targetXRotation, float lookTimerRate) {
 
 	// 処理中なら受け付けない
 	if (lookStart_ && !isReset) {
@@ -104,6 +105,13 @@ void FollowCamera::StartLookToTarget(FollowCameraTargetType from,
 	// 開始回転を設定
 	lookToStart_ = Quaternion::Normalize(transform_.rotation);
 	lookToTarget_ = std::nullopt;
+	anyTargetXRotation_ = std::nullopt;
+
+	// 任意のX軸回転が設定されていれば
+	if (targetXRotation.has_value()) {
+
+		anyTargetXRotation_ = targetXRotation.value();
+	}
 
 	// 目標回転を固定するなら
 	if (isLockTarget) {
@@ -234,13 +242,16 @@ Quaternion FollowCamera::GetTargetRotation() const {
 	forward.y = 0.0f;
 	forward = forward.Normalize();
 
+	float targetXRotation = anyTargetXRotation_.has_value() ?
+		anyTargetXRotation_.value() : targetXRotation_;
+
 	// Y軸の回転
 	Quaternion yawRotation = Quaternion::LookRotation(
 		forward, Direction::Get(Direction3D::Up));
 	// X軸回転
 	Vector3 rightAxis = (yawRotation * Direction::Get(Direction3D::Right)).Normalize();
 	Quaternion pitchRotation = Quaternion::Normalize(Quaternion::MakeAxisAngle(
-		rightAxis, targetXRotation_));
+		rightAxis, targetXRotation));
 	// 目標回転
 	Quaternion targetRotation = Quaternion::Normalize(pitchRotation * yawRotation);
 	return targetRotation;

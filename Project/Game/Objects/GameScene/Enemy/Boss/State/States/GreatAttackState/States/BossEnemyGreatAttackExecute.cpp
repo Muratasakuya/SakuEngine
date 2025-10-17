@@ -1,6 +1,11 @@
 #include "BossEnemyGreatAttackExecute.h"
 
 //============================================================================
+//	include
+//============================================================================
+#include <Game/Objects/GameScene/Player/Entity/Player.h>
+
+//============================================================================
 //	BossEnemyGreatAttackExecute classMethods
 //============================================================================
 
@@ -11,6 +16,9 @@ BossEnemyGreatAttackExecute::BossEnemyGreatAttackExecute() {
 }
 
 void BossEnemyGreatAttackExecute::Enter() {
+
+	// プレイヤーの動きを止める
+	player_->SetUpdateMode(ObjectUpdateMode::None);
 }
 
 void BossEnemyGreatAttackExecute::Update() {

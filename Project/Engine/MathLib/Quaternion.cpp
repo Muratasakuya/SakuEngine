@@ -61,10 +61,10 @@ Quaternion Quaternion::FromJson(const Json& data) {
 		quaternion.w = data[0].get<float>();
 	} else if (data.contains("x") && data.contains("y") &&
 		data.contains("z") && data.contains("w")) {
-		quaternion.x = data["x"].get<float>();
-		quaternion.y = data["y"].get<float>();
-		quaternion.z = data["z"].get<float>();
-		quaternion.w = data["w"].get<float>();
+		quaternion.x = data.value("x", 0.0f);
+		quaternion.y = data.value("y", 0.0f);
+		quaternion.z = data.value("z", 0.0f);
+		quaternion.w = data.value("w", 1.0f);
 	}
 	return quaternion;
 }

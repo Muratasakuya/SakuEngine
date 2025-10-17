@@ -36,8 +36,14 @@ void PlayerAttack_4thState::Enter(Player& player) {
 		startPos_ = playerPos;
 		targetPos_ = startPos_ + player.GetTransform().GetForward() * moveValue_;
 	}
-	// カメラアニメーション開始
-	followCamera_->StartPlayerActionAnim(PlayerState::Attack_4th);
+	
+	// 回転補間範囲内に入っていたら
+	if (CheckInRange(attackLookAtCircleRange_,
+		Vector3(bossEnemy_->GetTranslation() - playerPos).Length())) {
+
+		// カメラアニメーション開始
+		followCamera_->StartPlayerActionAnim(PlayerState::Attack_4th);
+	}
 }
 
 void PlayerAttack_4thState::Update(Player& player) {
@@ -60,6 +66,9 @@ void PlayerAttack_4thState::Update(Player& player) {
 	// animationが終わったら時間経過を進める
 	if (canExit_) {
 
+		// シェイク前にアニメーションを終了させる
+		followCamera_->EndPlayerActionAnim(PlayerState::Attack_4th);
+
 		exitTimer_ += GameTimer::GetScaledDeltaTime();
 		// 画面シェイクを行わせる
 		followCamera_->SetScreenShake(true);
@@ -72,6 +81,9 @@ void PlayerAttack_4thState::Exit([[maybe_unused]] Player& player) {
 	attackPosLerpTimer_ = 0.0f;
 	exitTimer_ = 0.0f;
 	moveTimer_.Reset();
+
+	// カメラアニメーションを終了させる
+	followCamera_->EndPlayerActionAnim(PlayerState::Attack_4th);
 }
 
 void PlayerAttack_4thState::ImGui(const Player& player) {

@@ -232,7 +232,9 @@ Vector3 PlayerParryState::SetLerpValue(Vector3& start, Vector3& target,
 	const Vector3 playerPos = player.GetTranslation();
 	const Vector3 enemyPos = bossEnemy_->GetTranslation();
 	// 向き
-	Vector3 direction = (enemyPos - playerPos).Normalize();
+	Vector3 direction = enemyPos - playerPos;
+	direction.y = 0.0f;
+	direction = direction.Normalize();
 
 	// 補間座標を設定する
 	start = playerPos;
@@ -243,7 +245,6 @@ Vector3 PlayerParryState::SetLerpValue(Vector3& start, Vector3& target,
 
 		target = enemyPos + direction * moveDistance;
 	}
-
 	return direction;
 }
 

@@ -3,6 +3,7 @@
 //============================================================================
 //	include
 //============================================================================
+#include <Engine/Input/Input.h>
 #include <Engine/Utility/Random/RandomGenerator.h>
 #include <Engine/Utility/Enum/EnumAdapter.h>
 #include <Game/Objects/GameScene/Enemy/Boss/Entity/BossEnemy.h>
@@ -250,6 +251,12 @@ void Player::Update() {
 	Collider::UpdateAllBodies(*transform_);
 	attackCollision_->Update(*transform_);
 
+	// 入力で攻撃を無効化できるようにする
+	if (Input::GetInstance()->TriggerKey(DIK_F9)) {
+
+		isInvincible_ = !isInvincible_;
+	}
+
 	// エフェクトの更新
 	// エフェクト、エンジン機能変更中...
 	//animationEffect_->Update(*this);
@@ -277,6 +284,10 @@ void Player::CheckBossEnemyStun() {
 }
 
 void Player::OnCollisionEnter(const CollisionBody* collisionBody) {
+
+	if (isInvincible_) {
+		return;
+	}
 
 	// パリィ処理中なら攻撃を受けない
 	if (stateController_->IsActiveParry()) {
@@ -307,6 +318,7 @@ void Player::DerivedImGui() {
 		if (ImGui::BeginTabItem("Stats")) {
 
 			ImGui::Text(std::format("isStunUpdate: {}", isStunUpdate_).c_str());
+			ImGui::Text(std::format("isInvincible: {}", isInvincible_).c_str());
 
 			ImGui::Text("HP : %d / %d", stats_.currentHP, stats_.maxHP);
 			ImGui::Text("SP : %d / %d", stats_.currentSkilPoint, stats_.maxSkilPoint);
@@ -379,6 +391,13 @@ void Player::DerivedImGui() {
 
 	ImGui::PopItemWidth();
 	ImGui::SetWindowFontScale(1.0f);
+}
+
+void Player::ClampInitPosY() {
+
+	// y座標が初期化時のY座標より下に行かないようにする
+	transform_->translation.y = (std::max)(transform_->translation.y,
+		initTransform_.translation.y);
 }
 
 void Player::ApplyJson() {

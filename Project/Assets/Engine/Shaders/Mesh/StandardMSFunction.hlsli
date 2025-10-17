@@ -165,6 +165,5 @@ bool IsShadowed(float3 origin) {
 	
 	while (rayQuery.Proceed()) {
 	}
-
 	return rayQuery.CommittedStatus() == COMMITTED_TRIANGLE_HIT;
 }

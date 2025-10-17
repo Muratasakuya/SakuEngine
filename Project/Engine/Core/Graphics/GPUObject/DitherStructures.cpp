@@ -13,9 +13,9 @@
 
 void DitherForGPU::Init() {
 
-	maxValue = 64.0f;
+	maxValue = 186.0f;
 	fadeStart = 7.2f;
-	fadeLength = 48.0f;
+	fadeLength = 54.0f;
 }
 
 void DitherForGPU::ImGui() {

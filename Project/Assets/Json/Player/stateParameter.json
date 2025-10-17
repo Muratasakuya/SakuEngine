@@ -4,7 +4,7 @@
             "easeingType_": "EaseInExpo",
             "target_": 0.15000000596046448
         },
-        "attackLookAtCircleRange_": 108.0,
+        "attackLookAtCircleRange_": 164.0,
         "attackOffsetTranslation_": 8.0,
         "attackPosEaseType_": 14,
         "attackPosLerpCircleRange_": 40.0,
@@ -12,14 +12,15 @@
         "exitTime_": 0.029999999329447746,
         "moveValue_": 24.0,
         "nextAnimDuration_": 0.019999999552965164,
-        "rotationLerpRate_": 0.46000000834465027
+        "rotationLerpRate_": 0.46000000834465027,
+        "targetCameraRotateX_": 0.05000000074505806
     },
     "Attack_2nd": {
         "approachForwardDistance_": 34.099998474121094,
         "approachLeftPointAngle_": 0.09000000357627869,
         "approachRightPointAngle_": 0.6100000143051147,
         "approachSwayLength_": -8.720000267028809,
-        "attackLookAtCircleRange_": 108.0,
+        "attackLookAtCircleRange_": 164.0,
         "attackOffsetTranslation_": 8.0,
         "attackPosEaseType_": 14,
         "attackPosLerpCircleRange_": 40.0,
@@ -29,7 +30,8 @@
         "nextAnimDuration_": 0.04800000041723251,
         "rightPointAngle_": 0.9200000166893005,
         "rotationLerpRate_": 0.4000000059604645,
-        "swayRate_": -0.1599999964237213
+        "swayRate_": -0.1599999964237213,
+        "targetCameraRotateX_": 0.10000000149011612
     },
     "Attack_3rd": {
         "BackMoveTimer": {
@@ -43,12 +45,12 @@
         "Weapon": {
             "Left": {
                 "moveValue": 80.0,
-                "offsetRotationY": 0.5400000214576721,
+                "offsetRotationY": -0.2800000011920929,
                 "rotateSpeed": 1.600000023841858
             },
             "Right": {
                 "moveValue": 80.0,
-                "offsetRotationY": -0.5400000214576721,
+                "offsetRotationY": 0.27000001072883606,
                 "rotateSpeed": 1.600000023841858
             }
         },
@@ -56,13 +58,13 @@
             "easeingType_": "EaseOutExpo",
             "target_": 0.09000000357627869
         },
-        "attackLookAtCircleRange_": 108.0,
+        "attackLookAtCircleRange_": 164.0,
         "attackOffsetTranslation_": 8.0,
         "attackPosEaseType_": 14,
         "attackPosLerpCircleRange_": 40.0,
         "attackPosLerpTime_": 0.4399999976158142,
         "backMoveValue_": -48.0,
-        "bossEnemyDistance_": 8.600000381469727,
+        "bossEnemyDistance_": -12.699999809265137,
         "exitTime_": 0.019999999552965164,
         "nextAnimDuration_": 0.07999999821186066,
         "rotationLerpRate_": 0.46000000834465027,
@@ -73,7 +75,7 @@
             "easeingType_": "EaseOutExpo",
             "target_": 0.800000011920929
         },
-        "attackLookAtCircleRange_": 108.0,
+        "attackLookAtCircleRange_": 164.0,
         "attackOffsetTranslation_": 8.0,
         "attackPosEaseType_": 14,
         "attackPosLerpCircleRange_": 40.0,
