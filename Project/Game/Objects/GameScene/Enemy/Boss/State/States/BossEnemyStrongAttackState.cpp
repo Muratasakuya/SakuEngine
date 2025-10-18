@@ -123,7 +123,7 @@ void BossEnemyStrongAttackState::UpdateAttack2nd(BossEnemy& bossEnemy) {
 	target.y = 0.0f;
 
 	// 敵は常にプレイヤーの方を向くようにしておく
-	LookTarget(bossEnemy, target);
+	LookTarget(bossEnemy, playerPos);
 
 	if (!reachedPlayer_) {
 

@@ -5,7 +5,7 @@
             "target_": 0.15000000596046448
         },
         "attackLookAtCircleRange_": 164.0,
-        "attackOffsetTranslation_": 8.0,
+        "attackOffsetTranslation_": 12.0,
         "attackPosEaseType_": 14,
         "attackPosLerpCircleRange_": 40.0,
         "attackPosLerpTime_": 0.4399999976158142,
@@ -21,7 +21,7 @@
         "approachRightPointAngle_": 0.6100000143051147,
         "approachSwayLength_": -8.720000267028809,
         "attackLookAtCircleRange_": 164.0,
-        "attackOffsetTranslation_": 10.0,
+        "attackOffsetTranslation_": 14.0,
         "attackPosEaseType_": 14,
         "attackPosLerpCircleRange_": 40.0,
         "attackPosLerpTime_": 0.47999998927116394,
@@ -59,7 +59,7 @@
             "target_": 0.09000000357627869
         },
         "attackLookAtCircleRange_": 164.0,
-        "attackOffsetTranslation_": 8.0,
+        "attackOffsetTranslation_": 12.0,
         "attackPosEaseType_": 14,
         "attackPosLerpCircleRange_": 40.0,
         "attackPosLerpTime_": 0.4399999976158142,
@@ -76,7 +76,7 @@
             "target_": 0.800000011920929
         },
         "attackLookAtCircleRange_": 164.0,
-        "attackOffsetTranslation_": 8.0,
+        "attackOffsetTranslation_": 12.0,
         "attackPosEaseType_": 14,
         "attackPosLerpCircleRange_": 40.0,
         "attackPosLerpTime_": 0.4399999976158142,
@@ -248,7 +248,7 @@
         "nextAnimDuration_": 0.019999999552965164,
         "parryLerp_.easingType": 11,
         "parryLerp_.moveDistance": -60.0,
-        "parryLerp_.time": 0.7200000286102295
+        "parryLerp_.time": 0.6399999856948853
     },
     "SkilAttack": {
         "BackJump": {

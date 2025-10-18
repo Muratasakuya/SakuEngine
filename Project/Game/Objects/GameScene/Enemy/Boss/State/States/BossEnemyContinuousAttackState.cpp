@@ -70,7 +70,7 @@ void BossEnemyContinuousAttackState::UpdateParrySign(BossEnemy& bossEnemy) {
 	Vector3 direction = (bossEnemy.GetTranslation() - playerPos).Normalize();
 	Vector3 target = playerPos - direction * attackOffsetTranslation_;
 	target.y = 0.0f;
-	LookTarget(bossEnemy, target);
+	LookTarget(bossEnemy, playerPos);
 
 	// 座標補間
 	bossEnemy.SetTranslation(Vector3::Lerp(startPos_, target, lerpT));
@@ -93,18 +93,21 @@ void BossEnemyContinuousAttackState::UpdateParrySign(BossEnemy& bossEnemy) {
 
 void BossEnemyContinuousAttackState::UpdateAttack(BossEnemy& bossEnemy) {
 
+
+	// プレイヤー座標計算
+	const Vector3 playerPos = player_->GetTranslation();
+	Vector3 direction = (bossEnemy.GetTranslation() - playerPos).Normalize();
+	Vector3 target = playerPos - direction * attackOffsetTranslation_;
+	target.y = 0.0f;
+
+	// 敵は常にプレイヤーの方を向くようにしておく
+	LookTarget(bossEnemy, playerPos);
+
 	if (!reachedPlayer_) {
 
 		lerpTimer_ += GameTimer::GetScaledDeltaTime();
 		float lerpT = std::clamp(lerpTimer_ / lerpTime_, 0.0f, 1.0f);
 		lerpT = EasedValue(easingType_, lerpT);
-
-		// プレイヤー座標計算
-		const Vector3 playerPos = player_->GetTranslation();
-		Vector3 direction = (bossEnemy.GetTranslation() - playerPos).Normalize();
-		Vector3 target = playerPos - direction * attackOffsetTranslation_;
-		target.y = 0.0f;
-		LookTarget(bossEnemy, target);
 
 		// 補間
 		Vector3 newPos = Vector3::Lerp(startPos_, target, lerpT);
