@@ -20,6 +20,8 @@ void PlayerAvoidSatate::Enter(Player& player) {
 	const Vector3 enemyPos = bossEnemy_->GetTranslation();
 	// 向き
 	Vector3 direction = (enemyPos - playerPos).Normalize();
+	direction.y = 0.0f;
+	direction = direction.Normalize();
 
 	// 補間座標を設定する
 	startPos_ = playerPos;
