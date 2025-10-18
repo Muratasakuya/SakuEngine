@@ -10,7 +10,9 @@
         }
     },
     "Follow": {
+        "clampBlendSpeed_": 0.07999999821186066,
         "fovYLerpRate_": 0.11999999731779099,
+        "handoffBlendSpeed_": 0.3199999928474426,
         "inputLerpRate_": 0.12999999523162842,
         "lerpRate_": 0.23999999463558197,
         "mouseSensitivity_": {
@@ -18,13 +20,13 @@
             "y": 0.14399999380111694
         },
         "offsetTranslation_": {
-            "x": 0.0,
-            "y": 9.0,
-            "z": -55.0
+            "x": 4.652849483477439e-08,
+            "y": 8.999970436096191,
+            "z": -54.999977111816406
         },
         "offsetXLerpRate_": 0.01600000075995922,
         "offsetYLerpRate_": 0.01600000075995922,
-"offsetZLerpRate_": 0.07999999821186066,
+        "offsetZLerpRate_": 0.07999999821186066,
         "padSensitivity_": {
             "x": 0.03200000151991844,
             "y": 0.04800000041723251

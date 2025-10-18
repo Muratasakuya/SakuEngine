@@ -33,6 +33,8 @@ void PlayerParryState::Enter(Player& player) {
 	// 座標、向きを計算
 	Vector3 direction = SetLerpValue(startPos_, targetPos_,
 		player, parryLerp_.moveDistance, true);
+	direction.y = 0.0f;
+	direction = direction.Normalize();
 
 	// 敵の方向を向かせる
 	player.SetRotation(Quaternion::LookRotation(direction, Vector3(0.0f, 1.0f, 0.0f)));
@@ -42,6 +44,7 @@ void PlayerParryState::Enter(Player& player) {
 	// deltaTimeをスケーリングしても元の値に戻らないようにする
 	GameTimer::SetReturnScaleEnable(false);
 	GameTimer::SetTimeScale(0.0f);
+	GameTimer::SetLerpSpeed(deltaLerpSpeed_);
 
 	// パリィ用のカメラアニメーションを設定
 	followCamera_->StartPlayerActionAnim(PlayerState::Parry);
@@ -51,6 +54,7 @@ void PlayerParryState::Enter(Player& player) {
 	request_ = std::nullopt;
 	parryLerp_.isFinised = false;
 	attackLerp_.isFinised = false;
+	deltaWaitTimer_ = 0.0f;
 }
 
 void PlayerParryState::Update(Player& player) {
@@ -162,10 +166,6 @@ void PlayerParryState::UpdateAnimation(Player& player) {
 		canExit_ = true;
 		// 元に戻す
 		player.SetReverseWeapon(false, PlayerWeaponType::Left);
-
-		// カメラの回転を戻す
-		followCamera_->StartLookToTarget(FollowCameraTargetType::Player,
-			FollowCameraTargetType::BossEnemy, true, true, std::nullopt, 0.88f);
 		return;
 	}
 	switch (request_.value()) {
@@ -180,7 +180,7 @@ void PlayerParryState::UpdateAnimation(Player& player) {
 
 		request_ = RequestState::AttackAnimation;
 
-		// カメラをパリィ攻撃用アニメーションにする
+		// カメラアニメーションを終了させる
 		followCamera_->EndPlayerActionAnim(PlayerState::Parry);
 		// パリィ攻撃は4段目の攻撃と同じ
 		followCamera_->StartPlayerActionAnim(PlayerState::Attack_4th);
@@ -253,6 +253,9 @@ void PlayerParryState::Exit([[maybe_unused]] Player& player) {
 
 	GameTimer::SetReturnScaleEnable(true);
 
+	// カメラアニメーションを終了させる
+	followCamera_->EndPlayerActionAnim(PlayerState::Parry);
+
 	// リセット
 	request_ = std::nullopt;
 	deltaWaitTimer_ = 0.0f;
@@ -273,6 +276,8 @@ void PlayerParryState::ImGui(const Player& player) {
 	ImGui::Text(std::format("allowAttack: {}", allowAttack_).c_str());
 	ImGui::DragFloat("nextAnimDuration", &nextAnimDuration_, 0.001f);
 	ImGui::DragFloat("deltaWaitTime", &deltaWaitTime_, 0.01f);
+	ImGui::DragFloat("deltaLerpSpeed_", &deltaLerpSpeed_, 0.01f);
+	ImGui::DragFloat("cameraLookRate", &cameraLookRate_, 0.01f);
 
 	ImGuiHelper::ValueText<Vector3>("stratPos", startPos_);
 	ImGuiHelper::ValueText<Vector3>("targetPos", targetPos_);
@@ -320,6 +325,8 @@ void PlayerParryState::ApplyJson(const Json& data) {
 
 	nextAnimDuration_ = JsonAdapter::GetValue<float>(data, "nextAnimDuration_");
 	deltaWaitTime_ = JsonAdapter::GetValue<float>(data, "deltaWaitTime_");
+	deltaLerpSpeed_ = data.value("deltaLerpSpeed_", 8.0f);
+	cameraLookRate_ = data.value("cameraLookRate_", 1.0f);
 
 	parryLerp_.time = JsonAdapter::GetValue<float>(data, "parryLerp_.time");
 	parryLerp_.moveDistance = JsonAdapter::GetValue<float>(data, "parryLerp_.moveDistance");
@@ -336,6 +343,8 @@ void PlayerParryState::SaveJson(Json& data) {
 
 	data["nextAnimDuration_"] = nextAnimDuration_;
 	data["deltaWaitTime_"] = deltaWaitTime_;
+	data["deltaLerpSpeed_"] = deltaLerpSpeed_;
+	data["cameraLookRate_"] = cameraLookRate_;
 
 	data["parryLerp_.time"] = parryLerp_.time;
 	data["parryLerp_.moveDistance"] = parryLerp_.moveDistance;

@@ -59,8 +59,8 @@ private:
 	std::unordered_map<FollowCameraTargetType, const Transform3D*> targets_;
 
 	// 視点を注視点に向ける処理
-	bool lookStart_ = false; // 補間開始するか
-	bool  lookAlwaysTarget_ = false;  // trueの間ずっと向ける
+	bool lookStart_ = false;         // 補間開始するか
+	bool  lookAlwaysTarget_ = false; // trueの間ずっと向ける
 	float lookTargetLerpRate_; // フレーム補間割合
 	std::pair<FollowCameraTargetType, FollowCameraTargetType> lookPair_;
 	Quaternion lookToStart_;  // 補間開始時の回転
@@ -69,6 +69,8 @@ private:
 	float lookTimerRate_;    // 目標時間の倍速率
 	float targetXRotation_;  // 目標X回転
 	std::optional<float> anyTargetXRotation_;
+	float startFovY_; // 開始時
+	float initFovY_;  // 目標
 
 	// アニメーションを読み込んだか
 	bool isLoadedAnim_;

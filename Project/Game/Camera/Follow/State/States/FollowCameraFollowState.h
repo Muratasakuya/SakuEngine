@@ -20,9 +20,9 @@ public:
 
 	void Enter(FollowCamera& followCamera) override;
 
-	void Update(FollowCamera& followCamera)  override;
+	void Update(FollowCamera& followCamera) override;
 
-	void Exit()  override;
+	void Exit() override;
 
 	// imgui
 	void ImGui(const FollowCamera& followCamera) override;
@@ -30,6 +30,9 @@ public:
 	// json
 	void ApplyJson(const Json& data) override;
 	void SaveJson(Json& data)  override;
+
+	// 今のカメラ姿勢からフォローの基準値を作る
+	void SnapToCamera(const FollowCamera& camera);
 
 	//--------- accessor -----------------------------------------------------
 
@@ -75,4 +78,14 @@ private:
 	float rotateZLerpRate_;        // z回転補間割合
 	RotateParam rotatePlusParam_;  // +
 	RotateParam rotateMinusParam_; // -
+
+	// 補間アニメーション後のクランプで急にオフセットがずれるのを防ぐ
+	float clampBlendT_ = 1.0f; // 補間値
+	float clampBlendSpeed_;    // 補間速度
+	float handoffBlendT_ = 1.0f; // 補間値
+	float handoffBlendSpeed_;    // 補間速度
+	// 補間アニメーション終了直後のオフセット位置
+	float handoffDefaultZ_;
+	float handoffDefaultY_;
+	float handoffDefaultX_;
 };

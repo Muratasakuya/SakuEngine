@@ -147,8 +147,8 @@ void BossEnemyStrongAttackState::UpdateAttack2nd(BossEnemy& bossEnemy) {
 		bossEnemy.SetTranslation(newPos);
 
 		// プレイヤーに十分近づいたら補間しない
-		float dist = (playerPos - newPos).Length();
-		if (dist <= std::abs(attackOffsetTranslation_)) {
+		float distance = (playerPos - newPos).Length();
+		if (distance <= std::abs(attackOffsetTranslation_)) {
 
 			reachedPlayer_ = true;
 			bossEnemy.SetTranslation(target);

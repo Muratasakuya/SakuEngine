@@ -81,6 +81,18 @@ void FollowCameraStateController::SetOverlayState(FollowCamera& owner, FollowCam
 	overlayStates_[state]->Enter(owner);
 }
 
+void FollowCameraStateController::WarmStartFollow(FollowCamera& owner) {
+
+	auto it = states_.find(FollowCameraState::Follow);
+	if (it == states_.end()) {
+		return;
+	}
+	if (FollowCameraFollowState* state = dynamic_cast<FollowCameraFollowState*>(it->second.get())) {
+
+		state->SnapToCamera(owner);
+	}
+}
+
 void FollowCameraStateController::ExitOverlayState(FollowCameraOverlayState state) {
 
 	// 強制終了

@@ -18,6 +18,7 @@
 //============================================================================
 
 Camera3DEditor* Camera3DEditor::instance_ = nullptr;
+
 Camera3DEditor* Camera3DEditor::GetInstance() {
 
 	if (instance_ == nullptr) {
