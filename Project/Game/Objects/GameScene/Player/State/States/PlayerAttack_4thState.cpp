@@ -34,7 +34,11 @@ void PlayerAttack_4thState::Enter(Player& player) {
 	if (!assisted_) {
 
 		startPos_ = playerPos;
-		targetPos_ = startPos_ + player.GetTransform().GetForward() * moveValue_;
+
+		Vector3 forward = player.GetTransform().GetForward();
+		forward.y = 0.0f;
+		forward = forward.Normalize();
+		targetPos_ = startPos_ + forward * moveValue_;
 	}
 
 	// 回転補間範囲内に入っていたら

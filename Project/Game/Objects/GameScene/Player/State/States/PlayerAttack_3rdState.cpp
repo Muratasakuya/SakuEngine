@@ -41,6 +41,8 @@ void PlayerAttack_3rdState::Enter(Player& player) {
 	if (!assisted_) {
 		direction = player.GetTransform().GetForward();
 	}
+	direction.y = 0.0f;
+	direction = direction.Normalize();
 	backTargetPos_ = backStartPos_ + direction * backMoveValue_;
 	currentState_ = State::MoveBack;
 
