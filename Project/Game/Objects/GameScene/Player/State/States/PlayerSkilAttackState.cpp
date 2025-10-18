@@ -238,7 +238,7 @@ void PlayerSkilAttackState::UpdateJumpAttack(Player& player) {
 			isOutJumpAttackCameraAnim_ = true;
 
 			// カメラアニメーション終了
-			followCamera_->EndPlayerActionAnim(PlayerState::SkilAttack);
+			followCamera_->EndPlayerActionAnim(PlayerState::SkilAttack, false);
 			// カメラの向きを補正させる
 			followCamera_->StartLookToTarget(FollowCameraTargetType::Player,
 				FollowCameraTargetType::BossEnemy);

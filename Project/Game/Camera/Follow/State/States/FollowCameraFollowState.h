@@ -68,13 +68,10 @@ private:
 	Vector2 mouseSensitivity_; // マウス感度
 	Vector2 padSensitivity_;   // パッド操作の感度
 
+	Vector3 defaultOffset_;  // 初期化時のオフセット
+	Vector3 offsetLerpRate_; // 補間割合
+
 	// 回転の設定
-	float defaultOffsetZ_;         // z初期値
-	float defaultOffsetY_;         // y初期値
-	float defaultOffsetX_;         // x初期値
-	float offsetZLerpRate_;        // z値補間割合
-	float offsetYLerpRate_;        // y値補間割合
-	float offsetXLerpRate_;        // x値補間割合
 	float rotateZLerpRate_;        // z回転補間割合
 	RotateParam rotatePlusParam_;  // +
 	RotateParam rotateMinusParam_; // -
@@ -85,7 +82,5 @@ private:
 	float handoffBlendT_ = 1.0f; // 補間値
 	float handoffBlendSpeed_;    // 補間速度
 	// 補間アニメーション終了直後のオフセット位置
-	float handoffDefaultZ_;
-	float handoffDefaultY_;
-	float handoffDefaultX_;
+	Vector3 handoffDefault_;
 };

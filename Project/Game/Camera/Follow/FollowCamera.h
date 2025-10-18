@@ -40,7 +40,7 @@ public:
 
 	// エディターによるカメラアニメーション
 	void StartPlayerActionAnim(PlayerState state);
-	void EndPlayerActionAnim(PlayerState  state);
+	void EndPlayerActionAnim(PlayerState  state, bool isWarmStart);
 
 	// 視点を注視点に向ける
 	void StartLookToTarget(FollowCameraTargetType from, FollowCameraTargetType to,

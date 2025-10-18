@@ -59,7 +59,7 @@ void FollowCamera::StartPlayerActionAnim(PlayerState state) {
 	}
 }
 
-void FollowCamera::EndPlayerActionAnim(PlayerState state) {
+void FollowCamera::EndPlayerActionAnim(PlayerState state, bool isWarmStart) {
 
 	Camera3DEditor* editor = Camera3DEditor::GetInstance();
 	std::string name{};
@@ -88,7 +88,10 @@ void FollowCamera::EndPlayerActionAnim(PlayerState state) {
 
 	// アニメーションを終了させる
 	editor->EndAnim(name);
-	stateController_->WarmStartFollow(*this);
+	if (isWarmStart) {
+
+		stateController_->WarmStartFollow(*this);
+	}
 }
 
 void FollowCamera::StartLookToTarget(FollowCameraTargetType from,
@@ -168,11 +171,8 @@ void FollowCamera::SetState(FollowCameraState state) {
 
 void FollowCamera::Update() {
 
-	if (!lookStart_ || lookAlwaysTarget_) {
-
-		// 状態の更新
-		stateController_->Update(*this);
-	}
+	// 状態の更新
+	stateController_->Update(*this);
 
 	// エディターで更新しているときは処理しない
 	if (isUpdateEditor_) {

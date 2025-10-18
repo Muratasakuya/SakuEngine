@@ -181,7 +181,7 @@ void PlayerParryState::UpdateAnimation(Player& player) {
 		request_ = RequestState::AttackAnimation;
 
 		// カメラアニメーションを終了させる
-		followCamera_->EndPlayerActionAnim(PlayerState::Parry);
+		followCamera_->EndPlayerActionAnim(PlayerState::Parry, true);
 		// パリィ攻撃は4段目の攻撃と同じ
 		followCamera_->StartPlayerActionAnim(PlayerState::Attack_4th);
 
@@ -254,7 +254,7 @@ void PlayerParryState::Exit([[maybe_unused]] Player& player) {
 	GameTimer::SetReturnScaleEnable(true);
 
 	// カメラアニメーションを終了させる
-	followCamera_->EndPlayerActionAnim(PlayerState::Parry);
+	followCamera_->EndPlayerActionAnim(PlayerState::Parry, true);
 
 	// リセット
 	request_ = std::nullopt;

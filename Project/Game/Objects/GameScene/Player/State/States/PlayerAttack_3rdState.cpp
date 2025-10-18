@@ -300,7 +300,7 @@ void PlayerAttack_3rdState::Exit(Player& player) {
 	player.ResetWeaponTransform(PlayerWeaponType::Right);
 
 	// カメラアニメーションを終了させる
-	followCamera_->EndPlayerActionAnim(PlayerState::Attack_3rd);
+	followCamera_->EndPlayerActionAnim(PlayerState::Attack_3rd, false);
 }
 
 void PlayerAttack_3rdState::ImGui(const Player& player) {
