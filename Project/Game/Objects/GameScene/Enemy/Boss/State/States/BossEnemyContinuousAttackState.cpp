@@ -31,7 +31,6 @@ void BossEnemyContinuousAttackState::Enter(BossEnemy& bossEnemy) {
 	parryParam_.continuousCount = 3;
 	parryParam_.canParry = true;
 	keyEventIndex_ = 0;
-
 	parried_ = false;
 	reachedPlayer_ = false;
 }
@@ -79,8 +78,12 @@ void BossEnemyContinuousAttackState::UpdateParrySign(BossEnemy& bossEnemy) {
 	// アニメーションが終了次第攻撃する
 	if (bossEnemy.IsAnimationFinished()) {
 
-		bossEnemy.SetTranslation(target);
+		// 連続攻撃アニメーションを開始させる
 		bossEnemy.SetNextAnimation("bossEnemy_continuousAttack", false, nextAnimDuration_);
+
+		// 補間座標を設定
+		bossEnemy.SetTranslation(target);
+		startPos_ = bossEnemy.GetTranslation();
 
 		// 状態を進める
 		currentState_ = State::Attack;
@@ -94,7 +97,7 @@ void BossEnemyContinuousAttackState::UpdateAttack(BossEnemy& bossEnemy) {
 
 		lerpTimer_ += GameTimer::GetScaledDeltaTime();
 		float lerpT = std::clamp(lerpTimer_ / lerpTime_, 0.0f, 1.0f);
-		lerpT = EasedValue(EasingType::EaseOutExpo, lerpT);
+		lerpT = EasedValue(easingType_, lerpT);
 
 		// プレイヤー座標計算
 		const Vector3 playerPos = player_->GetTranslation();
@@ -108,8 +111,9 @@ void BossEnemyContinuousAttackState::UpdateAttack(BossEnemy& bossEnemy) {
 		bossEnemy.SetTranslation(newPos);
 
 		// プレイヤーに十分近づいたら補間しない
-		float distance = (playerPos - newPos).Length();
-		if (distance <= std::abs(attackOffsetTranslation_)) {
+		// xとzの距離を見る
+		Vector2 distanceXZ = Vector2(playerPos.x - newPos.x, playerPos.z - newPos.z);
+		if (distanceXZ.Length() <= std::fabs(attackOffsetTranslation_)) {
 
 			reachedPlayer_ = true;
 			bossEnemy.SetTranslation(target);
@@ -137,7 +141,6 @@ void BossEnemyContinuousAttackState::UpdateParryTiming(BossEnemy& bossEnemy) {
 		if (bossEnemy.IsEventKey("Parry", keyEventIndex_)) {
 
 			bossEnemy.TellParryTiming();
-
 			parried_ = true;
 
 			// キーイベントを進める
@@ -146,6 +149,8 @@ void BossEnemyContinuousAttackState::UpdateParryTiming(BossEnemy& bossEnemy) {
 
 			// もう一度近づけるようにする
 			reachedPlayer_ = false;
+			// 補間処理をリセット
+			startPos_ = bossEnemy.GetTranslation();
 			lerpTimer_ = 0.0f;
 		}
 		break;
@@ -167,6 +172,8 @@ void BossEnemyContinuousAttackState::Exit(BossEnemy& bossEnemy) {
 }
 
 void BossEnemyContinuousAttackState::ImGui(const BossEnemy& bossEnemy) {
+
+	ImGui::Text(std::format("reachedPlayer: {}", reachedPlayer_).c_str());
 
 	ImGui::DragFloat("nextAnimDuration", &nextAnimDuration_, 0.001f);
 	ImGui::DragFloat("rotationLerpRate", &rotationLerpRate_, 0.001f);

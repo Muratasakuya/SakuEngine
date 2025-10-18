@@ -7,10 +7,10 @@
         "singleBladeMoveSpeed_": 64.0
     },
     "ContinuousAttack": {
-        "attackOffsetTranslation_": -8.0,
-        "easingType_": 4,
+        "attackOffsetTranslation_": -10.0,
+        "easingType_": 3,
         "exitTime_": 0.07999999821186066,
-        "nextAnimDuration_": 0.0,
+        "nextAnimDuration_": 0.03200000151991844,
         "rotationLerpRate_": 14.0
     },
     "Falter": {
