@@ -131,7 +131,8 @@ void PlayerParryState::UpdateLerpTranslation(Player& player) {
 
 void PlayerParryState::CheckInput() {
 
-	if (request_.has_value()) {
+	// 座標補間が終了したら入力を受け付けない
+	if (parryLerp_.isFinised) {
 		return;
 	}
 
@@ -148,16 +149,7 @@ void PlayerParryState::UpdateAnimation(Player& player) {
 
 	// 座標補間が終了するまでなにもしない
 	if (!parryLerp_.isFinised) {
-
-		const bool hasAttackRequest = request_.has_value() && request_.value() == RequestState::PlayAnimation;
-		const bool reachedHalf = (parryLerp_.time > 0.0f) && (parryLerp_.timer >= parryLerp_.time * 0.5f);
-		// 半分以上時間経過していれば攻撃アニメーションを行えるようにする
-		if (hasAttackRequest && reachedHalf) {
-
-			parryLerp_.isFinised = true;
-		} else {
-			return;
-		}
+		return;
 	}
 
 	// 攻撃ボタンが押されていなければ状態を終了する

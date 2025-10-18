@@ -246,9 +246,9 @@
         "deltaLerpSpeed_": 10.0,
         "deltaWaitTime_": 0.17399999499320984,
         "nextAnimDuration_": 0.019999999552965164,
-        "parryLerp_.easingType": 14,
+        "parryLerp_.easingType": 11,
         "parryLerp_.moveDistance": -60.0,
-        "parryLerp_.time": 0.5
+        "parryLerp_.time": 0.7200000286102295
     },
     "SkilAttack": {
         "BackJump": {

@@ -14,6 +14,7 @@
 void FollowCameraFollowState::SnapToCamera(const FollowCamera& camera) {
 
 	// 補間位置を初期化
+	interTarget_ = targets_[FollowCameraTargetType::Player]->GetWorldPos();
 	const auto& transform = camera.GetTransform();
 	offsetTranslation_ = Quaternion::Conjugate(transform.rotation) * (transform.translation - interTarget_);
 	// 現在位置のオフセットを記録
@@ -134,7 +135,7 @@ void FollowCameraFollowState::Exit() {
 void FollowCameraFollowState::ImGui([[maybe_unused]] const FollowCamera& followCamera) {
 
 	ImGui::Text("clampBlendT: %.3f", clampBlendT_);
-	ImGui::Text("clampBlendT: %.3f", handoffBlendT_);
+	ImGui::Text("handoffBlendT: %.3f", handoffBlendT_);
 
 	ImGui::DragFloat3("offsetTranslation", &offsetTranslation_.x, 0.1f);
 
