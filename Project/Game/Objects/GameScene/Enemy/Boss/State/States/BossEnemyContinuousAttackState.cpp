@@ -128,7 +128,6 @@ void BossEnemyContinuousAttackState::UpdateAttack(BossEnemy& bossEnemy) {
 	}
 }
 
-
 void BossEnemyContinuousAttackState::UpdateParryTiming(BossEnemy& bossEnemy) {
 
 	// パリィ攻撃のタイミング

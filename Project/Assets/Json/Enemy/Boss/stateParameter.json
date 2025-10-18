@@ -98,12 +98,11 @@
     },
     "StrongAttack": {
         "attack2ndAnimDuration_": 0.05999999865889549,
-        "attack2ndLerpTime_": 0.03999999910593033,
-        "attackOffsetTranslation_": -8.0,
+        "attack2ndLerpTime_": 0.2800000011920929,
+        "attackOffsetTranslation_": -18.0,
         "easingType_": 4,
         "exitTime_": 0.07999999821186066,
         "nextAnimDuration_": 0.0020000000949949026,
-        "parriedPlaybackSpeed_": 2.200000047683716,
         "rotationLerpRate_": 14.0
     },
     "Stun": {
