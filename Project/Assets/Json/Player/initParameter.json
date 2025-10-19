@@ -75,20 +75,20 @@
                 "y": 4.0,
                 "z": 5.400000095367432
             },
-            "hitInterval": 0.1599999964237213,
+            "hitInterval": 0.09000000357627869,
             "hitWindows": [
                 {
-                    "offTime": 0.4000000059604645,
-                    "onTime": 0.05999999865889549
+                    "offTime": 0.3799999952316284,
+                    "onTime": 0.009999999776482582
                 }
             ],
-            "lerpSpeed": 8.0,
+            "lerpSpeed": 16.0,
             "size": {
                 "x": 5.599999904632568,
                 "y": 4.0,
                 "z": 3.5999999046325684
             },
-            "timeScale": 0.0,
+            "timeScale": 1.0,
             "timeScaleEasing": "EaseOutExpo",
             "waitTime": 0.00800000037997961
         },

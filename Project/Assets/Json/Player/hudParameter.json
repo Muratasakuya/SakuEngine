@@ -6,14 +6,14 @@
         "y": 200.0
     },
     "damageDisplayPosRandomRange_": {
-        "x": 80.0,
-        "y": 80.0
+        "x": 8.0,
+        "y": 8.0
     },
     "damageDisplaySize_": {
-        "x": 80.0,
-        "y": 80.0
+        "x": 56.0,
+        "y": 56.0
     },
-    "damageDisplayTime_": 0.30000001192092896,
+    "damageDisplayTime_": 0.23999999463558197,
     "damageNumSpacing_": -24.0,
     "damageOutEasingType_": 5,
     "damageOutTime_": 0.07999999821186066,
