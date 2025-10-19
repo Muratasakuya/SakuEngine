@@ -71,34 +71,30 @@ void BossEnemyStrongAttackState::Update(BossEnemy& bossEnemy) {
 
 void BossEnemyStrongAttackState::UpdateParrySign(BossEnemy& bossEnemy) {
 
-	// アニメーション終了時間で補間
-	lerpTimer_ += GameTimer::GetScaledDeltaTime();
-	float lerpT = std::clamp(lerpTimer_ / bossEnemy.GetAnimationDuration(
-		"bossEnemy_strongAttackParrySign"), 0.0f, 1.0f);
-	lerpT = EasedValue(easingType_, lerpT);
-
 	// 目標座標を常に更新する
 	const Vector3 playerPos = player_->GetTranslation();
 	Vector3 direction = (bossEnemy.GetTranslation() - playerPos).Normalize();
 	Vector3 target = playerPos - direction * attackOffsetTranslation_;
 	target.y = 0.0f;
-	LookTarget(bossEnemy, target);
-
-	// 座標補間
-	bossEnemy.SetTranslation(Vector3::Lerp(startPos_, target, lerpT));
+	LookTarget(bossEnemy, playerPos);
 
 	// アニメーションが終了次第攻撃する
 	if (bossEnemy.IsAnimationFinished()) {
 
-		bossEnemy.SetTranslation(target);
 		bossEnemy.SetNextAnimation("bossEnemy_strongAttack", false, nextAnimDuration_);
 
 		// 状態を進める
 		currentState_ = State::Attack1st;
+
+		// 座標を設定
+		startPos_ = bossEnemy.GetTranslation();
 	}
 }
 
 void BossEnemyStrongAttackState::UpdateAttack1st(BossEnemy& bossEnemy) {
+
+	// 座標補間処理
+	LerpTranslation(bossEnemy);
 
 	// animationが終了したら次の攻撃に移る
 	if (bossEnemy.IsAnimationFinished()) {
@@ -107,44 +103,18 @@ void BossEnemyStrongAttackState::UpdateAttack1st(BossEnemy& bossEnemy) {
 
 		// 状態を進める
 		currentState_ = State::Attack2nd;
-		lerpTimer_ = 0.0f;
 
-		// 座標を設定
+		// 補間をリセット
+		lerpTimer_ = 0.0f;
 		startPos_ = bossEnemy.GetTranslation();
+		reachedPlayer_ = false;
 	}
 }
 
 void BossEnemyStrongAttackState::UpdateAttack2nd(BossEnemy& bossEnemy) {
 
-	// 目標座標計算
-	const Vector3 playerPos = player_->GetTranslation();
-	Vector3 direction = (bossEnemy.GetTranslation() - playerPos).Normalize();
-	Vector3 target = playerPos - direction * attackOffsetTranslation_;
-	target.y = 0.0f;
-
-	// 敵は常にプレイヤーの方を向くようにしておく
-	LookTarget(bossEnemy, playerPos);
-
-	if (!reachedPlayer_) {
-
-		// 補間時間を進める
-		lerpTimer_ += GameTimer::GetScaledDeltaTime();
-		float lerpT = std::clamp(lerpTimer_ / attack2ndLerpTime_, 0.0f, 1.0f);
-		lerpT = EasedValue(easingType_, lerpT);
-
-		// 補間
-		Vector3 newPos = Vector3::Lerp(startPos_, target, lerpT);
-		bossEnemy.SetTranslation(newPos);
-
-		// プレイヤーに十分近づいたら補間しない
-		// xとzの距離を見る
-		Vector2 distanceXZ = Vector2(playerPos.x - newPos.x, playerPos.z - newPos.z);
-		if (distanceXZ.Length() <= std::fabs(attackOffsetTranslation_)) {
-
-			reachedPlayer_ = true;
-			bossEnemy.SetTranslation(target);
-		}
-	}
+	// 座標補間処理
+	LerpTranslation(bossEnemy);
 
 	// animationが終了したら経過時間を進める
 	if (bossEnemy.IsAnimationFinished()) {
@@ -180,6 +150,39 @@ void BossEnemyStrongAttackState::UpdateParryTiming(BossEnemy& bossEnemy) {
 		}
 		break;
 	}
+	}
+}
+
+void BossEnemyStrongAttackState::LerpTranslation(BossEnemy& bossEnemy) {
+
+	// 目標座標計算
+	const Vector3 playerPos = player_->GetTranslation();
+	Vector3 direction = (bossEnemy.GetTranslation() - playerPos).Normalize();
+	Vector3 target = playerPos - direction * attackOffsetTranslation_;
+	target.y = 0.0f;
+
+	if (!reachedPlayer_) {
+
+		// プレイヤーの方を向くようにしておく
+		LookTarget(bossEnemy, playerPos);
+
+		// 補間時間を進める
+		lerpTimer_ += GameTimer::GetScaledDeltaTime();
+		float lerpT = std::clamp(lerpTimer_ / attack2ndLerpTime_, 0.0f, 1.0f);
+		lerpT = EasedValue(easingType_, lerpT);
+
+		// 補間
+		Vector3 newPos = Vector3::Lerp(startPos_, target, lerpT);
+		bossEnemy.SetTranslation(newPos);
+
+		// プレイヤーに十分近づいたら補間しない
+		// xとzの距離を見る
+		Vector2 distanceXZ = Vector2(playerPos.x - newPos.x, playerPos.z - newPos.z);
+		if (distanceXZ.Length() <= std::fabs(attackOffsetTranslation_)) {
+
+			reachedPlayer_ = true;
+			bossEnemy.SetTranslation(target);
+		}
 	}
 }
 

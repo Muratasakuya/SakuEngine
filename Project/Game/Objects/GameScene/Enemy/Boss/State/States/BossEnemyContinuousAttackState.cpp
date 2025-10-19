@@ -59,21 +59,12 @@ void BossEnemyContinuousAttackState::Update(BossEnemy& bossEnemy) {
 
 void BossEnemyContinuousAttackState::UpdateParrySign(BossEnemy& bossEnemy) {
 
-	// アニメーション終了時間で補間
-	lerpTimer_ += GameTimer::GetScaledDeltaTime();
-	float lerpT = std::clamp(lerpTimer_ / bossEnemy.GetAnimationDuration(
-		"bossEnemy_strongAttackParrySign"), 0.0f, 1.0f);
-	lerpT = EasedValue(easingType_, lerpT);
-
 	// 目標座標を常に更新する
 	const Vector3 playerPos = player_->GetTranslation();
 	Vector3 direction = (bossEnemy.GetTranslation() - playerPos).Normalize();
 	Vector3 target = playerPos - direction * attackOffsetTranslation_;
 	target.y = 0.0f;
 	LookTarget(bossEnemy, playerPos);
-
-	// 座標補間
-	bossEnemy.SetTranslation(Vector3::Lerp(startPos_, target, lerpT));
 
 	// アニメーションが終了次第攻撃する
 	if (bossEnemy.IsAnimationFinished()) {
@@ -82,17 +73,16 @@ void BossEnemyContinuousAttackState::UpdateParrySign(BossEnemy& bossEnemy) {
 		bossEnemy.SetNextAnimation("bossEnemy_continuousAttack", false, nextAnimDuration_);
 
 		// 補間座標を設定
-		bossEnemy.SetTranslation(target);
 		startPos_ = bossEnemy.GetTranslation();
 
 		// 状態を進める
 		currentState_ = State::Attack;
 		lerpTimer_ = 0.0f;
+		reachedPlayer_ = false;
 	}
 }
 
 void BossEnemyContinuousAttackState::UpdateAttack(BossEnemy& bossEnemy) {
-
 
 	// プレイヤー座標計算
 	const Vector3 playerPos = player_->GetTranslation();
@@ -100,10 +90,10 @@ void BossEnemyContinuousAttackState::UpdateAttack(BossEnemy& bossEnemy) {
 	Vector3 target = playerPos - direction * attackOffsetTranslation_;
 	target.y = 0.0f;
 
-	// 敵は常にプレイヤーの方を向くようにしておく
-	LookTarget(bossEnemy, playerPos);
-
 	if (!reachedPlayer_) {
+
+		// プレイヤーの方を向くようにしておく
+		LookTarget(bossEnemy, playerPos);
 
 		lerpTimer_ += GameTimer::GetScaledDeltaTime();
 		float lerpT = std::clamp(lerpTimer_ / lerpTime_, 0.0f, 1.0f);
@@ -217,6 +207,7 @@ void BossEnemyContinuousAttackState::SaveJson(Json& data) {
 
 	data["nextAnimDuration_"] = nextAnimDuration_;
 	data["rotationLerpRate_"] = rotationLerpRate_;
+	data["lerpTime_"] = lerpTime_;
 
 	data["attackOffsetTranslation_"] = attackOffsetTranslation_;
 	data["exitTime_"] = exitTime_;

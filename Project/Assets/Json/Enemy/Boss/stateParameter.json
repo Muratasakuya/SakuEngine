@@ -10,7 +10,8 @@
         "attackOffsetTranslation_": -10.0,
         "easingType_": 3,
         "exitTime_": 0.07999999821186066,
-        "nextAnimDuration_": 0.03200000151991844,
+        "lerpTime_": 0.11999999731779099,
+        "nextAnimDuration_": 0.0,
         "rotationLerpRate_": 14.0
     },
     "Falter": {
@@ -73,10 +74,11 @@
         "rotationLerpRate_": 8.0
     },
     "LightAttack": {
-        "attackOffsetTranslation_": -8.0,
+        "attackOffsetTranslation_": -18.899999618530273,
         "easingType_": 4,
         "exitTime_": 0.07999999821186066,
-        "nextAnimDuration_": 0.0,
+        "lerpTime_": 0.20000000298023224,
+        "nextAnimDuration_": 0.03200000151991844,
         "rotationLerpRate_": 14.0
     },
     "RushAttack": {

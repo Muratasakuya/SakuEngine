@@ -22,6 +22,8 @@ public:
 
 	void Update(SceneManager* sceneManager) override;
 	void NonActiveUpdate(SceneManager* sceneManager) override;
+
+	void ImGui() override;
 private:
 	//========================================================================
 	//	private Methods

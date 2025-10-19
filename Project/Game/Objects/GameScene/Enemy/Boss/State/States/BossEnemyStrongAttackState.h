@@ -76,4 +76,7 @@ private:
 	void UpdateAttack1st(BossEnemy& bossEnemy);
 	void UpdateAttack2nd(BossEnemy& bossEnemy);
 	void UpdateParryTiming(BossEnemy& bossEnemy);
+
+	// helper
+	void LerpTranslation(BossEnemy& bossEnemy);
 };

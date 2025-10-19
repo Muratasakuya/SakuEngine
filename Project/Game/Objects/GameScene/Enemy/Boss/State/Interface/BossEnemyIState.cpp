@@ -19,6 +19,7 @@ void BossEnemyIState::LookTarget(BossEnemy& bossEnemy, const Vector3& target) {
 
 	// 前方ベクトルを取得
 	Vector3 bossPos = bossEnemy.GetTranslation();
+	bossPos.y = 0.0f;
 
 	// 回転を計算して設定
 	Quaternion bossRotation = Quaternion::LookTarget(bossPos, target,
