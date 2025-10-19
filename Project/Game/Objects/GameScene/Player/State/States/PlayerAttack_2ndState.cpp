@@ -119,6 +119,8 @@ void PlayerAttack_2ndState::CalcWayPoints(const Player& player, std::array<Vecto
 	startTranslation_ = player.GetTranslation();
 	const Vector3 enemyPos = bossEnemy_->GetTranslation();
 	Vector3 direction = (enemyPos - startTranslation_).Normalize();
+	direction.y = 0.0f;
+	direction = direction.Normalize();
 	targetTranslation_ = enemyPos - direction * attackOffsetTranslation_;
 
 	//距離に応じて振れ幅を変更する
@@ -134,6 +136,8 @@ void PlayerAttack_2ndState::CalcWayPointsToTarget(const Vector3& start, const Ve
 	float leftT, float rightT, float swayLength, std::array<Vector3, kNumSegments>& dstWayPoints) {
 
 	Vector3 direction = Vector3(target - start).Normalize();
+	direction.y = 0.0f;
+	direction = direction.Normalize();
 	Vector3 right = Vector3::Cross(direction, Vector3(0.0f, 1.0f, 0.0f)).Normalize();
 
 	dstWayPoints[0] = Vector3::Lerp(start, target, leftT) - right * swayLength;  // 左
@@ -147,6 +151,8 @@ void PlayerAttack_2ndState::CalcApproachWayPoints(const Player& player,
 	// プレイヤーの前方向に向かってジグザグ移動させる
 	startTranslation_ = player.GetTranslation();
 	Vector3 forward = player.GetTransform().GetForward().Normalize();
+	forward.y = 0.0f;
+	forward = forward.Normalize();
 	Vector3 target = startTranslation_ + forward * approachForwardDistance_;
 	targetTranslation_ = target;
 

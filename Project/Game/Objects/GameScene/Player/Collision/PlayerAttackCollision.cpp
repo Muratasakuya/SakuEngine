@@ -176,7 +176,7 @@ void PlayerAttackCollision::ApplyJson(const Json& data) {
 		parameter.timeScale = value.value("timeScale", 1.0f);
 		parameter.waitTime = value.value("waitTime", 0.08f);
 		parameter.lerpSpeed = value.value("lerpSpeed", 1.0f);
-		parameter.timeScaleEasing = EnumAdapter<EasingType>::FromString(data.value("timeScaleEasing", "Linear")).value();
+		parameter.timeScaleEasing = EnumAdapter<EasingType>::FromString(value.value("timeScaleEasing", "Linear")).value();
 		parameter.hitInterval = value.value("hitInterval", 0.0f);
 
 		if (value.contains("hitWindows")) {

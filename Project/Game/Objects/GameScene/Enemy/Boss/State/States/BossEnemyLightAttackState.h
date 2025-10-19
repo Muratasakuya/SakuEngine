@@ -54,12 +54,15 @@ private:
 
 	// parameters
 	float lerpTimer_;       // 座標補間の際の経過時間
+	float lerpTime_;        // 座標補間時間
 	EasingType easingType_; // 補間の際のイージング
 
 	float attackOffsetTranslation_; // 座標からのオフセット距離
 
 	float exitTimer_; // 遷移可能にするまでの経過時間
 	float exitTime_;  // 遷移可能にするまでの時間
+
+	bool reachedPlayer_; // 近くまで来たかどうか
 
 	// debug
 	bool parried_;
@@ -70,4 +73,7 @@ private:
 	void UpdateParrySign(BossEnemy& bossEnemy);
 	void UpdateAttack(BossEnemy& bossEnemy);
 	void UpdateParryTiming(BossEnemy& bossEnemy);
+
+	// helper
+	void LerpTranslation(BossEnemy& bossEnemy);
 };

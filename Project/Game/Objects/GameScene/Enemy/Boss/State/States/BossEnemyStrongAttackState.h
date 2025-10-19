@@ -64,14 +64,7 @@ private:
 
 	float attack2ndAnimDuration_; // 2回目のアニメーション補間時間
 	float attack2ndLerpTime_;     // 座標補間時間
-
-	float parriedPlaybackSpeed_;     // パリィされる時のアニメーション再生速度
-	float playbackSpeed_;
-	float returnPlayBackSpeedTimer_; // 元の再生速度に戻るまでの時間経過
-	float returnPlayBackSpeedTime_;  // 元の再生速度に戻るまでの時間
-	std::optional<bool> isPlayerParried_;
 	bool reachedPlayer_; // 近くまで来たかどうか
-	bool isFinishedParry_;
 
 	// debug
 	std::unordered_map<State, bool> parriedMaps_;
@@ -83,5 +76,7 @@ private:
 	void UpdateAttack1st(BossEnemy& bossEnemy);
 	void UpdateAttack2nd(BossEnemy& bossEnemy);
 	void UpdateParryTiming(BossEnemy& bossEnemy);
-	void UpdatePlaybackSpeed(BossEnemy& bossEnemy);
+
+	// helper
+	void LerpTranslation(BossEnemy& bossEnemy);
 };

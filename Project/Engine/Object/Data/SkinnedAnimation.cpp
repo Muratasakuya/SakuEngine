@@ -181,6 +181,7 @@ void SkinnedAnimation::ImGui(float itemSize) {
 		}
 		ImGui::Text("RepeatCount: %d", repeatCount_);
 		ImGui::DragFloat("playbackSpeed", &playbackSpeed_, 0.01f);
+		ImGui::Text("duration: %.3f", animationData_[currentAnimationName_].duration);
 		EnumAdapter<ObjectUpdateMode>::Combo("UpdateMode", &updateMode_);
 	}
 	ImGui::Separator();

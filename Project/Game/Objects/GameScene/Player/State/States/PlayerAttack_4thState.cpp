@@ -34,7 +34,11 @@ void PlayerAttack_4thState::Enter(Player& player) {
 	if (!assisted_) {
 
 		startPos_ = playerPos;
-		targetPos_ = startPos_ + player.GetTransform().GetForward() * moveValue_;
+
+		Vector3 forward = player.GetTransform().GetForward();
+		forward.y = 0.0f;
+		forward = forward.Normalize();
+		targetPos_ = startPos_ + forward * moveValue_;
 	}
 
 	// 回転補間範囲内に入っていたら
@@ -67,7 +71,7 @@ void PlayerAttack_4thState::Update(Player& player) {
 	if (canExit_) {
 
 		// シェイク前にアニメーションを終了させる
-		followCamera_->EndPlayerActionAnim(PlayerState::Attack_4th);
+		followCamera_->EndPlayerActionAnim(PlayerState::Attack_4th, false);
 
 		exitTimer_ += GameTimer::GetScaledDeltaTime();
 		// 画面シェイクを行わせる
@@ -83,7 +87,7 @@ void PlayerAttack_4thState::Exit([[maybe_unused]] Player& player) {
 	moveTimer_.Reset();
 
 	// カメラアニメーションを終了させる
-	followCamera_->EndPlayerActionAnim(PlayerState::Attack_4th);
+	followCamera_->EndPlayerActionAnim(PlayerState::Attack_4th, false);
 }
 
 void PlayerAttack_4thState::ImGui(const Player& player) {

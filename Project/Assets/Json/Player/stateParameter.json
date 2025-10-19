@@ -5,7 +5,7 @@
             "target_": 0.15000000596046448
         },
         "attackLookAtCircleRange_": 164.0,
-        "attackOffsetTranslation_": 8.0,
+        "attackOffsetTranslation_": 12.0,
         "attackPosEaseType_": 14,
         "attackPosLerpCircleRange_": 40.0,
         "attackPosLerpTime_": 0.4399999976158142,
@@ -21,7 +21,7 @@
         "approachRightPointAngle_": 0.6100000143051147,
         "approachSwayLength_": -8.720000267028809,
         "attackLookAtCircleRange_": 164.0,
-        "attackOffsetTranslation_": 10.0,
+        "attackOffsetTranslation_": 14.0,
         "attackPosEaseType_": 14,
         "attackPosLerpCircleRange_": 40.0,
         "attackPosLerpTime_": 0.47999998927116394,
@@ -59,7 +59,7 @@
             "target_": 0.09000000357627869
         },
         "attackLookAtCircleRange_": 164.0,
-        "attackOffsetTranslation_": 8.0,
+        "attackOffsetTranslation_": 12.0,
         "attackPosEaseType_": 14,
         "attackPosLerpCircleRange_": 40.0,
         "attackPosLerpTime_": 0.4399999976158142,
@@ -76,7 +76,7 @@
             "target_": 0.800000011920929
         },
         "attackLookAtCircleRange_": 164.0,
-        "attackOffsetTranslation_": 8.0,
+        "attackOffsetTranslation_": 12.0,
         "attackPosEaseType_": 14,
         "attackPosLerpCircleRange_": 40.0,
         "attackPosLerpTime_": 0.4399999976158142,
@@ -242,11 +242,13 @@
         "attackLerp_.easingType": 14,
         "attackLerp_.moveDistance": -13.0,
         "attackLerp_.time": 0.07999999821186066,
-        "deltaWaitTime_": 0.15399999916553497,
+        "cameraLookRate_": 4.800000190734863,
+        "deltaLerpSpeed_": 10.0,
+        "deltaWaitTime_": 0.1940000057220459,
         "nextAnimDuration_": 0.019999999552965164,
-        "parryLerp_.easingType": 14,
-        "parryLerp_.moveDistance": -54.0,
-        "parryLerp_.time": 0.800000011920929
+        "parryLerp_.easingType": 11,
+        "parryLerp_.moveDistance": -64.0,
+        "parryLerp_.time": 0.5799999833106995
     },
     "SkilAttack": {
         "BackJump": {

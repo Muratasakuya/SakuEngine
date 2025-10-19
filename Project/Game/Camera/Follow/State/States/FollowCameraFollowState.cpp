@@ -11,6 +11,20 @@
 //	FollowCameraFollowState classMethods
 //============================================================================
 
+void FollowCameraFollowState::SnapToCamera(const FollowCamera& camera) {
+
+	// 補間位置を初期化
+	interTarget_ = targets_[FollowCameraTargetType::Player]->GetWorldPos();
+	const auto& transform = camera.GetTransform();
+	offsetTranslation_ = Quaternion::Conjugate(transform.rotation) * (transform.translation - interTarget_);
+	// 現在位置のオフセットを記録
+	handoffDefault_ = offsetTranslation_;
+
+	// 初期化
+	handoffBlendT_ = 0.0f;
+	clampBlendT_ = 0.0f;
+}
+
 void FollowCameraFollowState::Enter([[maybe_unused]] FollowCamera& followCamera) {
 }
 
@@ -80,25 +94,32 @@ void FollowCameraFollowState::Update(FollowCamera& followCamera) {
 		forwardRoll.Normalize(), Direction::Get(Direction3D::Up));
 	Quaternion rotation = Quaternion::Slerp(candidateRotation, currentRoll, rotateZLerpRate_);
 
+	// 補間処理後クランプされるまでの値を補間
+	clampBlendT_ = (std::min)(1.0f, clampBlendT_ + clampBlendSpeed_);
+	handoffBlendT_ = (std::min)(1.0f, handoffBlendT_ + handoffBlendSpeed_);
+	// 補間処理後にデフォルトのオフセットになるように補間する
+	Vector3 baseDefaultOffset = Vector3::Lerp(handoffDefault_, defaultOffset_, handoffBlendT_);
+
 	// クランプされるまでの距離
 	float distanceToMinus = std::fabs(pitchClamped - rotateMinusParam_.rotateClampX);
 	float distanceToPlus = std::fabs(pitchClamped - rotatePlusParam_.rotateClampX);
-	float targetZ = defaultOffsetZ_;
+	float targetZ = baseDefaultOffset.z;
 	// 距離が閾値以下なら補間値分最大/最小の回転に近づける
 	if (distanceToMinus < rotateMinusParam_.clampThreshold) {
 
 		float t = 1.0f - (distanceToMinus / rotateMinusParam_.clampThreshold);
-		targetZ = std::lerp(defaultOffsetZ_, rotateMinusParam_.offsetZNear, t);
+		targetZ = std::lerp(baseDefaultOffset.z, rotateMinusParam_.offsetZNear, t);
 	} else if (distanceToPlus < rotatePlusParam_.clampThreshold) {
 
 		float t = 1.0f - (distanceToPlus / rotatePlusParam_.clampThreshold);
-		targetZ = std::lerp(defaultOffsetZ_, rotatePlusParam_.offsetZNear, t);
+		targetZ = std::lerp(baseDefaultOffset.z, rotatePlusParam_.offsetZNear, t);
 	}
 
 	// オフセットの補間
-	offsetTranslation_.z = std::lerp(offsetTranslation_.z, targetZ, offsetZLerpRate_);
-	offsetTranslation_.y = std::lerp(offsetTranslation_.y, defaultOffsetY_, offsetYLerpRate_);
-	offsetTranslation_.x = std::lerp(offsetTranslation_.x, defaultOffsetX_, offsetXLerpRate_);
+	float blendedTargetZ = std::lerp(offsetTranslation_.z, targetZ, clampBlendT_);
+	offsetTranslation_.z = std::lerp(offsetTranslation_.z, blendedTargetZ, offsetLerpRate_.z);
+	offsetTranslation_.y = std::lerp(offsetTranslation_.y, baseDefaultOffset.y, offsetLerpRate_.y);
+	offsetTranslation_.x = std::lerp(offsetTranslation_.x, baseDefaultOffset.x, offsetLerpRate_.x);
 
 	// 回転を考慮したオフセットと追従先の座標を足す
 	Vector3 translation = interTarget_ + rotation * offsetTranslation_;
@@ -113,19 +134,22 @@ void FollowCameraFollowState::Exit() {
 
 void FollowCameraFollowState::ImGui([[maybe_unused]] const FollowCamera& followCamera) {
 
+	ImGui::Text("clampBlendT: %.3f", clampBlendT_);
+	ImGui::Text("handoffBlendT: %.3f", handoffBlendT_);
+
 	ImGui::DragFloat3("offsetTranslation", &offsetTranslation_.x, 0.1f);
 
 	ImGui::DragFloat("lerpRate", &lerpRate_, 0.01f);
 	ImGui::DragFloat("inputLerpRate_", &inputLerpRate_, 0.01f);
 
+	ImGui::DragFloat("clampBlendSpeed", &clampBlendSpeed_, 0.01f);
+	ImGui::DragFloat("handoffBlendSpeed", &handoffBlendSpeed_, 0.01f);
 	ImGui::DragFloat2("mouseSensitivity", &mouseSensitivity_.x, 0.001f);
 	ImGui::DragFloat2("padSensitivity", &padSensitivity_.x, 0.001f);
 	ImGui::DragFloat2("smoothedInput", &smoothedInput_.x, 0.001f);
 
 	ImGui::DragFloat("fovYLerpRate", &fovYLerpRate_, 0.001f);
-	ImGui::DragFloat("offsetZLerpRate", &offsetZLerpRate_, 0.001f);
-	ImGui::DragFloat("offsetYLerpRate", &offsetYLerpRate_, 0.001f);
-	ImGui::DragFloat("offsetXLerpRate", &offsetXLerpRate_, 0.001f);
+	ImGui::DragFloat("offsetLerpRate", &offsetLerpRate_.x, 0.001f);
 	ImGui::DragFloat("rotateZLerpRate", &rotateZLerpRate_, 0.001f);
 	ImGui::DragFloat("rotatePlusParam.rotateClampX", &rotatePlusParam_.rotateClampX, 0.001f);
 	ImGui::DragFloat("rotatePlusParam.offsetZNear", &rotatePlusParam_.offsetZNear, 0.001f);
@@ -139,8 +163,10 @@ void FollowCameraFollowState::ImGui([[maybe_unused]] const FollowCamera& followC
 void FollowCameraFollowState::ApplyJson(const Json& data) {
 
 	offsetTranslation_ = JsonAdapter::ToObject<Vector3>(data["offsetTranslation_"]);
-	defaultOffsetZ_ = offsetTranslation_.z;
-	defaultOffsetY_ = offsetTranslation_.y;
+	defaultOffset_ = offsetTranslation_;
+	offsetTranslation_.x = 0.0f;
+	// 現在位置のオフセットを記録
+	handoffDefault_ = offsetTranslation_;
 
 	lerpRate_ = JsonAdapter::GetValue<float>(data, "lerpRate_");
 	inputLerpRate_ = JsonAdapter::GetValue<float>(data, "inputLerpRate_");
@@ -148,10 +174,10 @@ void FollowCameraFollowState::ApplyJson(const Json& data) {
 	padSensitivity_ = JsonAdapter::ToObject<Vector2>(data["padSensitivity_"]);
 
 	fovYLerpRate_ = JsonAdapter::GetValue<float>(data, "fovYLerpRate_");
-	offsetZLerpRate_ = JsonAdapter::GetValue<float>(data, "offsetZLerpRate_");
-	offsetYLerpRate_ = JsonAdapter::GetValue<float>(data, "offsetYLerpRate_");
+	offsetLerpRate_.x = JsonAdapter::GetValue<float>(data, "offsetXLerpRate_");
+	offsetLerpRate_.y = JsonAdapter::GetValue<float>(data, "offsetYLerpRate_");
+	offsetLerpRate_.z = JsonAdapter::GetValue<float>(data, "offsetZLerpRate_");
 	rotateZLerpRate_ = JsonAdapter::GetValue<float>(data, "rotateZLerpRate_");
-	offsetXLerpRate_ = JsonAdapter::GetValue<float>(data, "offsetXLerpRate_");
 
 	rotatePlusParam_.rotateClampX = JsonAdapter::GetValue<float>(data, "rotateClampPlusX_");
 	rotatePlusParam_.offsetZNear = JsonAdapter::GetValue<float>(data, "rotatePlusParam_.offsetZNear");
@@ -160,6 +186,9 @@ void FollowCameraFollowState::ApplyJson(const Json& data) {
 	rotateMinusParam_.rotateClampX = JsonAdapter::GetValue<float>(data, "rotateClampMinusX_");
 	rotateMinusParam_.offsetZNear = JsonAdapter::GetValue<float>(data, "rotateMinusParam_.offsetZNear");
 	rotateMinusParam_.clampThreshold = JsonAdapter::GetValue<float>(data, "rotateMinusParam_.clampThreshold");
+
+	clampBlendSpeed_ = data.value("clampBlendSpeed_", 0.08f);
+	handoffBlendSpeed_ = data.value("handoffBlendSpeed_", 0.08f);
 }
 
 void FollowCameraFollowState::SaveJson(Json& data) {
@@ -171,10 +200,12 @@ void FollowCameraFollowState::SaveJson(Json& data) {
 	data["padSensitivity_"] = JsonAdapter::FromObject<Vector2>(padSensitivity_);
 
 	data["fovYLerpRate_"] = fovYLerpRate_;
-	data["offsetZLerpRate_"] = offsetZLerpRate_;
-	data["offsetYLerpRate_"] = offsetYLerpRate_;
+	data["offsetXLerpRate_"] = offsetLerpRate_.x;
+	data["offsetZLerpRate_"] = offsetLerpRate_.z;
+	data["offsetYLerpRate_"] = offsetLerpRate_.y;
 	data["rotateZLerpRate_"] = rotateZLerpRate_;
-	data["offsetXLerpRate_"] = offsetXLerpRate_;
+	data["clampBlendSpeed_"] = clampBlendSpeed_;
+	data["handoffBlendSpeed_"] = handoffBlendSpeed_;
 
 	data["rotateClampPlusX_"] = rotatePlusParam_.rotateClampX;
 	data["rotatePlusParam_.offsetZNear"] = rotatePlusParam_.offsetZNear;

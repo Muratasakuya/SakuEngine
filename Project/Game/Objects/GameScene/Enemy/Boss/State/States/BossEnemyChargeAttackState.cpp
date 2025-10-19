@@ -48,7 +48,7 @@ void BossEnemyChargeAttackState::Update(BossEnemy& bossEnemy) {
 
 	if (bossEnemy.IsAnimationFinished()) {
 
-		exitTimer_ += GameTimer::GetDeltaTime();
+		exitTimer_ += GameTimer::GetScaledDeltaTime();
 		// 時間経過が過ぎたら遷移可能
 		if (exitTime_ < exitTimer_) {
 

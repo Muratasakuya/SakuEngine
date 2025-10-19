@@ -31,7 +31,6 @@ void BossEnemyContinuousAttackState::Enter(BossEnemy& bossEnemy) {
 	parryParam_.continuousCount = 3;
 	parryParam_.canParry = true;
 	keyEventIndex_ = 0;
-
 	parried_ = false;
 	reachedPlayer_ = false;
 }
@@ -60,56 +59,54 @@ void BossEnemyContinuousAttackState::Update(BossEnemy& bossEnemy) {
 
 void BossEnemyContinuousAttackState::UpdateParrySign(BossEnemy& bossEnemy) {
 
-	// アニメーション終了時間で補間
-	lerpTimer_ += GameTimer::GetScaledDeltaTime();
-	float lerpT = std::clamp(lerpTimer_ / bossEnemy.GetAnimationDuration(
-		"bossEnemy_strongAttackParrySign"), 0.0f, 1.0f);
-	lerpT = EasedValue(easingType_, lerpT);
-
 	// 目標座標を常に更新する
 	const Vector3 playerPos = player_->GetTranslation();
 	Vector3 direction = (bossEnemy.GetTranslation() - playerPos).Normalize();
 	Vector3 target = playerPos - direction * attackOffsetTranslation_;
 	target.y = 0.0f;
-	LookTarget(bossEnemy, target);
-
-	// 座標補間
-	bossEnemy.SetTranslation(Vector3::Lerp(startPos_, target, lerpT));
+	LookTarget(bossEnemy, playerPos);
 
 	// アニメーションが終了次第攻撃する
 	if (bossEnemy.IsAnimationFinished()) {
 
-		bossEnemy.SetTranslation(target);
+		// 連続攻撃アニメーションを開始させる
 		bossEnemy.SetNextAnimation("bossEnemy_continuousAttack", false, nextAnimDuration_);
+
+		// 補間座標を設定
+		startPos_ = bossEnemy.GetTranslation();
 
 		// 状態を進める
 		currentState_ = State::Attack;
 		lerpTimer_ = 0.0f;
+		reachedPlayer_ = false;
 	}
 }
 
 void BossEnemyContinuousAttackState::UpdateAttack(BossEnemy& bossEnemy) {
 
+	// プレイヤー座標計算
+	const Vector3 playerPos = player_->GetTranslation();
+	Vector3 direction = (bossEnemy.GetTranslation() - playerPos).Normalize();
+	Vector3 target = playerPos - direction * attackOffsetTranslation_;
+	target.y = 0.0f;
+
 	if (!reachedPlayer_) {
 
-		lerpTimer_ += GameTimer::GetDeltaTime();
-		float lerpT = std::clamp(lerpTimer_ / lerpTime_, 0.0f, 1.0f);
-		lerpT = EasedValue(EasingType::EaseOutExpo, lerpT);
+		// プレイヤーの方を向くようにしておく
+		LookTarget(bossEnemy, playerPos);
 
-		// プレイヤー座標計算
-		const Vector3 playerPos = player_->GetTranslation();
-		Vector3 direction = (bossEnemy.GetTranslation() - playerPos).Normalize();
-		Vector3 target = playerPos - direction * attackOffsetTranslation_;
-		target.y = 0.0f;
-		LookTarget(bossEnemy, target);
+		lerpTimer_ += GameTimer::GetScaledDeltaTime();
+		float lerpT = std::clamp(lerpTimer_ / lerpTime_, 0.0f, 1.0f);
+		lerpT = EasedValue(easingType_, lerpT);
 
 		// 補間
 		Vector3 newPos = Vector3::Lerp(startPos_, target, lerpT);
 		bossEnemy.SetTranslation(newPos);
 
 		// プレイヤーに十分近づいたら補間しない
-		float distance = (playerPos - newPos).Length();
-		if (distance <= std::abs(attackOffsetTranslation_)) {
+		// xとzの距離を見る
+		Vector2 distanceXZ = Vector2(playerPos.x - newPos.x, playerPos.z - newPos.z);
+		if (distanceXZ.Length() <= std::fabs(attackOffsetTranslation_)) {
 
 			reachedPlayer_ = true;
 			bossEnemy.SetTranslation(target);
@@ -119,7 +116,7 @@ void BossEnemyContinuousAttackState::UpdateAttack(BossEnemy& bossEnemy) {
 	// animationが終了したら経過時間を進める
 	if (bossEnemy.IsAnimationFinished()) {
 
-		exitTimer_ += GameTimer::GetDeltaTime();
+		exitTimer_ += GameTimer::GetScaledDeltaTime();
 		// 時間経過が過ぎたら遷移可能
 		if (exitTime_ < exitTimer_) {
 
@@ -127,7 +124,6 @@ void BossEnemyContinuousAttackState::UpdateAttack(BossEnemy& bossEnemy) {
 		}
 	}
 }
-
 
 void BossEnemyContinuousAttackState::UpdateParryTiming(BossEnemy& bossEnemy) {
 
@@ -138,7 +134,6 @@ void BossEnemyContinuousAttackState::UpdateParryTiming(BossEnemy& bossEnemy) {
 		if (bossEnemy.IsEventKey("Parry", keyEventIndex_)) {
 
 			bossEnemy.TellParryTiming();
-
 			parried_ = true;
 
 			// キーイベントを進める
@@ -147,6 +142,8 @@ void BossEnemyContinuousAttackState::UpdateParryTiming(BossEnemy& bossEnemy) {
 
 			// もう一度近づけるようにする
 			reachedPlayer_ = false;
+			// 補間処理をリセット
+			startPos_ = bossEnemy.GetTranslation();
 			lerpTimer_ = 0.0f;
 		}
 		break;
@@ -168,6 +165,8 @@ void BossEnemyContinuousAttackState::Exit(BossEnemy& bossEnemy) {
 }
 
 void BossEnemyContinuousAttackState::ImGui(const BossEnemy& bossEnemy) {
+
+	ImGui::Text(std::format("reachedPlayer: {}", reachedPlayer_).c_str());
 
 	ImGui::DragFloat("nextAnimDuration", &nextAnimDuration_, 0.001f);
 	ImGui::DragFloat("rotationLerpRate", &rotationLerpRate_, 0.001f);
@@ -208,6 +207,7 @@ void BossEnemyContinuousAttackState::SaveJson(Json& data) {
 
 	data["nextAnimDuration_"] = nextAnimDuration_;
 	data["rotationLerpRate_"] = rotationLerpRate_;
+	data["lerpTime_"] = lerpTime_;
 
 	data["attackOffsetTranslation_"] = attackOffsetTranslation_;
 	data["exitTime_"] = exitTime_;

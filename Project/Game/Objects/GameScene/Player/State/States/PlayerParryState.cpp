@@ -6,6 +6,7 @@
 #include <Engine/Core/Graphics/Renderer/LineRenderer.h>
 #include <Engine/Core/Graphics/PostProcess/Core/PostProcessSystem.h>
 #include <Engine/Utility/Timer/GameTimer.h>
+#include <Engine/Utility/Helper/ImGuiHelper.h>
 #include <Game/Camera/Follow/FollowCamera.h>
 #include <Game/Objects/GameScene/Enemy/Boss/Entity/BossEnemy.h>
 #include <Game/Objects/GameScene/Player/Entity/Player.h>
@@ -32,6 +33,8 @@ void PlayerParryState::Enter(Player& player) {
 	// 座標、向きを計算
 	Vector3 direction = SetLerpValue(startPos_, targetPos_,
 		player, parryLerp_.moveDistance, true);
+	direction.y = 0.0f;
+	direction = direction.Normalize();
 
 	// 敵の方向を向かせる
 	player.SetRotation(Quaternion::LookRotation(direction, Vector3(0.0f, 1.0f, 0.0f)));
@@ -41,6 +44,7 @@ void PlayerParryState::Enter(Player& player) {
 	// deltaTimeをスケーリングしても元の値に戻らないようにする
 	GameTimer::SetReturnScaleEnable(false);
 	GameTimer::SetTimeScale(0.0f);
+	GameTimer::SetLerpSpeed(deltaLerpSpeed_);
 
 	// パリィ用のカメラアニメーションを設定
 	followCamera_->StartPlayerActionAnim(PlayerState::Parry);
@@ -50,6 +54,7 @@ void PlayerParryState::Enter(Player& player) {
 	request_ = std::nullopt;
 	parryLerp_.isFinised = false;
 	attackLerp_.isFinised = false;
+	deltaWaitTimer_ = 0.0f;
 }
 
 void PlayerParryState::Update(Player& player) {
@@ -104,7 +109,7 @@ void PlayerParryState::UpdateDeltaWaitTime(const Player& player) {
 			Vector2 screenPos = Math::ProjectToScreen(
 				player.GetWeapon(PlayerWeaponType::Left)->GetTransform().GetWorldPos(), *followCamera_).Normalize();
 			blur->SetBlurCenter(screenPos);
-			
+
 			// 発生済み
 			isEmitedBlur_ = true;
 		}
@@ -126,7 +131,8 @@ void PlayerParryState::UpdateLerpTranslation(Player& player) {
 
 void PlayerParryState::CheckInput() {
 
-	if (request_.has_value()) {
+	// 座標補間が終了したら入力を受け付けない
+	if (parryLerp_.isFinised) {
 		return;
 	}
 
@@ -143,18 +149,7 @@ void PlayerParryState::UpdateAnimation(Player& player) {
 
 	// 座標補間が終了するまでなにもしない
 	if (!parryLerp_.isFinised) {
-
-		const bool hasAttackRequest =
-			request_.has_value() && request_.value() == RequestState::PlayAnimation;
-		const bool reachedHalf =
-			(parryLerp_.time > 0.0f) && (parryLerp_.timer >= parryLerp_.time * 0.5f);
-		// 半分以上時間経過していれば攻撃アニメーションを行えるようにする
-		if (hasAttackRequest && reachedHalf) {
-
-			parryLerp_.isFinised = true;
-		} else {
-			return;
-		}
+		return;
 	}
 
 	// 攻撃ボタンが押されていなければ状態を終了する
@@ -165,11 +160,10 @@ void PlayerParryState::UpdateAnimation(Player& player) {
 		player.SetReverseWeapon(false, PlayerWeaponType::Left);
 		return;
 	}
-
 	switch (request_.value()) {
 	case RequestState::PlayAnimation: {
 
-		// 3段目の攻撃を再生させる
+		// 4段目の攻撃を再生させる
 		player.SetNextAnimation("player_attack_4th", false, nextAnimDuration_);
 
 		// 補間先の座標を再設定する
@@ -178,8 +172,8 @@ void PlayerParryState::UpdateAnimation(Player& player) {
 
 		request_ = RequestState::AttackAnimation;
 
-		// カメラをパリィ攻撃用アニメーションにする
-		followCamera_->EndPlayerActionAnim(PlayerState::Parry);
+		// カメラアニメーションを終了させる
+		followCamera_->EndPlayerActionAnim(PlayerState::Parry, true);
 		// パリィ攻撃は4段目の攻撃と同じ
 		followCamera_->StartPlayerActionAnim(PlayerState::Attack_4th);
 
@@ -212,7 +206,7 @@ Vector3 PlayerParryState::GetLerpTranslation(LerpParameter& lerp) {
 
 	// 時間を進める
 	lerp.timer += GameTimer::GetScaledDeltaTime();
-	float lerpT = lerp.timer / lerp.time;
+	float lerpT = std::clamp(lerp.timer / lerp.time, 0.0f, 1.0f);
 	lerpT = EasedValue(lerp.easingType, lerpT);
 
 	// 座標を補間
@@ -222,18 +216,18 @@ Vector3 PlayerParryState::GetLerpTranslation(LerpParameter& lerp) {
 
 		lerp.isFinised = true;
 	}
-
 	return translation;
 }
 
 Vector3 PlayerParryState::SetLerpValue(Vector3& start, Vector3& target,
 	const Player& player, float moveDistance, bool isPlayerBase) {
 
-	const Vector3 playerPos = player.GetTranslation();
-	const Vector3 enemyPos = bossEnemy_->GetTranslation();
+	Vector3 playerPos = player.GetTranslation();
+	playerPos.y = 0.0f;
+	Vector3 enemyPos = bossEnemy_->GetTranslation();
+	enemyPos.y = 0.0f;
 	// 向き
 	Vector3 direction = enemyPos - playerPos;
-	direction.y = 0.0f;
 	direction = direction.Normalize();
 
 	// 補間座標を設定する
@@ -249,6 +243,11 @@ Vector3 PlayerParryState::SetLerpValue(Vector3& start, Vector3& target,
 }
 
 void PlayerParryState::Exit([[maybe_unused]] Player& player) {
+
+	GameTimer::SetReturnScaleEnable(true);
+
+	// カメラアニメーションを終了させる
+	followCamera_->EndPlayerActionAnim(PlayerState::Parry, true);
 
 	// リセット
 	request_ = std::nullopt;
@@ -270,6 +269,11 @@ void PlayerParryState::ImGui(const Player& player) {
 	ImGui::Text(std::format("allowAttack: {}", allowAttack_).c_str());
 	ImGui::DragFloat("nextAnimDuration", &nextAnimDuration_, 0.001f);
 	ImGui::DragFloat("deltaWaitTime", &deltaWaitTime_, 0.01f);
+	ImGui::DragFloat("deltaLerpSpeed_", &deltaLerpSpeed_, 0.01f);
+	ImGui::DragFloat("cameraLookRate", &cameraLookRate_, 0.01f);
+
+	ImGuiHelper::ValueText<Vector3>("stratPos", startPos_);
+	ImGuiHelper::ValueText<Vector3>("targetPos", targetPos_);
 
 	LineRenderer* lineRenderer = LineRenderer::GetInstance();
 
@@ -314,6 +318,8 @@ void PlayerParryState::ApplyJson(const Json& data) {
 
 	nextAnimDuration_ = JsonAdapter::GetValue<float>(data, "nextAnimDuration_");
 	deltaWaitTime_ = JsonAdapter::GetValue<float>(data, "deltaWaitTime_");
+	deltaLerpSpeed_ = data.value("deltaLerpSpeed_", 8.0f);
+	cameraLookRate_ = data.value("cameraLookRate_", 1.0f);
 
 	parryLerp_.time = JsonAdapter::GetValue<float>(data, "parryLerp_.time");
 	parryLerp_.moveDistance = JsonAdapter::GetValue<float>(data, "parryLerp_.moveDistance");
@@ -330,6 +336,8 @@ void PlayerParryState::SaveJson(Json& data) {
 
 	data["nextAnimDuration_"] = nextAnimDuration_;
 	data["deltaWaitTime_"] = deltaWaitTime_;
+	data["deltaLerpSpeed_"] = deltaLerpSpeed_;
+	data["cameraLookRate_"] = cameraLookRate_;
 
 	data["parryLerp_.time"] = parryLerp_.time;
 	data["parryLerp_.moveDistance"] = parryLerp_.moveDistance;

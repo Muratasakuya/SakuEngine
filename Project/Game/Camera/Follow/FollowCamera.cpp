@@ -59,30 +59,38 @@ void FollowCamera::StartPlayerActionAnim(PlayerState state) {
 	}
 }
 
-void FollowCamera::EndPlayerActionAnim(PlayerState state) {
+void FollowCamera::EndPlayerActionAnim(PlayerState state, bool isWarmStart) {
 
 	Camera3DEditor* editor = Camera3DEditor::GetInstance();
+	std::string name{};
 	switch (state) {
 	case PlayerState::Attack_2nd:
 
-		editor->EndAnim("AttackProgress_2nd");
+		name = "AttackProgress_2nd";
 		break;
 	case PlayerState::Attack_3rd:
 
-		editor->EndAnim("AttackProgress_3rd");
+		name = "AttackProgress_3rd";
 		break;
 	case PlayerState::Attack_4th:
 
-		editor->EndAnim("AttackProgress_4th");
+		name = "AttackProgress_4th";
 		break;
 	case PlayerState::SkilAttack:
 
-		editor->EndAnim("SkillProgress");
+		name = "SkillProgress";
 		break;
 	case PlayerState::Parry:
 
-		editor->EndAnim("Parry");
+		name = "Parry";
 		break;
+	}
+
+	// アニメーションを終了させる
+	editor->EndAnim(name);
+	if (isWarmStart) {
+
+		stateController_->WarmStartFollow(*this);
 	}
 }
 
@@ -101,6 +109,7 @@ void FollowCamera::StartLookToTarget(FollowCameraTargetType from,
 	lookTimerRate_ = lookTimerRate;
 	lookPair_.first = from;
 	lookPair_.second = to;
+	startFovY_ = fovY_;
 
 	// 開始回転を設定
 	lookToStart_ = Quaternion::Normalize(transform_.rotation);
@@ -196,13 +205,14 @@ void FollowCamera::UpdateLookToTarget() {
 		targetRotation, lookTimer_.easedT_);
 	transform_.rotation = Quaternion::Normalize(rotation);
 
+	fovY_ = std::lerp(startFovY_, initFovY_, lookTimer_.easedT_);
+
 	// 時間経過で終了
 	if (lookTimer_.IsReached()) {
 
 		// 回転を固定する
 		transform_.rotation = targetRotation;
 		lookStart_ = false;
-		lookTimer_.Reset();
 		lookToTarget_ = std::nullopt;
 	}
 }
@@ -291,6 +301,8 @@ void FollowCamera::ImGui() {
 					FollowCameraTargetType::BossEnemy, true);
 			}
 
+			ImGui::Text(std::format("lookTimer_.IsReached(): {}", lookTimer_.IsReached()).c_str());
+
 			ImGui::Checkbox("lookAlwaysTarget", &lookAlwaysTarget_);
 
 			ImGui::DragFloat("targetXRotation", &targetXRotation_, 0.01f);
@@ -312,6 +324,7 @@ void FollowCamera::ApplyJson() {
 	}
 
 	fovY_ = JsonAdapter::GetValue<float>(data, "fovY_");
+	initFovY_ = fovY_;
 	nearClip_ = JsonAdapter::GetValue<float>(data, "nearClip_");
 	farClip_ = JsonAdapter::GetValue<float>(data, "farClip_");
 

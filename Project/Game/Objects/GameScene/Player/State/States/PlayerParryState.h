@@ -74,6 +74,8 @@ private:
 
 	float deltaWaitTimer_; // deltaTimeが元に戻るまでの時間経過
 	float deltaWaitTime_;  // deltaTimeが元に戻るまでの時間
+	float deltaLerpSpeed_; // 補間速度
+	float cameraLookRate_; // カメラ補間速度
 
 	std::optional<RequestState> request_;
 
