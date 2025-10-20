@@ -43,7 +43,7 @@ void TextureManager::LoadSynch(const std::string& textureName) {
 	// すでにロード済みなら何もしない
 	{
 		std::scoped_lock lk(gpuMutex_);
-		if (textures_.contains(textureName)) { 
+		if (textures_.contains(textureName)) {
 			return;
 		}
 	}
@@ -165,17 +165,28 @@ DirectX::ScratchImage TextureManager::GenerateMipMaps(const std::filesystem::pat
 	DirectX::ScratchImage image{};
 	std::wstring filePathW = Algorithm::ConvertString(filePath.string());
 
-	HRESULT hr = S_OK;
+	// 法線テクスチャかどうか
+	const std::wstring stemLower = Algorithm::ToLowerW(filePath.stem().wstring());
+	bool isNormal =
+		(stemLower.find(L"normal") != std::wstring::npos) ||
+		Algorithm::EndsWithW(stemLower, L"_n") ||
+		(stemLower.find(L"_nrm") != std::wstring::npos);
+	// 法線テクスチャかどうかでLinearかSRGBか変える
+	DirectX::WIC_FLAGS wicFlags = isNormal ? static_cast<DirectX::WIC_FLAGS>(
+		DirectX::WIC_FLAGS_IGNORE_SRGB | DirectX::WIC_FLAGS_DEFAULT_SRGB) :
+		static_cast<DirectX::WIC_FLAGS>(DirectX::WIC_FLAGS_FORCE_SRGB | DirectX::WIC_FLAGS_DEFAULT_SRGB);
+
+	HRESULT hr = DirectX::LoadFromWICFile(filePathW.c_str(), wicFlags, nullptr, image);
 	// dds拡張子かどうかで分岐させる
 	if (filePathW.ends_with(L".dds")) {
 
 		hr = DirectX::LoadFromDDSFile(filePathW.c_str(), DirectX::DDS_FLAGS_NONE, nullptr, image);
-		assert(SUCCEEDED(hr));
 	} else {
 
-		hr = DirectX::LoadFromWICFile(filePathW.c_str(), DirectX::WIC_FLAGS_FORCE_SRGB | DirectX::WIC_FLAGS_DEFAULT_SRGB, nullptr, image);
-		assert(SUCCEEDED(hr));
+		hr = DirectX::LoadFromWICFile(filePathW.c_str(),
+			DirectX::WIC_FLAGS_FORCE_SRGB | DirectX::WIC_FLAGS_DEFAULT_SRGB, nullptr, image);
 	}
+	assert(SUCCEEDED(hr));
 
 	DirectX::ScratchImage mipImages{};
 	// 圧縮フォーマットかどうかチェックして分岐させる
@@ -186,9 +197,9 @@ DirectX::ScratchImage TextureManager::GenerateMipMaps(const std::filesystem::pat
 	} else {
 
 		// ミップマップの作成 → 元画像よりも小さなテクスチャ群
-		hr = DirectX::GenerateMipMaps(
-			image.GetImages(), image.GetImageCount(), image.GetMetadata(),
-			DirectX::TEX_FILTER_SRGB, 4, mipImages);
+		auto mipFilter = isNormal ? DirectX::TEX_FILTER_DEFAULT : DirectX::TEX_FILTER_SRGB;
+		hr = DirectX::GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(),
+			mipFilter, 4, mipImages);
 		assert(SUCCEEDED(hr));
 	}
 	// メタデータ取得
