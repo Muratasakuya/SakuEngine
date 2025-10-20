@@ -128,6 +128,22 @@ void FollowCamera::StartLookToTarget(FollowCameraTargetType from,
 		// 目標回転を設定
 		lookToTarget_ = GetTargetRotation();
 	}
+
+	// 目標回転
+	const Quaternion baseTarget = lookToTarget_.has_value()
+		? lookToTarget_.value() : GetTargetRotation();
+
+	// Y軸回転の差
+	const float yawDelta = Math::YawSignedDelta(lookToStart_, baseTarget);
+	const float kDeadZone = 0.008f;
+	if (std::abs(yawDelta) <= kDeadZone) {
+
+		lookYawDirection_ = (preLookYawDirection_ != 0) ? preLookYawDirection_ : +1;
+	} else {
+
+		lookYawDirection_ = (0.0f < yawDelta) ? +1 : -1;
+	}
+	preLookYawDirection_ = lookYawDirection_;
 }
 
 void FollowCamera::Init() {
@@ -194,8 +210,16 @@ void FollowCamera::UpdateLookToTarget() {
 	}
 
 	// 目標回転
-	Quaternion targetRotation = lookToTarget_.has_value() ?
+	Quaternion baseTarget = lookToTarget_.has_value() ?
 		lookToTarget_.value() : GetTargetRotation();
+
+	// 最短のY軸補間方向を取得
+	// 0オフセットなし、1左周り、2右回り
+	float signedOffset = -static_cast<float>(lookYawDirection_) * lookYawOffset_;
+
+	// Y軸にオフセットをかけて目標回転を算出
+	Quaternion yawOffset = Quaternion::MakeAxisAngle(Direction::Get(Direction3D::Up), signedOffset);
+	Quaternion targetRotation = Quaternion::Normalize(yawOffset * baseTarget);
 
 	// 時間の更新
 	lookTimer_.Update(lookTimer_.target_ * lookTimerRate_);
@@ -307,6 +331,7 @@ void FollowCamera::ImGui() {
 
 			ImGui::DragFloat("targetXRotation", &targetXRotation_, 0.01f);
 			ImGui::DragFloat("lookTargetLerpRate", &lookTargetLerpRate_, 0.01f);
+			ImGui::DragFloat("lookYawOffset", &lookYawOffset_, 0.01f);
 			lookTimer_.ImGui("Timer", true);
 			ImGui::EndTabItem();
 		}
@@ -330,6 +355,7 @@ void FollowCamera::ApplyJson() {
 
 	targetXRotation_ = data.value("targetXRotation_", 0.4f);
 	lookTargetLerpRate_ = data.value("lookTargetLerpRate_", 0.4f);
+	lookYawOffset_ = data.value("lookYawOffset_", 0.01f);
 	lookTimer_.FromJson(data.value("LookTimer", Json()));
 }
 
@@ -343,6 +369,7 @@ void FollowCamera::SaveJson() {
 
 	data["targetXRotation_"] = targetXRotation_;
 	data["lookTargetLerpRate_"] = lookTargetLerpRate_;
+	data["lookYawOffset_"] = lookYawOffset_;
 	lookTimer_.ToJson(data["LookTimer"]);
 
 	JsonAdapter::Save("Camera/Follow/initParameter.json", data);

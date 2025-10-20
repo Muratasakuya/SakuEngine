@@ -39,6 +39,9 @@ namespace Math {
 
 	float WrapPi(float value);
 
+	int YawShortestDirection(const Quaternion& from, const Quaternion& to);
+	float YawSignedDelta(const Quaternion& from, const Quaternion& to);
+
 	float AngleFromTwist(const Quaternion& twist, Axis axis);
 
 	Vector3 RandomPointOnArc(const Vector3& center, const Vector3& direction,
