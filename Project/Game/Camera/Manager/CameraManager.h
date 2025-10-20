@@ -38,7 +38,7 @@ public:
 
 	//--------- accessor -----------------------------------------------------
 
-	void SetTarget(const Player* Player, const BossEnemy* bossEnemy);
+	void SetTarget(const Player* player, const BossEnemy* bossEnemy);
 
 	FollowCamera* GetFollowCamera() const { return followCamera_.get(); }
 	BeginGameCamera* GetBeginGameCamera() const { return beginGameCamera_.get(); }

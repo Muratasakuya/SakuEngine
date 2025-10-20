@@ -19,6 +19,9 @@ void PlayerDashState::Enter(Player& player) {
 	// 加速開始
 	currentState_ = State::Accel;
 	accelLerp_->Start();
+
+	// カメラを見やすい位置まで補間させる
+	followCamera_->SetOverlayState(FollowCameraOverlayState::ReturnDefaultRotate, true);
 }
 
 void PlayerDashState::Update(Player& player) {

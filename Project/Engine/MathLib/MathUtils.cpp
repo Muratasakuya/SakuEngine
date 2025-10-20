@@ -21,6 +21,39 @@ float Math::GetYawRadian(const Vector3& direction) {
 	return std::atan2(direction.z, direction.x);
 }
 
+float Math::WrapPi(float value) {
+
+	while (value > pi) {
+
+		value -= 2.0f * pi;
+	}
+	while (value < -pi) {
+
+		value += 2.0f * pi;
+	}
+	return value;
+}
+
+float Math::AngleFromTwist(const Quaternion& twist, Axis axis) {
+	
+	float angle = 0.0f;
+	switch (axis) {
+	case Math::Axis::X:
+
+		angle = 2.0f * std::atan2(twist.x, twist.w);
+		break;
+	case Math::Axis::Y:
+
+		angle = 2.0f * std::atan2(twist.y, twist.w);
+		break;
+	case Math::Axis::Z:
+
+		angle = 2.0f * std::atan2(twist.z, twist.w);
+		break;
+	}
+	return angle;
+}
+
 Vector3 Math::RandomPointOnArc(const Vector3& center,
 	const Vector3& direction, float radius, float halfAngle) {
 

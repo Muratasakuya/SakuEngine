@@ -75,7 +75,7 @@ void PlayerAttack_4thState::Update(Player& player) {
 
 		exitTimer_ += GameTimer::GetScaledDeltaTime();
 		// 画面シェイクを行わせる
-		followCamera_->SetScreenShake(true);
+		followCamera_->SetOverlayState(FollowCameraOverlayState::Shake, true);
 	}
 }
 

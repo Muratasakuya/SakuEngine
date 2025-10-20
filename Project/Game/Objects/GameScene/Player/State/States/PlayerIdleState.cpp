@@ -20,8 +20,8 @@ void PlayerIdleState::Enter(Player& player) {
 	canExit_ = false;
 	player.SetNextAnimation("player_idle", true, nextAnimDuration_);
 
-	// カメラ制御をプレイヤーに委ねる
-	followCamera_->SetLookAlwaysTarget(false);
+	// カメラを見やすい位置まで補間させる
+	followCamera_->SetOverlayState(FollowCameraOverlayState::ReturnDefaultRotate, true);
 }
 
 void PlayerIdleState::Update([[maybe_unused]] Player& player) {

@@ -31,10 +31,11 @@ public:
 
 	//--------- accessor -----------------------------------------------------
 
-	void SetScreenShake(bool isShake);
+	void SetPlayer(const Player* player) { stateController_->SetPlayer(player); }
 	void SetTarget(FollowCameraTargetType type, const Transform3D& target);
 	void SetFovY(float fovY) { fovY_ = fovY; }
 	void SetState(FollowCameraState state);
+	void SetOverlayState(FollowCameraOverlayState state, bool isStart);
 
 	float GetFovY() const { return fovY_; }
 

@@ -195,7 +195,7 @@ void PlayerParryState::UpdateAnimation(Player& player) {
 			request_ = std::nullopt;
 
 			// 画面シェイクを行わせる
-			followCamera_->SetScreenShake(true);
+			followCamera_->SetOverlayState(FollowCameraOverlayState::Shake, true);
 		}
 		break;
 	}

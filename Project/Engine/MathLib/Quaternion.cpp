@@ -443,3 +443,12 @@ Quaternion Quaternion::LookTarget(const Vector3& from, const Vector3& to, const 
 
 	return newRotation;
 }
+
+Quaternion Quaternion::ExtractTwistX(const Quaternion& qNorm) {
+
+	// X軸成分だけを残す
+	Quaternion t{ qNorm.x, 0.0f, 0.0f, qNorm.w };
+	float lenSq = t.x * t.x + t.w * t.w;
+	float invLen = 1.0f / std::sqrt(lenSq);
+	return Quaternion{ t.x * invLen, 0.0f, 0.0f, t.w * invLen };
+}

@@ -31,7 +31,7 @@ void StateTimer::Reset() {
 bool StateTimer::IsReached() const {
 
 	// 現在の時間が目標時間に達したら
-	return target_ < current_ || t_ == 1.0f;
+	return t_ == 1.0f;
 }
 
 void StateTimer::ImGui(const std::string& name, bool isSeparate) {
