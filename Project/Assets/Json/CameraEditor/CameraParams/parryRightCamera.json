@@ -38,7 +38,7 @@
     "followTarget": true,
     "lerpType": "Spline",
     "objectName": "ParryState",
-    "overallName": "Parry",
+    "overallName": "ParryRightView",
     "targetName": "player",
     "useAveraging": true
 }

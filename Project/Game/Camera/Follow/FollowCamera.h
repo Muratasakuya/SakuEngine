@@ -79,6 +79,8 @@ private:
 
 	// アニメーションを読み込んだか
 	bool isLoadedAnim_;
+	// 最後にエディターで再生したアニメーションの名前
+	std::string lastActionAnimName_;
 
 	//--------- functions ----------------------------------------------------
 

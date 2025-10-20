@@ -26,7 +26,8 @@ void FollowCamera::LoadAnim() {
 	editor->LoadAnimFile("3rdAttackCamera.json");
 	editor->LoadAnimFile("4thAttackCamera.json");
 	editor->LoadAnimFile("skillAttackCamera.json");
-	editor->LoadAnimFile("parryCamera.json");
+	editor->LoadAnimFile("parryRightCamera.json");
+	editor->LoadAnimFile("parryLeftCamera.json");
 
 	// 読み込み済み
 	isLoadedAnim_ = true;
@@ -35,54 +36,48 @@ void FollowCamera::LoadAnim() {
 void FollowCamera::StartPlayerActionAnim(PlayerState state) {
 
 	Camera3DEditor* editor = Camera3DEditor::GetInstance();
+
+	// 状態毎に名前を取得
+	std::string name{};
 	switch (state) {
-	case PlayerState::Attack_2nd:
-
-		editor->StartAnim("AttackProgress_2nd", true);
-		break;
-	case PlayerState::Attack_3rd:
-
-		editor->StartAnim("AttackProgress_3rd", true);
-		break;
-	case PlayerState::Attack_4th:
-
-		editor->StartAnim("AttackProgress_4th", true);
-		break;
-	case PlayerState::SkilAttack:
-
-		editor->StartAnim("SkillProgress", true);
-		break;
+	case PlayerState::Attack_2nd: name = "AttackProgress_2nd"; break;
+	case PlayerState::Attack_3rd: name = "AttackProgress_3rd"; break;
+	case PlayerState::Attack_4th: name = "AttackProgress_4th"; break;
+	case PlayerState::SkilAttack: name = "SkillProgress";      break;
 	case PlayerState::Parry:
 
-		editor->StartAnim("Parry", true);
+		// 目標回転
+		const Quaternion baseTarget = targets_[FollowCameraTargetType::BossEnemy]->rotation;
+		// y軸最短補間方向
+		int direction = Math::YawShortestDirection(transform_.rotation, baseTarget);
+
+		// 0か-1なら左、+1は右からの視点のパリィアニメーションを行わせる
+		name = (0 <= direction) ? "ParryRightView" : "ParryLeftView";
+		lastActionAnimName_ = name;
 		break;
+	}
+
+	// 名前が設定されていればアニメーションを再生
+	if (!name.empty()) {
+
+		editor->StartAnim(name, true);
 	}
 }
 
 void FollowCamera::EndPlayerActionAnim(PlayerState state, bool isWarmStart) {
 
 	Camera3DEditor* editor = Camera3DEditor::GetInstance();
+
+	// 状態毎に名前を取得
 	std::string name{};
 	switch (state) {
-	case PlayerState::Attack_2nd:
-
-		name = "AttackProgress_2nd";
-		break;
-	case PlayerState::Attack_3rd:
-
-		name = "AttackProgress_3rd";
-		break;
-	case PlayerState::Attack_4th:
-
-		name = "AttackProgress_4th";
-		break;
-	case PlayerState::SkilAttack:
-
-		name = "SkillProgress";
-		break;
+	case PlayerState::Attack_2nd: name = "AttackProgress_2nd"; break;
+	case PlayerState::Attack_3rd: name = "AttackProgress_3rd"; break;
+	case PlayerState::Attack_4th: name = "AttackProgress_4th"; break;
+	case PlayerState::SkilAttack: name = "SkillProgress";      break;
 	case PlayerState::Parry:
 
-		name = "Parry";
+		name = lastActionAnimName_;
 		break;
 	}
 
@@ -91,6 +86,10 @@ void FollowCamera::EndPlayerActionAnim(PlayerState state, bool isWarmStart) {
 	if (isWarmStart) {
 
 		stateController_->WarmStartFollow(*this);
+	}
+	if (state == PlayerState::Parry) {
+
+		lastActionAnimName_.clear();
 	}
 }
 
