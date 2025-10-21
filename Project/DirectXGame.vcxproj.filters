@@ -2297,8 +2297,10 @@
     </None>
     <ClCompile Include="Game\Objects\GameScene\Enemy\Boss\State\States\GreatAttackState\Interface\BossEnemyGreatAttackIState.cpp" />
     <ClCompile Include="Game\Camera\Follow\State\States\FollowCameraReturnDefaultRotate.cpp" />
+    <ClCompile Include="Engine\Effect\Game\GameEffectGroup.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\Camera\Follow\State\States\FollowCameraReturnDefaultRotate.h" />
+    <ClInclude Include="Engine\Effect\Game\GameEffectGroup.h" />
   </ItemGroup>
 </Project>

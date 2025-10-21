@@ -37,11 +37,15 @@ public:
 
 	// object追加
 	// helper
+	// 3Dオブジェクト
 	uint32_t CreateObjects(const std::string& modelName, const std::string& name,
 		const std::string& groupName, const std::optional<std::string>& animationName = std::nullopt);
-
+	// スカイボックス
 	uint32_t CreateSkybox(const std::string& textureName);
+	// エフェクト
+	uint32_t CreateEffect(const std::string& name, const std::string& groupName);
 
+	// 2Dオブジェクト
 	uint32_t CreateObject2D(const std::string& textureName, const std::string& name,
 		const std::string& groupName);
 

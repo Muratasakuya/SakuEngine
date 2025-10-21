@@ -68,6 +68,8 @@ void BaseTransform::ImGui(float itemSize) {
 
 		eulerRotate.Init();
 	}
+	ImGui::Separator();
+
 	ImGui::Text(std::format("isDirty: {}", isDirty_).c_str());
 
 	ImGui::DragFloat3("translation", &translation.x, 0.01f);
@@ -171,6 +173,38 @@ Vector3 BaseTransform::GetUp() const {
 
 Vector3 BaseTransform::GetDown() const {
 	return Vector3(-GetUp().x, -GetUp().y, -GetUp().z);
+}
+
+//============================================================================
+// Effect
+//============================================================================
+
+void EffectTransform::Init() {
+
+	rotation.Init();
+	eulerRotate.Init();
+
+	translation.Init();
+}
+
+void EffectTransform::ImGui() {
+
+	if (ImGui::Button("Reset")) {
+
+		rotation.Init();
+		translation.Init();
+
+		eulerRotate.Init();
+	}
+	ImGui::Separator();
+
+	ImGui::DragFloat3("translation", &translation.x, 0.01f);
+	if (ImGui::DragFloat3("rotation", &eulerRotate.x, 0.01f)) {
+
+		rotation = Quaternion::EulerToQuaternion(eulerRotate);
+	}
+	ImGui::Text("quaternion(%4.3f, %4.3f, %4.3f, %4.3f)",
+		rotation.x, rotation.y, rotation.z, rotation.w);
 }
 
 //============================================================================

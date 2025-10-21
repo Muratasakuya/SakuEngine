@@ -34,7 +34,7 @@ public:
 
 	//--------- accessor -----------------------------------------------------
 
-	bool SetCommand(const ParticleCommand& command) override;
+	void SetCommand(const ParticleCommand& command) override;
 
 	const char* GetName() const override { return "SpawnPolygonVertex"; }
 

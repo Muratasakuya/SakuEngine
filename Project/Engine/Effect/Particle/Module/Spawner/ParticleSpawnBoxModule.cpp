@@ -10,27 +10,22 @@
 //	ParticleSpawnBoxModule classMethods
 //============================================================================
 
-bool ParticleSpawnBoxModule::SetCommand(const ParticleCommand& command) {
+void ParticleSpawnBoxModule::SetCommand(const ParticleCommand& command) {
 
 	switch (command.id) {
 	case ParticleCommandID::SetTranslation: {
 		if (const auto& translation = std::get_if<Vector3>(&command.value)) {
 
 			emitter_.translation = *translation;
-			return true;
 		}
-		return false;
 	}
 	case ParticleCommandID::SetRotation: {
 		if (const auto& rotation = std::get_if<Vector3>(&command.value)) {
 
 			emitterRotation_ = *rotation;
-			return true;
 		}
-		return false;
 	}
 	}
-	return false;
 }
 
 void ParticleSpawnBoxModule::Init() {

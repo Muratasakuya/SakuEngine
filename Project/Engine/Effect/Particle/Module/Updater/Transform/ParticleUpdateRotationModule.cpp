@@ -9,6 +9,18 @@
 //	ParticleUpdateRotationModule classMethods
 //============================================================================
 
+void ParticleUpdateRotationModule::SetCommand(const ParticleCommand& command) {
+
+	switch (command.id) {
+	case ParticleCommandID::SetRotation: {
+		if (const auto& rotation = std::get_if<Quaternion>(&command.value)) {
+
+			setRotation_ = *rotation;
+		}
+	}
+	}
+}
+
 static Quaternion MakeTwist(const Quaternion& rotation, const Vector3& axisN) {
 
 	// rotationのベクトル部を軸へ射影して、軸回りのツイストを取り出す
@@ -17,20 +29,6 @@ static Quaternion MakeTwist(const Quaternion& rotation, const Vector3& axisN) {
 	Vector3 projection = a * Vector3::Dot(v, a);
 	Quaternion twist{ projection.x, projection.y, projection.z, rotation.w };
 	return Quaternion::Normalize(twist);
-}
-
-bool ParticleUpdateRotationModule::SetCommand(const ParticleCommand& command) {
-
-	switch (command.id) {
-	case ParticleCommandID::SetRotation: {
-		if (const auto& rotation = std::get_if<Quaternion>(&command.value)) {
-
-			setRotation_ = *rotation;
-		}
-		return false;
-	}
-	}
-	return false;
 }
 
 void ParticleUpdateRotationModule::ToAxisAngle(const Quaternion& rotation, Vector3& axis, float& angle) {
@@ -63,11 +61,12 @@ Quaternion ParticleUpdateRotationModule::UpdateRotation(
 		const Quaternion delta = Quaternion::Multiply(Quaternion::Inverse(start), target);
 
 		// 軸角へ
-		Vector3 axis; float angle = 0.0f;
+		Vector3 axis;
+		float angle = 0.0f;
 		ToAxisAngle(delta, axis, angle);
 
 		// 長い方の弧を処理するときは軸を反転する
-		if (slerpPreferLongArc_ && angle > 1e-6f && angle < pi) {
+		if (slerpPreferLongArc_ && angle > std::numeric_limits<float>::epsilon() && angle < pi) {
 
 			angle = 2.0f * pi - angle;
 			axis = -axis;
@@ -142,11 +141,11 @@ void ParticleUpdateRotationModule::Execute(
 
 	particle.transform.billboardMode = static_cast<uint32_t>(billboardType_);
 
-	// 外部で姿勢を直接セット
+	// 外部で回転を直接セット
 	if (setRotation_.has_value() && billboardType_ == ParticleBillboardType::None) {
 
 		// 行列を計算
-		UpdateMatrix(particle, LockAxis(*setRotation_));
+		UpdateMatrix(particle, *setRotation_);
 		return;
 	}
 

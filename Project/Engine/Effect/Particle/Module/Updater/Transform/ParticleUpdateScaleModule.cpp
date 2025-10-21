@@ -9,18 +9,17 @@
 //	ParticleUpdateScaleModule classMethods
 //============================================================================
 
-bool ParticleUpdateScaleModule::SetCommand(const ParticleCommand& command) {
+void ParticleUpdateScaleModule::SetCommand(const ParticleCommand& command) {
 
 	switch (command.id) {
 	case ParticleCommandID::Scaling: {
 		if (const auto& scaling = std::get_if<float>(&command.value)) {
 
+			// 補間値と乗算する値、デフォルトで1.0f
 			scalingValue_ = Vector3::AnyInit(*scaling);
 		}
-		return false;
 	}
 	}
-	return false;
 }
 
 void ParticleUpdateScaleModule::Init() {
