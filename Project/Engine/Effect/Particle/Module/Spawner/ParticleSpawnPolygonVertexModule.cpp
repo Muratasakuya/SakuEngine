@@ -9,24 +9,20 @@
 //	ParticleSpawnPolygonVertexModule classMethods
 //============================================================================
 
-bool ParticleSpawnPolygonVertexModule::SetCommand(const ParticleCommand& command) {
+void ParticleSpawnPolygonVertexModule::SetCommand(const ParticleCommand& command) {
 
 	switch (command.id) {
 	case ParticleCommandID::SetTranslation: {
 		if (const auto& translation = std::get_if<Vector3>(&command.value)) {
 
 			translation_ = *translation;
-			return true;
 		}
-		return false;
 	}
 	case ParticleCommandID::SetRotation: {
 		if (const auto& rotation = std::get_if<Vector3>(&command.value)) {
 
 			emitterRotation_ = *rotation;
-			return true;
 		}
-		return false;
 	}
 	case ParticleCommandID::SetBillboardRotation: {
 		if (const auto* matrix = std::get_if<Matrix4x4>(&command.value)) {
@@ -34,9 +30,7 @@ bool ParticleSpawnPolygonVertexModule::SetCommand(const ParticleCommand& command
 			// ビルボード回転を取得
 			billboardRotation_ = *matrix;
 			useBillboardRotation_ = true;
-			return true;
 		}
-		return false;
 	}
 	case ParticleCommandID::SetEmitFlag: {
 		if (const auto& flag = std::get_if<bool>(&command.value)) {
@@ -44,7 +38,7 @@ bool ParticleSpawnPolygonVertexModule::SetCommand(const ParticleCommand& command
 			bool emit = flag;
 			// trueならリセットして発生させる
 			if (emit) {
-				
+
 				spawnTimer_.Reset();
 				updater_.Reset();
 				spawned_ = 0;
@@ -56,12 +50,9 @@ bool ParticleSpawnPolygonVertexModule::SetCommand(const ParticleCommand& command
 				multiEmit_ = false;
 				updateEnable_ = false;
 			}
-			return true;
 		}
-		return false;
 	}
 	}
-	return false;
 }
 
 void ParticleSpawnPolygonVertexModule::Init() {

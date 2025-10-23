@@ -42,6 +42,12 @@ void ParticleUpdateTrailModule::Execute(
 
 	ParticleCommon::TrailRuntime& trail = particle.trailRuntime;
 
+	// トレイル対象の座標、親がいれば親の座標も加算する
+	const Vector3 parentTranslation = (particle.transform.aliveParent == 1) ?
+		particle.transform.parentMatrix.GetTranslationValue() :
+		Vector3::AnyInit(0.0f);
+	const Vector3 particleTranslation = particle.transform.translation + parentTranslation;
+
 	// ノードの寿命を更新
 	for (auto& node : trail.nodes) {
 
@@ -60,7 +66,7 @@ void ParticleUpdateTrailModule::Execute(
 	}
 
 	// 現在の座標
-	const Vector3 currentPos = particle.transform.translation;
+	const Vector3 currentPos = particleTranslation;
 
 	// 未初期化なら初期化する
 	if (!trail.isInitialized) {
@@ -70,7 +76,7 @@ void ParticleUpdateTrailModule::Execute(
 
 		// 初期化してノード追加
 		ParticleCommon::TrailPoint point{};
-		point.pos = particle.transform.translation;
+		point.pos = particleTranslation;
 		point.age = 0.0f;
 		trail.nodes.emplace_back(point);
 		return;

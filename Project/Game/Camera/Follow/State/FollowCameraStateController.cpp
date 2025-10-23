@@ -18,6 +18,7 @@
 #include <Game/Camera/Follow/State/States/FollowCameraAllyAttackState.h>
 #include <Game/Camera/Follow/State/States/FollowCameraStunAttackState.h>
 #include <Game/Camera/Follow/State/States/FollowCameraShakeState.h>
+#include <Game/Camera/Follow/State/States/FollowCameraReturnDefaultRotate.h>
 
 // imgui
 #include <imgui.h>
@@ -42,6 +43,7 @@ void FollowCameraStateController::Init(FollowCamera& owner) {
 	states_.emplace(FollowCameraState::AllyAttack, std::make_unique<FollowCameraAllyAttackState>(owner.GetFovY()));
 	states_.emplace(FollowCameraState::StunAttack, std::make_unique<FollowCameraStunAttackState>());
 	overlayStates_.emplace(FollowCameraOverlayState::Shake, std::make_unique<FollowCameraShakeState>());
+	overlayStates_.emplace(FollowCameraOverlayState::ReturnDefaultRotate, std::make_unique<FollowCameraReturnDefaultRotate>());
 
 	// json適応
 	ApplyJson();
@@ -53,6 +55,19 @@ void FollowCameraStateController::Init(FollowCamera& owner) {
 	current_ = FollowCameraState::Follow;
 	requested_ = FollowCameraState::Follow;
 	ChangeState(owner);
+}
+
+void FollowCameraStateController::SetPlayer(const Player* player) {
+
+	// 各状態にplayerをセット
+	for (const auto& state : std::views::values(states_)) {
+
+		state->SetPlayer(player);
+	}
+	for (const auto& state : std::views::values(overlayStates_)) {
+
+		state->SetPlayer(player);
+	}
 }
 
 void FollowCameraStateController::SetTarget(FollowCameraTargetType type, const Transform3D& target) {
@@ -215,11 +230,19 @@ void FollowCameraStateController::ApplyJson() {
 
 	for (const auto& [state, ptr] : states_) {
 
-		ptr->ApplyJson(data[EnumAdapter<FollowCameraState>::ToString(state)]);
+		const auto& key = EnumAdapter<FollowCameraState>::ToString(state);
+		if (data.contains(key)) {
+
+			ptr->ApplyJson(data[key]);
+		}
 	}
 	for (const auto& [state, ptr] : overlayStates_) {
 
-		ptr->ApplyJson(data[EnumAdapter<FollowCameraOverlayState>::ToString(state)]);
+		const auto& key = EnumAdapter<FollowCameraOverlayState>::ToString(state);
+		if (data.contains(key)) {
+
+			ptr->ApplyJson(data[key]);
+		}
 	}
 }
 

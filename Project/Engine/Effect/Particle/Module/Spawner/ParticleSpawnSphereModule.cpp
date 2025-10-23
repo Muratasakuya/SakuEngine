@@ -10,19 +10,16 @@
 //	ParticleSpawnSphereModule classMethods
 //============================================================================
 
-bool ParticleSpawnSphereModule::SetCommand(const ParticleCommand& command) {
+void ParticleSpawnSphereModule::SetCommand(const ParticleCommand& command) {
 
 	switch (command.id) {
 	case ParticleCommandID::SetTranslation: {
 		if (const auto& translation = std::get_if<Vector3>(&command.value)) {
 
 			emitter_.translation = *translation;
-			return true;
 		}
-		return false;
 	}
 	}
-	return false;
 }
 
 void ParticleSpawnSphereModule::Init() {

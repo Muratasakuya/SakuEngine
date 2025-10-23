@@ -31,7 +31,7 @@ public:
 
 	//--------- accessor -----------------------------------------------------
 
-	virtual bool SetCommand([[maybe_unused]] const ParticleCommand& command) { return false; }
+	virtual void SetCommand([[maybe_unused]] const ParticleCommand& command) {}
 
 	virtual const char* GetName() const = 0;
 };

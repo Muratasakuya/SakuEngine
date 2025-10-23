@@ -25,9 +25,24 @@ constexpr float radian = pi / 180.0f;
 
 namespace Math {
 
+	// 軸
+	enum class Axis {
+
+		X,
+		Y,
+		Z
+	};
+
 	float AbsFloat(float v);
 
 	float GetYawRadian(const Vector3& direction);
+
+	float WrapPi(float value);
+
+	int YawShortestDirection(const Quaternion& from, const Quaternion& to);
+	float YawSignedDelta(const Quaternion& from, const Quaternion& to);
+
+	float AngleFromTwist(const Quaternion& twist, Axis axis);
 
 	Vector3 RandomPointOnArc(const Vector3& center, const Vector3& direction,
 		float radius, float halfAngle);

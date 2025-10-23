@@ -140,6 +140,22 @@ uint32_t ObjectManager::CreateSkybox(const std::string& textureName) {
 	return object;
 }
 
+uint32_t ObjectManager::CreateEffect(const std::string& name, const std::string& groupName) {
+
+	LOG_SCOPE_MS_LABEL("effect");
+
+	// object作成
+	uint32_t object = BuildEmptyobject(name, groupName);
+	// 必要なdataを作成
+	auto* transform = objectPoolManager_->AddData<EffectTransform>(object);
+
+	// dataを初期化
+	transform->Init();
+	LOG_INFO("created effect: name: [{}]", name);
+
+	return object;
+}
+
 uint32_t ObjectManager::CreateObject2D(const std::string& textureName,
 	const std::string& name, const std::string& groupName) {
 

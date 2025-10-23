@@ -84,6 +84,20 @@ std::wstring Algorithm::ConvertString(const std::string& str) {
 	return result;
 }
 
+std::wstring Algorithm::ToLowerW(std::wstring s) {
+
+	std::transform(s.begin(), s.end(), s.begin(),
+		[](wchar_t c) -> wchar_t {
+			return static_cast<wchar_t>(std::tolower(static_cast<wint_t>(c)));
+		});
+	return s;
+}
+
+bool Algorithm::EndsWithW(const std::wstring& s, const std::wstring& suf) {
+
+	return s.size() >= suf.size() && s.compare(s.size() - suf.size(), suf.size(), suf) == 0;
+}
+
 int Algorithm::LerpInt(int a, int b, float t) {
 
 	float v = static_cast<float>(a) + (static_cast<float>(b) - static_cast<float>(a)) * t;

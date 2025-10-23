@@ -1,0 +1,44 @@
+{
+    "Keyframes": {
+        "0": {
+            "fovY": 0.8799999952316284,
+            "rotation": {
+                "w": 0.9598174144536405,
+                "x": -0.04494979255676332,
+                "y": 0.2745928778471063,
+                "z": 0.036452688464316776
+            },
+            "translation": {
+                "x": -8.807588577270508,
+                "y": 3.2970685958862305,
+                "z": -7.613008499145508
+            }
+        },
+        "1": {
+            "fovY": 0.6000000238418579,
+            "rotation": {
+                "w": 0.9765440665506756,
+                "x": -0.08259702341813417,
+                "y": 0.19741306883355017,
+                "z": 0.02382221779880625
+            },
+            "translation": {
+                "x": -11.180285453796387,
+                "y": 1.9796206951141357,
+                "z": -17.481060028076172
+            }
+        }
+    },
+    "Timer": {
+        "easeingType_": "EaseOutExpo",
+        "target_": 0.800000011920929
+    },
+    "divisionCount": 64,
+    "followRotation": true,
+    "followTarget": true,
+    "lerpType": "Spline",
+    "objectName": "ParryState",
+    "overallName": "ParryLeftView",
+    "targetName": "player",
+    "useAveraging": true
+}

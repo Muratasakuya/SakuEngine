@@ -136,7 +136,7 @@ void PlayerStunAttackState::UpdatePlayerAttack(Player& player) {
 		followCamera_->SetState(FollowCameraState::Follow);
 
 		// 画面シェイクを行わせる
-		followCamera_->SetScreenShake(true);
+		followCamera_->SetOverlayState(FollowCameraOverlayState::Shake, true);
 	}
 }
 

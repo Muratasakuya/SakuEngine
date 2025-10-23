@@ -15,6 +15,9 @@
 void PlayerWalkState::Enter(Player& player) {
 
 	player.SetNextAnimation("player_walk", true, nextAnimDuration_);
+
+	// カメラを見やすい位置まで補間させる
+	followCamera_->SetOverlayState(FollowCameraOverlayState::ReturnDefaultRotate, true);
 }
 
 void PlayerWalkState::Update(Player& player) {

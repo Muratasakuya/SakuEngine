@@ -11,6 +11,8 @@
 #include <utility>
 #include <algorithm>
 #include <any>
+#include <locale>
+#include <iostream>
 
 //============================================================================
 //	Algorithm namespace
@@ -65,7 +67,9 @@ namespace Algorithm {
 
 	std::wstring ConvertString(const std::string& str);
 
+	std::wstring ToLowerW(std::wstring s);
 
+	bool EndsWithW(const std::wstring& s, const std::wstring& suf);
 
 	//========================================================================
 	//	Find

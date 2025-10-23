@@ -11,6 +11,8 @@
 
 //============================================================================
 //	AssetAsyncQueue class
+//	非同期ジョブの追加・待機・取り出しを行うスレッドセーフなFIFOキュー
+//	AssetLoadWorker と組み合わせ、資産ロードなどのバックグラウンド処理を支える
 //============================================================================
 template<class Tx>
 class AssetAsyncQueue {
@@ -22,11 +24,17 @@ public:
 	AssetAsyncQueue() = default;
 	~AssetAsyncQueue() = default;
 
+	// キュー末尾にジョブを追加し、待機中のスレッドを起床させる
 	void AddQueue(Tx job);
+
+	// stopフラグが立つかジョブ投入までブロックし、先頭ジョブを取得して削除
+	// 停止時は std::nullopt を返す
 	std::optional<Tx> PopBlock(std::atomic_bool& stop);
 
+	// 任意条件に合致するジョブの存在を確認（重複投入の抑止に使用）
 	template<class Ty>
 	bool IsClearCondition(Ty pre);
+	// ジョブが空かどうかを取得（監視や待機終了判定に使用）
 	bool IsEmpty() const;
 private:
 	//========================================================================

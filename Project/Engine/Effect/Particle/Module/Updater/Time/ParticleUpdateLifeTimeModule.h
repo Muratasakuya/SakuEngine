@@ -4,19 +4,7 @@
 //	include
 //============================================================================
 #include <Engine/Effect/Particle/Module/Base/ICPUParticleUpdateModule.h>
-
-//============================================================================
-//	ParticleUpdateLifeTimeModule enum class
-//============================================================================
-
-// 寿命が尽きた時の処理
-enum class ParticleLifeEndMode {
-
-	Advance, // 次のフェーズに進む
-	Clamp,   // 最大時間で固定、次にも進まない
-	Reset,   // 時間をリセットして再処理
-	Kill     // 即削除
-};
+#include <Engine/Effect/Particle/Command/ParticleCommand.h>
 
 //============================================================================
 //	ParticleUpdateLifeTimeModule class
@@ -42,6 +30,8 @@ public:
 	void FromJson(const Json& data) override;
 
 	//--------- accessor -----------------------------------------------------
+
+	void SetCommand(const ParticleCommand& command) override;
 
 	const char* GetName() const override { return "LifeTime"; }
 

@@ -20,9 +20,9 @@
             "y": 0.14399999380111694
         },
         "offsetTranslation_": {
-            "x": 4.652849483477439e-08,
+            "x": 4.6528274566526306e-08,
             "y": 8.999970436096191,
-            "z": -54.999977111816406
+            "z": -53.3497200012207
         },
         "offsetXLerpRate_": 0.01600000075995922,
         "offsetYLerpRate_": 0.01600000075995922,
@@ -38,6 +38,19 @@
         "rotatePlusParam_.clampThreshold": 0.3199999928474426,
         "rotatePlusParam_.offsetZNear": -38.0,
         "rotateZLerpRate_": 0.03999999910593033
+    },
+    "ReturnDefaultRotate": {
+        "TargetTime": {
+            "Dash": 0.4000000059604645,
+            "Idle": 6.0,
+            "Walk": 0.699999988079071
+        },
+        "Timer": {
+            "easeingType_": "EaseOutCubic",
+            "target_": 0.6399999856948853
+        },
+        "lerpThreshold_": 0.0,
+        "targetRotateX_": 0.10000000149011612
     },
     "Shake": {
         "shakeEasingType_": 14,

@@ -31,6 +31,8 @@ public:
 
 	//--------- accessor -----------------------------------------------------
 
+	void SetCommand(const ParticleCommand& command) override;
+
 	const char* GetName() const override { return "KeyframePath"; }
 
 	//-------- registryID ----------------------------------------------------
@@ -48,6 +50,9 @@ private:
 	LerpKeyframe::Type type_;
 	// 補間キー
 	std::vector<Vector3> keys_;
+	// 親として動かす座標、回転
+	Vector3 parentTranslation_;
+	Quaternion parentRotation_;
 
 	// 強さ（半径）
 	ParticleCommon::LerpValue<float> swirlRadius_;

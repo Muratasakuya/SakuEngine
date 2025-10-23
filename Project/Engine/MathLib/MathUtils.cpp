@@ -21,6 +21,83 @@ float Math::GetYawRadian(const Vector3& direction) {
 	return std::atan2(direction.z, direction.x);
 }
 
+float Math::WrapPi(float value) {
+
+	while (value > pi) {
+
+		value -= 2.0f * pi;
+	}
+	while (value < -pi) {
+
+		value += 2.0f * pi;
+	}
+	return value;
+}
+
+int Math::YawShortestDirection(const Quaternion& from, const Quaternion& to) {
+
+	// Δ回転
+	Quaternion qFrom = Quaternion::Normalize(from);
+	Quaternion qTo = Quaternion::Normalize(to);
+	Quaternion delta = Quaternion::Normalize(Quaternion::Multiply(qTo, Quaternion::Inverse(qFrom)));
+
+	// Y軸まわりの回転のみ取得
+	Quaternion twistY{ 0.0f, delta.y, 0.0f, delta.w };
+	float len = std::sqrt(twistY.y * twistY.y + twistY.w * twistY.w);
+	if (len <= std::numeric_limits<float>::epsilon()) {
+		return 0;
+	}
+	twistY.y /= len;
+	twistY.w /= len;
+
+	// 符号付き角度
+	float angle = AngleFromTwist(twistY, Axis::Y);
+	angle = WrapPi(angle);
+
+	if (std::abs(angle) <= std::numeric_limits<float>::epsilon()) {
+		return 0;
+	}
+	return (0.0f < angle) ? +1 : -1;
+}
+
+float Math::YawSignedDelta(const Quaternion& from, const Quaternion& to) {
+
+	Quaternion qFrom = Quaternion::Normalize(from);
+	Quaternion qTo = Quaternion::Normalize(to);
+	Quaternion delta = Quaternion::Normalize(Quaternion::Multiply(qTo, Quaternion::Inverse(qFrom)));
+
+	Quaternion twistY{ 0.0f, delta.y, 0.0f, delta.w };
+	float len = std::sqrt(twistY.y * twistY.y + twistY.w * twistY.w);
+	if (len <= std::numeric_limits<float>::epsilon()) {
+		return 0.0f;
+	}
+	twistY.y /= len;
+	twistY.w /= len;
+
+	float angle = AngleFromTwist(twistY, Axis::Y);
+	return WrapPi(angle);
+}
+
+float Math::AngleFromTwist(const Quaternion& twist, Axis axis) {
+
+	float angle = 0.0f;
+	switch (axis) {
+	case Math::Axis::X:
+
+		angle = 2.0f * std::atan2(twist.x, twist.w);
+		break;
+	case Math::Axis::Y:
+
+		angle = 2.0f * std::atan2(twist.y, twist.w);
+		break;
+	case Math::Axis::Z:
+
+		angle = 2.0f * std::atan2(twist.z, twist.w);
+		break;
+	}
+	return angle;
+}
+
 Vector3 Math::RandomPointOnArc(const Vector3& center,
 	const Vector3& direction, float radius, float halfAngle) {
 

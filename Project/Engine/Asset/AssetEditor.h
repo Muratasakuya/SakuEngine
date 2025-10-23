@@ -22,6 +22,8 @@ class Asset;
 
 //============================================================================
 //	AssetEditor class
+//	Assetsディレクトリをツリー/グリッド表示し、プレビュー、D&D、ロード操作を提供
+//	レイアウト編集、コンテキストボタン、エディタ用アイコン管理を担当するUIクラス
 //============================================================================
 class AssetEditor {
 public:
@@ -29,14 +31,17 @@ public:
 	//	public Methods
 	//========================================================================
 
+	// 参照するAssetを受け取り、アイコン取得/ディレクトリツリー構築/設定適用を行う
 	void Init(Asset* asset);
 
+	// フォルダサイズや余白などUIレイアウトの編集UIを表示する
 	void EditLayout();
+	// メインのエディタウィンドウを描画する
 	void ImGui();
 
 	//--------- accessor -----------------------------------------------------
 
-	// singleton
+	// シングルトンインスタンスを取得/破棄する
 	static AssetEditor* GetInstance();
 	static void Finalize();
 private:
@@ -46,6 +51,7 @@ private:
 
 	//--------- structure ----------------------------------------------------
 
+	// ディレクトリツリーを構成するノード情報(表示名/パス/子ノード/状態フラグ)
 	struct DirectoryNode {
 
 		std::string name;                                     // フォルダ名
@@ -88,19 +94,21 @@ private:
 
 	//--------- functions ----------------------------------------------------
 
-	// json
+	// 設定ファイルを適用する/保存する
 	void ApplyJson();
 	void SaveJson();
 
-	// init
+	// ルートから再帰走査してツリーを再構築する(runTime=trueで初期化からやり直し)
 	void BuildDirectoryTree(bool runTime);
 
-	// update
+	// パンくずと再構築ボタンを含むヘッダを描画する
 	void DrawHeader();
+	// 現在ディレクトリの子要素をアイコンのグリッドで描画し、入力を処理する
 	void DrawFolderGrid();
+	// 右クリック位置にロード候補の小窓を表示し、即時ロードを提供する
 	void DrawLoadOverlay();
 
-	// helper
+	// ヘルパ: 拡張子判定/アイコン選択など
 	bool IsTextureFile(const std::filesystem::path& p) const;
 	bool IsModelFile(const std::filesystem::path& path) const;
 	bool IsJsonFile(const std::filesystem::path& path) const;

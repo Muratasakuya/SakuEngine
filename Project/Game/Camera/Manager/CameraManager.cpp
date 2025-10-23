@@ -42,11 +42,12 @@ void CameraManager::Init(SceneView* sceneView) {
 #endif
 }
 
-void CameraManager::SetTarget(const Player* Player, const BossEnemy* bossEnemy) {
+void CameraManager::SetTarget(const Player* player, const BossEnemy* bossEnemy) {
 
 	player_ = nullptr;
-	player_ = Player;
+	player_ = player;
 
+	followCamera_->SetPlayer(player);
 	// 追従先を設定する: player
 	followCamera_->SetTarget(FollowCameraTargetType::Player, player_->GetTransform());
 	followCamera_->SetTarget(FollowCameraTargetType::PlayerAlly, player_->GetAlly()->GetTransform());

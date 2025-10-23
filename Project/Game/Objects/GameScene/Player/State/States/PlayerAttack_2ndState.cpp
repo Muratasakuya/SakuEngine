@@ -48,12 +48,6 @@ void PlayerAttack_2ndState::Enter(Player& player) {
 	// 回転補間させるかの設定
 	approachPhase_ = CheckInRange(attackLookAtCircleRange_,
 		Vector3(bossEnemy_->GetTranslation() - playerPos).Length());
-	if (approachPhase_) {
-
-		// カメラの向きを補正させる
-		followCamera_->StartLookToTarget(FollowCameraTargetType::Player,
-			FollowCameraTargetType::BossEnemy, true, true, targetCameraRotateX_);
-	}
 }
 
 void PlayerAttack_2ndState::Update(Player& player) {

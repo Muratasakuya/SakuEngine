@@ -9,6 +9,18 @@
 //	ParticleUpdateLifeTimeModule classMethods
 //============================================================================
 
+void ParticleUpdateLifeTimeModule::SetCommand(const ParticleCommand& command) {
+
+	switch (command.id) {
+	case ParticleCommandID::SetLifeEndMode: {
+		if (const auto& mode = std::get_if<ParticleLifeEndMode>(&command.value)) {
+
+			endMode_ = *mode;
+		}
+	}
+	}
+}
+
 void ParticleUpdateLifeTimeModule::Init() {
 
 }

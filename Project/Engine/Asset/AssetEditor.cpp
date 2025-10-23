@@ -418,10 +418,16 @@ D3D12_GPU_DESCRIPTOR_HANDLE AssetEditor::GetIconForEntry(const DirectoryNode& en
 
 		// 既にロード済みならそのテクスチャ
 		const std::string stem = entry.path.stem().string();
+
+		// 既にロード済みならメタデータでキューブか判定して分岐
 		if (asset_->SearchTexture(stem)) {
 
-			D3D12_GPU_DESCRIPTOR_HANDLE handle = asset_->GetGPUHandle(stem);
-			return handle;
+			const auto& meta = asset_->GetMetaData(stem);
+			if (meta.IsCubemap()) {
+
+				return textureIcon_;
+			}
+			return asset_->GetGPUHandle(stem);
 		}
 
 		// 未ロードの場合はデフォルト

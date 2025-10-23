@@ -31,10 +31,11 @@ public:
 
 	//--------- accessor -----------------------------------------------------
 
-	void SetScreenShake(bool isShake);
+	void SetPlayer(const Player* player) { stateController_->SetPlayer(player); }
 	void SetTarget(FollowCameraTargetType type, const Transform3D& target);
 	void SetFovY(float fovY) { fovY_ = fovY; }
 	void SetState(FollowCameraState state);
+	void SetOverlayState(FollowCameraOverlayState state, bool isStart);
 
 	float GetFovY() const { return fovY_; }
 
@@ -72,8 +73,14 @@ private:
 	float startFovY_; // 開始時
 	float initFovY_;  // 目標
 
+	float lookYawOffset_;     // Y回転オフセット
+	int lookYawDirection_;    // 開始時の最短補間方向
+	int preLookYawDirection_; // 開始時の最短補間方向の前回値
+
 	// アニメーションを読み込んだか
 	bool isLoadedAnim_;
+	// 最後にエディターで再生したアニメーションの名前
+	std::string lastActionAnimName_;
 
 	//--------- functions ----------------------------------------------------
 

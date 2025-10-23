@@ -31,6 +31,7 @@ public:
 
 	//--------- accessor -----------------------------------------------------
 
+	void SetPlayer(const Player* player);
 	void SetTarget(FollowCameraTargetType type, const Transform3D& target);
 	void SetState(FollowCameraState state) { requested_ = state; }
 	void SetOverlayState(FollowCamera& owner, FollowCameraOverlayState state);

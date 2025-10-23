@@ -72,6 +72,7 @@ void ImGuiObjectEditor::SelectObject() {
 bool ImGuiObjectEditor::Is3D(uint32_t object) const {
 
 	return objectManager_->GetData<Transform3D>(object) != nullptr ||
+		objectManager_->GetData<EffectTransform>(object) != nullptr ||
 		objectManager_->GetData<Skybox>(object) != nullptr;
 }
 

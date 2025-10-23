@@ -11,9 +11,34 @@
 //	ParticleUpdateKeyframePathModule classMethods
 //============================================================================
 
+void ParticleUpdateKeyframePathModule::SetCommand(const ParticleCommand& command) {
+
+	switch (command.id) {
+	case ParticleCommandID::SetTranslation: {
+		if (const auto& translation = std::get_if<Vector3>(&command.value)) {
+
+			// 親として動かす座標
+			parentTranslation_ = *translation;
+		}
+		break;
+	}
+	case ParticleCommandID::SetRotation: {
+		if (const auto& rotation = std::get_if<Quaternion>(&command.value)) {
+
+			// キーの位置を回転させる
+			parentRotation_ = *rotation;
+		}
+		break;
+	}
+	}
+}
+
 void ParticleUpdateKeyframePathModule::Init() {
 
 	// 初期化値
+	parentTranslation_ = Vector3::AnyInit(0.0f);
+	parentRotation_ = Quaternion::IdentityQuaternion();
+
 	isDrawKeyframe_ = true;
 	swirlRadius_.start = 0.0f;
 	swirlRadius_.target = 0.0f;
@@ -128,7 +153,12 @@ void ParticleUpdateKeyframePathModule::Execute(
 		translation = onPath + right * (std::cos(theta) * currentRadius) +
 			normal * (std::sin(theta) * currentRadius);
 	}
-	particle.transform.translation = translation;
+
+	// 親の回転をかける
+	Vector3 worldTranslation = parentRotation_ * translation;
+	// 親の座標を乗算
+	worldTranslation += parentTranslation_;
+	particle.transform.translation = worldTranslation;
 }
 
 Vector3 ParticleUpdateKeyframePathModule::GetTangent(float t) const {

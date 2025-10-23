@@ -35,7 +35,7 @@ void PlayerSwitchAllyState::Enter(Player& player) {
 	// カメラの状態を切り替え待ち状態にする
 	followCamera_->SetState(FollowCameraState::SwitchAlly);
 	// 画面シェイクを止める
-	followCamera_->SetScreenShake(false);
+	followCamera_->SetOverlayState(FollowCameraOverlayState::Shake, false);
 
 	// HPなどの表示を消してスタン用のHUDを出す
 	player.GetHUD()->SetDisable();
