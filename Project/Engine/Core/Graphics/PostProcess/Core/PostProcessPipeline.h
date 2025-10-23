@@ -15,6 +15,7 @@ class DxShaderCompiler;
 
 //============================================================================
 //	PostProcessPipeline class
+//	各ポストプロセスのComputeパイプラインを生成/保持し、必要に応じて切り替える。
 //============================================================================
 class PostProcessPipeline {
 public:
@@ -25,12 +26,14 @@ public:
 	PostProcessPipeline() = default;
 	~PostProcessPipeline() = default;
 
+	// 依存(デバイス/ディスクリプタ/コンパイラ)を記録し、コピー用PSOを先に用意する
 	void Init(ID3D12Device8* device, SRVDescriptor* srvDescriptor, DxShaderCompiler* shaderCompiler);
-
+	// 指定PostProcessTypeのComputeパイプラインを作成する
 	void Create(PostProcessType type);
 
 	//--------- accessor -----------------------------------------------------
 
+	// 指定タイプのCompute RootSig/PSOをコマンドリストへセットする
 	void SetPipeline(ID3D12GraphicsCommandList* commandList, PostProcessType type);
 private:
 	//========================================================================

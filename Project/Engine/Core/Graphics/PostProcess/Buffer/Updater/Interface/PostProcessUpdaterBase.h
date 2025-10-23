@@ -13,6 +13,7 @@ class SceneView;
 
 //============================================================================
 //	PostProcessUpdaterBase class
+//	Updaterの共通基底。SceneView参照の保持と型非依存のIFを定義する。
 //============================================================================
 class PostProcessUpdaterBase {
 public:
@@ -42,12 +43,13 @@ public:
 
 	//--------- accessor -----------------------------------------------------
 
+	// シーン参照の受け取り
 	void SetSceneView(SceneView* sceneView) { sceneView_ = sceneView; }
 
-	// 処理を行うpostProcessの種類
+	// 対象ポストプロセス種別の取得
 	virtual PostProcessType GetType() const = 0;
 
-	// バッファデータ更新用データの取得
+	// GPUへ渡すデータのポインタとサイズを取得
 	virtual std::pair<const void*, size_t> GetBufferData() const = 0;
 protected:
 	//========================================================================

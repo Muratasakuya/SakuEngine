@@ -7,6 +7,7 @@
 
 //============================================================================
 //	DepthOutlineUpdater class
+//	深度ベースの輪郭強調エフェクト(DepthBasedOutline)のパラメータ更新/保存/UI編集を行う。
 //============================================================================
 class DepthOutlineUpdater :
 	public IPostProcessUpdater<DepthBasedOutlineForGPU> {
@@ -18,13 +19,13 @@ public:
 	DepthOutlineUpdater() = default;
 	~DepthOutlineUpdater() = default;
 
-	// 初期化処理
+	// 初期化処理(jsonから既定値を読み込む)
 	void Init() override;
 
-	// 更新処理
+	// 更新処理(カメラ行列などシーン依存値をGPU用構造体へ反映)
 	void Update() override;
 
-	// imgui
+	// imgui(パラメータ編集と保存ボタンを提供)
 	void ImGui() override;
 
 	// 呼び出し
@@ -37,6 +38,7 @@ public:
 
 	//--------- accessor -----------------------------------------------------
 
+	// このUpdaterが扱うポストプロセス種別を返す
 	PostProcessType GetType() const override { return PostProcessType::DepthBasedOutline; }
 private:
 	//========================================================================

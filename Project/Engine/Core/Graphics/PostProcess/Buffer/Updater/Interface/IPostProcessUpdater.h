@@ -13,6 +13,7 @@
 
 //============================================================================
 //	IPostProcessUpdater class
+//	ポストプロセスのパラメータ(T)を管理するテンプレート基底。更新/保存/UIを共通化する。
 //============================================================================
 template <typename T>
 class IPostProcessUpdater :
@@ -25,13 +26,13 @@ public:
 	IPostProcessUpdater() = default;
 	~IPostProcessUpdater() = default;
 
-	// 初期化処理
+	// 初期化処理(必要ならjsonから既定値を読み込む)
 	virtual void Init() = 0;
 
-	// 更新処理
+	// 更新処理(フレームごとの値をbufferData_へ反映)
 	virtual void Update() = 0;
 
-	// imgui
+	// imgui(パラメータ編集UI)
 	virtual void ImGui() = 0;
 
 	// 呼び出し
@@ -44,6 +45,7 @@ public:
 
 	//--------- accessor -----------------------------------------------------
 
+		// GPU転送用の生ポインタとサイズを返す
 	std::pair<const void*, size_t> GetBufferData() const override;
 protected:
 	//========================================================================
@@ -60,16 +62,17 @@ protected:
 
 	//--------- functions ----------------------------------------------------
 
-	// json
+	// json(任意実装)
 	virtual void ApplyJson() {}
 	virtual void SaveJson() {}
+	// 保存ファイルの読み込み/書き込み
 	bool LoadFile(Json& data);
 	void SaveFile(const Json& data);
 
-	// imgui
+	// imgui(共通の保存ボタン)
 	void SaveButton();
 
-	// helper
+	// helper(型名からファイルパスを生成)
 	std::string GetFileName() const;
 };
 

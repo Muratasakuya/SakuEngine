@@ -23,6 +23,7 @@ class Asset;
 
 //============================================================================
 //	PostProcessSystem class
+//	ポストプロセス一式の初期化/実行/管理(UI含む)を担う統括クラス。
 //============================================================================
 class PostProcessSystem :
 	public IGameEditor {
@@ -31,56 +32,64 @@ public:
 	//	public Methods
 	//========================================================================
 
+	// デバイスやディスクリプタ等の依存を受け取り、パイプライン/コピー用プロセスを準備する
 	void Init(ID3D12Device8* device, class DxShaderCompiler* shaderComplier,
 		SRVDescriptor* srvDescriptor, Asset* asset, SceneView* sceneView);
 
+	// 登録済みUpdaterを用いて各ポストプロセスの定数バッファを更新する
 	void Update();
 
-	// postProcess作成
+	// 使用可能なポストプロセス群を初期化し、Processor/Buffer/PSOを生成する
 	void Create(const std::vector<PostProcessType>& processes);
 
-	// postProcess実行
+	// ColorとMaskの入力SRVを元に、アクティブなプロセスを順番にディスパッチする
 	void Execute(DxCommand* dxCommand,
 		const D3D12_GPU_DESCRIPTOR_HANDLE& inputSRVGPUHandle,      // 色
 		const D3D12_GPU_DESCRIPTOR_HANDLE& inputMaskSRVGPUHandle); // ポストエフェクトマスク
+	// デバッグビュー用にコピー処理のみ実行する
 	void ExecuteDebugScene(DxCommand* dxCommand,
 		const D3D12_GPU_DESCRIPTOR_HANDLE& inputSRVGPUHandle,      // 色
 		const D3D12_GPU_DESCRIPTOR_HANDLE& inputMaskSRVGPUHandle); // ポストエフェクトマスク
 
-	// 最終的なtextureをframeBufferに描画する
+	// 最終結果のSRVを全画面三角形でスワップチェインRTへ描画する
 	void RenderFrameBuffer(DxCommand* dxCommand);
 
-	// imgui
+	// imguiでAvailable/Active/Parameters/Updaterを操作するUIを表示する
 	void ImGui() override;
 
+	// 次フレームに備え、出力テクスチャをUAV書き込み状態へ戻す
 	void ToWrite(DxCommand* dxCommand);
 
 	//--------- accessor -----------------------------------------------------
 
-	// processの追加、削除
+	// アクティブなプロセス集合を追加/削除/初期化(Copyのみ)する
 	void AddProcess(PostProcessType process);
 	void RemoveProcess(PostProcessType process);
 	void ClearProcess();
 
-	// postProcessに使うtextureの設定
+	// プロセスが参照する追加テクスチャ(例: 深度)のSRVを名前から設定する
 	void InputProcessTexture(const std::string& textureName, PostProcessType process);
 
-	// buffer更新クラスの登録
+	// パラメータ更新クラスを登録/削除する
 	void RegisterUpdater(std::unique_ptr<PostProcessUpdaterBase> updater);
 	void RemoveUpdater(PostProcessType type);
 
-	// 更新クラスの呼び出し
+	// Updaterの状態制御を行う
 	void Start(PostProcessType type);
 	void Stop(PostProcessType type);
 	void Reset(PostProcessType type);
 
+	// 指定型のパラメータを対応バッファへ書き込む(存在時のみ)
 	template <typename T>
 	void SetParameter(const T& parameter, PostProcessType process);
+	// 深度ベースのエフェクトで利用する深度SRVハンドルを設定する
 	void SetDepthFrameBufferGPUHandle(const D3D12_GPU_DESCRIPTOR_HANDLE& handle) { depthFrameBurferGPUHandle_ = handle; }
 
+	// パイプライン/コピー結果のSRVを取得する
 	PostProcessPipeline* GetPipeline() const { return pipeline_.get(); }
 	const D3D12_GPU_DESCRIPTOR_HANDLE& GetCopySRVGPUHandle() const { return copyTextureProcess_->GetSRVGPUHandle(); }
 
+	// 型に一致するUpdaterのポインタを返す(未登録ならnullptr)
 	template <typename T>
 	T* GetUpdater(PostProcessType type) const;
 
@@ -133,12 +142,14 @@ private:
 
 	//--------- functions ----------------------------------------------------
 
-	// update
+	// 全Updaterを実行して対応バッファへ最新値を反映する
 	void ApplyUpdatersToBuffers();
 
-	// helper
+	// タイプ別のCBを生成し、必要ならUpdaterも自動登録する
 	void CreateCBuffer(PostProcessType type);
+	// 指定プロセスのCB更新/ルート定数バインドを行う
 	void ExecuteCBuffer(ID3D12GraphicsCommandList* commandList, PostProcessType type);
+	// 最終かどうかで遷移先(PS/CS)を切り替え、UAVから適切な状態へ遷移する
 	void BeginTransition(PostProcessType type, DxCommand* dxCommand);
 
 	PostProcessSystem() :IGameEditor("PostProcessSystem") {}
