@@ -8,6 +8,7 @@
 
 //============================================================================
 //	FollowCameraKeyInput class
+//	キーボード入力
 //============================================================================
 class FollowCameraKeyInput :
 	public IInputDevice<FollowCameraInputAction> {

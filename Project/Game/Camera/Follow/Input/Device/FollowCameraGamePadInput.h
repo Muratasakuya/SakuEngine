@@ -8,6 +8,7 @@
 
 //============================================================================
 //	FollowCameraGamePadInput class
+//	ゲームパッド入力
 //============================================================================
 class FollowCameraGamePadInput :
 	public IInputDevice<FollowCameraInputAction> {

@@ -20,6 +20,7 @@ enum class RadialBlurType {
 
 //============================================================================
 //	RadialBlurUpdater class
+//	ラジアルブラーの更新、中心からぼかす
 //============================================================================
 class RadialBlurUpdater :
 	public IPostProcessUpdater<RadialBlurForGPU> {

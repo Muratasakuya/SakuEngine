@@ -23,6 +23,7 @@ enum class ButtonFocusGroup {
 
 //============================================================================
 //	GamecButtonFocusNavigator class
+//	ゲームコントローラーでのボタンフォーカス移動管理
 //============================================================================
 class GamecButtonFocusNavigator {
 public:
@@ -33,14 +34,19 @@ public:
 	GamecButtonFocusNavigator() = default;
 	~GamecButtonFocusNavigator() = default;
 
+	// 初期化
 	void Init(ButtonFocusGroup group, const std::vector<GameButton*>& items);
+	// グループとアイテムの設定
 	void SetGroup(ButtonFocusGroup group, const std::vector<GameButton*>& items, size_t defaultIndex = 0);
 
+	// 更新
 	void Update();
 
 	//--------- accessor -----------------------------------------------------
 
+	// 確定時のコールバック設定
 	void SetOnConfirm(std::function<void(ButtonFocusGroup, int)> onConfirm) { onConfirm_ = std::move(onConfirm); }
+	// フォーカスインデックスの設定
 	void SetFocusIndex(size_t index);
 private:
 	//========================================================================

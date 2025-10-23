@@ -7,6 +7,7 @@
 
 //============================================================================
 //	GameDigitDisplay class
+//	2Dスプライトで連番数字の表示を行う
 //============================================================================
 class GameDigitDisplay {
 public:
@@ -17,9 +18,11 @@ public:
 	GameDigitDisplay() = default;
 	~GameDigitDisplay() = default;
 
+	// 初期化
 	void Init(uint32_t maxDigit, const std::string& textureName,
 		const std::string& name, const std::string& groupName);
 
+	// 最大桁数分の数字を表示、更新
 	void Update(uint32_t maxDigit, int num);
 
 	//--------- accessor -----------------------------------------------------

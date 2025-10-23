@@ -8,6 +8,7 @@
 
 //============================================================================
 //	FollowCameraAllyAttackState class
+//	プレイヤーの味方攻撃時のカメラ状態
 //============================================================================
 class FollowCameraAllyAttackState :
 	public FollowCameraIState {

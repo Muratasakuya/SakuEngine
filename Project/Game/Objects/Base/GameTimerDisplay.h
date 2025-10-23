@@ -12,6 +12,7 @@ class Asset;
 
 //============================================================================
 //	GameTimerDisplay class
+//	記号込みの時間の表示(00:00:00.000)
 //============================================================================
 class GameTimerDisplay {
 public:
@@ -22,9 +23,11 @@ public:
 	GameTimerDisplay() = default;
 	~GameTimerDisplay() = default;
 
+	// 初期化
 	void Init(const std::string& pattern, const std::string& digits, const std::string& symbols,
 		const std::string& name, const std::string& groupName, float space = 0.0f);
 
+	// 受け取った時間で更新
 	void Update(float second);
 
 	//--------- accessor -----------------------------------------------------

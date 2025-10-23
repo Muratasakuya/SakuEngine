@@ -17,6 +17,7 @@ struct GameButtonFrameContext {
 
 //============================================================================
 //	IGameButtonResponseUpdater class
+//	ボタンの反応更新処理インターフェース
 //============================================================================
 class IGameButtonResponseUpdater {
 public:

@@ -8,6 +8,7 @@
 
 //============================================================================
 //	FollowCameraSwitchAllyState class
+//	スタンバイ状態から味方にカメラを切り替える状態
 //============================================================================
 class FollowCameraSwitchAllyState :
 	public FollowCameraIState {

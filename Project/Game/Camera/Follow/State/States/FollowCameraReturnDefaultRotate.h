@@ -9,6 +9,7 @@
 
 //============================================================================
 //	FollowCameraReturnDefaultRotate class
+//	追従カメラをデフォルトの回転に戻す状態
 //============================================================================
 class FollowCameraReturnDefaultRotate :
 	public FollowCameraIState {

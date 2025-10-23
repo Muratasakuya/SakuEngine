@@ -9,6 +9,7 @@
 
 //============================================================================
 //	GameButtonBlinkingUpdater class
+//	ゲームボタンを点滅させる
 //============================================================================
 class GameButtonBlinkingUpdater :
 	public IGameButtonResponseUpdater {

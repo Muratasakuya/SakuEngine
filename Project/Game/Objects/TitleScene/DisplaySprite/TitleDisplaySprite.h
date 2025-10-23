@@ -9,6 +9,7 @@
 
 //============================================================================
 //	TitleDisplaySprite class
+//	タイトルシーンで表示するスプライト
 //============================================================================
 class TitleDisplaySprite :
 	public IGameEditor {
@@ -20,10 +21,13 @@ public:
 	TitleDisplaySprite() :IGameEditor("TitleDisplaySprite") {}
 	~TitleDisplaySprite() = default;
 
+	// 初期化
 	void Init();
 
+	// 更新
 	void Update();
 
+	// エディター
 	void ImGui() override;
 
 	//--------- accessor -----------------------------------------------------

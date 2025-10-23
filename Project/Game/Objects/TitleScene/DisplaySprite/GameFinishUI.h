@@ -8,6 +8,7 @@
 
 //============================================================================
 //	GameFinishUI class
+//	ゲームを終了するかどうかのUI
 //============================================================================
 class GameFinishUI {
 public:
@@ -18,8 +19,10 @@ public:
 	GameFinishUI() = default;
 	~GameFinishUI() = default;
 
+	// 初期化
 	void Init();
 
+	// 更新
 	void Update();
 
 	// editor

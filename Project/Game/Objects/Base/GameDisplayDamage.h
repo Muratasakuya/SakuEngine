@@ -21,20 +21,23 @@ public:
 	GameDisplayDamage() = default;
 	~GameDisplayDamage() = default;
 
+	// 初期化
 	void Init(const std::string& textureName, const std::string& groupName,
 		uint32_t damageDisplayMaxNum, uint32_t damageDigitMaxNum);
 
+	// 3Dオブジェクトの座標をスクリーン座標に変換してダメージ表示を更新
 	void Update(const GameObject3D& object, const BaseCamera& camera);
 
+	// エディター
 	void ImGui();
 
+	// json
 	void ApplyJson(const Json& data);
 	void SaveJson(Json& data);
 
 	//--------- accessor -----------------------------------------------------
 
 	void SetDamage(int damage);
-
 	void SetAlpha(float alpha);
 private:
 	//========================================================================

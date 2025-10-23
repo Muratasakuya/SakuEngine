@@ -8,6 +8,7 @@
 
 //============================================================================
 //	FollowCameraStunAttackState class
+//	スタン開始時のカメラ状態
 //============================================================================
 class FollowCameraStunAttackState :
 	public FollowCameraIState {

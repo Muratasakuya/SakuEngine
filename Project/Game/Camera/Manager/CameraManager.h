@@ -19,6 +19,7 @@ class SceneView;
 
 //============================================================================
 //	CameraManager class
+//	全てのカメラを管理する
 //============================================================================
 class CameraManager :
 	public IGameEditor {
@@ -30,14 +31,17 @@ public:
 	CameraManager() :IGameEditor("CameraManager") {};
 	~CameraManager() = default;
 
+	// 全てのカメラを初期化
 	void Init(SceneView* sceneView);
 
+	// シーンの状態に応じてカメラを更新
 	void Update(GameSceneState sceneState);
 
 	void ImGui() override;
 
 	//--------- accessor -----------------------------------------------------
 
+	// 追従先の設定
 	void SetTarget(const Player* player, const BossEnemy* bossEnemy);
 
 	FollowCamera* GetFollowCamera() const { return followCamera_.get(); }
@@ -65,6 +69,6 @@ private:
 
 	//--------- functions ----------------------------------------------------
 
-	// update
+	// 現在の状態をチェックしてカメラを切り替える
 	void CheckSceneState(GameSceneState sceneState);
 };

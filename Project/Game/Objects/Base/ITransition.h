@@ -18,6 +18,7 @@ enum class TransitionState {
 
 //============================================================================
 //	ITransition class
+//	シーン遷移インターフェース
 //============================================================================
 class ITransition {
 public:
@@ -28,17 +29,23 @@ public:
 	ITransition() = default;
 	virtual ~ITransition() = default;
 
+	// 初期化
 	virtual void Init() = 0;
 
+	// 更新処理
 	virtual void Update() = 0;
-
+	
+	// 遷移入りの更新
 	virtual void BeginUpdate() = 0;
 
+	// 読み込み中(NowLoading...など)の更新
 	virtual void LoadUpdate() = 0;
 	virtual void LoadEndUpdate() = 0;
 
+	// 遷移終わりの更新
 	virtual void EndUpdate() = 0;
 
+	// エディター
 	virtual void ImGui() = 0;
 
 	//--------- accessor -----------------------------------------------------
