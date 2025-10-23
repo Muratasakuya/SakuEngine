@@ -10,6 +10,8 @@
 
 //============================================================================
 //	AssetLoadWorker class
+//	AssetAsyncQueue を監視するワーカースレッド。
+//	キューからジョブを取り出し、ユーザー定義処理で逐次実行する
 //============================================================================
 template<class T>
 class AssetLoadWorker {
@@ -21,13 +23,17 @@ public:
 	AssetLoadWorker() = default;
 	~AssetLoadWorker();
 
+	// ワーカースレッドを起動し、PopBlockで得たジョブをprocessで処理
 	void Start(std::function<void(T&&)> process);
 
+	// ワーカースレッドを停止(stop設定＋ダミージョブ投入)しjoinまで行う
 	void Stop();
 
 	//--------- accessor -----------------------------------------------------
 
+	// ジョブ投入用：内部キューへの参照を返す
 	AssetAsyncQueue<T>& RefAsyncQueue() { return queue_; }
+	// 監視用：内部キュー(const)の参照を返す
 	const AssetAsyncQueue<T>& GetAsyncQueue() const { return queue_; }
 private:
 	//========================================================================
