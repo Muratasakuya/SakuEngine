@@ -16,6 +16,7 @@ class FollowCamera;
 
 //============================================================================
 //	BossEnemyHUD class
+//	ボスの情報を表示するHUD
 //============================================================================
 class BossEnemyHUD {
 public:
@@ -26,10 +27,13 @@ public:
 	BossEnemyHUD() = default;
 	~BossEnemyHUD() = default;
 
+	// 初期化
 	void Init();
 
+	// 更新
 	void Update(const BossEnemy& bossEnemy);
 
+	// エディター
 	void ImGui();
 
 	//--------- accessor -----------------------------------------------------

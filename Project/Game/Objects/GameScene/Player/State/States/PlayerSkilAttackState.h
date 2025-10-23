@@ -7,6 +7,7 @@
 
 //============================================================================
 //	PlayerSkilAttackState class
+//	スキル攻撃
 //============================================================================
 class PlayerSkilAttackState :
 	public PlayerBaseAttackState {

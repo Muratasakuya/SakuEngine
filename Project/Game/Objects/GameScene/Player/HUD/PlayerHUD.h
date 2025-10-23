@@ -17,6 +17,7 @@ class FollowCamera;
 
 //============================================================================
 //	PlayerHUD class
+//	プレイヤーの情報を表示するHUD
 //============================================================================
 class PlayerHUD {
 public:
@@ -27,10 +28,13 @@ public:
 	PlayerHUD() = default;
 	~PlayerHUD() = default;
 
+	// 初期化
 	void Init();
 
+	// HUD表示の更新
 	void Update(const Player& player);
 
+	// エディター
 	void ImGui();
 
 	//--------- accessor -----------------------------------------------------

@@ -8,6 +8,7 @@
 
 //============================================================================
 //	BossEnemyBladeCollision class
+//	敵が出す刃の当たり判定
 //============================================================================
 class BossEnemyBladeCollision :
 	public Collider {
@@ -18,11 +19,14 @@ public:
 
 	BossEnemyBladeCollision() = default;
 	~BossEnemyBladeCollision() = default;
-
+	
+	// 初期化、typeNameは刃の種類のファイル
 	void Init(const std::string& typeName);
 
+	// 更新
 	void Update();
 
+	// エディター
 	void ImGui();
 
 	//--------- accessor -----------------------------------------------------

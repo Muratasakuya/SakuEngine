@@ -19,6 +19,7 @@
 
 //============================================================================
 //	Player class
+//	プレイヤー
 //============================================================================
 class Player :
 	public GameObject3D {
@@ -30,10 +31,13 @@ public:
 	Player() = default;
 	~Player() = default;
 
+	// 初期化
 	void DerivedInit() override;
 
+	// 状態の更新
 	void Update() override;
 
+	// エディター
 	void DerivedImGui() override;
 
 	// Y座標の制限
@@ -48,7 +52,10 @@ public:
 
 	void SetBossEnemy(const BossEnemy* bossEnemy);
 	void SetFollowCamera(FollowCamera* followCamera);
+
+	// 武器の向きを反転させる
 	void SetReverseWeapon(bool isReverse, PlayerWeaponType type);
+	// 武器の位置を初期化する
 	void ResetWeaponTransform(PlayerWeaponType type);
 
 	PlayerState GetCurrentState() const { return stateController_->GetCurrentState(); }

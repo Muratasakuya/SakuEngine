@@ -8,6 +8,7 @@
 
 //============================================================================
 //	FieldBoundary class
+//	設定されたオブジェクトをAABBで囲み、範囲外に出た場合に押し戻す処理を行う
 //============================================================================
 class FieldBoundary :
 	public IGameEditor {
@@ -19,15 +20,18 @@ public:
 	FieldBoundary() :IGameEditor("FieldWallCollisionCollection") {}
 	~FieldBoundary() = default;
 
+	// 初期化
 	void Init();
 
 	// 制御処理
 	void ControlTargetMove();
 
+	// エディター
 	void ImGui() override;
 
 	//--------- accessor -----------------------------------------------------
 
+	// 押し戻し対象の設定
 	void SetPushBackTarget(Player* player, BossEnemy* bossEnemy);
 private:
 	//========================================================================

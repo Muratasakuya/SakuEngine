@@ -12,6 +12,7 @@
 
 //============================================================================
 //	BossEnemySingleBladeEffect class
+//	刃1本分のエフェクト
 //============================================================================
 class BossEnemySingleBladeEffect {
 public:
@@ -22,8 +23,10 @@ public:
 	BossEnemySingleBladeEffect() = default;
 	~BossEnemySingleBladeEffect() = default;
 
+	// 初期化
 	void Init(const BaseTransform& transform, const std::string& typeName);
 
+	// 更新
 	void Update();
 
 	// editor

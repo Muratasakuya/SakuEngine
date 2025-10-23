@@ -8,6 +8,7 @@
 
 //============================================================================
 //	BossEnemyGreatAttackExecute class
+//	大技発動状態
 //============================================================================
 class BossEnemyGreatAttackExecute :
 	public BossEnemyGreatAttackIState {

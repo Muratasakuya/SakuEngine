@@ -7,6 +7,7 @@
 
 //============================================================================
 //	BossEnemyStrongAttackState class
+//	強攻撃状態
 //============================================================================
 class BossEnemyStrongAttackState :
 	public BossEnemyIState {

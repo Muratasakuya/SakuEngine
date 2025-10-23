@@ -7,6 +7,7 @@
 
 //============================================================================
 //	BossEnemyLightAttackState class
+//	弱剣振り攻撃状態
 //============================================================================
 class BossEnemyLightAttackState :
 	public BossEnemyIState {

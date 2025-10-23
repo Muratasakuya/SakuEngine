@@ -7,6 +7,7 @@
 
 //============================================================================
 //	BossEnemyContinuousAttackState class
+//	連続剣撃状態、3回連続で突進攻撃を行う
 //============================================================================
 class BossEnemyContinuousAttackState :
 	public BossEnemyIState {

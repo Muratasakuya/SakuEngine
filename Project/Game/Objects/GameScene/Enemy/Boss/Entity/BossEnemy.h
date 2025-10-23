@@ -23,6 +23,7 @@ class Player;
 
 //============================================================================
 //	BossEnemy class
+//	ボスクラス
 //============================================================================
 class BossEnemy :
 	public GameObject3D {
@@ -34,10 +35,13 @@ public:
 	BossEnemy() = default;
 	~BossEnemy() = default;
 
+	// 初期化
 	void DerivedInit() override;
 
+	// ボスの状態更新
 	void Update(GameSceneState sceneState);
 
+	// エディター
 	void DerivedImGui() override;
 
 	/*-------- collision ----------*/
@@ -47,14 +51,20 @@ public:
 
 	/*---------- parry ------------*/
 
+	// パリィ受付
 	bool ConsumeParryTiming();
+	// パリィ受付可能時間の通知
 	void TellParryTiming();
+	// パリィ受付時間リセット
 	void ResetParryTiming() { parryTimingTickets_ = 0; }
 
 	/*---------- falter -----------*/
 
+	// 怯み状態の通知
 	void OnFalterState() { ++stats_.currentFalterCount; }
+	// 怯みタイマーリセット
 	void ResetFalterTimer() { stats_.reFalterTimer.Reset(); }
+	// 怯みクールダウン更新
 	void UpdateFalterCooldown();
 
 	//--------- accessor -----------------------------------------------------

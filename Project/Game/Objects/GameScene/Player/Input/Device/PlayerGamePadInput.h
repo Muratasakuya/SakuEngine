@@ -8,6 +8,7 @@
 
 //============================================================================
 //	PlayerGamePadInput class
+//	ゲームパッド入力
 //============================================================================
 class PlayerGamePadInput :
 	public IInputDevice<PlayerInputAction> {

@@ -11,6 +11,7 @@ class BossEnemy;
 
 //============================================================================
 //	FieldWallCollision class
+//	任意の場所に設置できる壁衝突判定、押し戻し処理を行う
 //============================================================================
 class FieldWallCollision :
 	public Collider {
@@ -22,8 +23,10 @@ public:
 	FieldWallCollision() = default;
 	~FieldWallCollision() = default;
 
+	// 初期化
 	void Init();
 
+	// 更新
 	void Update();
 
 	/*-------- collision ----------*/
@@ -40,6 +43,7 @@ public:
 
 	//--------- accessor -----------------------------------------------------
 
+	// 押し戻し対象の設定
 	void SetPushBackTarget(Player* player, BossEnemy* bossEnemy);
 private:
 	//========================================================================

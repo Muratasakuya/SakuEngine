@@ -9,6 +9,7 @@
 
 //============================================================================
 //	PlayerAttackCollision class
+//	プレイヤーの状態に応じた攻撃判定、ヒットストップ処理
 //============================================================================
 class PlayerAttackCollision :
 	public Collider {
@@ -20,10 +21,13 @@ public:
 	PlayerAttackCollision() = default;
 	~PlayerAttackCollision() = default;
 
+	// 初期化
 	void Init();
 
+	// 衝突判定更新
 	void Update(const Transform3D& transform);
-
+	
+	// エディター
 	void ImGui();
 
 	// json
@@ -35,6 +39,7 @@ public:
 
 	//--------- accessor -----------------------------------------------------
 
+	// プレイヤーの状態に応じた攻撃判定に切り替え
 	void SetEnterState(PlayerState state);
 private:
 	//========================================================================

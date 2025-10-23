@@ -10,6 +10,7 @@
 
 //============================================================================
 //	PlayerStunHUD class
+//	敵をスタンさせたときに表示するHUD
 //============================================================================
 class PlayerStunHUD {
 public:
@@ -20,14 +21,18 @@ public:
 	PlayerStunHUD() = default;
 	~PlayerStunHUD() = default;
 
+	// 初期化
 	void Init();
-
+	
+	// スタンしているときのみ更新
 	void Update();
 
+	// エディター
 	void ImGui();
 
 	//--------- accessor -----------------------------------------------------
 
+	// 有効かどうか
 	void SetVaild();
 	void SetCancel();
 private:

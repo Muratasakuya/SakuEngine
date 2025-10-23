@@ -8,6 +8,7 @@
 
 //============================================================================
 //	BossEnemyGreatAttackCharge class
+//	チャージ攻撃の準備中...状態
 //============================================================================
 class BossEnemyGreatAttackCharge :
 	public BossEnemyGreatAttackIState {

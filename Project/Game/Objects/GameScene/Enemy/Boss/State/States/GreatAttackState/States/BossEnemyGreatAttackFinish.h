@@ -8,6 +8,7 @@
 
 //============================================================================
 //	BossEnemyGreatAttackFinish class
+//	大技攻撃終了状態
 //============================================================================
 class BossEnemyGreatAttackFinish :
 	public BossEnemyGreatAttackIState {

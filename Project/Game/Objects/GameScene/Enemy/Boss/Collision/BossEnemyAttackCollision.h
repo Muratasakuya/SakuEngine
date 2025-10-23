@@ -8,6 +8,7 @@
 
 //============================================================================
 //	BossEnemyAttackCollision class
+//	ボスの攻撃の当たり判定
 //============================================================================
 class BossEnemyAttackCollision :
 	public Collider {
@@ -19,10 +20,13 @@ public:
 	BossEnemyAttackCollision() = default;
 	~BossEnemyAttackCollision() = default;
 
+	// 初期化
 	void Init();
 
+	// 衝突判定更新
 	void Update(const Transform3D& transform);
 
+	// エディター
 	void ImGui();
 
 	// json
@@ -34,6 +38,7 @@ public:
 
 	//--------- accessor -----------------------------------------------------
 
+	// 状態設定
 	void SetEnterState(BossEnemyState state);
 private:
 	//========================================================================

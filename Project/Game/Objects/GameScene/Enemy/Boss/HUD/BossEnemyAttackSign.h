@@ -9,6 +9,7 @@
 
 //============================================================================
 //	BossEnemyAttackSign class
+//	ボスの攻撃予備動作サイン
 //============================================================================
 class BossEnemyAttackSign :
 	public IGameEditor {
@@ -20,14 +21,18 @@ public:
 	BossEnemyAttackSign() :IGameEditor("BossEnemyAttackSign") {}
 	~BossEnemyAttackSign() = default;
 
+	// 初期化
 	void Init();
 
+	// 更新
 	void Update();
 
+	// エディター
 	void ImGui() override;
 
 	//--------- accessor -----------------------------------------------------
 
+	// 予備動作サインを発生させる
 	void Emit(const Vector2& emitPos);
 private:
 	//========================================================================

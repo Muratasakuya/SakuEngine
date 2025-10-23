@@ -10,6 +10,7 @@ class Player;
 
 //============================================================================
 //	PlayerAnimationEffect class
+//	アニメーションに合わせたエフェクトの管理
 //============================================================================
 class PlayerAnimationEffect {
 public:
@@ -20,8 +21,10 @@ public:
 	PlayerAnimationEffect() = default;
 	~PlayerAnimationEffect() = default;
 
+	// 初期化
 	void Init(const Player& player);
 
+	// エフェクトの発生、更新
 	void Update(Player& player);
 
 	// editor

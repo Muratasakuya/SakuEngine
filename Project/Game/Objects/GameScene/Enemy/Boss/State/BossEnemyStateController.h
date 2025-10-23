@@ -17,6 +17,7 @@
 
 //============================================================================
 //	BossEnemyStateController class
+//	ボスの状態を管理する
 //============================================================================
 class BossEnemyStateController {
 public:
@@ -27,8 +28,10 @@ public:
 	BossEnemyStateController() = default;
 	~BossEnemyStateController() = default;
 
+	// 各状態の初期化
 	void Init(BossEnemy& owner);
 
+	// 状態更新
 	void Update(BossEnemy& owner);
 
 	// 状態遷移をリクエスト
@@ -36,6 +39,7 @@ public:
 	// ダメージを受けたら怯み回数を入れる
 	void OnDamaged() { ++pendingFalterTickets_; }
 
+	// エディター
 	void ImGui(const BossEnemy& bossEnemy);
 	void EditStateTable();
 
@@ -98,7 +102,9 @@ private:
 	void SaveJson();
 
 	// update
+	// HPに応じたフェーズ更新
 	void UpdatePhase();
+	// 状態タイマー更新
 	void UpdateStateTimer();
 
 	// 怯み処理
@@ -106,9 +112,14 @@ private:
 	void UpdateReFalterCooldown(BossEnemy& owner);
 
 	// helper
+	// 状態遷移
 	void ChangeState(BossEnemy& owner);
+	// 次の状態を選択
 	void ChooseNextState(const BossEnemyPhase& phase);
+	// スタン靭性チェック
 	void CheckStunToughness();
+	// フェーズ数同期
 	void SyncPhaseCount();
+	// エディターハイライト描画
 	void DrawHighlighted(bool highlight, const ImVec4& col, const std::function<void()>& draw);
 };

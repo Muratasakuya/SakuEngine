@@ -8,6 +8,7 @@
 
 //============================================================================
 //	BossEnemyGreatAttackState class
+//	ボスの大技攻撃処理
 //============================================================================
 class BossEnemyGreatAttackState :
 	public BossEnemyIState {

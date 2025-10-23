@@ -7,6 +7,7 @@
 
 //============================================================================
 //	FieldCrossMarkWall class
+//	行けない場所を示す十字マークの壁、押し戻し処理はしていない
 //============================================================================
 class FieldCrossMarkWall :
 	public GameObject3D {
@@ -18,10 +19,13 @@ public:
 	FieldCrossMarkWall() = default;
 	~FieldCrossMarkWall() = default;
 
+	// 初期化
 	void DerivedInit() override;
 
+	// 更新
 	void Update() override;
 
+	// エディター
 	void DerivedImGui() override;
 
 	/*-------- collision ----------*/

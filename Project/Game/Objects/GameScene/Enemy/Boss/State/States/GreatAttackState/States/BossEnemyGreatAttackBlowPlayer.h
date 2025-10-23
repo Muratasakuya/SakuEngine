@@ -8,6 +8,7 @@
 
 //============================================================================
 //	BossEnemyGreatAttackBlowPlayer class
+//	プレイヤーを遠くに吹っ飛ばす状態
 //============================================================================
 class BossEnemyGreatAttackBlowPlayer :
 	public BossEnemyGreatAttackIState {

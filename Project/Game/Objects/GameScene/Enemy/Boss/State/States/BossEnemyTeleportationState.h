@@ -7,6 +7,7 @@
 
 //============================================================================
 //	BossEnemyTeleportationState class
+//	テレポート状態
 //============================================================================
 class BossEnemyTeleportationState :
 	public BossEnemyIState {

@@ -9,6 +9,7 @@
 
 //============================================================================
 //	BossEnemyChargeAttackState class
+//	チャージ攻撃状態
 //============================================================================
 class BossEnemyChargeAttackState :
 	public BossEnemyIState {
