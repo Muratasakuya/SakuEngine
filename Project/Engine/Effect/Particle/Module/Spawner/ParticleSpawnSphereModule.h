@@ -7,6 +7,7 @@
 
 //============================================================================
 //	ParticleSpawnSphereModule class
+//	球発生モジュール
 //============================================================================
 class ParticleSpawnSphereModule :
 	public ICPUParticleSpawnModule {
@@ -50,5 +51,6 @@ private:
 
 	//--------- functions ----------------------------------------------------
 
+	// ランダムな方向ベクトルを取得
 	Vector3 GetRandomDirection() const;
 };

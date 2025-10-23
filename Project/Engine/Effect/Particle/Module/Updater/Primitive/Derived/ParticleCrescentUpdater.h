@@ -7,6 +7,7 @@
 
 //============================================================================
 //	ParticleCrescentUpdater class
+//	三日月型のパーティクルを更新するクラス
 //============================================================================
 class ParticleCrescentUpdater :
 	public BaseParticlePrimitiveUpdater<CrescentForGPU> {

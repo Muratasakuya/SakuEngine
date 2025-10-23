@@ -15,6 +15,7 @@ concept InputEnum = std::is_enum_v<T>;
 
 //============================================================================
 //	IInputDevice class
+//	入力デバイスの基底インターフェース、Enumのみをテンプレート引数に取る
 //============================================================================
 template<InputEnum Enum>
 class IInputDevice {
@@ -29,7 +30,7 @@ public:
 	//--------- accessor -----------------------------------------------------
 
 	// 連続入力
-	virtual float GetVector(Enum axis)  const = 0;
+	virtual float GetVector(Enum axis) const = 0;
 
 	// 単入力
 	virtual bool IsPressed(Enum button) const = 0;

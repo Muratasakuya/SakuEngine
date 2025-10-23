@@ -8,6 +8,7 @@
 
 //============================================================================
 //	ParticleUpdateLifeTimeModule class
+//	寿命を更新するモジュール
 //============================================================================
 class ParticleUpdateLifeTimeModule :
 	public ICPUParticleUpdateModule {

@@ -20,6 +20,7 @@ class GPUParticleGroup;
 
 //============================================================================
 //	GPUParticleUpdater class
+//	GPUパーティクルの発生、更新を行う
 //============================================================================
 class GPUParticleUpdater {
 public:
@@ -30,9 +31,11 @@ public:
 	GPUParticleUpdater() = default;
 	~GPUParticleUpdater() = default;
 
+	// CS用のパイプライン初期化
 	void Init(ID3D12Device8* device, Asset* asset, SRVDescriptor* srvDescriptor,
 		DxShaderCompiler* shaderCompiler);
 
+	// GPUパーティクルの更新
 	void Update(GPUParticleGroup& group, DxCommand* dxCommand);
 private:
 	//========================================================================

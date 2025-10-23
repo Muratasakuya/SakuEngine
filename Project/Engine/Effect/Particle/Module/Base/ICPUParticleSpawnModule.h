@@ -16,6 +16,7 @@ class Asset;
 
 //============================================================================
 //	ICPUParticleSpawnModule class
+//	CPUパーティクル発生モジュール基底
 //============================================================================
 class ICPUParticleSpawnModule :
 	public ICPUParticleModule {
@@ -27,6 +28,7 @@ public:
 	ICPUParticleSpawnModule() = default;
 	virtual ~ICPUParticleSpawnModule() = default;
 
+	// 受け取ったパーティクルの発生処理を行う
 	virtual void Execute(std::list<CPUParticle::ParticleData>& particles) = 0;
 
 	virtual void UpdateEmitter() {}

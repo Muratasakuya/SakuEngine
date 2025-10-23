@@ -16,6 +16,7 @@ class Asset;
 
 //============================================================================
 //	LevelEditor class
+//	シーンのレベルエディター
 //============================================================================
 class LevelEditor :
 	IGameEditor {
@@ -27,14 +28,14 @@ public:
 	LevelEditor() :IGameEditor("LevelEditor") {};
 	~LevelEditor() = default;
 
+	// .jsonファイルから初期化
 	void Init(const std::string& initSceneFile);
 
+	// データ更新
 	void Update();
 
+	// editorUIの呼び出し
 	void ImGui() override;
-
-	//--------- accessor -----------------------------------------------------
-
 private:
 	//========================================================================
 	//	private Methods

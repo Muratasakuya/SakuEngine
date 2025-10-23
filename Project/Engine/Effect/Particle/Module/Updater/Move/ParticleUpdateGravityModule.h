@@ -7,6 +7,7 @@
 
 //============================================================================
 //	ParticleUpdateGravityModule class
+//	重力を適応させる更新モジュール
 //============================================================================
 class ParticleUpdateGravityModule :
 	public ICPUParticleUpdateModule {

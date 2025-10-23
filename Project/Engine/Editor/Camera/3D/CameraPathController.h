@@ -11,6 +11,7 @@ class BaseCamera;
 
 //============================================================================
 //	CameraPathController class
+//	カメラのキーパスの補間を行う
 //============================================================================
 class CameraPathController {
 public:
@@ -59,8 +60,10 @@ public:
 	explicit CameraPathController(SceneView* sceneView);
 	~CameraPathController() = default;
 
+	// カメラ補間データの更新
 	void Update(const PlaybackState& state, CameraPathData& data);
 
+	// カメラ補間値の取得
 	void Evaluate(const CameraPathData& data, float t,
 		Vector3& outTranslation, Quaternion& outRotation, float& outFovY) const;
 	void EvaluateAtKey(const CameraPathData& data, int keyIndex,

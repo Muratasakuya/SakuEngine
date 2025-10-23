@@ -10,6 +10,7 @@
 
 //============================================================================
 //	ParticleManager class
+//	CPU/GPUパーティクルシステムの管理
 //============================================================================
 class ParticleManager :
 	public IGameEditor {
@@ -18,14 +19,18 @@ public:
 	//	public Methods
 	//========================================================================
 
+	// 更新、描画昨日の初期化
 	void Init(Asset* asset, ID3D12Device8* device,
 		SRVDescriptor* srvDescriptor, DxShaderCompiler* shaderCompiler,
 		SceneView* sceneView);
 
+	// 所持しているパーティクルシステムの更新
 	void Update(DxCommand* dxCommand);
 
+	// 全てのパーティクルの描画
 	void Rendering(bool debugEnable, SceneConstBuffer* sceneBuffer, DxCommand* dxCommand);
 
+	// パーティクル処理のエディター
 	void ImGui() override;
 
 	//--------- accessor -----------------------------------------------------

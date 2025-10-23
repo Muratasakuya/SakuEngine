@@ -7,6 +7,7 @@
 
 //============================================================================
 //	ParticleUpdateColorModule class
+//	色の更新を行うモジュール
 //============================================================================
 class ParticleUpdateColorModule :
 	public ICPUParticleUpdateModule {

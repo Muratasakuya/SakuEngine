@@ -12,6 +12,7 @@
 
 //============================================================================
 //	ParticleModuleRegistry class
+//	パーティクルモジュールの登録、生成を行うクラス
 //============================================================================
 template<class Base, class EnumT>
 class ParticleModuleRegistry {
@@ -29,13 +30,16 @@ public:
 
 	//--------- functions -----------------------------------------------------
 
+	// モジュールの生成
 	std::unique_ptr<Base> Create(EnumT id) const;
 
+	// モジュールの登録
 	template<class ModuleT>
 	void Register();
 
 	//--------- accessor -----------------------------------------------------
 
+	// 登録されているモジュール名の取得
 	std::vector<const char*> GetNames() const;
 
 	// singleton
@@ -55,6 +59,7 @@ private:
 
 	//--------- functions ----------------------------------------------------
 
+	// 関数でモジュールを登録
 	void RegisterFn(EnumT id, CreateFn fn);
 };
 

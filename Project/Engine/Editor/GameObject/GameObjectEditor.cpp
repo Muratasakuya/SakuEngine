@@ -112,7 +112,7 @@ void GameObjectEditor::Addobject() {
 	// animationの名前
 	DropFile("Drop animation", addAnimationName_);
 	// typeの選択
-	SelectobjectClassType(addClassType_);
+	SelectObjectClassType(addClassType_);
 
 	if (ImGui::Button("Add", addButtonSize_)) {
 
@@ -255,7 +255,7 @@ void GameObjectEditor::DropFile(const std::string& label, std::optional<std::str
 	}
 }
 
-void GameObjectEditor::SelectobjectClassType(objectClassType& classType) {
+void GameObjectEditor::SelectObjectClassType(objectClassType& classType) {
 
 	const char* typeOptions[] = {
 			"None",

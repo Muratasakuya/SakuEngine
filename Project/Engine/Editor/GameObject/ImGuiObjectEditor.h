@@ -25,6 +25,7 @@ class IGameObject;
 //	ImGuiObjectEditor structure
 //============================================================================
 
+// ギズモ描画情報
 struct GizmoContext {
 
 	ImDrawList* drawlist; // ウィンドウのDrawList
@@ -34,6 +35,7 @@ struct GizmoContext {
 	float projection[16];
 	bool orthographic;
 };
+// ギズモアイコン情報
 struct GizmoIcons {
 
 	ImTextureID none;
@@ -52,6 +54,7 @@ public:
 	//	public Methods
 	//========================================================================
 
+	// 初期化
 	void Init();
 
 	// objectの選択
@@ -124,8 +127,10 @@ private:
 	ImGuiObjectEditor(const ImGuiObjectEditor&) = delete;
 	ImGuiObjectEditor& operator=(const ImGuiObjectEditor&) = delete;
 
+	// 3Dか2Dかの判定
 	bool Is3D(uint32_t object) const;
 	bool Is2D(uint32_t object) const;
+	// 選択可能なobjectの描画
 	void DrawSelectable(uint32_t object, const std::string& name);
 
 	//----------- group ------------------------------------------------------
@@ -147,6 +152,7 @@ private:
 
 	//--------- object2D -----------------------------------------------------
 
+	// Object2D詳細、操作
 	void EditObject2D();
 	void Object2DInformation();
 	void Object2DSprite();

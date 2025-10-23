@@ -11,6 +11,7 @@ class Asset;
 
 //============================================================================
 //	GPUParticleGroup class
+//	GPUのパーティクル処理をまとめたグループ
 //============================================================================
 class GPUParticleGroup :
 	public BaseParticleGroup {
@@ -35,9 +36,11 @@ public:
 	GPUParticleGroup() = default;
 	~GPUParticleGroup() = default;
 
+	// グループの作成
 	void Create(ID3D12Device* device, Asset* asset, ParticlePrimitiveType primitiveType);
 	void CreateFromJson(ID3D12Device* device, Asset* asset, const Json& data);
 
+	// 発生間隔の更新
 	void Update();
 
 	// editor
@@ -49,9 +52,11 @@ public:
 
 	//--------- accessor -----------------------------------------------------
 
+	// 初期化済みフラグの設定、取得
 	void SetIsInitialized(bool isInitialized) { isInitialized_ = isInitialized; }
 	bool IsInitialized() const { return isInitialized_; }
 
+	// 強制発生フラグの設定、取得
 	void SetIsForcedEmit(bool emit);
 	bool IsForcedEmit() const { return isForcedEmit_; }
 

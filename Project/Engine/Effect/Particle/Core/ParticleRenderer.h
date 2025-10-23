@@ -20,6 +20,7 @@ class CPUParticleGroup;
 
 //============================================================================
 //	ParticleRenderer class
+//	パーティクル描画クラス
 //============================================================================
 class ParticleRenderer {
 public:
@@ -30,6 +31,7 @@ public:
 	ParticleRenderer() = default;
 	~ParticleRenderer() = default;
 
+	// 描画パイプライン初期化
 	void Init(ID3D12Device8* device, Asset* asset,
 		SRVDescriptor* srvDescriptor, DxShaderCompiler* shaderCompiler);
 

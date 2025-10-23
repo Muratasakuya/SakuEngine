@@ -18,6 +18,7 @@ class Asset;
 
 //============================================================================
 //	ParticleSystem class
+//	CPU/GPU両対応のパーティクルシステム
 //============================================================================
 class ParticleSystem {
 private:
@@ -27,13 +28,14 @@ private:
 
 	//--------- structure ----------------------------------------------------
 
+	// 名前付きグループ
 	template <typename T>
 	struct NameGroup {
 
 		std::string name;
 		T group;
 	};
-
+	// 選択中のグループハンドル
 	struct GroupHandle {
 
 		ParticleType type;
@@ -47,8 +49,10 @@ public:
 	ParticleSystem() = default;
 	~ParticleSystem() = default;
 
+	// 初期化
 	void Init(ID3D12Device* device, Asset* asset, const std::string& name);
 
+	// 所持しているグループの更新
 	void Update();
 
 	// editor
@@ -73,6 +77,7 @@ public:
 
 	//---------- runtime -----------------------------------------------------
 
+	// コマンド適用、各モジュールへ転送
 	void ApplyCommand(const ParticleCommand& command);
 
 	// .jsonファイルから読み込んで作成する

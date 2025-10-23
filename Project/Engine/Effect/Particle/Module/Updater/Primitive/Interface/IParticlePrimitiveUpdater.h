@@ -9,6 +9,7 @@
 
 //============================================================================
 //	IParticlePrimitiveUpdater class
+//	プリミティブ形状の更新インターフェース
 //============================================================================
 class IParticlePrimitiveUpdater {
 public:
@@ -21,6 +22,7 @@ public:
 
 	virtual void Init() = 0;
 
+	// プリミティブ形状の更新
 	virtual void Update(CPUParticle::ParticleData& particle, EasingType easingType) = 0;
 
 	virtual void ImGui() = 0;

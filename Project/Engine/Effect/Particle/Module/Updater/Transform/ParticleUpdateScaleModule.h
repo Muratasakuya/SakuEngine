@@ -7,6 +7,7 @@
 
 //============================================================================
 //	ParticleUpdateScaleModule class
+//	スケールを更新するモジュール
 //============================================================================
 class ParticleUpdateScaleModule :
 	public ICPUParticleUpdateModule {

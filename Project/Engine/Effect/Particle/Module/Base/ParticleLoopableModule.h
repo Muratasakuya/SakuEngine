@@ -8,6 +8,7 @@
 
 //============================================================================
 //	ParticleLoopableModule class
+//	パーティクルのループ制御が可能なモジュールの基底クラス
 //============================================================================
 class ParticleLoopableModule {
 public:
@@ -30,8 +31,10 @@ protected:
 
 	//--------- functions ----------------------------------------------------
 
+	// ループ制御されたT値を計算
 	float LoopedT(float rawT) { return ParticleLoop::CalLoopedT(rawT, loopCount_, loopType_); }
 
+	// エディター
 	void ImGuiLoopParam();
 
 	// json

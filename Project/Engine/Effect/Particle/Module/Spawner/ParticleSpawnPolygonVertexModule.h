@@ -8,6 +8,7 @@
 
 //============================================================================
 //	ParticleSpawnPolygonVertexModule class
+//	多角形頂点発生モジュール
 //============================================================================
 class ParticleSpawnPolygonVertexModule :
 	public ICPUParticleSpawnModule {
@@ -95,15 +96,18 @@ private:
 
 	//--------- functions ----------------------------------------------------
 
-	// emit
+	// 発生可能かどうかのフラグ
 	bool EnableEmit();
+	// 間を補間して発生
 	void InterpolateEmit(std::list<CPUParticle::ParticleData>& particles);
+	// 通常発生
 	void NoneEmit(std::list<CPUParticle::ParticleData>& particles);
 
-	// helper
+	// N頂点の多角形頂点を計算
 	std::vector<Vector3> CalcVertices() const;
 	std::vector<Vector3> CalcVertices(float scale, const Vector3& rotation) const;
 
+	// 1インスタンスの発生処理
 	void SpawnInstance();
 	void EmitForInstance(PolygonInstance& instance, std::list<CPUParticle::ParticleData>& particles);
 };

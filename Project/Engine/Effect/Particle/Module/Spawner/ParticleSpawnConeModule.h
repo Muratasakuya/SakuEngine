@@ -7,6 +7,7 @@
 
 //============================================================================
 //	ParticleSpawnConeModule class
+//	コーン型発生モジュール
 //============================================================================
 class ParticleSpawnConeModule :
 	public ICPUParticleSpawnModule {
@@ -52,5 +53,6 @@ private:
 
 	//--------- functions ----------------------------------------------------
 
+	// コーンの面上の点を取得
 	Vector3 GetFacePoint(float radius, float height) const;
 };

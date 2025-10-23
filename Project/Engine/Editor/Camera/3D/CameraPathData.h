@@ -8,6 +8,7 @@
 
 //============================================================================
 //	CameraPathData class
+//	カメラ補間データ
 //============================================================================
 class CameraPathData {
 public:
@@ -86,7 +87,7 @@ public:
 	void ApplyJson(const std::string& fileName, bool isUseGame);
 	void SaveJson(const std::string& fileName);
 
-	// helper
+	//キー座標の配列を取得
 	std::vector<Vector3> CollectTranslationPoints() const;
 
 	// コピー禁止

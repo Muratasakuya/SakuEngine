@@ -8,6 +8,7 @@
 
 //============================================================================
 //	CPUParticleGroup class
+//	CPUのパーティクル処理をまとめたグループ
 //============================================================================
 class CPUParticleGroup :
 	public BaseParticleGroup {
@@ -26,9 +27,11 @@ public:
 	CPUParticleGroup(CPUParticleGroup&&) noexcept = default;
 	CPUParticleGroup& operator=(CPUParticleGroup&&) noexcept = default;
 
+	// グループの作成
 	void Create(ID3D12Device* device, Asset* asset, ParticlePrimitiveType primitiveType);
 	void CreateFromJson(ID3D12Device* device, Asset* asset, const Json& data, bool useGame);
 
+	// 各パーティクルのフェーズを更新する
 	void Update();
 
 	// editor

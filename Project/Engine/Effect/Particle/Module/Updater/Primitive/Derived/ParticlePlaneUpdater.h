@@ -7,6 +7,7 @@
 
 //============================================================================
 //	ParticlePlaneUpdater class
+//	平面型のパーティクルを更新するクラス
 //============================================================================
 class ParticlePlaneUpdater :
 	public BaseParticlePrimitiveUpdater<PlaneForGPU> {

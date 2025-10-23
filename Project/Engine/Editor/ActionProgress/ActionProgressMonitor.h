@@ -10,6 +10,7 @@
 
 //============================================================================
 //	ActionProgressMonitor class
+//	アクション進捗度モニター
 //============================================================================
 class ActionProgressMonitor :
 	public IGameEditor {
@@ -18,6 +19,7 @@ public:
 	//	public Methods
 	//========================================================================
 
+	// エディターUIの呼び出し
 	void ImGui() override;
 
 	// オブジェクト追加
@@ -30,9 +32,11 @@ public:
 
 	//--------- accessor -----------------------------------------------------
 
+	// 進捗度の設定
 	void SetSpanSetter(int objectID, const std::string& spanName,
 		std::function<void(float)> setter);
 
+	// エディター選択の設定
 	void SetSelectedObject(int index);
 	void SetSelectedMetric(int index);
 
@@ -134,7 +138,7 @@ private:
 
 	//--------- functions ----------------------------------------------------
 
-	// helper
+	// 現在の選択が有効かどうか
 	bool IsValidObject(int index) const;
 	bool IsValidMetric(int index) const;
 

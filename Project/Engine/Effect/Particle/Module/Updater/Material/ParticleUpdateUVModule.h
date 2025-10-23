@@ -9,6 +9,7 @@
 
 //============================================================================
 //	ParticleUpdateUVModule class
+//	UVTransformの更新を行うモジュール
 //============================================================================
 class ParticleUpdateUVModule :
 	public ICPUParticleUpdateModule {

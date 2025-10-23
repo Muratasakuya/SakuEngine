@@ -12,6 +12,7 @@ class SceneView;
 
 //============================================================================
 //	BaseParticleGroup class
+//	パーティクルの共通設定、バッファ管理
 //============================================================================
 class BaseParticleGroup {
 public:
@@ -24,6 +25,7 @@ public:
 
 	//--------- accessor -----------------------------------------------------
 
+	// シーンビューの設定
 	void SetSceneView(SceneView* sceneView) { sceneView_ = sceneView; }
 
 	// 親の設定

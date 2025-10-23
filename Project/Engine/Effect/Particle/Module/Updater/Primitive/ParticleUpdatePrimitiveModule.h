@@ -10,6 +10,7 @@
 
 //============================================================================
 //	ParticleUpdatePrimitiveModule class
+//	プリミティブ形状に基づいてパーティクルを更新するモジュール
 //============================================================================
 class ParticleUpdatePrimitiveModule :
 	public ICPUParticleUpdateModule {

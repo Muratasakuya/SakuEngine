@@ -10,6 +10,7 @@ class SceneView;
 
 //============================================================================
 //	ParticleUpdateTrailModule class
+//	パーティクルのトレイル(頂点生成)を行うモジュール
 //============================================================================
 class ParticleUpdateTrailModule :
 	public ICPUParticleUpdateModule {

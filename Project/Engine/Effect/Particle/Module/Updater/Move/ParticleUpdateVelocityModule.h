@@ -7,6 +7,7 @@
 
 //============================================================================
 //	ParticleUpdateVelocityModule class
+//	速度を加算して移動させるモジュール
 //============================================================================
 class ParticleUpdateVelocityModule :
 	public ICPUParticleUpdateModule {

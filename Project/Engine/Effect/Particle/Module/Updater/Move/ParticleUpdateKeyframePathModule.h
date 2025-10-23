@@ -8,6 +8,7 @@
 
 //============================================================================
 //	ParticleUpdateKeyframePathModule class
+//	引いたキーフレームに沿って移動するモジュール
 //============================================================================
 class ParticleUpdateKeyframePathModule :
 	public ICPUParticleUpdateModule {

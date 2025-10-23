@@ -7,6 +7,7 @@
 
 //============================================================================
 //	ParticleSpawnBoxModule class
+//	箱型発生モジュール
 //============================================================================
 class ParticleSpawnBoxModule :
 	public ICPUParticleSpawnModule {
@@ -52,5 +53,6 @@ private:
 
 	//--------- functions ----------------------------------------------------
 
+	// 箱の中のランダムな点を取得
 	Vector3 GetRandomPoint() const;
 };

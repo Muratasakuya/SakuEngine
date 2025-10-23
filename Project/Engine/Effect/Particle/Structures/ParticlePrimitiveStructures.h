@@ -74,6 +74,7 @@ struct CylinderForGPU {
 		divide = 16;
 	}
 };
+// 三日月
 struct CrescentForGPU {
 
 	// 半径

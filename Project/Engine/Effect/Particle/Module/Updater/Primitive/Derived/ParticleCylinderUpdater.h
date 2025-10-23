@@ -7,6 +7,7 @@
 
 //============================================================================
 //	ParticleCylinderUpdater class
+//	円柱型のパーティクルを更新するクラス
 //============================================================================
 class ParticleCylinderUpdater :
 	public BaseParticlePrimitiveUpdater<CylinderForGPU> {

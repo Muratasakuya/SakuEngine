@@ -26,19 +26,25 @@ public:
 	SceneBuilder() = default;
 	~SceneBuilder() = default;
 
+	// jsonファイルパスから初期化
 	void Init(const std::string& jsonPath);
 
+	// jsonファイルからオブジェクトを作成して返す
 	void CreateObjectsMap(std::unordered_map<Level::ObjectType,
 		std::vector<std::unique_ptr<GameObject3D>>>& objectsMap);
 
+	// 設定のリセット
 	void Reset();
 
+	// editorUIの呼び出し
 	void ImGui();
 
 	//--------- accessor -----------------------------------------------------
 
+	// 作成するシーンファイルの設定
 	void SetFile(const std::string& sceneFile);
 
+	// シーンファイルが設定されたかどうか
 	bool IsCreate() const { return fileName_.has_value(); }
 private:
 	//========================================================================
@@ -69,18 +75,23 @@ private:
 	void BuildObjects(const Json& obj, std::unordered_map<Level::ObjectType,
 		std::vector<std::unique_ptr<GameObject3D>>>& objectsMap);
 
+	// 作成済みのメッシュかどうか
 	bool IsMeshObjectCreatable(const Json& obj) const;
 	template<typename... Ts>
 	bool CheckCollisionValid(const GameObject3D& object);
 
+	// objectType文字列からenumに変換
 	Level::ObjectType GetObjectType(const std::string& objectTypeName);
 
+	// objectの作成
 	std::unique_ptr<GameObject3D> CreateObject(const Json& obj, Level::ObjectType objectType);
 	std::unique_ptr<GameObject3D> CreateObjectPtr(Level::ObjectType objectType);
 
+	// 同じ名前のobjectが存在したときの処理
 	void HandleDuplicateObject(std::vector<std::unique_ptr<GameObject3D>>& objects,
 		const std::string& identifier);
 
+	// object設定適用
 	void ApplyTransform(GameObject3D& object, const Json& data);
 	void ApplyMaterial(GameObject3D& object, const Json& data);
 	void ApplyCollision(GameObject3D& object, const Json& data);

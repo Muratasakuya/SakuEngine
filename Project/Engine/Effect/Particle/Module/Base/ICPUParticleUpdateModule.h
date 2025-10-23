@@ -8,6 +8,7 @@
 
 //============================================================================
 //	ICPUParticleUpdateModule class
+//	CPUパーティクル更新モジュール基底
 //============================================================================
 class ICPUParticleUpdateModule :
 	public ICPUParticleModule,
@@ -22,6 +23,7 @@ public:
 
 	void Init() override {}
 
+	// 受け取ったパーティクルの更新処理を行う
 	virtual void Execute(CPUParticle::ParticleData& particle, float deltaTime) = 0;
 
 	//--------- accessor -----------------------------------------------------

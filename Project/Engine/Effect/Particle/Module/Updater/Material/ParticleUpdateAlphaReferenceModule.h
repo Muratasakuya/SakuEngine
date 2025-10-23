@@ -8,6 +8,7 @@
 
 //============================================================================
 //	ParticleUpdateAlphaReferenceModule class
+//	α値の閾値の更新モジュール
 //============================================================================
 class ParticleUpdateAlphaReferenceModule :
 	public ICPUParticleUpdateModule {

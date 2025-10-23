@@ -11,6 +11,7 @@
 
 //============================================================================
 //	GameEditorManager class
+//	IGameEditorを継承したエディターの管理を行う
 //============================================================================
 class GameEditorManager {
 public:
@@ -21,6 +22,7 @@ public:
 	GameEditorManager() = default;
 	~GameEditorManager() = default;
 
+	// editorの登録、削除
 	void AddEditor(IGameEditor* editor);
 	void RemoveEditor(IGameEditor* editor);
 
@@ -31,6 +33,7 @@ public:
 
 	//--------- accessor -----------------------------------------------------
 
+	// 外部からフォーカスするIDを設定
 	void SetSelectObjectID(uint32_t id);
 
 	// singleton

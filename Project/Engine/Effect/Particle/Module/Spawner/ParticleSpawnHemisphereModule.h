@@ -7,6 +7,7 @@
 
 //============================================================================
 //	ParticleSpawnHemisphereModule class
+//	半球型のパーティクルを更新するクラス
 //============================================================================
 class ParticleSpawnHemisphereModule :
 	public ICPUParticleSpawnModule {
@@ -52,5 +53,6 @@ private:
 
 	//--------- functions ----------------------------------------------------
 
+	// ランダムな方向ベクトルを取得
 	Vector3 GetRandomDirection() const;
 };

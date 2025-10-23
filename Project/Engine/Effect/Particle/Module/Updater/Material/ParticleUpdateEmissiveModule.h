@@ -8,6 +8,7 @@
 
 //============================================================================
 //	ParticleUpdateEmissiveModule class
+//	発光色の更新を行うモジュール
 //============================================================================
 class ParticleUpdateEmissiveModule :
 	public ICPUParticleUpdateModule {

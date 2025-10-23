@@ -10,6 +10,7 @@
 
 //============================================================================
 //	GameEffectGroup class
+//	複数のパーティクルシステムをゲーム上でまとめて扱うためのクラス
 //============================================================================
 class GameEffectGroup :
 	public IGameObject {
@@ -21,13 +22,16 @@ public:
 	GameEffectGroup() = default;
 	~GameEffectGroup() = default;
 
+	// オブジェクト作成
 	void Init(const std::string& name, const std::string& groupName);
 	void DerivedInit() override {}
-
+	// .jsonファイルからエフェクトデータを読み込み、作成する
 	void LoadJson(const std::string& fileName);
 
+	// 更新処理
 	void Update();
 
+	// エディターの表示
 	void ImGui() override;
 	void DerivedImGui() override {}
 

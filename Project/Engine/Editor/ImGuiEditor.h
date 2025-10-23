@@ -19,6 +19,7 @@ class Asset;
 
 //============================================================================
 //	ImGuiEditor class
+//	全てのImGui呼びだしをここで行う
 //============================================================================
 class ImGuiEditor {
 public:
@@ -29,17 +30,21 @@ public:
 	ImGuiEditor() = default;
 	~ImGuiEditor() = default;
 
+	// 初期化
 	void Init(const D3D12_GPU_DESCRIPTOR_HANDLE& renderTextureGPUHandle,
 		const D3D12_GPU_DESCRIPTOR_HANDLE& debugSceneRenderTextureGPUHandle);
+	// アイコンテクスチャの読み込み
 	void LoadIconTextures(Asset* asset);
 
+	// imguiの表示
 	void Display(SceneView* sceneView);
 
 	//--------- accessor -----------------------------------------------------
 
+	// デスクリプタの情報を表示するための情報を設定
 	void SetConsoleViewDescriptor(DescriptorHeapType type,
 		const BaseDescriptor* descriptor);
-
+	// ゲームプレイフラグ
 	bool IsPlayGame() const { return isPlayGame_; }
 private:
 	//========================================================================
@@ -48,6 +53,7 @@ private:
 
 	//--------- structure ----------------------------------------------------
 
+	// ギズモの種類
 	enum class GizmoEnum {
 
 		None,

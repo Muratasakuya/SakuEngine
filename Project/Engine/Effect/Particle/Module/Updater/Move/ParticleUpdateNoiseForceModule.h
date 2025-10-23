@@ -7,6 +7,7 @@
 
 //============================================================================
 //	ParticleUpdateNoiseForceModule class
+//	有機的なノイズの力を加えるモジュール
 //============================================================================
 class ParticleUpdateNoiseForceModule :
 	public ICPUParticleUpdateModule {
@@ -67,7 +68,7 @@ private:
 
 	//--------- functions ----------------------------------------------------
 
-	// helper
+	// ノイズ値の生成
 	float Noise3(const Vector3& p, uint32_t s) const;      // ノイズ生成
 	float FBm(const Vector3& p, uint32_t s) const;         // オクターブ合成
 	Vector3 GradNoise(const Vector3& p, uint32_t s) const; // ∇fBm

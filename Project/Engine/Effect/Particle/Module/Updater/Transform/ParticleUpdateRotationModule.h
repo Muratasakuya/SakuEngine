@@ -7,6 +7,7 @@
 
 //============================================================================
 //	ParticleUpdateRotationModule class
+//	回転を更新するモジュール
 //============================================================================
 class ParticleUpdateRotationModule :
 	public ICPUParticleUpdateModule {

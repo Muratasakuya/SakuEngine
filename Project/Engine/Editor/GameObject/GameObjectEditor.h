@@ -12,6 +12,7 @@ class Asset;
 
 //============================================================================
 //	GameObjectEditor class
+//	エディターからオブジェクトの追加、編集、削除を行う
 //============================================================================
 class GameObjectEditor :
 	public IGameEditor {
@@ -23,10 +24,13 @@ public:
 	GameObjectEditor() :IGameEditor("GameObjectEditor") {}
 	~GameObjectEditor() = default;
 
+	// 初期化
 	void Init(Asset* asset);
 
+	// データ更新
 	void Update();
 
+	// editorUIの呼び出し
 	void ImGui() override;
 private:
 	//========================================================================
@@ -83,6 +87,7 @@ private:
 
 	//--------- functions ----------------------------------------------------
 
+	// エディターのレイアウト編集
 	void EditLayout();
 
 	// update
@@ -97,8 +102,8 @@ private:
 	// 削除処理
 	void Removeobject();
 
-	// helper
+	// .jsonファイルのドラッグアンドドロップ処理
 	void DropFile(const std::string& label, std::optional<std::string>& recieveName);
-
-	void SelectobjectClassType(objectClassType& classType);
+	// objectクラスタイプの選択
+	void SelectObjectClassType(objectClassType& classType);
 };

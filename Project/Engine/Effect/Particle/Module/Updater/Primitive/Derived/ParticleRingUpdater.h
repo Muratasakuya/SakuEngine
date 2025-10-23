@@ -7,6 +7,7 @@
 
 //============================================================================
 //	ParticleRingUpdater class
+//	リング型のパーティクルを更新するクラス
 //============================================================================
 class ParticleRingUpdater :
 	public BaseParticlePrimitiveUpdater<RingForGPU> {

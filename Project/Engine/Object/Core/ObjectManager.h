@@ -18,6 +18,7 @@ class DxCommand;
 
 //============================================================================
 //	ObjectManager class
+//	オブジェクトのデータを管理するマネージャ
 //============================================================================
 class ObjectManager {
 public:
@@ -28,9 +29,12 @@ public:
 	ObjectManager() = default;
 	~ObjectManager() = default;
 
+	// 初期化
 	void Init(ID3D12Device* device, Asset* asset, DxCommand* dxCommand);
 
+	// データの更新
 	void UpdateData();
+	// バッファの更新
 	void UpdateBuffer();
 
 	//---------- objects -----------------------------------------------------
@@ -55,9 +59,11 @@ public:
 
 	//--------- accessor -----------------------------------------------------
 
+	// data取得
 	template<class T, bool Flag = false>
 	typename ObjectPool<T, Flag>::Storage* GetData(uint32_t object);
 
+	// system取得
 	template<class T>
 	T* GetSystem() const;
 
@@ -82,6 +88,7 @@ private:
 
 	//--------- functions ----------------------------------------------------
 
+	// 空のオブジェクトを作成する
 	uint32_t BuildEmptyobject(const std::string& name, const std::string& groupName);
 };
 
