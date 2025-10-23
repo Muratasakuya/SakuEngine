@@ -18,6 +18,7 @@ enum class AnimationLoopType {
 
 //============================================================================
 //	AnimationLoop class
+//	0.0f~1.0fの範囲でループ制御
 //============================================================================
 class AnimationLoop {
 public:
@@ -28,8 +29,10 @@ public:
 	AnimationLoop() = default;
 	~AnimationLoop() = default;
 
+	// 0.0f~1.0fの範囲でループ制御
 	float LoopedT(float rawT);
 
+	// エディター
 	void ImGuiLoopParam(bool isSeparate = true);
 
 	// json
@@ -38,6 +41,7 @@ public:
 
 	//--------- accessor -----------------------------------------------------
 
+	// ループ回数の取得
 	int GetLoopCount() const { return loopCount_; }
 private:
 	//========================================================================

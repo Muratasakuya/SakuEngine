@@ -52,6 +52,7 @@ namespace detail {
 	}
 }
 
+// json保存状態
 struct JsonSaveState {
 
 	bool showPopup = false;
@@ -61,6 +62,7 @@ struct JsonSaveState {
 
 //============================================================================
 //	ImGuiHelper class
+//	ImGui関数のヘルパー
 //============================================================================
 class ImGuiHelper {
 public:
@@ -71,10 +73,12 @@ public:
 	ImGuiHelper() = default;
 	~ImGuiHelper() = default;
 
+	// 画像付きボタン
 	static void ImageButtonWithLabel(const char* id,
 		const std::string& label, ImTextureID textureId, const ImVec2& size);
-
+	// ドラッグアンドドロップのペイロード取得
 	static const DragPayload* DragDropPayload(PendingType expectedType);
+	// ドラッグアンドドロップのペイロード文字列取得
 	static std::string DragDropPayloadString(PendingType expectedType);
 
 	// 配列のstringをComboで表示する

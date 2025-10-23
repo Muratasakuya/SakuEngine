@@ -11,6 +11,7 @@
 
 //============================================================================
 //	BaseCamera class
+//	カメラの基底クラス、継承しなくてもこのクラスを使ってカメラを実装できる
 //============================================================================
 class BaseCamera {
 public:
@@ -37,12 +38,16 @@ public:
 	virtual void Init() {};
 
 	virtual void Update() {};
+	// ビュープロジェクション行列の更新
 	void UpdateView(UpdateMode updateMode = UpdateMode::Euler);
 
+	// 共通エディター
 	virtual void ImGui();
+	// フラスタムの編集
 	void EditFrustum();
 	void RenderFrustum();
 
+	// 自動フォーカス開始
 	void StartAutoFocus(bool isFocus, const Vector3& target);
 
 	//--------- accessor -----------------------------------------------------
@@ -103,9 +108,9 @@ protected:
 
 	//--------- functions ----------------------------------------------------
 
-	// update
+	// 自動フォーカス更新
 	void UpdateAutoFocus();
 
-	// helper
+	// ビルボード行列計算
 	void CalBillboardMatrix();
 };

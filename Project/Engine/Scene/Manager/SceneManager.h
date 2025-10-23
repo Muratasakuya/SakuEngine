@@ -15,6 +15,7 @@ class Asset;
 
 //============================================================================
 //	SceneManager class
+//	ISceneを継承した各シーンの生成・破棄・更新・切り替えを管理する
 //============================================================================
 class SceneManager :
 	public IGameEditor {
@@ -23,11 +24,14 @@ public:
 	//	public Methods
 	//========================================================================
 
+	// 初期化、最初のシーンを決定し読み込んで作成
 	SceneManager(Scene scene, Asset* asset, SceneView* sceneView);
 	~SceneManager() = default;
 
 	// シーンの更新
 	void Update();
+
+	// フレーム開始・終了
 	void BeginFrame();
 	void EndFrame();
 
@@ -72,5 +76,6 @@ private:
 
 	//--------- functions ----------------------------------------------------
 
+	// シーン読み込み
 	void LoadScene(Scene scene);
 };

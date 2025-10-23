@@ -28,6 +28,7 @@ enum class SimpleAnimationType {
 
 //============================================================================
 //	SimpleAnimation class
+//	startからendまで補間するシンプルなアニメーション
 //============================================================================
 template <typename T>
 class SimpleAnimation {
@@ -66,7 +67,7 @@ public:
 	bool IsStart() const { return isRunning_; }
 	bool IsFinished() const { return isFinished_; }
 
-	float GetProgress(SimpleAnimationType type = SimpleAnimationType::None) const;
+	float GetProgress() const;
 private:
 	//========================================================================
 	//	private Methods
@@ -278,12 +279,12 @@ inline void SimpleAnimation<T>::SetDragValue(int value) {
 }
 
 template<typename T>
-inline float SimpleAnimation<T>::GetProgress(SimpleAnimationType type) const {
+inline float SimpleAnimation<T>::GetProgress() const {
 
-	if (type == SimpleAnimationType::None) {
+	if (type_ == SimpleAnimationType::None) {
 
 		return timer_.t_;
-	} else if (type == SimpleAnimationType::Return) {
+	} else if (type_ == SimpleAnimationType::Return) {
 		if (useReturnTimer_) {
 
 			return returnTimer_.t_;

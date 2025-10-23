@@ -10,6 +10,7 @@
 
 //============================================================================
 //	SerialUVScroll class
+//	連番画像のUVスクロール処理
 //============================================================================
 class SerialUVScroll {
 public:
@@ -20,8 +21,10 @@ public:
 	SerialUVScroll() = default;
 	~SerialUVScroll() = default;
 
+	// 進捗に応じたUV変換値を取得
 	void Update(float progress, Vector3& translation, Vector3& scale);
 
+	// エディター
 	void ImGui();
 
 	// json
@@ -108,7 +111,8 @@ private:
 
 	//--------- functions ----------------------------------------------------
 
-	// helper
+	// 連番画像のマスの巡回パスを構築
 	void BuildPath();
+	// 総フレーム数を取得
 	uint32_t GetTotalFrames() const { return static_cast<uint32_t>(path_.size()); }
 };

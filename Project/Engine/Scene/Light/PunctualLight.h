@@ -13,6 +13,7 @@
 //	PunctualLight
 //============================================================================
 
+// 平行光源
 struct DirectionalLight {
 
 	Color color;
@@ -24,6 +25,7 @@ struct DirectionalLight {
 	void ImGui(float itemWidth);
 };
 
+// 点光源
 struct PointLight {
 
 	Color color;
@@ -38,6 +40,7 @@ struct PointLight {
 	void ImGui(float itemWidth);
 };
 
+// スポットライト
 struct SpotLight {
 
 	Color color;
@@ -57,6 +60,7 @@ struct SpotLight {
 
 //============================================================================
 //	PunctualLight class
+//	すべてのライト情報を管理
 //============================================================================
 class PunctualLight {
 public:

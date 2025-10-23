@@ -10,6 +10,7 @@
 
 //============================================================================
 //	SceneTransition class
+//	セットされたITransitionを使ってシーン遷移を行う
 //============================================================================
 class SceneTransition {
 public:
@@ -20,10 +21,13 @@ public:
 	SceneTransition() = default;
 	~SceneTransition() = default;
 
+	// 初期化
 	void Init();
 
+	// ITransitionの更新
 	void Update();
 
+	// エディター
 	void ImGui();
 
 	//--------- accessor -----------------------------------------------------
