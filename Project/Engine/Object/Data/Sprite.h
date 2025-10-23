@@ -37,6 +37,7 @@ enum class SpriteLayerIndex :
 
 //============================================================================
 //	Sprite class
+//	2Dスプライトデータ
 //============================================================================
 class Sprite {
 public:
@@ -45,12 +46,15 @@ public:
 	//========================================================================
 
 	Sprite() = default;
+	// スプライトの初期化
 	Sprite(ID3D12Device* device, Asset* asset,
 		const std::string& textureName, Transform2D& transform);
 	~Sprite() = default;
 
+	// 頂点情報更新
 	void UpdateVertex(const Transform2D& transform);
 
+	// エディター
 	void ImGui(float itemSize);
 
 	//--------- accessor -----------------------------------------------------
@@ -105,7 +109,8 @@ private:
 
 	//--------- functions ----------------------------------------------------
 
-	// init
+	// バッファ作成
 	void InitBuffer(ID3D12Device* device);
+	// メタデータからテクスチャサイズ設定
 	void SetMetaDataTextureSize(Transform2D& transform);
 };

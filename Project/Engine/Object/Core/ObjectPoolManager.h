@@ -8,6 +8,7 @@
 
 //============================================================================
 //	ObjectPoolManager class
+//	各型のObjectPoolとアーキタイプを統括し、追加/削除/参照とデバッグを提供する。
 //============================================================================
 class ObjectPoolManager :
 	public IGameEditor {
@@ -19,30 +20,35 @@ public:
 	ObjectPoolManager() :IGameEditor("ObjectPoolManager") {};
 	~ObjectPoolManager() = default;
 
-	// object作成
+	// 新規オブジェクトIDを発行する(再利用キュー優先)
 	uint32_t Create();
-	// object削除
+	// 指定オブジェクトを破棄し、関連データとアーキタイプを更新する
 	void Destroy(uint32_t object);
 
+	// 型Tのプールを取得する(未生成なら生成して返す)
 	template<class T, bool Flag = false>
 	ObjectPool<T, Flag>& GetPool();
 
-	// data追加
+	// オブジェクトに型Tのデータを追加しビットを立てる
 	template<class T, bool Flag = false, class... Args>
 	typename ObjectPool<T, Flag>::Storage* AddData(uint32_t object, Args&&... args);
-	// data削除
+	// オブジェクトから型Tのデータを削除しビットを下ろす
 	template<class T, bool Flag = false>
 	void RemoveData(uint32_t object);
 
+	// マスクを満たすアーキタイプのオブジェクト一覧を返す
 	std::vector<uint32_t> View(const Archetype& mask) const;
 
+	// 登録済みプールをimguiでデバッグ表示する
 	void ImGui() override;
 
 	//--------- accessor -----------------------------------------------------
 
+	// 型Tの内部IDを取得する
 	template<class T>
 	static size_t GetTypeID();
 
+	// オブジェクトに結びつく型Tのデータを取得する
 	template<class T, bool Flag = false>
 	typename ObjectPool<T, Flag>::Storage* GetData(uint32_t object);
 private:
@@ -64,6 +70,7 @@ private:
 
 	//--------- structure ----------------------------------------------------
 
+	// 型TごとにユニークなIDを保持するホルダー
 	template<class T>
 	struct TypeIDHolder {
 
@@ -72,9 +79,11 @@ private:
 
 	//--------- functions ----------------------------------------------------
 
+	// 内部: アーキタイプのビット更新とエンティティリストの再構成を行う
 	template<class T>
 	void SetBit(uint32_t object, bool enable);
 
+	// 内部: 再利用キューからIDを取り出す
 	uint32_t PopAlive();
 };
 

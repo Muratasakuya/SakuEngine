@@ -10,6 +10,7 @@ class ObjectPoolManager;
 
 //============================================================================
 //	ISystem class
+//	データ更新システムのインターフェース
 //============================================================================
 class ISystem {
 public:
@@ -18,10 +19,10 @@ public:
 	//========================================================================
 
 	ISystem() = default;
-
 	virtual ~ISystem() = default;
 
+	// タイプシグネチャ取得
 	virtual Archetype Signature() const = 0;
-
+	// タイプシグネチャでフィルタリングされたオブジェクトの更新
 	virtual void Update(ObjectPoolManager& ObjectPoolManager) = 0;
 };

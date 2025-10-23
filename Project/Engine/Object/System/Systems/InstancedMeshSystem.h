@@ -23,6 +23,7 @@ class RaytracingScene;
 
 //============================================================================
 //	InstancedMeshSystem class
+//	メッシュごとのインスタンシングバッファを管理するシステム
 //============================================================================
 class InstancedMeshSystem :
 	public ISystem {
@@ -31,6 +32,7 @@ public:
 	//	public Methods
 	//========================================================================
 
+	// 初期化/終了
 	InstancedMeshSystem(ID3D12Device* device,
 		Asset* asset, DxCommand* dxCommand);
 	~InstancedMeshSystem();
@@ -39,9 +41,11 @@ public:
 	void StartBuildWorker();
 	void StopBuildWorker();
 
+	// メッシュのビルド要求
 	void RequestBuild(const std::string& modelName,
 		uint32_t maxInstStatic = Config::kMaxInstanceNum,
 		uint32_t maxInstSkinned = 16);
+	// シーンのビルド要求
 	void BuildForSceneSynch(Scene scene);
 	void RequestBuildForScene(Scene scene);
 
@@ -59,8 +63,10 @@ public:
 	const std::unordered_map<std::string, MeshRenderView>& GetRenderViewPerModel() const { return renderViewPerModel_; }
 	std::vector<RayTracingInstance> CollectRTInstances(const RaytracingScene* scene) const;
 
+	// ビルド状況の取得
 	bool IsReady(const std::string& name) const;
 	bool IsBuilding() const;
+	// シーンのビルド進捗取得
 	float GetBuildProgressForScene(Scene scene) const;
 private:
 	//========================================================================

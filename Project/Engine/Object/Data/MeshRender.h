@@ -8,6 +8,7 @@
 
 //============================================================================
 //	MeshRender class
+//	描画設定をRendererに伝えるためのデータ
 //============================================================================
 class MeshRender {
 public:
@@ -18,10 +19,13 @@ public:
 	MeshRender() = default;
 	~MeshRender() = default;
 
+	// 初期化
 	void Init(const std::string& name);
 
+	// エディター
 	void ImGui(float itemSize);
 
+	// json
 	void ToJson(Json& data);
 	void FromJson(const Json& data);
 

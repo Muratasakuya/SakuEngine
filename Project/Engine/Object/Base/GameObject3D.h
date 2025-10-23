@@ -12,6 +12,7 @@
 
 //============================================================================
 //	GameObject3D class
+//	3Dオブジェクトの基底クラス
 //============================================================================
 class GameObject3D :
 	public IGameObject,
@@ -24,6 +25,7 @@ public:
 	GameObject3D() = default;
 	virtual ~GameObject3D() = default;
 
+	// 初期化
 	void Init(const std::string& modelName, const std::string& name,
 		const std::string& groupName, const std::optional<std::string>& animationName = std::nullopt);
 	virtual void DerivedInit() override {}

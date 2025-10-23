@@ -12,6 +12,7 @@ class BaseCamera;
 
 //============================================================================
 //	GameObject2D class
+//	2Dオブジェクトの基底クラス
 //============================================================================
 class GameObject2D :
 	public IGameObject {
@@ -23,8 +24,8 @@ public:
 	GameObject2D() = default;
 	virtual ~GameObject2D() = default;
 
+	// 初期化
 	void Init(const std::string& textureName, const std::string& name, const std::string& groupName);
-
 	void DerivedInit() override {};
 
 	// imgui

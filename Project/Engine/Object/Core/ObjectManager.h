@@ -18,7 +18,7 @@ class DxCommand;
 
 //============================================================================
 //	ObjectManager class
-//	オブジェクトのデータを管理するマネージャ
+//	オブジェクト生成/破棄と各データ管理、各System連携を統括する
 //============================================================================
 class ObjectManager {
 public:
@@ -29,12 +29,12 @@ public:
 	ObjectManager() = default;
 	~ObjectManager() = default;
 
-	// 初期化
+	// デバイス/アセット/コマンドを受け、各Systemとプールを初期化する
 	void Init(ID3D12Device* device, Asset* asset, DxCommand* dxCommand);
 
-	// データの更新
+	// 各Systemのデータ更新を実行する
 	void UpdateData();
-	// バッファの更新
+	// 各Systemのバッファ更新を実行する
 	void UpdateBuffer();
 
 	//---------- objects -----------------------------------------------------
@@ -53,17 +53,18 @@ public:
 	uint32_t CreateObject2D(const std::string& textureName, const std::string& name,
 		const std::string& groupName);
 
-	// object削除
+	// 指定オブジェクトを破棄する
 	void Destroy(uint32_t object);
+	// 破棄対象フラグの立つオブジェクトを一括破棄する
 	void DestroyAll();
 
 	//--------- accessor -----------------------------------------------------
 
-	// data取得
+	// オブジェクトに結びつくデータT(必要に応じ可変長)を取得する
 	template<class T, bool Flag = false>
 	typename ObjectPool<T, Flag>::Storage* GetData(uint32_t object);
 
-	// system取得
+	// 型TのSystemを取得する
 	template<class T>
 	T* GetSystem() const;
 

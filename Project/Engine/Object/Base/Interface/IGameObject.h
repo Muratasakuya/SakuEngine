@@ -20,6 +20,7 @@ class ObjectManager;
 
 //============================================================================
 //	IGameObject class
+//	ゲームオブジェクトのインターフェース
 //============================================================================
 class IGameObject {
 public:
@@ -40,6 +41,7 @@ public:
 	/*---------- setter ----------*/
 
 	void SetIdentifier(const std::string& identifier) { identifier_ = identifier; }
+	// シーン終了時に破棄するか
 	void SetDestroyOnLoad(bool enable) { tag_->destroyOnLoad = enable; }
 
 	/*---------- getter ----------*/

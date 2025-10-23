@@ -22,6 +22,7 @@ using Archetype = std::bitset<kMaxDataTypes>;
 
 //============================================================================
 //	IObjectPool class
+//	各プール共通のIFを定義し、削除/デバッグ操作を提供する。
 //============================================================================
 class IObjectPool {
 public:
@@ -32,13 +33,16 @@ public:
 	IObjectPool() = default;
 	virtual ~IObjectPool() = default;
 
+	// 指定オブジェクトのデータを削除する
 	virtual void Remove(uint32_t object) = 0;
 
+	// プール状態をデバッグ表示する
 	virtual void Debug(const char* label) = 0;
 };
 
 //============================================================================
 //	ObjectPool class
+//	汎用データプール。追加/削除/取得とメモリ再利用を管理する。
 //============================================================================
 template<class T, bool kMultiple = false>
 class ObjectPool :
@@ -68,15 +72,15 @@ public:
 
 	//--------- functions ----------------------------------------------------
 
-	// debug
+	// imguiでプールの容量/連続性/配置をデバッグ表示する
 	void Debug(const char* label) override;
 
-	// 追加
+	// オブジェクトにデータを追加/上書きしインデックスを更新する
 	template<class... Args>
 	void Add(uint32_t object, Args&&... args);
-	// 削除
+	// 指定オブジェクトのデータを削除する
 	void Remove(uint32_t object) override;
-	// data取得
+	// 指定オブジェクトのデータを取得する(無ければnullptr)
 	Storage* Get(uint32_t object);
 private:
 	//========================================================================
@@ -85,6 +89,7 @@ private:
 
 	//--------- functions ----------------------------------------------------
 
+	// 内部処理: 実削除と空き番地管理を行う
 	void RemoveImpl(uint32_t object);
 };
 

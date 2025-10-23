@@ -12,6 +12,7 @@
 
 //============================================================================
 //	SystemManager class
+//	オブジェクトデータのシステムを管理するマネージャ
 //============================================================================
 class SystemManager {
 public:
@@ -22,15 +23,19 @@ public:
 	SystemManager() = default;
 	~SystemManager() = default;
 
+	// システムの追加、可変引数を受け取る
 	template<class T, class... Args>
 	void AddSystem(Args&&... args);
 
+	// 全てのシステムの更新
 	void UpdateData(ObjectPoolManager& ObjectPoolManager);
 
+	// 全てのシステムのバッファ更新
 	void UpdateBuffer(ObjectPoolManager& ObjectPoolManager);
 
 	//--------- accessor -----------------------------------------------------
 
+	// システム取得
 	template<class T>
 	T* GetSystem() const;
 private:

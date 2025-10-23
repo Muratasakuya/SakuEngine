@@ -12,6 +12,7 @@
 
 //============================================================================
 //	Skybox class
+//	スカイボックスの初期化から更新、描画までを行う
 //============================================================================
 class Skybox {
 private:
@@ -21,6 +22,7 @@ private:
 
 	//--------- structure ----------------------------------------------------
 
+	// マテリアル構造体
 	struct SkyboxMaterial {
 
 		Color color;
@@ -36,10 +38,13 @@ public:
 	Skybox() = default;
 	~Skybox() = default;
 
+	// 初期化
 	void Create(ID3D12Device* device, uint32_t textureIndex);
 
+	// 更新
 	void Update();
 
+	// エディター
 	void ImGui(float itemSize);
 
 	//--------- accessor -----------------------------------------------------
@@ -79,6 +84,7 @@ private:
 
 	//--------- functions ----------------------------------------------------
 
+	// バッファ作成
 	void CreateVertexBuffer(ID3D12Device* device);
 	void CreateCBuffer(ID3D12Device* device, uint32_t textureIndex);
 

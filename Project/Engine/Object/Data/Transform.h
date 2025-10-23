@@ -14,6 +14,7 @@
 
 //============================================================================
 //	BaseTransform class
+//	3DTransformの基底クラス
 //============================================================================
 class BaseTransform {
 public:
@@ -24,16 +25,22 @@ public:
 	BaseTransform() = default;
 	virtual ~BaseTransform() = default;
 
+	// 初期化
 	void Init();
 
+	// 行列更新
 	void UpdateMatrix();
 
+	// エディター
 	void ImGui(float itemSize);
 
+	// json
 	void ToJson(Json& data);
 	void FromJson(const Json& data);
 
 	//--------- accessor -----------------------------------------------------
+
+	// matrixからワールド座標、向きを取得
 
 	Vector3 GetWorldPos() const;
 
@@ -49,6 +56,7 @@ public:
 
 	Vector3 GetDown() const;
 
+	// 変更があったかどうか
 	bool IsDirty() const { return isDirty_; }
 	void SetIsDirty(bool isDirty) { isDirty_ = isDirty; }
 
@@ -85,6 +93,7 @@ private:
 
 //============================================================================
 //	Transform3D class
+//	3DTransformクラス
 //============================================================================
 class Transform3D :
 	public BaseTransform {
@@ -113,6 +122,7 @@ private:
 
 //============================================================================
 //	EffectTransform class
+//	エフェクト用Transform
 //============================================================================
 struct EffectTransform {
 public:
@@ -135,7 +145,8 @@ public:
 };
 
 //============================================================================
-//	Transform3D class
+//	Transform2D class
+//	2DTransformクラス
 //============================================================================
 class Transform2D {
 public:

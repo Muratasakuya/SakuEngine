@@ -12,6 +12,7 @@
 
 //============================================================================
 //	TagSystem class
+//	オブジェクトの所属しているグループ、タグ名を管理するシステム
 //============================================================================
 class TagSystem :
 	public ISystem {
@@ -27,6 +28,7 @@ public:
 
 	void Update(ObjectPoolManager& ObjectPoolManager) override;
 
+	// 名前の重複チェックと修正
 	std::string CheckName(const std::string& name);
 
 	//--------- accessor -----------------------------------------------------
@@ -52,5 +54,6 @@ private:
 
 	//--------- functions ----------------------------------------------------
 
+	// 名前からベースネームと番号を分離する
 	std::string SplitBaseNameAndNumber(const std::string& name, int& number);
 };
