@@ -25,6 +25,7 @@ using Json = nlohmann::json;
 
 //============================================================================
 //	PipelineState class
+//	JSON定義からGraphics/ComputeのPSOとRootSignatureを構築・保持し、ブレンド別PSO取得APIを提供する。
 //============================================================================
 class PipelineState {
 public:
@@ -35,14 +36,17 @@ public:
 	PipelineState() = default;
 	virtual ~PipelineState() = default;
 
+	// JSONを読み込み、シェーダをコンパイルし、RootSignature/各種PSOを生成する
 	void Create(const std::string& fileName, ID3D12Device8* device,
 		class SRVDescriptor* srvDescriptor, DxShaderCompiler* shaderCompiler);
 
 	//--------- accessor -----------------------------------------------------
 
+	// ブレンドモードに対応するGraphics PSOを取得する
 	ID3D12PipelineState* GetGraphicsPipeline(BlendMode blendMode = BlendMode::kBlendModeNormal) const;
+	// Compute PSOを取得する
 	ID3D12PipelineState* GetComputePipeline() const { return computePipelineState_.Get(); };
-
+	// 生成済みRootSignatureを取得する
 	ID3D12RootSignature* GetRootSignature() const { return rootSignature_.Get(); }
 private:
 	//========================================================================
@@ -80,31 +84,35 @@ private:
 
 	//--------- functions ----------------------------------------------------
 
+	// ShaderData(JSON)を読み込む
 	Json LoadFile(const std::string& fileName);
 
+	// VS/PSパイプラインを構築し、必要なブレンドモード分のPSOを生成する
 	void CreateVertexPipeline(const std::string& fileName, const Json& json, ID3D12Device8* device,
 		const std::vector<ComPtr<IDxcBlob>>& shaderBlobs);
-
+	// MeshShaderパイプラインを構築し、必要なブレンドモード分のPSOを生成する
 	void CreateMeshPipeline(const std::string& fileName, const Json& json, ID3D12Device8* device,
 		const std::vector<ComPtr<IDxcBlob>>& shaderBlobs);
-
+	// Computeパイプラインを構築する
 	void CreateComputePipeline(const std::string& fileName, ID3D12Device8* device,
 		const std::vector<ComPtr<IDxcBlob>>& shaderBlobs);
 
-	// helper
+	// 文字列からDXGI_FORMATへ変換する
 	DXGI_FORMAT GetFormatFromString(const std::string& name) const;
+	// JSONからDSV/RTVフォーマット等を抽出してFormatsを組み立てる
 	Formats ParseFormatsFromJson(const Json& stateJson,
 		const std::function<DXGI_FORMAT(const std::string&)>& toFormat);
-	// ブレンドデスクの構築
+	// ブレンドモード別にD3D12_BLEND_DESCを構築する
 	void BuildBlendStateForMode(D3D12_BLEND_DESC& outDesc, BlendMode mode,
 		const DXGI_FORMAT* rtvFormats, UINT numRT);
 
-	// pipelineを作成
+	// ブレンドモード毎にPSOを生成する(共通テンプレート)
 	template<typename Desc, typename CreateOneFn>
 	void CreatePipelinesForBlendModes(const std::string& fileName, Desc& baseDesc,
 		const std::string& blendModeString, const Formats& formats, CreateOneFn&& createOne);
 };
 
+// ブレンドモード毎にPSOを生成する共通テンプレートの実装
 template<typename Desc, typename CreateOneFn>
 inline void PipelineState::CreatePipelinesForBlendModes(const std::string& fileName,
 	Desc& baseDesc, const std::string& blendModeString, const Formats& formats, CreateOneFn&& createOne) {

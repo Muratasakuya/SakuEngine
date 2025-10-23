@@ -10,6 +10,7 @@
 
 //============================================================================
 //	DxReadbackBuffer class
+//	GPU→CPUの読み戻し用リードバックバッファを管理するテンプレート。
 //============================================================================
 template <typename T>
 class DxReadbackBuffer {
@@ -21,12 +22,15 @@ public:
 	DxReadbackBuffer() = default;
 	~DxReadbackBuffer() = default;
 	
+	// リードバック用のリソースを確保し、CPUアクセス可能にする
 	void CreateBuffer(ID3D12Device* device);
 
 	//--------- accessor -----------------------------------------------------
 
+	// 内部リソースを取得する
 	ID3D12Resource* GetResource() const { return resource_.Get(); }
 
+	// 読み戻し結果を参照で取得する
 	const T& GetReadbackData() { return *mappedData_; }
 private:
 	//========================================================================

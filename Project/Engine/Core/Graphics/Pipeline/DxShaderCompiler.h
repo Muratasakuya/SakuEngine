@@ -18,6 +18,7 @@ using Json = nlohmann::json;
 
 //============================================================================
 //	DxShaderCompiler class
+//	DXCでHLSLをDXILにコンパイルし、必要なシェーダBlob群を生成する。
 //============================================================================
 class DxShaderCompiler {
 public:
@@ -28,8 +29,10 @@ public:
 	DxShaderCompiler() = default;
 	~DxShaderCompiler() = default;
 
+	// DXCの初期化(コンパイラインターフェース/インクルードハンドラ等の準備)
 	void Init();
 
+	// JSON定義を基に各ステージのHLSLをコンパイルし、Blob配列を返す
 	void Compile(const Json& json, std::vector<ComPtr<IDxcBlob>>& shaderBlobs);
 
 	void CompileShader(
@@ -38,7 +41,6 @@ public:
 		const wchar_t* profile,
 		ComPtr<IDxcBlob>& shaderBlob,
 		const wchar_t* entry);
-
 	void CompileShaderLibrary(
 		const std::wstring& filePath,
 		const std::wstring& exports,

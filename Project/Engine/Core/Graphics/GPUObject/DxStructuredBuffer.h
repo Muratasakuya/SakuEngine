@@ -10,6 +10,7 @@
 
 //============================================================================
 //	DxStructuredBuffer class
+//	SRV/UAV用の構造化バッファを生成し、データ転送とハンドル提供を行う。
 //============================================================================
 template<typename T>
 class DxStructuredBuffer {
@@ -21,25 +22,35 @@ public:
 	DxStructuredBuffer() = default;
 	virtual ~DxStructuredBuffer() = default;
 
+	// SRV用の構造化バッファを作成する
 	void CreateSRVBuffer(ID3D12Device* device, UINT instanceCount);
+	// UAV用の構造化バッファを作成する
 	void CreateUAVBuffer(ID3D12Device* device, UINT instanceCount);
 
+	// 全要素をGPUへ転送する
 	void TransferData(const std::vector<T>& data);
+	// 先頭からcount分のみをGPUへ転送する
 	void TransferData(const std::vector<T>& data, size_t count);
 
 	//--------- accessor -----------------------------------------------------
 
+	// SRVのGPUハンドルを設定する
 	void SetSRVGPUHandle(const D3D12_GPU_DESCRIPTOR_HANDLE& handle) { srvGPUHandle_ = handle; }
+	// UAVのGPUハンドルを設定する
 	void SetUAVGPUHandle(const D3D12_GPU_DESCRIPTOR_HANDLE& handle) { uavGPUHandle_ = handle; }
 
+	// 内部リソースを取得する
 	ID3D12Resource* GetResource() const { return resource_.Get(); }
 
+	// SRV/UAVのGPUハンドルを取得する
 	const D3D12_GPU_DESCRIPTOR_HANDLE& GetSRVGPUHandle() const { return srvGPUHandle_; }
 	const D3D12_GPU_DESCRIPTOR_HANDLE& GetUAVGPUHandle() const { return uavGPUHandle_; }
 
+	// SRV/UAVのビュー記述子を生成する
 	D3D12_SHADER_RESOURCE_VIEW_DESC GetSRVDesc(UINT instanceCount) const;
 	D3D12_UNORDERED_ACCESS_VIEW_DESC GetUAVDesc(UINT instanceCount) const;
 
+	// リソースの作成状態を取得する
 	bool IsCreatedResource() const { return isCreated_; }
 private:
 	//========================================================================
@@ -78,7 +89,6 @@ inline void DxStructuredBuffer<T>::CreateUAVBuffer(ID3D12Device* device, UINT in
 
 	DxUtils::CreateUavBufferResource(device, resource_, sizeof(T) * instanceCount);
 	// マッピング処理は行わない
-
 	isCreated_ = true;
 }
 

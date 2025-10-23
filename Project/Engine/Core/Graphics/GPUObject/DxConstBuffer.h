@@ -15,6 +15,7 @@
 
 //============================================================================
 //	DxConstBuffer class
+//	汎用定数バッファ(CBV)の生成/マップ/転送を行うテンプレートラッパー。
 //============================================================================
 template<typename T>
 class DxConstBuffer {
@@ -26,14 +27,18 @@ public:
 	DxConstBuffer() = default;
 	~DxConstBuffer() = default;
 
+	// 必要なサイズでCBV用リソースを確保し、永続マップを行う
 	void CreateBuffer(ID3D12Device* device);
 
+	// 定数データを即時にマップ領域へコピーする
 	void TransferData(const T& data);
 
 	//--------- accessor -----------------------------------------------------
 
+	// 内部リソースを取得する
 	ID3D12Resource* GetResource() const { return resource_.Get(); }
 
+	// リソースの作成状態を取得する
 	bool IsCreatedResource() const { return isCreated_; }
 private:
 	//========================================================================

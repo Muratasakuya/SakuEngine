@@ -16,6 +16,7 @@ class SceneView;
 
 //============================================================================
 //	GPUPixelPicker class
+//	レンダー結果からGPUでピクセル/オブジェクトのピッキングを行い結果を取得する。
 //============================================================================
 class GPUPixelPicker {
 public:
@@ -26,10 +27,13 @@ public:
 	GPUPixelPicker() = default;
 	~GPUPixelPicker() = default;
 
+	// 必要なパイプライン/バッファ/ディスクリプタを初期化する
 	void Init(ID3D12Device8* device, DxShaderCompiler* shaderCompiler, SRVDescriptor* srvDescriptor);
 
+	// カメラ/入力/テクスチャサイズ等のピック条件を更新する
 	void Update(SceneView* sceneView, const Vector2& textureSize, const Vector2& input);
 
+	// GPUでピッキングを実行し、読み戻しまで行う
 	void Execute(DxCommand* dxCommand, ID3D12Resource* tlasResource);
 
 	//--------- accessor -----------------------------------------------------
@@ -72,7 +76,8 @@ private:
 
 	//--------- functions ----------------------------------------------------
 
-	// helper
+	// 内部ヘルパ: 読み戻し結果をCPU側にコピーする
 	void CopyReadbackResource(DxCommand* dxCommand);
+	// 内部ヘルパ: 現在のピック対象情報をCBVへ設定する
 	void SetPickObject();
 };

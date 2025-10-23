@@ -18,6 +18,7 @@ class Asset;
 //	structure
 //============================================================================
 
+// インスタンシング描画に必要なGPU用データ群
 struct MeshInstancingData {
 
 	// instance数
@@ -53,6 +54,7 @@ struct MeshInstancingData {
 
 //============================================================================
 //	InstancedMeshBuffer class
+//	メッシュのインスタンシング用バッファ群の生成/更新/破棄を管理する。
 //============================================================================
 class InstancedMeshBuffer {
 public:
@@ -63,12 +65,16 @@ public:
 	InstancedMeshBuffer() = default;
 	~InstancedMeshBuffer() = default;
 
+	// 必要なアセット参照とデバイスを受け取り、管理体制を初期化する
 	void Init(ID3D12Device* device, Asset* asset);
 
+	// メッシュ/名前/インスタンス数を指定してGPUバッファを準備する
 	void Create(class IMesh* mesh, const std::string& name, uint32_t numInstance);
 
+	// インスタンシング用バッファをフレーム更新する
 	void Update(class DxCommand* dxCommand);
 
+	// 全関連バッファを初期状態に戻す
 	void Reset();
 
 	//--------- accessor -----------------------------------------------------
@@ -92,6 +98,8 @@ private:
 
 	//--------- functions ----------------------------------------------------
 
+	// 非スキンメッシュのバッファ群を生成する
 	void CreateBuffers(const std::string& name);
+	// スキンメッシュ用のバッファ群を生成する
 	void CreateSkinnedMeshBuffers(const std::string& name);
 };

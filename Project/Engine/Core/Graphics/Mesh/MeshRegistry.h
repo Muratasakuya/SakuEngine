@@ -13,6 +13,7 @@ class Asset;
 
 //============================================================================
 //	MeshRegistry class
+//	メッシュの登録を行い、提供を行う
 //============================================================================
 class MeshRegistry {
 public:
@@ -23,8 +24,10 @@ public:
 	MeshRegistry() = default;
 	~MeshRegistry() = default;
 
+	// 初期化
 	void Init(ID3D12Device* device, Asset* asset);
 
+	// メッシュをマップに登録する
 	void RegisterMesh(const std::string& modelName,
 		bool isSkinned, uint32_t numInstance);
 

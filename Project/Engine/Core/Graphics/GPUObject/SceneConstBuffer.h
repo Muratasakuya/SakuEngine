@@ -13,6 +13,7 @@
 
 //============================================================================
 //	SceneConstBuffer class
+//	シーン共通の各種定数バッファ(CBV)をまとめ、セットコマンドを提供する。
 //============================================================================
 class SceneConstBuffer {
 public:
@@ -23,14 +24,21 @@ public:
 	SceneConstBuffer() = default;
 	~SceneConstBuffer() = default;
 
+	// 各種CBVを作成し、使用可能な状態に構築する
 	void Create(ID3D12Device* device);
 
+	// シーンビューから必要な定数を更新する
 	void Update(class SceneView* sceneView);
 
+	// メインパスに必要なCBVをルートへセットする
 	void SetMainPassCommands(bool debugEnable, ID3D12GraphicsCommandList* commandList);
+	// ビュー×射影行列関連のCBVをルートへセットする
 	void SetViewProCommand(bool debugEnable, ID3D12GraphicsCommandList* commandList, UINT rootIndex);
+	// ビュー依存のパラメータCBVをルートへセットする
 	void SetPerViewCommand(bool debugEnable, ID3D12GraphicsCommandList* commandList, UINT rootIndex);
+	// 正射影用のCBVをルートへセットする
 	void SetOrthoProCommand(ID3D12GraphicsCommandList* commandList, UINT rootIndex);
+	// レイトレース用シーンCBVをルートへセットする
 	void SetRaySceneCommand(ID3D12GraphicsCommandList* commandList, UINT rootIndex);
 private:
 	//========================================================================

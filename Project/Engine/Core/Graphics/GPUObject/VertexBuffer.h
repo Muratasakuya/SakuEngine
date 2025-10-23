@@ -10,6 +10,7 @@
 
 //============================================================================
 //	VertexBuffer class
+//	頂点バッファ(VB)の作成/転送/ビュー提供を行うテンプレートラッパー。
 //============================================================================
 template<typename T>
 class VertexBuffer {
@@ -21,12 +22,15 @@ public:
 	VertexBuffer() = default;
 	virtual ~VertexBuffer() = default;
 
+	// 指定頂点数でVBリソースを確保し、ビュー情報を初期化する
 	void CreateBuffer(ID3D12Device* device, UINT vertexCount);
 
+	// CPU側の頂点配列をGPUへ転送する
 	void TransferData(const std::vector<T>& data);
 
 	//--------- accessor -----------------------------------------------------
 
+	// VBVを取得する
 	const D3D12_VERTEX_BUFFER_VIEW& GetVertexBufferView() const { return vertexBufferView_; }
 private:
 	//========================================================================
