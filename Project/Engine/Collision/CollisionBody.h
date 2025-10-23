@@ -12,6 +12,7 @@
 
 //============================================================================
 //	ColliderType
+//	衝突グループ/マスクを表すビットフラグ。自己タイプと相手許可タイプの組で判定に用いる
 //============================================================================
 
 enum class ColliderType {
@@ -28,7 +29,7 @@ enum class ColliderType {
 	Type_Event = 1 << 8,
 };
 
-// operator
+// operator(ビット演算子の定義)
 inline ColliderType operator|(ColliderType lhs, ColliderType rhs) {
 	using T = std::underlying_type_t<ColliderType>;
 	return static_cast<ColliderType>(static_cast<T>(lhs) | static_cast<T>(rhs));
@@ -48,6 +49,7 @@ inline ColliderType& operator&=(ColliderType& lhs, ColliderType rhs) {
 
 //============================================================================
 //	CollisionBody  class
+//	単一の衝突形状とタイプ/ターゲット設定、当たりコールバックを保持する最小単位。
 //============================================================================
 class CollisionBody {
 public:
@@ -60,21 +62,24 @@ public:
 	CollisionBody() = default;
 	~CollisionBody() = default;
 
+	// コールバックを安全に発火させる(Enter/Stay/Exit)
 	void TriggerOnCollisionEnter(CollisionBody* collider);
-
 	void TriggerOnCollisionStay(CollisionBody* collider);
-
 	void TriggerOnCollisionExit(CollisionBody* collider);
 
+	// 当たり時に呼ばれるコールバック関数を設定する
 	void SetOnCollisionEnter(std::function<void(CollisionBody*)> onCollisionEnter) { onEnter_ = onCollisionEnter; }
 	void SetOnCollisionStay(std::function<void(CollisionBody*)> onCollisionEnter) { onStay_ = onCollisionEnter; }
 	void SetOnCollisionExit(std::function<void(CollisionBody*)> onCollisionEnter) { onExit_ = onCollisionEnter; }
 
+	// 形状タイプに応じて内部形状を更新する(不一致ならASSERT)
 	void UpdateSphere(const CollisionShape::Sphere& sphere);
 	void UpdateAABB(const CollisionShape::AABB& aabb);
 	void UpdateOBB(const CollisionShape::OBB& obb);
 
 	//--------- accessor -----------------------------------------------------
+
+	// 形状/タイプ/ターゲットを設定・取得する
 
 	void SetShape(const CollisionShape::Shapes& shape) { shape_ = shape; }
 
@@ -92,6 +97,7 @@ private:
 
 	//--------- using --------------------------------------------------------
 
+	// 当たりコールバックのシグネチャ
 	using CollisionCallback = std::function<void(CollisionBody*)>;
 
 	//--------- variables ----------------------------------------------------

@@ -27,6 +27,7 @@ class DxCommand;
 
 //============================================================================
 //	RenderEngine class
+//	描画全体を統括し、レンダーターゲット/MRT/ポストプロセス/GUI描画を管理する。
 //============================================================================
 class RenderEngine {
 public:
@@ -57,37 +58,42 @@ public:
 	RenderEngine() = default;
 	~RenderEngine() = default;
 
+	// スワップチェイン/各Descriptor/レンダラ/GUI等を初期化する
 	void Init(WinApp* winApp, ID3D12Device8* device, DxShaderCompiler* shaderCompiler,
 		DxCommand* dxCommand, IDXGIFactory7* factory);
 
+	// GUIなどの終了処理を行う
 	void Finalize();
 
+	// フレーム先頭でのセットアップ(DescriptorHeapなど)を行う
 	void BeginFrame();
 
-	// GPUの更新処理
+	// シーン定数バッファやTLASなどGPU側の更新を行う
 	void UpdateGPUBuffer(SceneView* sceneView, bool enableMesh);
 
-	// viewごとの描画
+	// 指定ビュー種類で描画パスを実行する
 	void Rendering(ViewType type, bool enableMesh);
 
-	// postProcess処理
+	// ポストプロセス前後のリソース状態遷移を行う
 	void BeginPostProcess();
 	void EndPostProcess();
 
-	// swapChain描画
+	// フレームバッファ(スワップチェイン)への描画開始/終了を行う
 	void BeginRenderFrameBuffer();
 	void EndRenderFrameBuffer();
 
 	//--------- accessor -----------------------------------------------------
 
+	// 各DescriptorとSwapChain、レンダーテクスチャを取得する
 	SRVDescriptor* GetSRVDescriptor() const { return srvDescriptor_.get(); }
 	RTVDescriptor* GetRTVDescriptor() const { return rtvDescriptor_.get(); }
 	DSVDescriptor* GetDSVDescriptor() const { return dsvDescriptor_.get(); }
-
 	DxSwapChain* GetDxSwapChain() const { return dxSwapChain_.get(); }
 
+	// ビューと添付先からRenderTextureを取得する
 	RenderTexture* GetRenderTexture(ViewType type, SVTarget target) const;
 
+	// 深度SRVとGUI用レンダーターゲットのGPUハンドルを取得する
 	const D3D12_GPU_DESCRIPTOR_HANDLE& GetDepthGPUHandle() const { return dsvDescriptor_->GetFrameGPUHandle(); }
 	const D3D12_GPU_DESCRIPTOR_HANDLE& GetRenderTextureGPUHandle() const { return guiRenderTexture_->GetGPUHandle(); }
 private:
@@ -128,21 +134,28 @@ private:
 
 	//--------- functions ----------------------------------------------------
 
-	// init
+	// Descriptorヒープ(RTV/DSV/SRV)と深度リソースを初期化する
 	void InitDescriptor(ID3D12Device8* device);
+	// 各ビュー(Main/Debug)のMRTや深度SRV等を生成する
 	void InitRenderTextrue(ID3D12Device8* device);
+	// メッシュ/スプライト/スキニング等のレンダラを初期化する
 	void InitRenderer(ID3D12Device8* device, DxShaderCompiler* shaderCompiler);
 
-	// render
+	// 各レンダラとライン/パーティクル描画をまとめて実行する
 	void Renderers(ViewType type, bool enableMesh);
 
-	// command
+	// 指定MRTでレンダーターゲットの設定/クリア/ビューポート設定を行う
 	void BeginRenderTarget(MultiRenderTexture* multiRenderTexture);
+	// 指定MRTをCompute入力へ状態遷移する
+
 	void EndRenderTarget(MultiRenderTexture* multiRenderTexture);
 
-	// helper
+	// ビューごとのMRTを生成して登録する
 	MultiRenderTexture* CreateViewMRT(ViewType type, ID3D12Device8* device);
+	// 標準のアタッチメント(色/マスク)を追加する
 	void AddDefaultAttachments(MultiRenderTexture* multiRenderTexture);
+	// GUI用のコピー先テクスチャを生成する
 	void CreateGuiRenderTexture(ID3D12Device8* device);
+	// 深度バッファをSRVとして参照できるようにする
 	void CreateDepthSRV();
 };

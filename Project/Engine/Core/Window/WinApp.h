@@ -11,6 +11,7 @@
 
 //============================================================================
 //	WinApp class
+//	Windowsウィンドウの生成/メッセージ処理/フルスクリーン切替を担当する。
 //============================================================================
 class WinApp {
 public:
@@ -21,14 +22,18 @@ public:
 	WinApp() = default;
 	~WinApp() = default;
 
+	// ウィンドウクラス登録とウィンドウ生成を行う
 	void Create();
 
+	// メッセージキューを処理し、WM_QUITを検出したらtrueを返す
 	bool ProcessMessage();
 
 	//--------- accessor -----------------------------------------------------
 
+	// フルスクリーンの有効/無効を切り替える
 	void SetFullscreen(bool fullscreen);
 
+	// 現在のウィンドウハンドル(HWND)を返す
 	static HWND GetHwnd() { return hwnd_; }
 private:
 	//========================================================================
@@ -44,7 +49,9 @@ private:
 
 	//--------- functions ----------------------------------------------------
 
+	// Win32のウィンドウプロシージャ
 	static LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
+	// ウィンドウクラスを登録する
 	void RegisterWindowClass();
 };

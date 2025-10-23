@@ -29,6 +29,7 @@ enum class LineType {
 
 //============================================================================
 //	LineRenderer class
+//	デバッグ可視化用のライン描画を担当。各種プリミティブ線の生成と描画実行を行う。
 //============================================================================
 class LineRenderer {
 public:
@@ -36,59 +37,63 @@ public:
 	//	public Methods
 	//========================================================================
 
+	// 必要なパイプライン/バッファを初期化し、参照オブジェクトを記録
 	void Init(ID3D12Device8* device, ID3D12GraphicsCommandList* commandList,
 		SRVDescriptor* srvDescriptor, DxShaderCompiler* shaderCompiler,
 		SceneView* sceneView);
 
+	// 2点間の3Dラインを追加登録する
 	void DrawLine3D(const Vector3& pointA, const Vector3& pointB, const Color& color,
 		LineType type = LineType::None);
 
+	// 蓄積されたラインをGPU転送して描画する
 	void ExecuteLine(bool debugEnable, LineType type);
-
+	// 追加済みの全ラインをクリアする
 	void ResetLine();
 
 	//--------- shapes ------------------------------------------------------
 
+	// グリッド線を描画する
 	void DrawGrid(int division, float gridSize, const Color& color, LineType type = LineType::None);
-
+	// 端点に球マーカーを付けた線分を描画する
 	void DrawSegment(int division, float radius, const Vector3& pointA,
 		const Vector3& pointB, const Color& color, LineType type = LineType::None);
 
-	// polygonCount <= 3
+	// N角形の枠線を描く(3〜12)
 	template <typename T>
 	void DrawPolygon(int polygonCount, const Vector3& centerPos, float scale,
 		const T& rotation, const Color& color, LineType type = LineType::None);
-
+	// 緯度経度分割のワイヤ球を描画
 	void DrawSphere(int division, float radius, const Vector3& centerPos,
 		const Color& color, LineType type = LineType::None);
-
+	// AABBの枠線を描画
 	void DrawAABB(const Vector3& min, const Vector3& max,
 		const Color& color, LineType type = LineType::None);
-
+	// XZ平面の円を描画
 	void DrawCircle(int division, float radius, const Vector3& center,
 		const Color& color, LineType type = LineType::None);
-
+	// 方向ベクトルを中心に扇形(弧)を描画
 	void DrawArc(int division, float radius, float halfAngle, const Vector3& center,
 		const Vector3& direction, const Color& color, LineType type = LineType::None);
-
+	// 正方形を描画
 	void DrawSquare(float length, const Vector3& center,
 		const Color& color, LineType type = LineType::None);
-
+	// 上半球のワイヤ描画
 	template <typename T>
 	void DrawHemisphere(int division, float radius, const Vector3& centerPos,
 		const T& rotation, const Color& color, LineType type = LineType::None);
-
+	// OBBの枠線を描画
 	template <typename T>
 	void DrawOBB(const Vector3& centerPos, const Vector3& size,
 		const T& rotation, const Color& color, LineType type = LineType::None);
-
+	// 円柱/円錐のワイヤ(上下円と側面)を描画
 	template <typename T>
 	void DrawCone(int division, float baseRadius, float topRadius, float height,
 		const Vector3& centerPos, const T& rotation, const Color& color, LineType type = LineType::None);
 
 	//--------- accessor -----------------------------------------------------
 
-	// singleton
+	// singleton取得/破棄
 	static LineRenderer* GetInstance();
 	static void Finalize();
 private:
@@ -98,14 +103,14 @@ private:
 
 	//--------- structure ----------------------------------------------------
 
-	// 頂点情報
+	// 1頂点の線描画データ(位置/色)
 	struct LineVertex {
 
 		Vector4 pos;
 		Color color;
 	};
 
-	// 描画に使うデータ
+	// ライン描画に必要なパイプラインと頂点バッファ/頂点配列
 	struct RenderStructure {
 
 		std::unique_ptr<PipelineState> pipeline;

@@ -12,6 +12,7 @@ class IMesh;
 
 //============================================================================
 //	structure
+//	BLAS構築要求。対象メッシュ/サブメッシュ/更新可否(skinnedか)を指定する。
 //============================================================================
 
 struct BuildRequest {
@@ -23,6 +24,7 @@ struct BuildRequest {
 
 //============================================================================
 //	BottomLevelAS class
+//	単一メッシュからBLASを構築・更新するユーティリティ。スキンメッシュはUpdate対応。
 //============================================================================
 class BottomLevelAS {
 public:
@@ -33,14 +35,16 @@ public:
 	BottomLevelAS() = default;
 	~BottomLevelAS() = default;
 
+	// メッシュ情報からBLASをビルドする(必要なScratch/Resultを確保して実行)
 	void Build(ID3D12Device8* device, ID3D12GraphicsCommandList6* commandList,
 		const BuildRequest& request);
 	
-	// skinnedMeshの更新
+	// allowUpdate時に前フレームBLASをSourceとしてインクリメンタル更新する
 	void Update(ID3D12GraphicsCommandList6* commandList);
 
 	//--------- accessor -----------------------------------------------------
 
+	// 生成済みBLASリソースを取得する
 	ID3D12Resource* GetResource() const { return result_.GetResource(); }
 private:
 	//========================================================================

@@ -10,6 +10,7 @@
 
 //============================================================================
 //	MultiRenderTexture class
+//	複数のRenderTexture(RTV)を束ねたMRTを管理し、生成/追加/参照を提供する。
 //============================================================================
 class MultiRenderTexture {
 private:
@@ -19,7 +20,7 @@ private:
 
 	//--------- structure ----------------------------------------------------
 
-	// 使用するRTV
+	// 使用するRTVの1アタッチメント(テクスチャ本体とRTV情報)
 	struct Attachment {
 
 		std::unique_ptr<RenderTexture> texture; // 既存RTを使う（当面はRTV=SRV同フォーマット）
@@ -33,14 +34,18 @@ public:
 	MultiRenderTexture() = default;
 	~MultiRenderTexture() = default;
 
+	// デバイス/ディスクリプタとサイズを受け取り初期化する
 	void Init(ID3D12Device* device, RTVDescriptor* rtvDescriptor,
 		SRVDescriptor* srvDescriptor, uint32_t width, uint32_t height);
 
-	// RTVの追加
+	// 色バッファを追加し、プライマリを設定する
 	void AddColorTarget(DXGI_FORMAT format, const Color& color);
+	// マスク用バッファを追加する
 	void AddMaskTarget(DXGI_FORMAT format);
 
 	//--------- accessor -----------------------------------------------------
+
+	// 添字でRenderTextureを取得/全添付/プライマリ/サイズを取得する
 
 	RenderTexture* GetRenderTexture(uint32_t i) const { return attachments_[i].texture.get(); }
 
@@ -69,6 +74,6 @@ private:
 
 	//--------- functions ----------------------------------------------------
 
-	// helper
+	// 内部ヘルパ: 指定フォーマット/クリア色で1アタッチメントを追加する
 	void AddAttachment(DXGI_FORMAT format, const Color& color);
 };

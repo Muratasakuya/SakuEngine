@@ -6,7 +6,7 @@
 
 // spdlog
 #ifndef SPDLOG_FUNCTION
-#   define SPDLOG_FUNCTION __FUNCSIG__
+#define SPDLOG_FUNCTION __FUNCSIG__
 #endif
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
@@ -22,6 +22,7 @@
 
 //============================================================================
 //	SpdLogger class
+//	コンソール/ファイル(MSVC)への複数シンク出力をまとめるロガー。初期化と各種ログAPIを提供する。
 //============================================================================
 class SpdLogger {
 public:
@@ -32,22 +33,26 @@ public:
 	SpdLogger() = default;
 	~SpdLogger() = default;
 
-	// ログのレベル
+	// ログレベル種別
 	enum class LogLevel {
 		INFO,
 		ASSERT_ERROR
 	};
 
+	// ロガー(エンジン用)を初期化。出力先とフォーマットを設定
 	static void Init(const std::string& fileName = "engine.log", bool truncate = true);
+	// アセット監視用ロガーを初期化。asset.logへ出力
 	static void InitAsset(const std::string& fileName = "assetCheck.log", bool truncate = true);
-
+	// 文字列を指定レベルで出力
 	static void Log(const std::string& message, LogLevel level = LogLevel::INFO);
 
+	// 書式つきでログ出力(printf風/型安全)
 	template <typename... Args>
 	static void LogFormat(LogLevel level, fmt::format_string<Args...> fmt, Args&&... args);
 
 	//--------- accessor -----------------------------------------------------
 
+	// 内部spdlogロガーへの参照を取得
 	static std::shared_ptr<spdlog::logger>& Get() { return logger_; }
 	static std::shared_ptr<spdlog::logger>& GetAsset() { return assetLogger_; }
 private:
@@ -93,6 +98,7 @@ inline void SpdLogger::LogFormat(LogLevel level, fmt::format_string<Args...> fmt
 
 //============================================================================
 //	ScopedMsLog class
+//	スコープ滞在時間をmsで自動記録するRAIIタイマ。スコープ終了時にINFO出力する。
 //============================================================================
 class ScopedMsLog final {
 public:
@@ -100,9 +106,11 @@ public:
 	//	public Methods
 	//========================================================================
 
+	// ラベル名を付けて計測開始
 	explicit ScopedMsLog(std::string label) :
 		label_(std::move(label)), start_(std::chrono::steady_clock::now()) {}
 
+	// デストラクタで経過時間を計算しロギング
 	~ScopedMsLog() {
 
 		using namespace std::chrono;

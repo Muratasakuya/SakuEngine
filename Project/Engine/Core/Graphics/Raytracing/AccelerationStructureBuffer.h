@@ -12,6 +12,7 @@
 
 //============================================================================
 //	AccelerationStructureBuffer class
+//	DXRのBLAS/TLAS構築で使用するバッファ(UAV/UPLOAD等)を生成・保持する薄いラッパー。
 //============================================================================
 class AccelerationStructureBuffer {
 public:
@@ -22,6 +23,7 @@ public:
 	AccelerationStructureBuffer() = default;
 	~AccelerationStructureBuffer() = default;
 
+	// 指定サイズ/フラグ/初期状態/ヒープ種別でバッファを作成する
 	void Create(ID3D12Device* device, UINT64 sizeInBytes,
 		D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_NONE,
 		D3D12_RESOURCE_STATES initState = D3D12_RESOURCE_STATE_COMMON,
@@ -29,6 +31,7 @@ public:
 
 	//--------- accessor -----------------------------------------------------
 
+	// 内部リソースを取得する
 	ID3D12Resource* GetResource()  const { return resource_.Get(); }
 private:
 	//========================================================================

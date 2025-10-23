@@ -21,6 +21,7 @@ class DxShaderCompiler;
 
 //============================================================================
 //	RaytracingPipeline class
+//	DXRのRaytracing Pipeline(StateObject/GlobalRootSig/ShaderTable)を構築・保持する。
 //============================================================================
 class RaytracingPipeline {
 public:
@@ -45,10 +46,12 @@ public:
 	RaytracingPipeline() = default;
 	~RaytracingPipeline() = default;
 
+	// HLSLのコンパイル→DXILライブラリ/HitGroup/RootSig/Configの設定→StateObject作成→ShaderTable構築
 	void Init(ID3D12Device5* device, DxShaderCompiler* shaderCompiler);
 
 	//--------- accessor -----------------------------------------------------
 
+	// パイプライン本体/ルートシグネチャ/シェーダテーブルを取得する
 	ID3D12StateObject* GetPipelineState() const { return stateObject_.Get(); }
 	ID3D12RootSignature* GetRootSignature() const { return globalRootSignature_.Get(); }
 	ID3D12Resource* GetShaderTable() const { return shaderTable_.Get(); }
@@ -71,7 +74,8 @@ private:
 
 	//--------- functions ----------------------------------------------------
 
+	// UAV/SRV/CBVを束ねるGlobal RootSignatureを作成する
 	ComPtr<ID3D12RootSignature> CreateGlobalRootSignature(ID3D12Device5* device);
-
+	// ShaderIdentifierを並べたShaderTableバッファを作成する
 	void BuildShaderTable(ID3D12Device5* device);
 };
