@@ -14,6 +14,7 @@
 
 //============================================================================
 //	DxDevice class
+//	DXGIファクトリ/アダプタ選定とD3D12デバイス生成を行い、デバイス取得を提供する。
 //============================================================================
 class DxDevice {
 public:
@@ -24,12 +25,13 @@ public:
 	DxDevice() = default;
 	~DxDevice() = default;
 
+	// DXGIファクトリ作成→アダプタ列挙/選定→D3D12デバイス生成を行う
 	void Create();
 
 	//--------- accessor -----------------------------------------------------
 
+	// デバイスを取得する
 	ID3D12Device8* Get() const { return device_.Get(); };
-
 	IDXGIFactory7* GetDxgiFactory() const { return dxgiFactory_.Get(); };
 private:
 	//========================================================================
@@ -46,5 +48,6 @@ private:
 
 	//--------- functions ----------------------------------------------------
 
+	// 内部ヘルパ: ワイド文字列をUTF-8へ変換する
 	std::string WStringToString(const std::wstring& wstr);
 };

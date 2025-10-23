@@ -18,6 +18,10 @@ class BaseTransform;
 //	CBufferStructures
 //============================================================================
 
+//----------------------------------------------------------------------------
+//	TransformationMatrix
+//	ワールド行列/逆転置行列など、描画に必要な行列を保持・更新する。
+//----------------------------------------------------------------------------
 struct TransformationMatrix {
 
 	Matrix4x4 world;
@@ -28,6 +32,10 @@ struct TransformationMatrix {
 		const std::optional<Matrix4x4>& billboardMatrix = std::nullopt);
 };
 
+//----------------------------------------------------------------------------
+//	MaterialForGPU
+//	ベースカラー/発光/UV変換等、マテリアルのGPU定数をまとめて保持する。
+//----------------------------------------------------------------------------
 struct MaterialForGPU {
 
 	Color color;
@@ -45,6 +53,10 @@ struct MaterialForGPU {
 	uint32_t postProcessMask;
 };
 
+//----------------------------------------------------------------------------
+//	LightingForGPU
+//	ライティングに必要な共通定数(環境/各ライト関連)を保持する。
+//----------------------------------------------------------------------------
 struct LightingForGPU {
 
 	int32_t enableLighting;
@@ -60,6 +72,10 @@ struct LightingForGPU {
 	float environmentCoefficient;
 };
 
+//----------------------------------------------------------------------------
+//	SpriteMaterialForGPU
+//	スプライト用の色/UV/しきい値等、GPU定数を保持する。
+//----------------------------------------------------------------------------
 struct SpriteMaterialForGPU {
 
 	Matrix4x4 uvTransform;

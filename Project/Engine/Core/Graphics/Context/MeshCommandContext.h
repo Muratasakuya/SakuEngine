@@ -13,6 +13,7 @@ class DxCommand;
 
 //============================================================================
 //	MeshCommand class
+// メッシュ描画処理を行う
 //============================================================================
 class MeshCommandContext {
 public:
@@ -23,7 +24,7 @@ public:
 	MeshCommandContext() = default;
 	~MeshCommandContext() = default;
 
-	// instancing
+	// メッシュ、インスタンス数を取得して描画コマンドを発行
 	void DispatchMesh(ID3D12GraphicsCommandList6* commandList,
 		UINT instanceCount, uint32_t meshIndex, class IMesh* mesh);
 	void DispatchMesh(ID3D12GraphicsCommandList6* commandList,

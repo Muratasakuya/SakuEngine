@@ -7,6 +7,7 @@
 
 //============================================================================
 //	DSVDescriptor class
+//	深度ステンシルビュー(DSV)ディスクリプタを管理し、作成/参照を提供する。
 //============================================================================
 class DSVDescriptor :
 	public BaseDescriptor {
@@ -18,8 +19,10 @@ public:
 	DSVDescriptor() :BaseDescriptor(4) {};
 	~DSVDescriptor() = default;
 
+	// 深度リソースの作成
 	void InitFrameBufferDSV();
 
+	// 深度テクスチャからDSVを作成しCPUハンドルを割り当てる。
 	void CreateDSV(uint32_t width, uint32_t height,
 		D3D12_CPU_DESCRIPTOR_HANDLE& handle, ComPtr<ID3D12Resource>& resource,
 		DXGI_FORMAT resourceFormat, DXGI_FORMAT depthClearFormat);
@@ -44,6 +47,7 @@ private:
 
 	//--------- functions ----------------------------------------------------
 
+	// 深度リソースを確保し、クリア形式を設定する。
 	void CreateDepthResource(ComPtr<ID3D12Resource>& resource, uint32_t width, uint32_t height,
 		DXGI_FORMAT resourceFormat, DXGI_FORMAT depthClearFormat);
 };

@@ -18,6 +18,7 @@ class DxCommand;
 
 //============================================================================
 //	DxSwapChain class
+//	スワップチェーンとバックバッファのRTVを生成し、現在のターゲットを提供する。
 //============================================================================
 class DxSwapChain {
 public:
@@ -28,18 +29,19 @@ public:
 	DxSwapChain() = default;
 	~DxSwapChain() = default;
 
+	// ウィンドウ/ファクトリ/キュー/RTVデスクリプタからスワップチェーンとRTVを作成する
 	void Create(class WinApp* winApp, IDXGIFactory7* factory,
 		ID3D12CommandQueue* queue, RTVDescriptor* rtvDescriptor);
 
 	//--------- accessor -----------------------------------------------------
 
+	// スワップチェーンを取得する
 	IDXGISwapChain4* Get() const { return swapChain_.Get(); }
-
+	// 現在のバックバッファリソースを取得する
 	ID3D12Resource* GetCurrentResource() const;
-
-	const DXGI_SWAP_CHAIN_DESC1& GetDesc() const { return desc_; }
-
+	// 現在のレンダーターゲット情報を取得する
 	const RenderTarget& GetRenderTarget();
+	const DXGI_SWAP_CHAIN_DESC1& GetDesc() const { return desc_; }
 private:
 	//========================================================================
 	//	private Methods
