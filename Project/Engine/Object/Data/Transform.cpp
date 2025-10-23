@@ -187,7 +187,9 @@ void EffectTransform::Init() {
 	translation.Init();
 }
 
-void EffectTransform::ImGui() {
+void EffectTransform::ImGui(float itemSize) {
+
+	ImGui::PushItemWidth(itemSize);
 
 	if (ImGui::Button("Reset")) {
 
@@ -201,10 +203,12 @@ void EffectTransform::ImGui() {
 	ImGui::DragFloat3("translation", &translation.x, 0.01f);
 	if (ImGui::DragFloat3("rotation", &eulerRotate.x, 0.01f)) {
 
-		rotation = Quaternion::EulerToQuaternion(eulerRotate);
+		rotation = Quaternion::Normalize(Quaternion::EulerToQuaternion(eulerRotate));
 	}
 	ImGui::Text("quaternion(%4.3f, %4.3f, %4.3f, %4.3f)",
 		rotation.x, rotation.y, rotation.z, rotation.w);
+
+	ImGui::PopItemWidth();
 }
 
 //============================================================================

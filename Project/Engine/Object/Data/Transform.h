@@ -122,7 +122,7 @@ public:
 
 	void Init();
 
-	void ImGui();
+	void ImGui(float itemSize);
 
 	//--------- variables ----------------------------------------------------
 

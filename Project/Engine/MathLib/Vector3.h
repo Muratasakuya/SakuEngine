@@ -95,4 +95,10 @@ public:
 	static Vector3 Transform(const Vector3& v, const Matrix4x4& matrix);
 
 	static Vector3 TransferNormal(const Vector3& v, const Matrix4x4& m);
+
+	static Vector3 Projection(const Vector3& v0, const Vector3& v1);
+
+	static Vector3 ClosestPointOnLine(const Vector3& point, const Vector3& origin,const Vector3& diff);
+	static Vector3 ClosestPointOnRay(const Vector3& point, const Vector3& origin, const Vector3& diff);
+	static Vector3 ClosestPointOnSegment(const Vector3& point, const Vector3& origin, const Vector3& diff);
 };

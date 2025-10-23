@@ -120,6 +120,7 @@ void Vector3::Init() {
 }
 
 float Vector3::Length() const {
+
 	return std::sqrtf(x * x + y * y + z * z);
 }
 
@@ -241,4 +242,38 @@ Vector3 Vector3::TransferNormal(const Vector3& v, const Matrix4x4& m) {
 	vector.z = v.x * m.m[0][2] + v.y * m.m[1][2] + v.z * m.m[2][2];
 
 	return vector;
+}
+
+Vector3 Vector3::Projection(const Vector3& v0, const Vector3& v1) {
+
+	Vector3 vector{};
+
+	Vector3 nomalizedV1 = Normalize(v1);
+	vector = Dot(v0, nomalizedV1) * nomalizedV1;
+
+	return vector;
+}
+
+Vector3 Vector3::ClosestPointOnLine(const Vector3& point, const Vector3& origin, const Vector3& diff) {
+
+	float denom = Dot(diff, diff);
+	float t = Dot(point - origin, diff) / denom;
+	return origin + diff * t;
+}
+
+Vector3 Vector3::ClosestPointOnRay(const Vector3& point, const Vector3& origin, const Vector3& diff) {
+
+	float denom = Dot(diff, diff);
+	float t = Dot(point - origin, diff) / denom;
+	if (t < 0.0f) {
+		t = 0.0f;
+	}
+	return origin + diff * t;
+}
+
+Vector3 Vector3::ClosestPointOnSegment(const Vector3& point, const Vector3& origin, const Vector3& diff) {
+
+	float denom = Dot(diff, diff);
+	float t = std::clamp(Dot(point - origin, diff) / denom, 0.0f, 1.0f);
+	return origin + diff * t;
 }

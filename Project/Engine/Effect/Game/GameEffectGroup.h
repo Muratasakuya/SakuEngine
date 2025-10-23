@@ -60,8 +60,8 @@ private:
 	// 処理依存相手
 	struct Dependency {
 
-		int systemIndex_ = -1; // 対象のシステムのインデックス
-		int groupIndex_ = -1;  // ↑が所持しているグループのインデックス
+		int systemIndex = -1; // 対象のシステムのインデックス
+		int groupIndex = -1;  // ↑が所持しているグループのインデックス
 	};
 	// 発生設定
 	struct EmitSetting {
@@ -86,7 +86,7 @@ private:
 		Vector3 spawnRotate;
 
 		// 寿命の管理
-		std::optional<ParticleLifeEndMode> lifeEndMode;
+		ParticleLifeEndMode lifeEndMode;
 	};
 	// ランタイム
 	struct Runtime {
@@ -102,8 +102,8 @@ private:
 	struct GroupData {
 
 		// システム
-		ParticleSystem* system;     // パーティクル管理
-		std::string systemJsonPath; // システムのファイル名
+		ParticleSystem* system; // パーティクル管理
+		std::string name;       // 名前
 
 		// 発生設定
 		EmitSetting emit;
@@ -123,11 +123,15 @@ private:
 	// パーティクルを処理するグループ
 	std::vector<GroupData> groups_;
 
-	// トランスフォーム
+	// トランスフォーム、すべてのグループエフェクトの原点
 	EffectTransform* transform_;
 
 	// エディター
+	int selectGroupIndex_ = -1;   // 選択中のグループ
 	JsonSaveState jsonSaveState_; // 保存処理用
+	// レイアウト
+	float leftChildWidth_;
+	int displaySystemCount_;
 
 	//--------- functions ----------------------------------------------------
 
@@ -135,5 +139,20 @@ private:
 	void SaveJson(const std::string& filePath);
 
 	// エディター
+	void DisplayInformation();
 	void SaveAndLoad();
+
+	// 左側の枠の処理
+	void EditLeftChild();
+	void AddParticleSystem();
+	void SelectParticleSystem();
+
+	// 右側の枠の処理
+	void EditRightChild();
+	void EditGroup();
+
+	// レイアウト
+	void EditLayout();
+	void ApplyLayout();
+	void SaveLayout();
 };
