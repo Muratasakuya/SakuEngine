@@ -508,39 +508,48 @@ void EffectGroup::LoadJson(const std::string& fileName) {
 	nodes_.clear();
 	parentAnchorId_ = data.value("parentAnchorId_", 0);
 	parentAnchorName_ = data.value("parentAnchorName_", "");
+
 	if (auto it = data.find("Nodes"); it != data.end() && it->is_array()) {
 		for (const auto& nodeData : *it) {
 
 			EffectNode node{};
 			node.key = nodeData.value("key", "");
 			node.name = nodeData.value("name", node.key);
+
 			// ParticleSystem
 			if (auto system = nodeData.find("ParticleSystem"); system != nodeData.end()) {
 
 				const std::string filePath = system->value("path", "");
-				node.system = ParticleManager::GetInstance()->CreateParticleSystem(filePath);
+				if (!filePath.empty()) {
+
+					node.system = ParticleManager::GetInstance()->CreateParticleSystem(filePath);
+					node.filePath = filePath;
+				}
 			}
+
 			// Emit
 			if (auto emit = nodeData.find("Emit"); emit != nodeData.end()) {
 
-				node.emit.mode = EnumAdapter<EffectEmitMode>::FromString(data.value("Mode", "Once")).value();
+				node.emit.mode = EnumAdapter<EffectEmitMode>::FromString(emit->value("Mode", "Once")).value();
 				node.emit.count = emit->value("count", 1);
 				node.emit.delay = emit->value("delay", 0.0f);
 				node.emit.interval = emit->value("interval", 0.0f);
 				node.emit.duration = emit->value("duration", 0.0f);
 			}
+
 			// Stop
 			if (auto stop = nodeData.find("Stop"); stop != nodeData.end()) {
 
-				node.stop.condition = EnumAdapter<EffectStopCondition>::FromString(data.value("Condition", "None")).value();
+				node.stop.condition = EnumAdapter<EffectStopCondition>::FromString(stop->value("Condition", "None")).value();
 				node.stop.emptyRef.nodeKey = stop->value("emptyNodeKey", "");
 				node.stop.emptyRef.groupIndex = stop->value("emptyGroupIndex", -1);
 			}
+
 			// Module
 			if (auto module = nodeData.find("Module"); module != nodeData.end()) {
 
-				node.module.lifeEndMode = EnumAdapter<ParticleLifeEndMode>::FromString(data.value("LifeEndMode", "Advance")).value();
-				node.module.posePreset = EnumAdapter<EffectPosePreset>::FromString(data.value("PosePreset", "None")).value();
+				node.module.lifeEndMode = EnumAdapter<ParticleLifeEndMode>::FromString(module->value("LifeEndMode", "Advance")).value();
+				node.module.posePreset = EnumAdapter<EffectPosePreset>::FromString(module->value("PosePreset", "None")).value();
 				node.module.spawnPos = Vector3::FromJson(module->value("spawnPos", Json()));
 				node.module.spawnRotate = Vector3::FromJson(module->value("spawnRotate", Json()));
 				// 発生モジュール
@@ -550,14 +559,16 @@ void EffectGroup::LoadJson(const std::string& fileName) {
 				node.module.updaterScaleEnable = module->value("updaterScaleEnable", false);
 				node.module.updaterScaleValue = module->value("updaterScaleValue", 1.0f);
 			}
+
 			// Sequencer
 			node.sequencer.startOffset = nodeData.value("startOffset", 0.0f);
 			if (auto after = nodeData.find("StartAfter"); after != nodeData.end()) {
 
-				node.sequencer.startAfter.condition = EnumAdapter<EffectSequencerStartCondition>::FromString(data.value("Condition", "None")).value();
+				node.sequencer.startAfter.condition = EnumAdapter<EffectSequencerStartCondition>::FromString(after->value("Condition", "None")).value();
 				node.sequencer.startAfter.emptyRef.nodeKey = after->value("nodeKey", "");
 				node.sequencer.startAfter.emptyRef.groupIndex = after->value("groupIndex", -1);
 			}
+
 			nodes_.push_back(node);
 		}
 	}
@@ -583,7 +594,9 @@ void EffectGroup::SaveJson(const std::string& filePath) {
 
 		// ParticleSystem
 		{
-			nodeData["ParticleSystem"]["path"] = node.filePath;
+			// 保存パスが未設定なら、name からの既定パスなどにフォールバック
+			const std::string path = !node.filePath.empty() ? node.filePath : (node.name + ".json");
+			nodeData["ParticleSystem"]["path"] = path;
 		}
 
 		// Emit
