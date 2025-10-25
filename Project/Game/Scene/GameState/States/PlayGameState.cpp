@@ -6,19 +6,12 @@
 
 void PlayGameState::Init([[maybe_unused]] SceneView* sceneView) {
 
-	effectGroup_ = std::make_unique<EffectGroup>();
-	effectGroup_->Init("testEffect", "Effect");
+	
 }
 
 void PlayGameState::Update([[maybe_unused]] SceneManager* sceneManager) {
 
 	const GameSceneState currentState = GameSceneState::PlayGame;
-
-	//========================================================================
-	//	debug
-	//========================================================================
-
-	effectGroup_->Update();
 
 	//========================================================================
 	//	object

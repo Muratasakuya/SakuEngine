@@ -67,7 +67,11 @@ bool EffectEmitController::Tick(const EffectEmitSetting& emit, EffectNodeRuntime
 	switch (emit.mode) {
 	case EffectEmitMode::Always:
 
-		// システムのFrequencyEmitで発生させるためfalseにしてEmit()させないようにする
+		// 遅延時間以上経過、まだ発生していなければ発生させる
+		if (runtime->pending && emit.delay <= runtime->timer) {
+
+			runtime->pending = false;
+		}
 		return false;
 	case EffectEmitMode::Once:
 
@@ -78,8 +82,10 @@ bool EffectEmitController::Tick(const EffectEmitSetting& emit, EffectNodeRuntime
 			runtime->emitted = 1;
 			runtime->pending = false;
 			runtime->didFirstEmit = true;
+			runtime->emitTimer = 0.0f;
 			return true;
 		}
+		runtime->emitTimer = 0.0f;
 		return false;
 	case EffectEmitMode::EmitCount:
 
@@ -100,6 +106,7 @@ bool EffectEmitController::Tick(const EffectEmitSetting& emit, EffectNodeRuntime
 
 			// 発生回数が上限に達していたら発生させない
 			if (emit.count <= runtime->emitted) {
+				runtime->emitTimer = 0.0f;
 				return false;
 			}
 

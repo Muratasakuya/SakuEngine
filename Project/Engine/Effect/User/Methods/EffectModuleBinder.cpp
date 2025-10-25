@@ -29,7 +29,7 @@ void EffectModuleBinder::ApplyPreEmit(ParticleSystem* system,
 	if (module.updaterScaleEnable) {
 		
 		command = MakeCommand<float>(
-			ParticleCommandTarget::Updater, ParticleCommandID::Scaling, module.spawnerScaleValue);
+			ParticleCommandTarget::Updater, ParticleCommandID::Scaling, module.updaterScaleValue);
 		EffectCommandRouter::Send(system, command);
 	}
 }

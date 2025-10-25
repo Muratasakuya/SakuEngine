@@ -16,7 +16,13 @@ bool EffectStopController::ShouldStop(const EffectStopSetting& stop, const Effec
 	}
 	case EffectStopCondition::OnParticleEmpty: {
 
+		// 参照先ノードとグループが指定されているか
 		if (!stop.emptyRef.nodeKey.empty() && 0 <= stop.emptyRef.groupIndex && queryFn) {
+
+			// 1回発生済みかどうか
+			if (!runtime.didFirstEmit) {
+				return false;
+			}
 
 			// 参照先ノードの指定グループの生存パーティクル数が0なら停止させる
 			// GetNumInstance() == 0

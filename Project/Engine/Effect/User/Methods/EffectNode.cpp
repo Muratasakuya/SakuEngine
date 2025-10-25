@@ -32,7 +32,20 @@ void EffectNode::Update(const Vector3& worldPos, const EffectQueryGroupAliveFn& 
 	// FrequencyEmitで常に発生
 	if (emit.mode == EffectEmitMode::Always) {
 
-		system->FrequencyEmit();
+		// Tickで時間を更新する
+		emitController.Tick(emit, &runtime);
+
+		// アクティブ状態の時のみ時間で発生
+		if (runtime.active && !runtime.pending) {
+
+			system->FrequencyEmit();
+			if (!runtime.started) {
+				runtime.started = true;
+			}
+			if (!runtime.didFirstEmit) {
+				runtime.didFirstEmit = true;
+			}
+		}
 	}
 	// Tickで判定して発生
 	else if (emitController.Tick(emit, &runtime)) {

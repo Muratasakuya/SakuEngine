@@ -167,7 +167,7 @@ void EffectGroup::Update() {
 
 void EffectGroup::ImGui() {
 
-	EditLayout();
+	//EditLayout();
 
 	ImGui::SetWindowFontScale(0.64f);
 
@@ -568,7 +568,6 @@ void EffectGroup::LoadJson(const std::string& fileName) {
 				node.sequencer.startAfter.emptyRef.nodeKey = after->value("nodeKey", "");
 				node.sequencer.startAfter.emptyRef.groupIndex = after->value("groupIndex", -1);
 			}
-
 			nodes_.push_back(node);
 		}
 	}
