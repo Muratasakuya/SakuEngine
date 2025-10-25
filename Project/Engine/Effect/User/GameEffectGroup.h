@@ -10,7 +10,7 @@
 
 //============================================================================
 //	GameEffectGroup class
-//	複数のパーティクルシステムをゲーム上でまとめて扱うためのクラス
+//	複数のパーティクルシステムをゲーム上でまとめて扱う
 //============================================================================
 class GameEffectGroup :
 	public IGameObject {
@@ -58,13 +58,12 @@ private:
 		None,
 		AfterDuration,   // 時間経過で
 		OnParticleEmpty, // 対象のグループのパーティクルがすべてなくなったら
-		OnParticlePhase, // 対象のグループのパーティクルが指定のフェーズを完了させたら
 		ExternalStop     // 外部入力
 	};
 	// 処理依存相手
 	struct Dependency {
 
-		int systemIndex = -1; // 対象のシステムのインデックス
+		int systemIndex = -1; // 対象のグループ内のシステムインデックス
 		int groupIndex = -1;  // ↑が所持しているグループのインデックス
 	};
 	// 発生設定
@@ -159,4 +158,7 @@ private:
 	void EditLayout();
 	void ApplyLayout();
 	void SaveLayout();
+
+	// グループ配列の名前を取得
+	std::vector<std::string> GetGroupNames() const;
 };

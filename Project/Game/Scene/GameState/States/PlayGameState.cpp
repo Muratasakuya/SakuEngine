@@ -6,7 +6,7 @@
 
 void PlayGameState::Init([[maybe_unused]] SceneView* sceneView) {
 
-	effectGroup_ = std::make_unique<GameEffectGroup>();
+	effectGroup_ = std::make_unique<EffectGroup>();
 	effectGroup_->Init("testEffect", "Effect");
 }
 

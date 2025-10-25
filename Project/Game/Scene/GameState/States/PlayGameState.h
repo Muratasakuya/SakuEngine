@@ -6,7 +6,7 @@
 #include <Game/Scene/GameState/Interface/IGameSceneState.h>
 
 // debug
-#include <Engine/Effect/Game/GameEffectGroup.h>
+#include <Engine/Effect/User/EffectGroup.h>
 
 //============================================================================
 //	PlayGameState class
@@ -36,7 +36,7 @@ private:
 	//--------- variables ----------------------------------------------------
 
 	// デバッグ
-	std::unique_ptr<GameEffectGroup> effectGroup_;
+	std::unique_ptr<EffectGroup> effectGroup_;
 
 	//--------- functions ----------------------------------------------------
 

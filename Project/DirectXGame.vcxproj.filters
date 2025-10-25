@@ -558,10 +558,10 @@
     <ClCompile Include="Engine\Editor\Curve\CurveValueEditor.cpp">
       <Filter>Engine\Editor\Curve</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Effect\Game\GameEffect.cpp">
+    <ClCompile Include="Engine\Effect\User\GameEffect.cpp">
       <Filter>Engine\Effect\Game</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Effect\Game\Helper\GameEffectCommandHelper.cpp">
+    <ClCompile Include="Engine\Effect\User\Helper\GameEffectCommandHelper.cpp">
       <Filter>Engine\Effect\Game\Helper</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Effect\Particle\Core\GPUParticleUpdater.cpp">
@@ -1368,10 +1368,10 @@
     <ClInclude Include="Engine\Editor\Curve\CurveValueEditor.h">
       <Filter>Engine\Editor\Curve</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Effect\Game\GameEffect.h">
+    <ClInclude Include="Engine\Effect\User\GameEffect.h">
       <Filter>Engine\Effect\Game</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Effect\Game\Helper\GameEffectCommandHelper.h">
+    <ClInclude Include="Engine\Effect\User\Helper\GameEffectCommandHelper.h">
       <Filter>Engine\Effect\Game\Helper</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Effect\Particle\Command\ParticleCommand.h">
@@ -2297,10 +2297,25 @@
     </None>
     <ClCompile Include="Game\Objects\GameScene\Enemy\Boss\State\States\GreatAttackState\Interface\BossEnemyGreatAttackIState.cpp" />
     <ClCompile Include="Game\Camera\Follow\State\States\FollowCameraReturnDefaultRotate.cpp" />
-    <ClCompile Include="Engine\Effect\Game\GameEffectGroup.cpp" />
+    <ClCompile Include="Engine\Effect\User\GameEffectGroup.cpp" />
+    <ClCompile Include="Engine\Effect\User\Methods\EffectCommandRouter.cpp" />
+    <ClCompile Include="Engine\Effect\User\Methods\EffectModuleBinder.cpp" />
+    <ClCompile Include="Engine\Effect\User\Methods\EffectEmitController.cpp" />
+    <ClCompile Include="Engine\Effect\User\Methods\EffectStopController.cpp" />
+    <ClCompile Include="Engine\Effect\User\Methods\EffectSequencer.cpp" />
+    <ClCompile Include="Engine\Effect\User\Methods\EffectNode.cpp" />
+    <ClCompile Include="Engine\Effect\User\EffectGroup.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\Camera\Follow\State\States\FollowCameraReturnDefaultRotate.h" />
-    <ClInclude Include="Engine\Effect\Game\GameEffectGroup.h" />
+    <ClInclude Include="Engine\Effect\User\GameEffectGroup.h" />
+    <ClInclude Include="Engine\Effect\User\Methods\EffectStructures.h" />
+    <ClInclude Include="Engine\Effect\User\Methods\EffectCommandRouter.h" />
+    <ClInclude Include="Engine\Effect\User\Methods\EffectModuleBinder.h" />
+    <ClInclude Include="Engine\Effect\User\Methods\EffectEmitController.h" />
+    <ClInclude Include="Engine\Effect\User\Methods\EffectStopController.h" />
+    <ClInclude Include="Engine\Effect\User\Methods\EffectSequencer.h" />
+    <ClInclude Include="Engine\Effect\User\Methods\EffectNode.h" />
+    <ClInclude Include="Engine\Effect\User\EffectGroup.h" />
   </ItemGroup>
 </Project>

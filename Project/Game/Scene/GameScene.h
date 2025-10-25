@@ -10,7 +10,7 @@
 #include <Game/Objects/SceneTransition/FadeTransition.h>
 
 // effect
-#include <Engine/Effect/Game/GameEffect.h>
+#include <Engine/Effect/User/GameEffect.h>
 
 //============================================================================
 //	GameScene class
