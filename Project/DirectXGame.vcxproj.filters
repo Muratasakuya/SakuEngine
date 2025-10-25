@@ -2305,6 +2305,7 @@
     <ClCompile Include="Engine\Effect\User\Methods\EffectSequencer.cpp" />
     <ClCompile Include="Engine\Effect\User\Methods\EffectNode.cpp" />
     <ClCompile Include="Engine\Effect\User\EffectGroup.cpp" />
+    <ClCompile Include="Engine\Effect\Particle\Module\Updater\Transform\ParticleUpdateTranslateModule.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\Camera\Follow\State\States\FollowCameraReturnDefaultRotate.h" />
@@ -2317,5 +2318,6 @@
     <ClInclude Include="Engine\Effect\User\Methods\EffectSequencer.h" />
     <ClInclude Include="Engine\Effect\User\Methods\EffectNode.h" />
     <ClInclude Include="Engine\Effect\User\EffectGroup.h" />
+    <ClInclude Include="Engine\Effect\Particle\Module\Updater\Transform\ParticleUpdateTranslateModule.h" />
   </ItemGroup>
 </Project>

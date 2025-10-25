@@ -226,6 +226,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Editor\Curve\CurveValueEditor.cpp">
       <SubType />
     </ClCompile>
+    <ClCompile Include="Engine\Effect\Particle\Module\Updater\Transform\ParticleUpdateTranslateModule.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="Engine\Effect\User\EffectGroup.cpp">
       <SubType>
       </SubType>
@@ -939,6 +943,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </ClInclude>
     <ClInclude Include="Engine\Editor\Curve\CurveValueEditor.h">
       <SubType />
+    </ClInclude>
+    <ClInclude Include="Engine\Effect\Particle\Module\Updater\Transform\ParticleUpdateTranslateModule.h">
+      <SubType>
+      </SubType>
     </ClInclude>
     <ClInclude Include="Engine\Effect\User\EffectGroup.h">
       <SubType>
