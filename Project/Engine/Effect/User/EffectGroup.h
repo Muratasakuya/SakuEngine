@@ -50,6 +50,11 @@ public:
 	void SetParent(uint32_t anchorId) { parentAnchorId_ = anchorId; }
 	// 親への追従を解除
 	void ClearParent();
+
+	// --------- accessor ----------------------------------------------------
+
+	// ワールド座標を設定
+	void SetWorldPos(const Vector3& worldPos) { effectWorldPos_ = worldPos; }
 private:
 	//========================================================================
 	//	private Methods

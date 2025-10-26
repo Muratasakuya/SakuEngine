@@ -21,13 +21,19 @@ PlayerParryState::PlayerParryState() {
 	isEmitedBlur_ = false;
 
 	// エフェクト作成
-	parryEffect_ = std::make_unique<EffectGroup>();
-	parryEffect_->Init("parryHitEffect", "PlayerEffect");
-	parryEffect_->LoadJson("GameEffectGroup/Player/playerParryHitEffect.json");
+	// ヒットした瞬間
+	parryHitEffect_ = std::make_unique<EffectGroup>();
+	parryHitEffect_->Init("parryHitEffect", "PlayerEffect");
+	parryHitEffect_->LoadJson("GameEffectGroup/Player/playerParryHitEffect.json");
+	// 引きずる剣先
+	tipScrackEffect_ = std::make_unique<EffectGroup>();
+	tipScrackEffect_->Init("parryTipScrachEffect", "PlayerEffect");
+	tipScrackEffect_->LoadJson("GameEffectGroup/Player/playerParryTipScrachEffect.json");
 }
 
 void PlayerParryState::Enter(Player& player) {
 
+	// アニメーション再生
 	player.SetNextAnimation("player_parry", false, nextAnimDuration_);
 
 	// 座標、向きを計算
@@ -48,6 +54,9 @@ void PlayerParryState::Enter(Player& player) {
 
 	// パリィ用のカメラアニメーションを設定
 	followCamera_->StartPlayerActionAnim(PlayerState::Parry);
+
+	// 剣先の引っかきエフェクトを発生させる
+	tipScrackEffect_->Emit(player.GetWeapon(PlayerWeaponType::Left)->GetTipTranslation());
 
 	canExit_ = false;
 	isEmitedBlur_ = false;
@@ -75,7 +84,11 @@ void PlayerParryState::Update(Player& player) {
 void PlayerParryState::UpdateAlways(Player& player) {
 
 	// エフェクトの更新
-	parryEffect_->Update();
+	parryHitEffect_->Update();
+
+	// 剣先の座標を常に更新
+	tipScrackEffect_->SetWorldPos(player.GetWeapon(PlayerWeaponType::Left)->GetTipTranslation());
+	tipScrackEffect_->Update();
 }
 
 void PlayerParryState::UpdateDeltaWaitTime(const Player& player) {
@@ -92,8 +105,8 @@ void PlayerParryState::UpdateDeltaWaitTime(const Player& player) {
 			// 左手にエフェクトを発生させる
 			// 発生座標
 			Vector3 effectPos = player.GetJointWorldPos("leftHand");
-			effectPos.y = parryEffectPosY_;
-			parryEffect_->Emit(effectPos);
+			effectPos.y = parryHitEffectPosY_;
+			parryHitEffect_->Emit(effectPos);
 
 			// ブラー手の位置に発生させる
 			postProcess_->Start(PostProcessType::RadialBlur);
@@ -127,7 +140,6 @@ void PlayerParryState::UpdateLerpTranslation(Player& player) {
 	// 座標を設定
 	player.SetTranslation(translation);
 
-	// 補間終了後アングル固定を解除
 	if (parryLerp_.isFinised) {
 
 		// 攻撃入力がされていなければ滑らかに元のカメラに戻るようにする
@@ -135,6 +147,9 @@ void PlayerParryState::UpdateLerpTranslation(Player& player) {
 
 			followCamera_->WarmStart();
 		}
+
+		// 補間終了後剣先エフェクトを停止させる
+		tipScrackEffect_->Stop();
 	}
 }
 
@@ -277,7 +292,7 @@ void PlayerParryState::ImGui(const Player& player) {
 	ImGui::DragFloat("deltaWaitTime", &deltaWaitTime_, 0.01f);
 	ImGui::DragFloat("deltaLerpSpeed_", &deltaLerpSpeed_, 0.01f);
 	ImGui::DragFloat("cameraLookRate", &cameraLookRate_, 0.01f);
-	ImGui::DragFloat("parryEffectPosY", &parryEffectPosY_, 0.01f);
+	ImGui::DragFloat("parryHitEffectPosY", &parryHitEffectPosY_, 0.01f);
 
 	ImGuiHelper::ValueText<Vector3>("stratPos", startPos_);
 	ImGuiHelper::ValueText<Vector3>("targetPos", targetPos_);
@@ -327,7 +342,7 @@ void PlayerParryState::ApplyJson(const Json& data) {
 	deltaWaitTime_ = JsonAdapter::GetValue<float>(data, "deltaWaitTime_");
 	deltaLerpSpeed_ = data.value("deltaLerpSpeed_", 8.0f);
 	cameraLookRate_ = data.value("cameraLookRate_", 1.0f);
-	parryEffectPosY_ = data.value("parryEffectPosY_", 4.0f);
+	parryHitEffectPosY_ = data.value("parryEffectPosY_", 4.0f);
 
 	parryLerp_.time = JsonAdapter::GetValue<float>(data, "parryLerp_.time");
 	parryLerp_.moveDistance = JsonAdapter::GetValue<float>(data, "parryLerp_.moveDistance");
@@ -346,7 +361,7 @@ void PlayerParryState::SaveJson(Json& data) {
 	data["deltaWaitTime_"] = deltaWaitTime_;
 	data["deltaLerpSpeed_"] = deltaLerpSpeed_;
 	data["cameraLookRate_"] = cameraLookRate_;
-	data["parryEffectPosY_"] = parryEffectPosY_;
+	data["parryEffectPosY_"] = parryHitEffectPosY_;
 
 	data["parryLerp_.time"] = parryLerp_.time;
 	data["parryLerp_.moveDistance"] = parryLerp_.moveDistance;

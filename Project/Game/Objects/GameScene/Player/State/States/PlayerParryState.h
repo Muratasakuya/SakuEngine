@@ -82,8 +82,11 @@ private:
 	std::optional<RequestState> request_;
 
 	// パリィエフェクト
-	std::unique_ptr<EffectGroup> parryEffect_;
-	float parryEffectPosY_; // エフェクトのY座標
+	// ヒットした瞬間
+	std::unique_ptr<EffectGroup> parryHitEffect_;
+	float parryHitEffectPosY_;
+	// 引きずる剣先
+	std::unique_ptr<EffectGroup> tipScrackEffect_;
 
 	//--------- functions ----------------------------------------------------
 
