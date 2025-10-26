@@ -246,6 +246,7 @@
         "deltaLerpSpeed_": 12.59000015258789,
         "deltaWaitTime_": 0.1940000057220459,
         "nextAnimDuration_": 0.019999999552965164,
+        "parryEffectPosY_": 4.0,
         "parryLerp_.easingType": 11,
         "parryLerp_.moveDistance": -69.5999984741211,
         "parryLerp_.time": 0.6000000238418579

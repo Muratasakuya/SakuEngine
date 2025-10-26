@@ -83,6 +83,7 @@ private:
 
 	// パリィエフェクト
 	std::unique_ptr<EffectGroup> parryEffect_;
+	float parryEffectPosY_; // エフェクトのY座標
 
 	//--------- functions ----------------------------------------------------
 

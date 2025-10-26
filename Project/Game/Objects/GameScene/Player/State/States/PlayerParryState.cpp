@@ -90,7 +90,10 @@ void PlayerParryState::UpdateDeltaWaitTime(const Player& player) {
 		if (!isEmitedBlur_) {
 
 			// 左手にエフェクトを発生させる
-			parryEffect_->Emit(player.GetJointWorldPos("leftHand"));
+			// 発生座標
+			Vector3 effectPos = player.GetJointWorldPos("leftHand");
+			effectPos.y = parryEffectPosY_;
+			parryEffect_->Emit(effectPos);
 
 			// ブラー手の位置に発生させる
 			postProcess_->Start(PostProcessType::RadialBlur);
@@ -274,6 +277,7 @@ void PlayerParryState::ImGui(const Player& player) {
 	ImGui::DragFloat("deltaWaitTime", &deltaWaitTime_, 0.01f);
 	ImGui::DragFloat("deltaLerpSpeed_", &deltaLerpSpeed_, 0.01f);
 	ImGui::DragFloat("cameraLookRate", &cameraLookRate_, 0.01f);
+	ImGui::DragFloat("parryEffectPosY", &parryEffectPosY_, 0.01f);
 
 	ImGuiHelper::ValueText<Vector3>("stratPos", startPos_);
 	ImGuiHelper::ValueText<Vector3>("targetPos", targetPos_);
@@ -323,6 +327,7 @@ void PlayerParryState::ApplyJson(const Json& data) {
 	deltaWaitTime_ = JsonAdapter::GetValue<float>(data, "deltaWaitTime_");
 	deltaLerpSpeed_ = data.value("deltaLerpSpeed_", 8.0f);
 	cameraLookRate_ = data.value("cameraLookRate_", 1.0f);
+	parryEffectPosY_ = data.value("parryEffectPosY_", 4.0f);
 
 	parryLerp_.time = JsonAdapter::GetValue<float>(data, "parryLerp_.time");
 	parryLerp_.moveDistance = JsonAdapter::GetValue<float>(data, "parryLerp_.moveDistance");
@@ -341,6 +346,7 @@ void PlayerParryState::SaveJson(Json& data) {
 	data["deltaWaitTime_"] = deltaWaitTime_;
 	data["deltaLerpSpeed_"] = deltaLerpSpeed_;
 	data["cameraLookRate_"] = cameraLookRate_;
+	data["parryEffectPosY_"] = parryEffectPosY_;
 
 	data["parryLerp_.time"] = parryLerp_.time;
 	data["parryLerp_.moveDistance"] = parryLerp_.moveDistance;
