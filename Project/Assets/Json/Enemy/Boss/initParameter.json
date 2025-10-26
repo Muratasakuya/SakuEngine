@@ -109,9 +109,10 @@
             }
         }
     },
-    "DamageRandomRange": 128,
+    "DamageRandomRange": 64,
     "Damages": {
         "0": 0,
+        "10": 400,
         "4": 400,
         "5": 600,
         "6": 600,
