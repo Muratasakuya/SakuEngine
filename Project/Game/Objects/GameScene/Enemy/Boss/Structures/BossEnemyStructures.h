@@ -27,6 +27,7 @@ enum class BossEnemyState {
 	RushAttack,       // 突進攻撃
 	ContinuousAttack, // 連続攻撃
 	GreatAttack,      // 大技攻撃
+	JumpAttack,       // ジャンプ攻撃
 };
 
 // テレポートの種類
