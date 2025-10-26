@@ -20,10 +20,10 @@ PlayerParryState::PlayerParryState() {
 
 	isEmitedBlur_ = false;
 
-	// effect作成
-	// エフェクト、エンジン機能変更中...
-	/*parryEffect_ = std::make_unique<GameEffect>();
-	parryEffect_->CreateParticleSystem("Particle/parryParticle.json");*/
+	// エフェクト作成
+	parryEffect_ = std::make_unique<EffectGroup>();
+	parryEffect_->Init("parryHitEffect", "PlayerEffect");
+	parryEffect_->LoadJson("GameEffectGroup/Player/playerParryHitEffect.json");
 }
 
 void PlayerParryState::Enter(Player& player) {
@@ -72,6 +72,12 @@ void PlayerParryState::Update(Player& player) {
 	UpdateAnimation(player);
 }
 
+void PlayerParryState::UpdateAlways(Player& player) {
+
+	// エフェクトの更新
+	parryEffect_->Update();
+}
+
 void PlayerParryState::UpdateDeltaWaitTime(const Player& player) {
 
 	// 時間経過を進める
@@ -81,20 +87,10 @@ void PlayerParryState::UpdateDeltaWaitTime(const Player& player) {
 
 		GameTimer::SetReturnScaleEnable(true);
 
-		// コマンドに設定
-		// エフェクト、エンジン機能変更中...
-		//ParticleCommand command{};
-		//// 座標設定
-		//command.target = ParticleCommandTarget::Spawner;
-		//command.id = ParticleCommandID::SetTranslation;
-		//command.value = player.GetJointWorldPos("leftHand");
-		//parryEffect_->SendCommand(command);
-
 		if (!isEmitedBlur_) {
 
-			// 発生させる
-			// エフェクト、エンジン機能変更中...
-			//parryEffect_->Emit(true);
+			// 左手にエフェクトを発生させる
+			parryEffect_->Emit(player.GetJointWorldPos("leftHand"));
 
 			// ブラー手の位置に発生させる
 			postProcess_->Start(PostProcessType::RadialBlur);
@@ -127,6 +123,16 @@ void PlayerParryState::UpdateLerpTranslation(Player& player) {
 
 	// 座標を設定
 	player.SetTranslation(translation);
+
+	// 補間終了後アングル固定を解除
+	if (parryLerp_.isFinised) {
+
+		// 攻撃入力がされていなければ滑らかに元のカメラに戻るようにする
+		if (!request_.has_value()) {
+
+			followCamera_->WarmStart();
+		}
+	}
 }
 
 void PlayerParryState::CheckInput() {
@@ -247,7 +253,7 @@ void PlayerParryState::Exit([[maybe_unused]] Player& player) {
 	GameTimer::SetReturnScaleEnable(true);
 
 	// カメラアニメーションを終了させる
-	followCamera_->EndPlayerActionAnim(PlayerState::Parry, true);
+	followCamera_->EndPlayerActionAnim(PlayerState::Parry, false);
 
 	// リセット
 	request_ = std::nullopt;
@@ -259,9 +265,6 @@ void PlayerParryState::Exit([[maybe_unused]] Player& player) {
 	canExit_ = false;
 	allowAttack_ = false;
 	isEmitedBlur_ = false;
-
-	// エフェクト、エンジン機能変更中...
-	//parryEffect_->ResetEmitFlag();
 }
 
 void PlayerParryState::ImGui(const Player& player) {

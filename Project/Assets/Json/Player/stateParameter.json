@@ -243,12 +243,12 @@
         "attackLerp_.moveDistance": -13.0,
         "attackLerp_.time": 0.07999999821186066,
         "cameraLookRate_": 4.800000190734863,
-        "deltaLerpSpeed_": 10.0,
+        "deltaLerpSpeed_": 12.59000015258789,
         "deltaWaitTime_": 0.1940000057220459,
         "nextAnimDuration_": 0.019999999552965164,
         "parryLerp_.easingType": 11,
-        "parryLerp_.moveDistance": -64.0,
-        "parryLerp_.time": 0.5799999833106995
+        "parryLerp_.moveDistance": -69.5999984741211,
+        "parryLerp_.time": 0.6000000238418579
     },
     "SkilAttack": {
         "BackJump": {

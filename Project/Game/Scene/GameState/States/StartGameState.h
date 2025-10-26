@@ -6,9 +6,6 @@
 #include <Engine/Object/Base/GameObject2D.h>
 #include <Game/Scene/GameState/Interface/IGameSceneState.h>
 
-// debug
-#include <Engine/Effect/User/EffectGroup.h>
-
 //============================================================================
 //	StartGameState class
 //	ゲーム開始状態
@@ -43,9 +40,6 @@ private:
 
 	// 指定の範囲に入ったら次の状態に遷移させる
 	std::unique_ptr<Collider> nextStateEvent_;
-
-	// デバッグ
-	std::unique_ptr<EffectGroup> effectGroup_;
 
 	//--------- functions ----------------------------------------------------
 
