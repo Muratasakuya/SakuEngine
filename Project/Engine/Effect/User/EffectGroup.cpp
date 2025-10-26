@@ -291,6 +291,8 @@ void EffectGroup::EditNode() {
 		}
 	}
 
+	ImGui::PushItemWidth(itemWidth_);
+
 	if (ImGui::BeginTabBar("EffectGroupNode")) {
 
 		// 発生設定
@@ -339,37 +341,50 @@ void EffectGroup::EditNode() {
 		if (ImGui::BeginTabItem("ModuleSetting")) {
 
 			// ランタイム寿命動作
-			EnumAdapter<ParticleLifeEndMode>::Combo("LifeEndMode", &node.module.lifeEndMode);
-			ImGui::SameLine();
 			ImGui::Checkbox("sendLifeEndMode", &node.module.sendLifeEndMode);
+			EnumAdapter<ParticleLifeEndMode>::Combo("LifeEndMode", &node.module.lifeEndMode);
 			EnumAdapter<EffectPosePreset>::Combo("PosePreset", &node.module.posePreset);
 
-			// 発生
-			EnumAdapter<EffectPosOption>::Combo("posOption", &node.module.posOption);
-			ImGui::DragFloat3("spawnPos", &node.module.spawnPos.x, 0.01f);
+			// 発生モジュール
+			{
+				ImGui::SeparatorText("Spawner");
 
-			EnumAdapter<EffectRotateOption>::Combo("spawnRotateOption", &node.module.spawnRotateOption);
-			ImGui::DragFloat3("spawnRotate", &node.module.spawnRotate.x, 0.01f);
+				// 座標
+				ImGui::Checkbox("sendSpawnerTranslation", &node.module.sendSpawnerTranslation);
+				EnumAdapter<EffectPosOption>::Combo("posOption", &node.module.posOption);
+				ImGui::DragFloat3("spawnPos", &node.module.spawnPos.x, 0.01f);
 
-			ImGui::SeparatorText("Spawner");
-			ImGui::Checkbox("sendSpawnerTranslation", &node.module.sendSpawnerTranslation);
-			ImGui::Checkbox("sendSpawnerRotation", &node.module.sendSpawnerRotation);
-			ImGui::Checkbox("spawnerScaleEnable", &node.module.spawnerScaleEnable);
-			ImGui::DragFloat("spawnerScaleValue", &node.module.spawnerScaleValue, 0.01f);
+				ImGui::Separator();
 
-			ImGui::SeparatorText("Updater");
+				// 回転
+				ImGui::Checkbox("sendSpawnerRotation", &node.module.sendSpawnerRotation);
+				EnumAdapter<EffectRotateOption>::Combo("spawnRotateOption", &node.module.spawnRotateOption);
+				ImGui::DragFloat3("spawnRotate", &node.module.spawnRotate.x, 0.01f);
+
+				ImGui::Separator();
+
+				ImGui::Checkbox("spawnerScaleEnable", &node.module.spawnerScaleEnable);
+				ImGui::DragFloat("spawnerScaleValue", &node.module.spawnerScaleValue, 0.01f);
+
+				ImGui::SeparatorText("Updater");
+			}
+
 			// 更新回転
 			ImGui::Checkbox("sendUpdaterRotation", &node.module.sendUpdaterRotation);
 			EnumAdapter<EffectUpdateRotateOption>::Combo("updateRotateOption", &node.module.updateRotateOption);
 			ImGui::DragFloat3("updateRotate", &node.module.updateRotate.x, 0.01f);
 
-			// 座標パス
-			ImGui::Checkbox("sendUpdaterTranslate", &node.module.sendUpdaterTranslate);
-			ImGui::Checkbox("sendUpdaterKeyPath", &node.module.sendUpdaterKeyPath);
+			ImGui::Separator();
 
 			// 更新側スケール
 			ImGui::Checkbox("updaterScaleEnable", &node.module.updaterScaleEnable);
 			ImGui::DragFloat("updaterScaleValue", &node.module.updaterScaleValue, 0.01f);
+
+			ImGui::Separator();
+
+			// 座標パス
+			ImGui::Checkbox("sendUpdaterTranslate", &node.module.sendUpdaterTranslate);
+			ImGui::Checkbox("sendUpdaterKeyPath", &node.module.sendUpdaterKeyPath);
 
 			ImGui::EndTabItem();
 		}
@@ -381,6 +396,7 @@ void EffectGroup::EditNode() {
 		}
 		ImGui::EndTabBar();
 	}
+	ImGui::PopItemWidth();
 }
 
 void EffectGroup::EditorTestTab() {

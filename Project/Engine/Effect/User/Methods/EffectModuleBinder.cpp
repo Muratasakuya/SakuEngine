@@ -129,12 +129,6 @@ void EffectModuleBinder::ApplyUpdate(ParticleSystem* system, const EffectModuleS
 		// KeyframePathモジュールのみ
 		command.filter.updaterId = ParticleUpdateModuleID::KeyframePath;
 		EffectCommandRouter::Send(system, command);
-		// 回転も設定
-		command = MakeCommand<Quaternion>(ParticleCommandTarget::Updater,
-			ParticleCommandID::SetRotation, parentRotation);
-		// KeyframePathモジュールのみ
-		command.filter.updaterId = ParticleUpdateModuleID::KeyframePath;
-		EffectCommandRouter::Send(system, command);
 	}
 
 	// LifeEndMode
