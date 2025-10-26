@@ -338,25 +338,39 @@ void EffectGroup::EditNode() {
 		// モジュール設定
 		if (ImGui::BeginTabItem("ModuleSetting")) {
 
+			// ランタイム寿命動作
 			EnumAdapter<ParticleLifeEndMode>::Combo("LifeEndMode", &node.module.lifeEndMode);
+			ImGui::SameLine();
+			ImGui::Checkbox("sendLifeEndMode", &node.module.sendLifeEndMode);
 			EnumAdapter<EffectPosePreset>::Combo("PosePreset", &node.module.posePreset);
 
+			// 発生
+			EnumAdapter<EffectPosOption>::Combo("posOption", &node.module.posOption);
 			ImGui::DragFloat3("spawnPos", &node.module.spawnPos.x, 0.01f);
+
+			EnumAdapter<EffectRotateOption>::Combo("spawnRotateOption", &node.module.spawnRotateOption);
 			ImGui::DragFloat3("spawnRotate", &node.module.spawnRotate.x, 0.01f);
 
-			// 発生、更新モジュール設定
-			{
-				ImGui::SeparatorText("Spawner");
+			ImGui::SeparatorText("Spawner");
+			ImGui::Checkbox("sendSpawnerTranslation", &node.module.sendSpawnerTranslation);
+			ImGui::Checkbox("sendSpawnerRotation", &node.module.sendSpawnerRotation);
+			ImGui::Checkbox("spawnerScaleEnable", &node.module.spawnerScaleEnable);
+			ImGui::DragFloat("spawnerScaleValue", &node.module.spawnerScaleValue, 0.01f);
 
-				ImGui::Checkbox("spawnerScaleEnable", &node.module.spawnerScaleEnable);
-				ImGui::DragFloat("spawnerScaleValue", &node.module.spawnerScaleValue, 0.01f);
-			}
-			{
-				ImGui::SeparatorText("Updater");
+			ImGui::SeparatorText("Updater");
+			// 更新回転
+			ImGui::Checkbox("sendUpdaterRotation", &node.module.sendUpdaterRotation);
+			EnumAdapter<EffectUpdateRotateOption>::Combo("updateRotateOption", &node.module.updateRotateOption);
+			ImGui::DragFloat3("updateRotate", &node.module.updateRotate.x, 0.01f);
 
-				ImGui::Checkbox("updaterScaleEnable", &node.module.updaterScaleEnable);
-				ImGui::DragFloat("updaterScaleValue", &node.module.updaterScaleValue, 0.01f);
-			}
+			// 座標パス
+			ImGui::Checkbox("sendUpdaterTranslate", &node.module.sendUpdaterTranslate);
+			ImGui::Checkbox("sendUpdaterKeyPath", &node.module.sendUpdaterKeyPath);
+
+			// 更新側スケール
+			ImGui::Checkbox("updaterScaleEnable", &node.module.updaterScaleEnable);
+			ImGui::DragFloat("updaterScaleValue", &node.module.updaterScaleValue, 0.01f);
+
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem("Sequencer")) {
@@ -552,10 +566,21 @@ void EffectGroup::LoadJson(const std::string& fileName) {
 				node.module.posePreset = EnumAdapter<EffectPosePreset>::FromString(module->value("PosePreset", "None")).value();
 				node.module.spawnPos = Vector3::FromJson(module->value("spawnPos", Json()));
 				node.module.spawnRotate = Vector3::FromJson(module->value("spawnRotate", Json()));
-				// 発生モジュール
+				node.module.updateRotate = Vector3::FromJson(module->value("updateRotate", Json()));
+				// フラグ
+				node.module.sendSpawnerTranslation = module->value("sendSpawnerTranslation", true);
+				node.module.sendSpawnerRotation = module->value("sendSpawnerRotation", false);
+				node.module.sendUpdaterRotation = module->value("sendUpdaterRotation", false);
+				node.module.sendUpdaterKeyPath = module->value("sendUpdaterKeyPath", false);
+				node.module.sendUpdaterTranslate = module->value("sendUpdaterTranslate", false);
+				node.module.sendLifeEndMode = module->value("sendLifeEndMode", false);
+				// オプション
+				node.module.posOption = EnumAdapter<EffectPosOption>::FromString(module->value("posOption", "World")).value();
+				node.module.spawnRotateOption = EnumAdapter<EffectRotateOption>::FromString(module->value("spawnRotateOption", "None")).value();
+				node.module.updateRotateOption = EnumAdapter<EffectUpdateRotateOption>::FromString(module->value("updateRotateOption", "None")).value();
+				// スケール
 				node.module.spawnerScaleEnable = module->value("spawnerScaleEnable", false);
 				node.module.spawnerScaleValue = module->value("spawnerScaleValue", 1.0f);
-				// 更新モジュール
 				node.module.updaterScaleEnable = module->value("updaterScaleEnable", false);
 				node.module.updaterScaleValue = module->value("updaterScaleValue", 1.0f);
 			}
@@ -593,9 +618,7 @@ void EffectGroup::SaveJson(const std::string& filePath) {
 
 		// ParticleSystem
 		{
-			// 保存パスが未設定なら、name からの既定パスなどにフォールバック
-			const std::string path = !node.filePath.empty() ? node.filePath : (node.name + ".json");
-			nodeData["ParticleSystem"]["path"] = path;
+			nodeData["ParticleSystem"]["path"] = node.filePath;
 		}
 
 		// Emit
@@ -625,6 +648,19 @@ void EffectGroup::SaveJson(const std::string& filePath) {
 			module["PosePreset"] = EnumAdapter<EffectPosePreset>::ToString(node.module.posePreset);
 			module["spawnPos"] = node.module.spawnPos.ToJson();
 			module["spawnRotate"] = node.module.spawnRotate.ToJson();
+			module["updateRotate"] = node.module.updateRotate.ToJson();
+			// フラグ
+			module["sendSpawnerTranslation"] = node.module.sendSpawnerTranslation;
+			module["sendSpawnerRotation"] = node.module.sendSpawnerRotation;
+			module["sendUpdaterRotation"] = node.module.sendUpdaterRotation;
+			module["sendUpdaterKeyPath"] = node.module.sendUpdaterKeyPath;
+			module["sendUpdaterTranslate"] = node.module.sendUpdaterTranslate;
+			module["sendLifeEndMode"] = node.module.sendLifeEndMode;
+			// オプション
+			module["posOption"] = EnumAdapter<EffectPosOption>::ToString(node.module.posOption);
+			module["spawnRotateOption"] = EnumAdapter<EffectRotateOption>::ToString(node.module.spawnRotateOption);
+			module["updateRotateOption"] = EnumAdapter<EffectUpdateRotateOption>::ToString(node.module.updateRotateOption);
+			// スケール
 			module["spawnerScaleEnable"] = node.module.spawnerScaleEnable;
 			module["spawnerScaleValue"] = node.module.spawnerScaleValue;
 			module["updaterScaleEnable"] = node.module.updaterScaleEnable;

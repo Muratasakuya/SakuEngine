@@ -22,7 +22,12 @@ public:
 	~EffectModuleBinder() = default;
 
 	// 発生前にモジュールに設定を適応する
-	static void ApplyPreEmit(ParticleSystem* system, const EffectModuleSetting& module, const Vector3& worldPos);
+	static void ApplyPreEmit(ParticleSystem* system, const EffectModuleSetting& module,
+		const Vector3& worldPos, const EffectCommandContext& context);
+	// 更新時にモジュールに設定を適応する
+	static void ApplyUpdate(ParticleSystem* system, const EffectModuleSetting& module,
+		const Vector3& parentTranslation, const Quaternion& parentRotation,
+		const EffectCommandContext& context);
 private:
 	//========================================================================
 	//	private Methods

@@ -27,7 +27,12 @@ void EffectNode::Update(const Vector3& worldPos, const EffectQueryGroupAliveFn& 
 	}
 
 	// 発生前のコマンドを設定
-	EffectModuleBinder::ApplyPreEmit(system, module, worldPos);
+	EffectCommandContext context{};
+	EffectModuleBinder::ApplyPreEmit(system, module, worldPos, context);
+	// Updaterモジュールの更新コマンドを設定
+	const Vector3 parentTranslation = worldPos - module.spawnPos;
+	const Quaternion parentRotation = Quaternion::IdentityQuaternion();
+	EffectModuleBinder::ApplyUpdate(system, module, parentTranslation, parentRotation, context);
 
 	// FrequencyEmitで常に発生
 	if (emit.mode == EffectEmitMode::Always) {

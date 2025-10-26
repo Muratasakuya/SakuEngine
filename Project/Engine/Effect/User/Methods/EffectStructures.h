@@ -79,24 +79,6 @@ struct EffectStopSetting {
 	EffectDependencyReference emptyRef; // conditionがOnParticleEmpty用の参照
 };
 
-// モジュール設定
-struct EffectModuleSetting {
-
-	// 発生座標、回転
-	Vector3 spawnPos = Vector3(0.0f, 0.4f, 0.0f);
-	Vector3 spawnRotate = Vector3::AnyInit(0.0f);
-	EffectPosePreset posePreset = EffectPosePreset::None;
-
-	// 発生モジュールの設定
-	bool spawnerScaleEnable = false;
-	float spawnerScaleValue = 1.0f;
-
-	// 更新モジュールの設定
-	bool updaterScaleEnable = false;
-	float updaterScaleValue = 1.0f;
-	ParticleLifeEndMode lifeEndMode = ParticleLifeEndMode::Advance;
-};
-
 // どの条件で開始するかの依存先
 struct EffectStartAfter {
 
@@ -123,4 +105,66 @@ struct EffectNodeRuntime {
 	float timer = 0.0f;        // 発生してから(Emitを呼びだしてから)の経過時間
 	float emitTimer = 0.0f;    // 発生間隔管理時間
 	float startOffsetRemain = 0.0f; // 発生待ち中の時間
+};
+
+// モジュール設定する際のオプション
+enum class EffectPosOption {
+
+	World,
+	ApplyNodeRotation
+};
+enum class EffectRotateOption {
+
+	None,
+	UseSpawnEuler,
+	BillboardCamera
+};
+enum class EffectUpdateRotateOption {
+
+	None,
+	UseUpdateEuler
+};
+
+// コマンド実行コンテキスト
+struct EffectCommandContext {
+
+	// カメラのビルボード行列
+	std::function<Matrix4x4()> billboardProvider = nullptr;
+};
+
+// モジュール設定
+struct EffectModuleSetting {
+
+	// パーティクル寿命終了時の動作
+	ParticleLifeEndMode lifeEndMode = ParticleLifeEndMode::Advance;
+
+	// 発生位置、回転
+	Vector3 spawnPos = Vector3(0.0f, 0.4f, 0.0f);
+	Vector3 spawnRotate = Vector3::AnyInit(0.0f);
+	// 更新回転
+	Vector3 updateRotate = Vector3::AnyInit(0.0f);
+
+	// モジュールに値を渡すかどうか
+	// 発生
+	bool sendSpawnerTranslation = true;
+	bool sendSpawnerRotation = false;
+	// 更新
+	bool sendUpdaterRotation = false;
+	bool sendUpdaterKeyPath = false;
+	bool sendUpdaterTranslate = false;
+	bool sendLifeEndMode = false;
+
+	// コマンド設定用オプション
+	EffectPosOption posOption = EffectPosOption::World;
+	EffectRotateOption spawnRotateOption = EffectRotateOption::None;
+	EffectUpdateRotateOption updateRotateOption = EffectUpdateRotateOption::None;
+	EffectPosePreset posePreset = EffectPosePreset::None;
+
+	// スケール設定
+	// 発生
+	bool spawnerScaleEnable = false;
+	float spawnerScaleValue = 1.0f;
+	// 更新
+	bool updaterScaleEnable = false;
+	float updaterScaleValue = 1.0f;
 };
