@@ -35,7 +35,7 @@ void RenderEngine::AddDefaultAttachments(MultiRenderTexture* multiRenderTexture)
 		Color(Config::kWindowClearColor[0], Config::kWindowClearColor[1],
 			Config::kWindowClearColor[2], Config::kWindowClearColor[3]));
 	// 1: ポストプロセスマスク
-	multiRenderTexture->AddMaskTarget(DXGI_FORMAT_R32G32B32A32_UINT);
+	multiRenderTexture->AddMaskTarget(DXGI_FORMAT_R16_UINT);
 }
 
 void RenderEngine::CreateGuiRenderTexture(ID3D12Device8* device) {

@@ -25,15 +25,16 @@ void CPUParticleGroup::Create(ID3D12Device* device,
 	blendMode_ = BlendMode::kBlendModeAdd;
 
 	// 作成するバッファの数
-	createInstanceCount_ = kMaxCPUParticles;
+	createParticleInstanceCount_ = kMaxCPUParticles;
+	createTrailInstanceCount_ = kMaxCPUParticles * kMaxTrailParticles;
 
 	// buffer作成
-	BaseParticleGroup::CreatePrimitiveBuffer(device, primitiveType, kMaxCPUParticles);
-	BaseParticleGroup::CreateTrailBuffer(device, primitiveBuffer_.type, kMaxCPUParticles);
+	BaseParticleGroup::CreatePrimitiveBuffer(device, primitiveType, createParticleInstanceCount_);
+	BaseParticleGroup::CreateTrailBuffer(device, primitiveBuffer_.type, createTrailInstanceCount_);
 	// structuredBuffer(SRV)
-	transformBuffer_.CreateSRVBuffer(device, kMaxCPUParticles);
-	materialBuffer_.CreateSRVBuffer(device, kMaxCPUParticles);
-	textureInfoBuffer_.CreateSRVBuffer(device, kMaxCPUParticles);
+	transformBuffer_.CreateSRVBuffer(device, createParticleInstanceCount_);
+	materialBuffer_.CreateSRVBuffer(device, createParticleInstanceCount_);
+	textureInfoBuffer_.CreateSRVBuffer(device, createParticleInstanceCount_);
 }
 
 bool CPUParticleGroup::HasTrailModule() const {
@@ -63,15 +64,16 @@ void CPUParticleGroup::CreateFromJson(ID3D12Device* device, Asset* asset, const 
 
 	// 作成するバッファの数
 	bool isUseGame = useGame_ && gameMaxParticleCount_ != 0;
-	createInstanceCount_ = isUseGame ? gameMaxParticleCount_ : kMaxCPUParticles;
+	createParticleInstanceCount_ = isUseGame ? gameMaxParticleCount_ : kMaxCPUParticles;
+	createTrailInstanceCount_ = kMaxCPUParticles * kMaxTrailParticles;
 
 	// buffer作成
-	BaseParticleGroup::CreatePrimitiveBuffer(device, primitiveBuffer_.type, createInstanceCount_);
-	BaseParticleGroup::CreateTrailBuffer(device, primitiveBuffer_.type, createInstanceCount_);
+	BaseParticleGroup::CreatePrimitiveBuffer(device, primitiveBuffer_.type, createParticleInstanceCount_);
+	BaseParticleGroup::CreateTrailBuffer(device, primitiveBuffer_.type, createTrailInstanceCount_);
 	// structuredBuffer(SRV)
-	transformBuffer_.CreateSRVBuffer(device, createInstanceCount_);
-	materialBuffer_.CreateSRVBuffer(device, createInstanceCount_);
-	textureInfoBuffer_.CreateSRVBuffer(device, createInstanceCount_);
+	transformBuffer_.CreateSRVBuffer(device, createParticleInstanceCount_);
+	materialBuffer_.CreateSRVBuffer(device, createParticleInstanceCount_);
+	textureInfoBuffer_.CreateSRVBuffer(device, createParticleInstanceCount_);
 }
 
 void CPUParticleGroup::Update() {
@@ -129,11 +131,11 @@ void CPUParticleGroup::UpdatePhase() {
 	const float deltaTime = GameTimer::GetDeltaTime();
 
 	// particleの数を最大数に制限する
-	if (createInstanceCount_ < particles_.size()) {
+	if (createParticleInstanceCount_ < particles_.size()) {
 
 		// 古いの要素から削除する
 		// it = std::next particles_.size() - createInstanceCount分イテレータを進める
-		auto last = std::next(particles_.begin(), particles_.size() - createInstanceCount_);
+		auto last = std::next(particles_.begin(), particles_.size() - createParticleInstanceCount_);
 		// beginからlastまでの要素を削除
 		particles_.erase(particles_.begin(), last);
 	}
@@ -401,8 +403,8 @@ void CPUParticleGroup::ResizeTransferData(uint32_t size) {
 	// トレイルの処理を行っている場合のみ
 	if (HasTrailModule()) {
 
-		transferTrailHeaders_.resize(size);
-		transferTrailTextureInfos_.resize(size);
+		transferTrailHeaders_.resize(size * kMaxTrailParticles);
+		transferTrailTextureInfos_.resize(size * kMaxTrailParticles);
 
 		transferTrailVertices_.clear();
 

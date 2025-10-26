@@ -3,7 +3,7 @@
 //============================================================================
 //	include
 //============================================================================
-#include <Engine/Effect/Game/Helper/GameEffectCommandHelper.h>
+#include <Engine/Effect/User/Helper/GameEffectCommandHelper.h>
 #include <Game/Objects/GameScene/Player/Entity/Player.h>
 
 //============================================================================

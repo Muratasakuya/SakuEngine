@@ -24,9 +24,9 @@ void ParticleUpdateRotationModule::SetCommand(const ParticleCommand& command) {
 static Quaternion MakeTwist(const Quaternion& rotation, const Vector3& axisN) {
 
 	// rotationのベクトル部を軸へ射影して、軸回りのツイストを取り出す
-	Vector3 a = axisN.Normalize();
+	Vector3 axis = axisN.Normalize();
 	Vector3 v = { rotation.x, rotation.y, rotation.z };
-	Vector3 projection = a * Vector3::Dot(v, a);
+	Vector3 projection = axis * Vector3::Dot(v, axis);
 	Quaternion twist{ projection.x, projection.y, projection.z, rotation.w };
 	return Quaternion::Normalize(twist);
 }

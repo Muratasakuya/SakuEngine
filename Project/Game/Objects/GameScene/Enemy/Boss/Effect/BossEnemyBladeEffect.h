@@ -3,7 +3,7 @@
 //============================================================================
 //	include
 //============================================================================
-#include <Engine/Effect/Game/GameEffect.h>
+#include <Engine/Effect/User/GameEffect.h>
 #include <Engine/Object/Data/Transform.h>
 #include <Engine/Utility/Timer/StateTimer.h>
 

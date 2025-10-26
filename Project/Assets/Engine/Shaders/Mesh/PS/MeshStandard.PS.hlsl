@@ -11,7 +11,7 @@
 struct PSOutput {
 	
 	float4 color : SV_TARGET0;
-	uint4 mask : SV_TARGET1;
+	uint mask : SV_TARGET1;
 };
 
 //============================================================================
@@ -29,7 +29,7 @@ PSOutput main(MSOutput input) {
 	Lighting lighting = gLightings[id];
 	
 	// マスク値を出力
-	output.mask = uint4(material.postProcessMask, 0, 0, 0);
+	output.mask = material.postProcessMask;
 	
 	// ディザ抜き処理を行うか
 	if (material.enableDithering == 1) {

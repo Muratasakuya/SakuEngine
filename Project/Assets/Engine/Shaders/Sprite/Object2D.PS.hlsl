@@ -11,7 +11,7 @@
 struct PSOutput {
 
 	float4 color : SV_TARGET0;
-	uint4 mask : SV_TARGET1;
+	uint mask : SV_TARGET1;
 };
 
 //============================================================================
@@ -46,7 +46,7 @@ PSOutput main(VSOutput input) {
 	PSOutput output;
 	
 	// マスク値を出力
-	output.mask = uint4(postProcessMask, 0, 0, 0);
+	output.mask = postProcessMask;
 	
 	float4 transformUV = mul(float4(input.texcoord, 0.0f, 1.0f), uvTransform);
 	

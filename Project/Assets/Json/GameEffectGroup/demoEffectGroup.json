@@ -1,0 +1,63 @@
+{
+    "Nodes": [
+        {
+            "Emit": {
+                "Mode": "Always",
+                "count": 1,
+                "delay": 0.0,
+                "duration": 16.0,
+                "interval": 0.0
+            },
+            "Module": {
+                "LifeEndMode": "Clamp",
+                "PosePreset": "None",
+                "posOption": "World",
+                "sendLifeEndMode": false,
+                "sendSpawnerRotation": true,
+                "sendSpawnerTranslation": true,
+                "sendUpdaterKeyPath": false,
+                "sendUpdaterRotation": true,
+                "sendUpdaterTranslate": false,
+                "spawnPos": {
+                    "x": 6.599999904632568,
+                    "y": 1.350000023841858,
+                    "z": 6.039999961853027
+                },
+                "spawnRotate": {
+                    "x": -0.5799999833106995,
+                    "y": 1.6799999475479126,
+                    "z": -0.6800000071525574
+                },
+                "spawnRotateOption": "UseSpawnEuler",
+                "spawnerScaleEnable": false,
+                "spawnerScaleValue": 1.0,
+                "updateRotate": {
+                    "x": -0.10000000149011612,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "updateRotateOption": "UseUpdateEuler",
+                "updaterScaleEnable": false,
+                "updaterScaleValue": 1.0
+            },
+            "ParticleSystem": {
+                "path": "Particle/testRotate.json"
+            },
+            "StartAfter": {
+                "Condition": "None",
+                "groupIndex": -1,
+                "nodeKey": ""
+            },
+            "Stop": {
+                "Condition": "None",
+                "emptyGroupIndex": -1,
+                "emptyNodeKey": ""
+            },
+            "key": "testRotate",
+            "name": "testRotate",
+            "startOffset": 0.0
+        }
+    ],
+    "parentAnchorId_": 0,
+    "parentAnchorName_": ""
+}

@@ -8,6 +8,7 @@
 #include <Engine/Effect/Particle/Core/ParticleManager.h>
 #include <Engine/Utility/Json/JsonAdapter.h>
 #include <Engine/Utility/Enum/EnumAdapter.h>
+#include "EffectGroup.h"
 
 //============================================================================
 //	GameEffectGroup classMethods
@@ -30,6 +31,7 @@ void GameEffectGroup::Init(const std::string& name, const std::string& groupName
 }
 
 void GameEffectGroup::Update() {
+
 
 }
 
@@ -110,15 +112,9 @@ void GameEffectGroup::AddParticleSystem() {
 
 void GameEffectGroup::SelectParticleSystem() {
 
-	std::vector<std::string> groupNames{};
-	for (const auto& group : groups_) {
-
-		groupNames.emplace_back(group.name);
-	}
-
 	// グループをすべて表示
 	ImGuiHelper::SelectableListFromStrings("", &selectGroupIndex_,
-		groupNames, displaySystemCount_);
+		GetGroupNames(), displaySystemCount_);
 }
 
 void GameEffectGroup::EditRightChild() {
@@ -157,28 +153,61 @@ void GameEffectGroup::EditGroup() {
 		ImGui::Checkbox("pending", &group.runtime.pending);
 		ImGui::Checkbox("active", &group.runtime.active);
 	}
-	if (ImGui::CollapsingHeader("EmitSetting",
-		ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Leaf)) {
 
-		EnumAdapter<EmitMode>::Combo("EmitMode", &group.emit.mode);
-		ImGui::DragInt("count", &group.emit.count);
-		ImGui::DragFloat("delay", &group.emit.delay, 0.01f);
-		ImGui::DragFloat("interval", &group.emit.interval, 0.01f);
-		ImGui::DragFloat("duration", &group.emit.duration, 0.01f);
-	}
-	if (ImGui::CollapsingHeader("StopSetting",
-		ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Leaf)) {
+	if (ImGui::BeginTabBar("GameEffectGroup")) {
+		if (ImGui::BeginTabItem("EmitSetting")) {
 
-		EnumAdapter<StopCondition>::Combo("StopCondition", &group.stop.condition);
-		ImGui::DragInt("systemIndex", &group.stop.dependency.systemIndex);
-		ImGui::DragInt("groupIndex", &group.stop.dependency.groupIndex);
-	}
-	if (ImGui::CollapsingHeader("ModuleSetting",
-		ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Leaf)) {
+			EnumAdapter<EmitMode>::Combo("EmitMode", &group.emit.mode);
+			ImGui::DragInt("count", &group.emit.count);
+			ImGui::DragFloat("delay", &group.emit.delay, 0.01f);
+			ImGui::DragFloat("interval", &group.emit.interval, 0.01f);
+			ImGui::DragFloat("duration", &group.emit.duration, 0.01f);
+			ImGui::EndTabItem();
+		}
+		if (ImGui::BeginTabItem("StopSetting")) {
 
-		EnumAdapter<ParticleLifeEndMode>::Combo("LifeEndMode", &group.module.lifeEndMode);
-		ImGui::DragFloat3("spawnPos", &group.module.spawnPos.x, 0.01f);
-		ImGui::DragFloat3("spawnRotate", &group.module.spawnRotate.x, 0.01f);
+			EnumAdapter<StopCondition>::Combo("StopCondition", &group.stop.condition);
+			// 別のグループに依存する場合の設定
+			// 対象のグループのパーティクルがすべてなくなったら
+			if (group.stop.condition == StopCondition::OnParticleEmpty) {
+
+				// グループの数
+				int maxGroupCount = static_cast<int>(groups_.size());
+				// インデックスの範囲外制御
+				group.stop.dependency.systemIndex = std::clamp(group.stop.dependency.systemIndex, 0, maxGroupCount - 1);
+				// +1で余白
+				++maxGroupCount;
+				// グループからシステムを選択
+				ImGuiHelper::SelectableListFromStrings("Systems", &group.stop.dependency.systemIndex,
+					GetGroupNames(), maxGroupCount);
+
+				// 選択したシステムの中のグループ名を取得
+				std::vector<std::string> groupNames{};
+				for (const auto& systemGroup : groups_[group.stop.dependency.systemIndex].system->GetCPUGroup()) {
+
+					groupNames.emplace_back(systemGroup.name);
+				}
+
+				// システムが持っているグループの数、+1で余白
+				int maxCPUGroupCount = static_cast<int>(groupNames.size());
+				// インデックスの範囲外制御
+				group.stop.dependency.groupIndex = std::clamp(group.stop.dependency.systemIndex, 0, maxGroupCount - 1);
+				// +1で余白
+				++maxCPUGroupCount;
+				// 対象のシステムの中のグループを選択
+				ImGuiHelper::SelectableListFromStrings("Groups", &group.stop.dependency.groupIndex,
+					groupNames, maxCPUGroupCount);
+			}
+			ImGui::EndTabItem();
+		}
+		if (ImGui::BeginTabItem("ModuleSetting")) {
+
+			EnumAdapter<ParticleLifeEndMode>::Combo("LifeEndMode", &group.module.lifeEndMode);
+			ImGui::DragFloat3("spawnPos", &group.module.spawnPos.x, 0.01f);
+			ImGui::DragFloat3("spawnRotate", &group.module.spawnRotate.x, 0.01f);
+			ImGui::EndTabItem();
+		}
+		ImGui::EndTabBar();
 	}
 }
 
@@ -271,4 +300,14 @@ void GameEffectGroup::SaveLayout() {
 	data["displaySystemCount_"] = displaySystemCount_;
 
 	JsonAdapter::Save(baseJsonPath_ + "Layout/editorLayout.json", data);
+}
+
+std::vector<std::string> GameEffectGroup::GetGroupNames() const {
+
+	std::vector<std::string> groupNames{};
+	for (const auto& group : groups_) {
+
+		groupNames.emplace_back(group.name);
+	}
+	return groupNames;
 }

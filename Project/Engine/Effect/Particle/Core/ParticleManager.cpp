@@ -40,6 +40,7 @@
 // Transform
 #include <Engine/Effect/Particle/Module/Updater/Transform/ParticleUpdateRotationModule.h>
 #include <Engine/Effect/Particle/Module/Updater/Transform/ParticleUpdateScaleModule.h>
+#include <Engine/Effect/Particle/Module/Updater/Transform/ParticleUpdateTranslateModule.h>
 
 //============================================================================
 //	ParticleManager classMethods
@@ -127,6 +128,7 @@ void ParticleManager::RegisterModules() {
 	uRegistry.Register<ParticleUpdatePrimitiveModule>();
 	uRegistry.Register<ParticleUpdateTrailModule>();
 	uRegistry.Register<ParticleUpdateKeyframePathModule>();
+	uRegistry.Register<ParticleUpdateTranslateModule>();
 }
 
 void ParticleManager::Init(Asset* asset, ID3D12Device8* device,

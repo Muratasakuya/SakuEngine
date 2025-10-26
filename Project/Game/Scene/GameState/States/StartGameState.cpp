@@ -99,6 +99,10 @@ void StartGameState::Init(SceneView* sceneView) {
 	body->SetType(ColliderType::Type_Event);
 	body->SetTargetType(ColliderType::Type_Player);
 
+	// デバッグエフェクト
+	effectGroup_ = std::make_unique<EffectGroup>();
+	effectGroup_->Init("testEffect", "Effect");
+
 	// json適応
 	ApplyJson();
 }
@@ -106,6 +110,12 @@ void StartGameState::Init(SceneView* sceneView) {
 void StartGameState::Update([[maybe_unused]] SceneManager* sceneManager) {
 
 	const GameSceneState currentState = GameSceneState::Start;
+
+	//========================================================================
+	//	debug
+	//========================================================================
+
+	effectGroup_->Update();
 
 	//========================================================================
 	//	object

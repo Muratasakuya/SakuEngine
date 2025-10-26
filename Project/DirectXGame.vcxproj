@@ -226,14 +226,22 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Editor\Curve\CurveValueEditor.cpp">
       <SubType />
     </ClCompile>
-    <ClCompile Include="Engine\Effect\Game\GameEffect.cpp">
-      <SubType />
-    </ClCompile>
-    <ClCompile Include="Engine\Effect\Game\GameEffectGroup.cpp">
+    <ClCompile Include="Engine\Effect\Particle\Module\Updater\Transform\ParticleUpdateTranslateModule.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="Engine\Effect\Game\Helper\GameEffectCommandHelper.cpp">
+    <ClCompile Include="Engine\Effect\User\EffectGroup.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="Engine\Effect\User\GameEffect.cpp">
+      <SubType />
+    </ClCompile>
+    <ClCompile Include="Engine\Effect\User\GameEffectGroup.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="Engine\Effect\User\Helper\GameEffectCommandHelper.cpp">
       <SubType />
     </ClCompile>
     <ClCompile Include="Engine\Effect\Particle\Core\GPUParticleUpdater.cpp">
@@ -346,6 +354,30 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </ClCompile>
     <ClCompile Include="Engine\Effect\Trail\Editor\TrailEffectEditor.cpp">
       <SubType />
+    </ClCompile>
+    <ClCompile Include="Engine\Effect\User\Methods\EffectCommandRouter.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="Engine\Effect\User\Methods\EffectEmitController.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="Engine\Effect\User\Methods\EffectModuleBinder.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="Engine\Effect\User\Methods\EffectNode.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="Engine\Effect\User\Methods\EffectSequencer.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="Engine\Effect\User\Methods\EffectStopController.cpp">
+      <SubType>
+      </SubType>
     </ClCompile>
     <ClCompile Include="Engine\Object\Core\ObjectPoolManager.cpp" />
     <ClCompile Include="Engine\Collision\CollisionBody.cpp">
@@ -912,14 +944,50 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Editor\Curve\CurveValueEditor.h">
       <SubType />
     </ClInclude>
-    <ClInclude Include="Engine\Effect\Game\GameEffect.h">
-      <SubType />
-    </ClInclude>
-    <ClInclude Include="Engine\Effect\Game\GameEffectGroup.h">
+    <ClInclude Include="Engine\Effect\Particle\Module\Updater\Transform\ParticleUpdateTranslateModule.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Engine\Effect\Game\Helper\GameEffectCommandHelper.h">
+    <ClInclude Include="Engine\Effect\User\EffectGroup.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Engine\Effect\User\GameEffect.h">
+      <SubType />
+    </ClInclude>
+    <ClInclude Include="Engine\Effect\User\GameEffectGroup.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Engine\Effect\User\Methods\EffectCommandRouter.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Engine\Effect\User\Methods\EffectEmitController.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Engine\Effect\User\Methods\EffectModuleBinder.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Engine\Effect\User\Methods\EffectNode.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Engine\Effect\User\Methods\EffectSequencer.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Engine\Effect\User\Methods\EffectStopController.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Engine\Effect\User\Methods\EffectStructures.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Engine\Effect\User\Helper\GameEffectCommandHelper.h">
       <SubType />
     </ClInclude>
     <ClInclude Include="Engine\Effect\Particle\Command\ParticleCommand.h">

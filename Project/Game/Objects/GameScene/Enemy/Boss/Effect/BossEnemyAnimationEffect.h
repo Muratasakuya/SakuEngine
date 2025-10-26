@@ -3,7 +3,7 @@
 //============================================================================
 //	include
 //============================================================================
-#include <Engine/Effect/Game/GameEffect.h>
+#include <Engine/Effect/User/GameEffect.h>
 
 // front
 class BossEnemy;
