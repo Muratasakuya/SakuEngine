@@ -17,12 +17,14 @@ void ParticleSpawnPolygonVertexModule::SetCommand(const ParticleCommand& command
 
 			translation_ = *translation;
 		}
+		break;
 	}
 	case ParticleCommandID::SetRotation: {
 		if (const auto& rotation = std::get_if<Vector3>(&command.value)) {
 
 			emitterRotation_ = *rotation;
 		}
+		break;
 	}
 	case ParticleCommandID::SetBillboardRotation: {
 		if (const auto* matrix = std::get_if<Matrix4x4>(&command.value)) {
@@ -31,6 +33,7 @@ void ParticleSpawnPolygonVertexModule::SetCommand(const ParticleCommand& command
 			billboardRotation_ = *matrix;
 			useBillboardRotation_ = true;
 		}
+		break;
 	}
 	case ParticleCommandID::SetEmitFlag: {
 		if (const auto& flag = std::get_if<bool>(&command.value)) {
@@ -51,6 +54,7 @@ void ParticleSpawnPolygonVertexModule::SetCommand(const ParticleCommand& command
 				updateEnable_ = false;
 			}
 		}
+		break;
 	}
 	}
 }

@@ -4,6 +4,18 @@
 //	ParticleUpdateTranslateModule classMethods
 //============================================================================
 
+void ParticleUpdateTranslateModule::SetCommand(const ParticleCommand& command) {
+
+	switch (command.id) {
+	case ParticleCommandID::SetTranslation: {
+		if (const auto& translation = std::get_if<Vector3>(&command.value)) {
+
+			translation_ = *translation;
+		}
+	}
+	}
+}
+
 void ParticleUpdateTranslateModule::Init() {
 
 	// 初期化値
