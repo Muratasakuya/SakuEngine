@@ -26,17 +26,3 @@ void BossEnemyIState::LookTarget(BossEnemy& bossEnemy, const Vector3& target) {
 		Vector3(0.0f, 1.0f, 0.0f), bossEnemy.GetRotation(), rotationLerpRate_ * deltaTime);
 	bossEnemy.SetRotation(bossRotation);
 }
-
-Vector2 BossEnemyIState::ProjectToScreen(const Vector3& translation, const FollowCamera& camera) {
-
-	Matrix4x4 viewMatrix = camera.GetViewMatrix();
-	Matrix4x4 projectionMatrix = camera.GetProjectionMatrix();
-
-	Vector3 viewPos = Vector3::Transform(translation, viewMatrix);
-	Vector3 clipPos = Vector3::Transform(viewPos, projectionMatrix);
-
-	float screenX = (clipPos.x * 0.5f + 0.5f) * Config::kWindowWidthf;
-	float screenY = (1.0f - (clipPos.y * 0.5f + 0.5f)) * Config::kWindowHeightf;
-
-	return Vector2(screenX, screenY);
-}

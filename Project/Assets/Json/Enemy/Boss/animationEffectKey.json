@@ -14,7 +14,7 @@
             }
         },
         {
-            "object": "bossEnemyArmature",
+            "object": "<unlinked>",
             "action": "continuousAttack",
             "events": {
                 "Parry": [
@@ -26,6 +26,15 @@
                     6,
                     18,
                     46
+                ]
+            }
+        },
+        {
+            "object": "bossEnemyArmature",
+            "action": "jumpAttack",
+            "events": {
+                "Parry": [
+                    14
                 ]
             }
         },

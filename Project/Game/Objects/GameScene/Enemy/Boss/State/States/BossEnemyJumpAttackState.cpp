@@ -6,6 +6,7 @@
 #include <Engine/Core/Graphics/Renderer/LineRenderer.h>
 #include <Engine/Utility/Animation/LerpKeyframe.h>
 #include <Engine/Utility/Json/JsonAdapter.h>
+#include <Game/Camera/Follow/FollowCamera.h>
 #include <Game/Objects/GameScene/Enemy/Boss/Entity/BossEnemy.h>
 #include <Game/Objects/GameScene/Player/Entity/Player.h>
 
@@ -23,6 +24,7 @@ BossEnemyJumpAttackState::BossEnemyJumpAttackState() {
 		float posY = offsetY * static_cast<float>(i);
 		jumpKeyframes_.emplace_back(Vector3(0.0f, posY, 0.0f));
 	}
+	canExit_ = false;
 }
 
 void BossEnemyJumpAttackState::Enter(BossEnemy& bossEnemy) {
@@ -32,6 +34,16 @@ void BossEnemyJumpAttackState::Enter(BossEnemy& bossEnemy) {
 
 	// 最初の状態で初期化
 	currentState_ = State::Pre;
+
+	// 攻撃予兆を出す
+	Vector3 sign = bossEnemy.GetTranslation();
+	sign.y = 2.0f;
+	attackSign_->Emit(Math::ProjectToScreen(sign, *followCamera_));
+
+	// パリィ可能にする
+	bossEnemy.ResetParryTiming();
+	parryParam_.continuousCount = 1;
+	parryParam_.canParry = true;
 }
 
 void BossEnemyJumpAttackState::Update(BossEnemy& bossEnemy) {
@@ -74,6 +86,12 @@ void BossEnemyJumpAttackState::UpdatePre(BossEnemy& bossEnemy) {
 
 void BossEnemyJumpAttackState::UpdateJump(BossEnemy& bossEnemy) {
 
+	// パリィ攻撃のタイミングを伝える
+	if (bossEnemy.IsEventKey("Parry", 0)) {
+
+		bossEnemy.TellParryTiming();
+	}
+
 	// 座標を補間
 	Vector3 translation = bossEnemy.GetTranslation();
 	lerpTranslationXZ_.LerpValue(translation);
@@ -99,6 +117,7 @@ void BossEnemyJumpAttackState::Exit([[maybe_unused]] BossEnemy& bossEnemy) {
 
 	// リセット
 	canExit_ = false;
+	parryParam_.canParry = false;
 	lerpTranslationXZ_.Reset();
 }
 

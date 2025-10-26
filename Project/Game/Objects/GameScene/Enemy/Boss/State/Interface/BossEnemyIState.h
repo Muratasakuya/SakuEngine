@@ -73,6 +73,4 @@ protected:
 	// helper
 	// ボスがtargetを見る
 	void LookTarget(BossEnemy& bossEnemy, const Vector3& target);
-	// 3D座標をスクリーン座標に変換
-	Vector2 ProjectToScreen(const Vector3& translation, const FollowCamera& camera);
 };
