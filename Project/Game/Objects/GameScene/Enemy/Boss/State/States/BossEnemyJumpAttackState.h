@@ -54,6 +54,7 @@ private:
 
 	// 座標の補間、XとZだけ
 	SimpleAnimation<Vector3> lerpTranslationXZ_;
+	float targetDistance_; // プレイヤーから離す距離
 	// Y座標のジャンプ補間
 	const uint32_t jumpKeyframeCount_ = 4;
 	std::vector<Vector3> jumpKeyframes_;
@@ -66,4 +67,8 @@ private:
 	void UpdatePre(BossEnemy& bossEnemy);
 	// ジャンプ
 	void UpdateJump(BossEnemy& bossEnemy);
+
+	// helper
+	// 補間座標の設定
+	void SetLerpTranslation(const BossEnemy& bossEnemy);
 };

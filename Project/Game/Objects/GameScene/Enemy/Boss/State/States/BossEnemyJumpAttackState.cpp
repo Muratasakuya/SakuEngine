@@ -3,7 +3,9 @@
 //============================================================================
 //	include
 //============================================================================
+#include <Engine/Core/Graphics/Renderer/LineRenderer.h>
 #include <Engine/Utility/Animation/LerpKeyframe.h>
+#include <Engine/Utility/Json/JsonAdapter.h>
 #include <Game/Objects/GameScene/Enemy/Boss/Entity/BossEnemy.h>
 #include <Game/Objects/GameScene/Player/Entity/Player.h>
 
@@ -64,10 +66,9 @@ void BossEnemyJumpAttackState::UpdatePre(BossEnemy& bossEnemy) {
 		currentState_ = State::Jump;
 
 		// 補間座標の設定
-		// 開始座標
-		lerpTranslationXZ_.SetStart(bossEnemy.GetTranslation());
-		// 終了座標、プレイヤーの位置
-		lerpTranslationXZ_.SetEnd(player_->GetTranslation());
+		SetLerpTranslation(bossEnemy);
+		// 補間開始
+		lerpTranslationXZ_.Start();
 	}
 }
 
@@ -101,10 +102,33 @@ void BossEnemyJumpAttackState::Exit([[maybe_unused]] BossEnemy& bossEnemy) {
 	lerpTranslationXZ_.Reset();
 }
 
+void BossEnemyJumpAttackState::SetLerpTranslation(const BossEnemy& bossEnemy) {
+
+	// 補間座標の設定
+	// 開始座標
+	lerpTranslationXZ_.SetStart(bossEnemy.GetTranslation());
+	// 終了座標
+	Vector3 playerPos = player_->GetTranslation();
+	Vector3 direction = Vector3(playerPos - bossEnemy.GetTranslation()).Normalize();
+	lerpTranslationXZ_.SetEnd(playerPos - direction * targetDistance_);
+
+	for (uint32_t i = 0; i < jumpKeyframeCount_; ++i) {
+
+		// 分割した時のt値
+		float t = static_cast<float>(i) / static_cast<float>(jumpKeyframeCount_ - 1);
+		Vector3 translation = Vector3::Lerp(lerpTranslationXZ_.GetStart(), lerpTranslationXZ_.GetEnd(), t);
+		jumpKeyframes_[i].x = translation.x;
+		jumpKeyframes_[i].z = translation.z;
+	}
+}
+
 void BossEnemyJumpAttackState::ImGui([[maybe_unused]] const BossEnemy& bossEnemy) {
+
+	ImGui::Text("currentState: %s", EnumAdapter<State>::ToString(currentState_));
 
 	ImGui::DragFloat("nextAnimDuration", &nextAnimDuration_, 0.01f);
 	ImGui::DragFloat("rotationLerpRate", &rotationLerpRate_, 0.01f);
+	ImGui::DragFloat("targetDistance", &targetDistance_, 0.01f);
 
 	lerpTranslationXZ_.ImGui("LerpTranslationXZ");
 
@@ -119,24 +143,41 @@ void BossEnemyJumpAttackState::ImGui([[maybe_unused]] const BossEnemy& bossEnemy
 
 		ImGui::DragFloat3(key.c_str(), &keyframe.x, 0.01f);
 
+		LineRenderer::GetInstance()->DrawSphere(6, 1.0f, keyframe, Color::Cyan());
+
 		ImGui::PopID();
 	}
 
 	EnumAdapter<EasingType>::Combo("JumpEasing", &jumpEasing_);
+
+	// 補間座標の設定
+	SetLerpTranslation(bossEnemy);
 }
 
 void BossEnemyJumpAttackState::ApplyJson(const Json& data) {
 
 	nextAnimDuration_ = data.value("nextAnimDuration_", 0.08f);
 	rotationLerpRate_ = data.value("rotationLerpRate_", 0.08f);
+	targetDistance_ = data.value("targetDistance_", 0.08f);
 	lerpTranslationXZ_.FromJson(data.value("LerpTranslationXZ", Json()));
+
 	jumpEasing_ = EnumAdapter<EasingType>::FromString(data.value("jumpEasing_", "Linear")).value();
+	for (uint32_t i = 0; i < jumpKeyframeCount_; ++i) {
+
+		jumpKeyframes_[i] = Vector3::FromJson(data["JumpKeyframes"][i]);
+	}
 }
 
 void BossEnemyJumpAttackState::SaveJson(Json& data) {
 
 	data["nextAnimDuration_"] = nextAnimDuration_;
 	data["rotationLerpRate_"] = rotationLerpRate_;
+	data["targetDistance_"] = targetDistance_;
 	lerpTranslationXZ_.ToJson(data["LerpTranslationXZ"]);
+
 	data["jumpEasing_"] = EnumAdapter<EasingType>::ToString(jumpEasing_);
+	for (uint32_t i = 0; i < jumpKeyframeCount_; ++i) {
+
+		data["JumpKeyframes"][i] = jumpKeyframes_[i].ToJson();
+	}
 }

@@ -68,6 +68,8 @@ public:
 	bool IsFinished() const { return isFinished_; }
 
 	float GetProgress() const;
+	const T& GetStart() const { return move_.start; }
+	const T& GetEnd() const { return move_.end; }
 private:
 	//========================================================================
 	//	private Methods

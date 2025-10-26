@@ -73,6 +73,61 @@
         "nextAnimDuration_": 0.3199999928474426,
         "rotationLerpRate_": 8.0
     },
+    "JumpAttack": {
+        "JumpKeyframes": [
+            {
+                "x": -33.91184997558594,
+                "y": 0.0,
+                "z": -138.81715393066406
+            },
+            {
+                "x": -32.990020751953125,
+                "y": 20.0,
+                "z": -124.84716033935547
+            },
+            {
+                "x": -32.06818771362305,
+                "y": 18.299999237060547,
+                "z": -110.8771743774414
+            },
+            {
+                "x": -31.146358489990234,
+                "y": 0.0,
+                "z": -96.90718078613281
+            }
+        ],
+        "LerpTranslationXZ": {
+            "Loop": {
+                "loop": {
+                    "loopCount": 1,
+                    "type": "Repeat"
+                }
+            },
+            "ReturnTimer": {
+                "easeingType_": "Linear",
+                "target_": 0.0
+            },
+            "Timer": {
+                "easeingType_": "EaseInExpo",
+                "target_": 0.7200000286102295
+            },
+            "move_.end": {
+                "x": -31.146358489990234,
+                "y": 0.6222410798072815,
+                "z": -96.90718078613281
+            },
+            "move_.start": {
+                "x": -33.91184997558594,
+                "y": 0.0,
+                "z": -138.81715393066406
+            },
+            "useReturnTimer_": false
+        },
+        "jumpEasing_": "EaseInQuad",
+        "nextAnimDuration_": 0.1599999964237213,
+        "rotationLerpRate_": 8.0,
+        "targetDistance_": 12.0
+    },
     "LightAttack": {
         "attackOffsetTranslation_": -18.899999618530273,
         "easingType_": 4,

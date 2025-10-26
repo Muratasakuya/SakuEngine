@@ -469,7 +469,7 @@ void BossEnemyStateController::ChooseNextStateDebug() {
 	// 連続同一状態の抑制
 	if (1 < combo.sequence.size() && !combo.allowRepeat && nextState == current_) {
 
-		// 
+		// コンボ最後まで行ったらリセット
 		sequenceIndex = (sequenceIndex + 1) % combo.sequence.size();
 		nextState = combo.sequence[sequenceIndex];
 	}
