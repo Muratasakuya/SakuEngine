@@ -6,6 +6,7 @@
 #include <Engine/Core/Graphics/Renderer/LineRenderer.h>
 #include <Engine/Utility/Enum/EnumAdapter.h>
 #include <Game/Objects/GameScene/Enemy/Boss/Entity/BossEnemy.h>
+#include <Game/Objects/GameScene/Player/Entity/Player.h>
 
 //============================================================================
 //	BossEnemyProjectileAttackState classMethods
@@ -49,6 +50,9 @@ void BossEnemyProjectileAttackState::Enter(BossEnemy& bossEnemy) {
 
 void BossEnemyProjectileAttackState::Update(BossEnemy& bossEnemy) {
 
+	// 処理中は常にプレイヤーの方を向くようにしておく
+	LookTarget(bossEnemy, player_->GetTranslation());
+
 	// 状態に応じて更新
 	switch (currentState_) {
 	case BossEnemyProjectileAttackState::State::Pre:
@@ -77,70 +81,163 @@ void  BossEnemyProjectileAttackState::UpdatePre(BossEnemy& bossEnemy) {
 		// 次の状態へ
 		currentState_ = State::Launch;
 
-		// 発生起動エフェクト開始
-
+		// 発生起動エフェクト前処理
+		BeginLaunchPhase(bossEnemy);
 	}
 }
 
 void  BossEnemyProjectileAttackState::UpdateLaunch(BossEnemy& bossEnemy) {
 
-	// 発生時間を更新
+
+	// 発生時間を更新する
 	launchTimer_.Update();
 
-	// 時間経過終了後、弾を発射させる
+	// 経過進捗で等間隔に発生させる
+	uint32_t count = phaseBulletCounts_[editingPhase_];
+	for (uint32_t i = 0; i < count; ++i) {
+
+		// 発生していなければ
+		if (!launchEmited_[i]) {
+
+			// i番目の時間を計算
+			float t = static_cast<float>(i + 1) / static_cast<float>(count);
+			// 発生時間に達していたら発生させる
+			if (t <= launchTimer_.t_) {
+
+				// 発生起動エフェクト発生
+				launchEffect_->Emit(launchPositions_[launchIndices_[i]]);
+				// 発生済み
+				launchEmited_[i] = true;
+			}
+		}
+	}
+
+	// 時間経過後弾を発生させる
 	if (launchTimer_.IsReached()) {
 
 		// 次の状態へ
 		currentState_ = State::Attack;
+
+		// 攻撃エフェクト前処理
+		BeginAttackPhase(bossEnemy);
 	}
 }
 
 void  BossEnemyProjectileAttackState::UpdateAttack(BossEnemy& bossEnemy) {
 
-	// 攻撃時間を更新
-	attackTimer_.Update();
+	// 弾の数と一発の弾の攻撃時間を目標時間にする
+	uint32_t count = phaseBulletCounts_[editingPhase_];
+	attackTimer_.Update(bulletAttackDuration_ * static_cast<float>(count));
 
-	// 時間経過終了後、状態を終了可能にする
+	// プレイヤーの座標
+	Vector3 playerPos = player_->GetTranslation();
+	for (uint32_t i = 0; i < count; ++i) {
+
+		// 発生していなければ
+		if (!bulletEmited_[i]) {
+
+			// i番目の時間を計算
+			float t = static_cast<float>(i + 1) / static_cast<float>(count);
+			if (t <= attackTimer_.t_) {
+
+				// 発生座標
+				Vector3 start = launchPositions_[launchIndices_[i]];
+
+				// 弾エフェクト発生
+				bulletEffect_->Emit(start);
+				// 発生位置、目標座標を設定
+				std::vector<Vector3> keys = { start, playerPos };
+				bulletEffect_->SetKeyframePath(bulletParticleNodeKey_, keys);
+				// 発生済み
+				bulletEmited_[i] = true;
+			}
+		}
+	}
+
+	// 時間経過後状態を終了する
 	if (attackTimer_.IsReached()) {
 
 		canExit_ = true;
 	}
 }
 
+void BossEnemyProjectileAttackState::BeginLaunchPhase(BossEnemy& bossEnemy) {
+
+	// 発生位置を設定する
+	SetLaunchPositions(bossEnemy, editingPhase_);
+	// 発生順序のインデックスを設定する
+	SetLeftToRightIndices(bossEnemy);
+	// 発生済みフラグをリセット
+	launchEmited_.assign(phaseBulletCounts_[editingPhase_], false);
+}
+
+void BossEnemyProjectileAttackState::BeginAttackPhase(BossEnemy& bossEnemy) {
+
+	// 発生済みフラグをリセット
+	bulletEmited_.assign(phaseBulletCounts_[editingPhase_], false);
+}
+
+void BossEnemyProjectileAttackState::SetLeftToRightIndices(const BossEnemy& bossEnemy) {
+
+	launchIndices_.clear();
+	for (uint32_t i = 0; i < static_cast<uint32_t>(launchPositions_.size()); ++i) {
+
+		launchIndices_.emplace_back(static_cast<int32_t>(i));
+	}
+
+	// 中心
+	Vector3 center = bossEnemy.GetTranslation();
+	center.y = launchTopPosY_;
+
+	// y軸の向きのベクトルを取得
+	Vector3 forward = bossEnemy.GetTransform().GetForward();
+	forward.y = 0.0f;
+	forward = forward.Normalize();
+	Vector3 right = Vector3(forward.z, 0.0f, -forward.x);
+
+	// 座標を方向ベクトルに射影して短い方からソートする
+	std::sort(launchIndices_.begin(), launchIndices_.end(),
+		[&](uint32_t a, uint32_t b) {
+
+			float projectionA = Vector3::Dot(launchPositions_[a] - center, right);
+			float projectionB = Vector3::Dot(launchPositions_[b] - center, right);
+			return projectionA < projectionB; });
+}
+
 void BossEnemyProjectileAttackState::SetLaunchPositions(const BossEnemy& bossEnemy, int32_t phaseIndex) {
 
 	// 対象フェーズの弾数
 	phaseIndex = std::clamp(phaseIndex, 0, static_cast<int32_t>(phaseBulletCounts_.size() - 1));
-	uint32_t count = phaseBulletCounts_[phaseIndex];
+	launchPositions_.clear();
 
 	// 中心位置、Y座標は固定
 	Vector3 center = bossEnemy.GetTranslation();
 	center.y = launchTopPosY_;
 
-	launchPositions_.clear();
+	// フェーズの左右段数
+	uint32_t half = phaseBulletCounts_[phaseIndex] / 2;
 
-	// 真ん中
-	launchPositions_.emplace_back(center);
+	// y軸の向きのベクトルを取得
+	Vector3 forward = bossEnemy.GetTransform().GetForward();
+	forward.y = 0.0f;
+	forward = forward.Normalize();
+	Vector3 right = Vector3(forward.z, 0.0f, -forward.x);
+	// 絶対値のxオフセット、y,zはそのまま
+	Vector3 step = Vector3(std::fabs(launchOffsetPos_.x), launchOffsetPos_.y, launchOffsetPos_.z);
 
-	// 半分の数
-	uint32_t half = static_cast<uint32_t>(count / 2);
-
-	// xは左右対称にするため絶対値
-	Vector3 offset = Vector3(std::fabs(launchOffsetPos_.x), launchOffsetPos_.y, launchOffsetPos_.z);
-
-	// 左右対象にオフセットをかける
+	// 真ん中の発生位置
+	launchPositions_.push_back(center);
+	Vector3 up = Vector3(0.0f, 1.0f, 0.0f);
 	for (uint32_t i = 1; i <= half; ++i) {
 
-		// オフセット計算
-		Vector3 delta = offset * static_cast<float>(i);
+		// 左右のオフセット距離
+		Vector3 offset = step * static_cast<float>(i);
+		// 差分
+		Vector3 delta = right * offset.x + up * offset.y + forward * offset.z;
 
-		// 左右の発生位置
-		Vector3 left = { center.x - delta.x, center.y + delta.y, center.z + delta.z };
-		Vector3 right = { center.x + delta.x, center.y + delta.y, center.z + delta.z };
-
-		// 追加
-		launchPositions_.push_back(left);
-		launchPositions_.push_back(right);
+		// 左右の発生位置を設定
+		launchPositions_.emplace_back(center - right * offset.x + up * offset.y + forward * offset.z);
+		launchPositions_.emplace_back(center + right * offset.x + up * offset.y + forward * offset.z);
 	}
 }
 
@@ -165,6 +262,7 @@ void BossEnemyProjectileAttackState::ImGui(const BossEnemy& bossEnemy) {
 	ImGui::Text("currentState: %s", EnumAdapter<State>::ToString(currentState_));
 
 	ImGui::DragInt("editingPhase", &editingPhase_, 1, 0, static_cast<uint32_t>(phaseBulletCounts_.size() - 1));
+	ImGui::DragFloat("rotationLerpRate", &rotationLerpRate_, 0.01f);
 
 	ImGui::SeparatorText("Launch");
 
@@ -177,22 +275,16 @@ void BossEnemyProjectileAttackState::ImGui(const BossEnemy& bossEnemy) {
 
 	ImGui::DragFloat("bulletAttackDuration", &bulletAttackDuration_, 0.01f);
 
-	ImGui::DragFloat3("editStartPos", &editStartPos_.x, 0.01f);
-	ImGui::DragFloat3("editEndPos_", &editEndPos_.x, 0.01f);
-	if (ImGui::Button("DebugEmitOnce")) {
-
-		std::vector<Vector3> debugPositions;
-		debugPositions.emplace_back(editStartPos_);
-		debugPositions.emplace_back(editEndPos_);
-
-		// デバッグ発生
-		bulletEffect_->Emit(editStartPos_);
-		bulletEffect_->SetKeyframePath(bulletParticleNodeKey_, debugPositions);
-	}
-
 	// 座標の更新
 	SetLaunchPositions(bossEnemy, editingPhase_);
 
+	ImGui::SeparatorText("Debug");
+
+	int index = 0;
+	for (const auto& emited : bulletEmited_) {
+
+		ImGui::Text("bulletEmited[%d]: %s", index++, emited ? "true" : "false");
+	}
 	// 現在発生させる位置のデバッグ表示
 	for (const auto& pos : launchPositions_) {
 
@@ -204,6 +296,7 @@ void BossEnemyProjectileAttackState::ApplyJson(const Json& data) {
 
 	launchTimer_.FromJson(data.value("LaunchTimer", Json()));
 	bulletAttackDuration_ = data.value("bulletAttackDuration", 1.0f);
+	rotationLerpRate_ = data.value("rotationLerpRate_", 1.0f);
 	launchTopPosY_ = data.value("launchTopPosY", 4.0f);
 	launchOffsetPos_ = Vector3::FromJson(data.value("launchOffsetPos", Json()));
 }
@@ -212,6 +305,7 @@ void BossEnemyProjectileAttackState::SaveJson(Json& data) {
 
 	launchTimer_.ToJson(data["LaunchTimer"]);
 	data["bulletAttackDuration"] = bulletAttackDuration_;
+	data["rotationLerpRate_"] = rotationLerpRate_;
 	data["launchTopPosY"] = launchTopPosY_;
 	data["launchOffsetPos"] = launchOffsetPos_.ToJson();
 }

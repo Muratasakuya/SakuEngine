@@ -8,6 +8,7 @@
 
 //============================================================================
 //	BossEnemyProjectileAttackState class
+//	弾を使って攻撃する状態
 //============================================================================
 class BossEnemyProjectileAttackState :
 	public BossEnemyIState {
@@ -54,6 +55,8 @@ private:
 
 	// フェーズに応じた弾を飛ばす数、奇数個
 	std::vector<uint32_t> phaseBulletCounts_;
+	// 発生させる順番のインデックス
+	std::vector<int32_t> launchIndices_;
 
 	// 発生しきる時間、0.0f~1.0fの間に等間隔に発生
 	StateTimer launchTimer_;
@@ -78,6 +81,10 @@ private:
 	std::unique_ptr<EffectGroup> bulletEffect_;
 	const std::string bulletParticleNodeKey_ = "bossAttackProjectile";
 
+	// エフェクト発生済みフラグ
+	std::vector<bool> launchEmited_;
+	std::vector<bool> bulletEmited_;
+
 	// エディター
 	int32_t editingPhase_; // 編集中のフェーズ
 	Vector3 editStartPos_; // デバッグ用開始位置
@@ -91,6 +98,10 @@ private:
 	void UpdateAttack(BossEnemy& bossEnemy);
 
 	// helper
+	void BeginLaunchPhase(BossEnemy& bossEnemy);
+	void BeginAttackPhase(BossEnemy& bossEnemy);
+	// 発生順序のインデックスを設定
+	void SetLeftToRightIndices(const BossEnemy& bossEnemy);
 	// 発生位置を設定
 	void SetLaunchPositions(const BossEnemy& bossEnemy, int32_t phaseIndex);
 };
