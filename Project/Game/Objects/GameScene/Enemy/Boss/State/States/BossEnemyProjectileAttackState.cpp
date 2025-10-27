@@ -177,6 +177,19 @@ void BossEnemyProjectileAttackState::ImGui(const BossEnemy& bossEnemy) {
 
 	ImGui::DragFloat("bulletAttackDuration", &bulletAttackDuration_, 0.01f);
 
+	ImGui::DragFloat3("editStartPos", &editStartPos_.x, 0.01f);
+	ImGui::DragFloat3("editEndPos_", &editEndPos_.x, 0.01f);
+	if (ImGui::Button("DebugEmitOnce")) {
+
+		std::vector<Vector3> debugPositions;
+		debugPositions.emplace_back(editStartPos_);
+		debugPositions.emplace_back(editEndPos_);
+
+		// デバッグ発生
+		bulletEffect_->Emit(editStartPos_);
+		bulletEffect_->SetKeyframePath(bulletParticleNodeKey_, debugPositions);
+	}
+
 	// 座標の更新
 	SetLaunchPositions(bossEnemy, editingPhase_);
 

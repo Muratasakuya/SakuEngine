@@ -56,6 +56,63 @@
             "key": "bossAttackProjectileGenerator",
             "name": "bossAttackProjectileGenerator",
             "startOffset": 0.0
+        },
+        {
+            "Emit": {
+                "Mode": "Once",
+                "count": 1,
+                "delay": 0.0,
+                "duration": 0.0,
+                "interval": 0.0
+            },
+            "Module": {
+                "LifeEndMode": "Advance",
+                "PosePreset": "None",
+                "posOption": "World",
+                "sendLifeEndMode": false,
+                "sendSpawnerRotation": false,
+                "sendSpawnerTranslation": false,
+                "sendUpdaterKeyPath": false,
+                "sendUpdaterRotation": false,
+                "sendUpdaterTranslate": false,
+                "spawnPos": {
+                    "x": 0.0,
+                    "y": 0.4000000059604645,
+                    "z": 0.0
+                },
+                "spawnRotate": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "spawnRotateOption": "None",
+                "spawnerScaleEnable": false,
+                "spawnerScaleValue": 1.0,
+                "updateRotate": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "updateRotateOption": "None",
+                "updaterScaleEnable": false,
+                "updaterScaleValue": 1.0
+            },
+            "ParticleSystem": {
+                "path": "Particle/Boss/bossAttackProjectile.json"
+            },
+            "StartAfter": {
+                "Condition": "None",
+                "groupIndex": -1,
+                "nodeKey": ""
+            },
+            "Stop": {
+                "Condition": "None",
+                "emptyGroupIndex": -1,
+                "emptyNodeKey": ""
+            },
+            "key": "bossAttackProjectile",
+            "name": "bossAttackProjectile",
+            "startOffset": 0.0
         }
     ],
     "parentAnchorId_": 0,

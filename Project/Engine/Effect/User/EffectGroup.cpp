@@ -8,6 +8,8 @@
 #include <Engine/Effect/Particle/Core/ParticleManager.h>
 #include <Engine/Effect/Particle/System/ParticleSystem.h>
 #include <Engine/Effect/User/Methods/EffectSequencer.h>
+#include <Engine/Effect/User/Methods/EffectCommandRouter.h>
+#include <Engine/Effect/User/Methods/EffectModuleBinder.h>
 
 //============================================================================
 //	EffectGroup classMethods
@@ -88,6 +90,23 @@ void EffectGroup::ClearParent() {
 
 	parentAnchorId_ = 0;
 	parentAnchorName_.clear();
+}
+
+void EffectGroup::SetKeyframePath(const std::string& nodeKey, const std::vector<Vector3>& keys) {
+
+	for (auto& node : nodes_) {
+		if (node.key == nodeKey && node.system) {
+
+			ParticleCommand command = EffectModuleBinder::MakeCommand<std::vector<Vector3>>(
+				ParticleCommandTarget::Updater, ParticleCommandID::SetKeyframePath, keys);
+			// KeyframePathに設定
+			command.filter.updaterId = ParticleUpdateModuleID::KeyframePath;
+
+			// コマンド送信
+			EffectCommandRouter::Send(node.system, command);
+			break;
+		}
+	}
 }
 
 bool EffectGroup::IsFinishedAllNode() const {

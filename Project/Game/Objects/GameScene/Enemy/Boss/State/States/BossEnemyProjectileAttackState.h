@@ -76,9 +76,12 @@ private:
 	std::unique_ptr<EffectGroup> launchEffect_;
 	// 弾
 	std::unique_ptr<EffectGroup> bulletEffect_;
+	const std::string bulletParticleNodeKey_ = "bossAttackProjectile";
 
 	// エディター
 	int32_t editingPhase_; // 編集中のフェーズ
+	Vector3 editStartPos_; // デバッグ用開始位置
+	Vector3 editEndPos_;   // デバッグ用終了位置
 
 	//--------- functions ----------------------------------------------------
 

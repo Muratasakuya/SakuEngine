@@ -55,6 +55,9 @@ public:
 
 	// ワールド座標を設定
 	void SetWorldPos(const Vector3& worldPos) { effectWorldPos_ = worldPos; }
+
+	// 特定のノードへのコマンド設定
+	void SetKeyframePath(const std::string& nodeKey, const std::vector<Vector3>& keys);
 	
 	// すべてのノードが処理を終えているか
 	bool IsFinishedAllNode() const;

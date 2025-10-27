@@ -30,6 +30,14 @@ void ParticleUpdateKeyframePathModule::SetCommand(const ParticleCommand& command
 		}
 		break;
 	}
+	case ParticleCommandID::SetKeyframePath: {
+		if (const auto& key = std::get_if<std::vector<Vector3>>(&command.value)) {
+
+			// キーの位置全て設定
+			keys_ = *key;
+		}
+		break;
+	}
 	}
 }
 
