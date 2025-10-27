@@ -20,20 +20,27 @@ BossEnemyProjectileAttackState::BossEnemyProjectileAttackState(uint32_t phaseCou
 	launchEffect_->Init("launchProjectileEffect", "BossEnemyEffect");
 	launchEffect_->LoadJson("GameEffectGroup/BossEnemy/bossEnemylaunchProjectileEffect.json");
 	// 弾エフェクト
-	bulletEffect_ = std::make_unique<EffectGroup>();
-	bulletEffect_->Init("bossEnemyProjectileBulletEffect", "BossEnemyEffect");
-	bulletEffect_->LoadJson("GameEffectGroup/BossEnemy/bossEnemyProjectileBulletEffect.json");
+	for (auto& effect : bulletEffects_) {
+
+		effect = std::make_unique<EffectGroup>();
+		effect->Init("bossEnemyProjectileBulletEffect", "BossEnemyEffect");
+		effect->LoadJson("GameEffectGroup/BossEnemy/bossEnemyProjectileBulletEffect.json");
+	}
 
 	for (uint32_t index = 0; index < phaseCount + 1; ++index) {
 
 		// フェーズに応じた弾の数
 		// 3から5だけ
-		phaseBulletCounts_.emplace_back(std::clamp(3 + index * 2, uint32_t(3), uint32_t(5)));
+		phaseBulletCounts_.emplace_back(std::clamp(kMinBulletCount_ + index * 2,
+			kMinBulletCount_, kMaxBulletCount_));
 	}
 	canExit_ = false;
 }
 
 void BossEnemyProjectileAttackState::Enter(BossEnemy& bossEnemy) {
+
+	// アニメーションを再生
+	bossEnemy.SetNextAnimation("bossEnemy_projectileAttack", false, nextAnimDuration_);
 
 	// 初期状態を設定
 	currentState_ = State::Launch;
@@ -52,7 +59,7 @@ void BossEnemyProjectileAttackState::Update(BossEnemy& bossEnemy) {
 	case BossEnemyProjectileAttackState::State::Launch:
 
 		// 発生起動更新
-		UpdateLaunch(bossEnemy);
+		UpdateLaunch();
 		break;
 	case BossEnemyProjectileAttackState::State::Attack:
 
@@ -62,7 +69,7 @@ void BossEnemyProjectileAttackState::Update(BossEnemy& bossEnemy) {
 	}
 }
 
-void BossEnemyProjectileAttackState::UpdateLaunch(BossEnemy& bossEnemy) {
+void BossEnemyProjectileAttackState::UpdateLaunch() {
 
 	// 発生時間を更新する
 	launchTimer_.Update();
@@ -94,11 +101,12 @@ void BossEnemyProjectileAttackState::UpdateLaunch(BossEnemy& bossEnemy) {
 		currentState_ = State::Attack;
 
 		// 攻撃エフェクト前処理
-		BeginAttackPhase(bossEnemy);
+		// 発生済みフラグをリセット
+		bulletEmited_.assign(phaseBulletCounts_[editingPhase_], false);
 	}
 }
 
-void  BossEnemyProjectileAttackState::UpdateAttack(BossEnemy& bossEnemy) {
+void  BossEnemyProjectileAttackState::UpdateAttack(const BossEnemy& bossEnemy) {
 
 	// 弾の数と一発の弾の攻撃時間を目標時間にする
 	uint32_t count = phaseBulletCounts_[editingPhase_];
@@ -115,14 +123,19 @@ void  BossEnemyProjectileAttackState::UpdateAttack(BossEnemy& bossEnemy) {
 			float t = static_cast<float>(i + 1) / static_cast<float>(count);
 			if (t <= attackTimer_.t_) {
 
+				// 目標への向き
+				Vector3 direction = Vector3(playerPos - bossEnemy.GetTranslation()).Normalize();
+				// 目標座標からのオフセットを加える
+				Vector3 target = playerPos + direction * targetDistance_;
+
 				// 発生座標
 				Vector3 start = launchPositions_[launchIndices_[i]];
 
 				// 弾エフェクト発生
-				bulletEffect_->Emit(start);
+				bulletEffects_[i]->Emit(start);
 				// 発生位置、目標座標を設定
-				std::vector<Vector3> keys = { start, playerPos };
-				bulletEffect_->SetKeyframePath(bulletParticleNodeKey_, keys);
+				std::vector<Vector3> keys = { start, target };
+				bulletEffects_[i]->SetKeyframePath(bulletParticleNodeKey_, keys);
 				// 発生済み
 				bulletEmited_[i] = true;
 			}
@@ -144,12 +157,6 @@ void BossEnemyProjectileAttackState::BeginLaunchPhase(BossEnemy& bossEnemy) {
 	SetLeftToRightIndices(bossEnemy);
 	// 発生済みフラグをリセット
 	launchEmited_.assign(phaseBulletCounts_[editingPhase_], false);
-}
-
-void BossEnemyProjectileAttackState::BeginAttackPhase(BossEnemy& bossEnemy) {
-
-	// 発生済みフラグをリセット
-	bulletEmited_.assign(phaseBulletCounts_[editingPhase_], false);
 }
 
 void BossEnemyProjectileAttackState::SetLeftToRightIndices(const BossEnemy& bossEnemy) {
@@ -216,14 +223,17 @@ void BossEnemyProjectileAttackState::SetLaunchPositions(const BossEnemy& bossEne
 	}
 }
 
-void BossEnemyProjectileAttackState::UpdateAlways(BossEnemy& bossEnemy) {
+void BossEnemyProjectileAttackState::UpdateAlways([[maybe_unused]] BossEnemy& bossEnemy) {
 
 	// エフェクトの更新
 	launchEffect_->Update();
-	bulletEffect_->Update();
+	for (const auto& effect : bulletEffects_) {
+
+		effect->Update();
+	}
 }
 
-void BossEnemyProjectileAttackState::Exit(BossEnemy& bossEnemy) {
+void BossEnemyProjectileAttackState::Exit([[maybe_unused]] BossEnemy& bossEnemy) {
 
 	// リセット
 	canExit_ = false;
@@ -237,6 +247,7 @@ void BossEnemyProjectileAttackState::ImGui(const BossEnemy& bossEnemy) {
 
 	ImGui::DragInt("editingPhase", &editingPhase_, 1, 0, static_cast<uint32_t>(phaseBulletCounts_.size() - 1));
 	ImGui::DragFloat("rotationLerpRate", &rotationLerpRate_, 0.01f);
+	ImGui::DragFloat("nextAnimDuration", &nextAnimDuration_, 0.01f);
 
 	ImGui::SeparatorText("Launch");
 
@@ -248,6 +259,7 @@ void BossEnemyProjectileAttackState::ImGui(const BossEnemy& bossEnemy) {
 	ImGui::SeparatorText("Attack");
 
 	ImGui::DragFloat("bulletAttackDuration", &bulletAttackDuration_, 0.01f);
+	ImGui::DragFloat("targetDistance", &targetDistance_, 0.01f);
 
 	// 座標の更新
 	SetLaunchPositions(bossEnemy, editingPhase_);
@@ -259,6 +271,7 @@ void BossEnemyProjectileAttackState::ImGui(const BossEnemy& bossEnemy) {
 
 		ImGui::Text("bulletEmited[%d]: %s", index++, emited ? "true" : "false");
 	}
+
 	// 現在発生させる位置のデバッグ表示
 	for (const auto& pos : launchPositions_) {
 
@@ -270,7 +283,9 @@ void BossEnemyProjectileAttackState::ApplyJson(const Json& data) {
 
 	launchTimer_.FromJson(data.value("LaunchTimer", Json()));
 	bulletAttackDuration_ = data.value("bulletAttackDuration", 1.0f);
+	targetDistance_ = data.value("targetDistance_", 1.0f);
 	rotationLerpRate_ = data.value("rotationLerpRate_", 1.0f);
+	nextAnimDuration_ = data.value("nextAnimDuration_", 0.16f);
 	launchTopPosY_ = data.value("launchTopPosY", 4.0f);
 	launchOffsetPos_ = Vector3::FromJson(data.value("launchOffsetPos", Json()));
 }
@@ -279,7 +294,9 @@ void BossEnemyProjectileAttackState::SaveJson(Json& data) {
 
 	launchTimer_.ToJson(data["LaunchTimer"]);
 	data["bulletAttackDuration"] = bulletAttackDuration_;
+	data["targetDistance_"] = targetDistance_;
 	data["rotationLerpRate_"] = rotationLerpRate_;
+	data["nextAnimDuration_"] = nextAnimDuration_;
 	data["launchTopPosY"] = launchTopPosY_;
 	data["launchOffsetPos"] = launchOffsetPos_.ToJson();
 }

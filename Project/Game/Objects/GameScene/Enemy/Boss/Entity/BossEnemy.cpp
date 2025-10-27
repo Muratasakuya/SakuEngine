@@ -43,6 +43,7 @@ void BossEnemy::InitAnimations() {
 	animation_->SetAnimationData("bossEnemy_rushAttack");
 	animation_->SetAnimationData("bossEnemy_strongAttack");
 	animation_->SetAnimationData("bossEnemy_strongAttackParrySign");
+	animation_->SetAnimationData("bossEnemy_projectileAttack");
 	animation_->SetAnimationData("bossEnemy_stun");
 	animation_->SetAnimationData("bossEnemy_stunUpdate");
 	animation_->SetAnimationData("bossEnemy_teleport");

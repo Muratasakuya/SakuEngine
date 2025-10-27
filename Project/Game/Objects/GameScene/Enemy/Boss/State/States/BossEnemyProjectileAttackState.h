@@ -71,11 +71,15 @@ private:
 
 	// 実際に発生させる位置
 	std::vector<Vector3> launchPositions_;
+	// 目標位置からのオフセット
+	float targetDistance_;
 
 	// 発生起動エフェクト
 	std::unique_ptr<EffectGroup> launchEffect_;
 	// 弾
-	std::unique_ptr<EffectGroup> bulletEffect_;
+	static const uint32_t kMinBulletCount_ = 3;
+	static const uint32_t kMaxBulletCount_ = 5;
+	std::array<std::unique_ptr<EffectGroup>, kMaxBulletCount_> bulletEffects_;
 	const std::string bulletParticleNodeKey_ = "bossAttackProjectile";
 
 	// エフェクト発生済みフラグ
@@ -90,13 +94,11 @@ private:
 	//--------- functions ----------------------------------------------------
 
 	// update
-	void UpdatePre(BossEnemy& bossEnemy);
-	void UpdateLaunch(BossEnemy& bossEnemy);
-	void UpdateAttack(BossEnemy& bossEnemy);
+	void UpdateLaunch();
+	void UpdateAttack(const BossEnemy& bossEnemy);
 
 	// helper
 	void BeginLaunchPhase(BossEnemy& bossEnemy);
-	void BeginAttackPhase(BossEnemy& bossEnemy);
 	// 発生順序のインデックスを設定
 	void SetLeftToRightIndices(const BossEnemy& bossEnemy);
 	// 発生位置を設定
