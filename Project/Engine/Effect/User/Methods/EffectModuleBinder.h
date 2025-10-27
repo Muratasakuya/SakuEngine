@@ -28,12 +28,6 @@ public:
 	static void ApplyUpdate(ParticleSystem* system, const EffectModuleSetting& module,
 		const Vector3& parentTranslation, const Quaternion& parentRotation,
 		const EffectCommandContext& context);
-private:
-	//========================================================================
-	//	private Methods
-	//========================================================================
-
-	//--------- functions ----------------------------------------------------
 
 	// 引き数で受け取った値でコマンドを作成して返す
 	template <typename T>

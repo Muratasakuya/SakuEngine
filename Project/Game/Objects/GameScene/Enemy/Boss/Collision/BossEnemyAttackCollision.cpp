@@ -31,6 +31,7 @@ void BossEnemyAttackCollision::Init() {
 	attackParameter.windows.emplace_back();
 	table_.emplace(BossEnemyState::LightAttack, attackParameter);
 	table_.emplace(BossEnemyState::StrongAttack, attackParameter);
+	table_.emplace(BossEnemyState::JumpAttack, attackParameter);
 }
 
 void BossEnemyAttackCollision::Update(const Transform3D& transform) {
@@ -126,7 +127,7 @@ void BossEnemyAttackCollision::ApplyJson(const Json& data) {
 		parameter.centerOffset = JsonAdapter::ToObject<Vector3>(value["centerOffset"]);
 		parameter.size = JsonAdapter::ToObject<Vector3>(value["size"]);
 		if (value.contains("hitWindows")) {
-			for (auto& w : value["hitWindows"]) {
+			for (const auto& w : value["hitWindows"]) {
 
 				TimeWindow time;
 				time.on = w.value("onTime", 0.0f);
@@ -134,7 +135,6 @@ void BossEnemyAttackCollision::ApplyJson(const Json& data) {
 				parameter.windows.emplace_back(time);
 			}
 		}
-
 		table_[state] = parameter;
 	}
 }
@@ -163,13 +163,7 @@ void BossEnemyAttackCollision::SaveJson(Json& data) {
 
 BossEnemyState BossEnemyAttackCollision::GetBossEnemyStateFromName(const std::string& name) {
 
-	for (int i = 0; i < static_cast<int>(BossEnemyState::RushAttack); ++i) {
-		if (name == EnumAdapter<BossEnemyState>::GetEnumName(i)) {
-
-			return static_cast<BossEnemyState>(i);
-		}
-	}
-	return BossEnemyState::Idle;
+	return EnumAdapter<BossEnemyState>::FromString(name).value();
 }
 
 void BossEnemyAttackCollision::EditWindowParameter(

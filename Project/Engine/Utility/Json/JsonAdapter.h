@@ -105,13 +105,16 @@ inline Json JsonAdapter::FromVector(const std::vector<T>& vec) {
 template <typename T>
 inline std::vector<T> JsonAdapter::ToVector(const Json& data) {
 
-	std::vector<T> vec;
+	std::vector<T> vector;
+	if (data.empty()) {
+		return vector;
+	}
 	if (data.is_array()) {
 		for (const auto& element : data) {
-			vec.push_back(element.get<T>());
+			vector.push_back(element.get<T>());
 		}
 	}
-	return vec;
+	return vector;
 }
 
 template <typename T, std::size_t N>

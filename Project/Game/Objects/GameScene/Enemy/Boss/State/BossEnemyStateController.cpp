@@ -16,17 +16,19 @@
 #include <Game/Objects/GameScene/Enemy/Boss/State/States/BossEnemyStunState.h>
 #include <Game/Objects/GameScene/Enemy/Boss/State/States/BossEnemyFalterState.h>
 #include <Game/Objects/GameScene/Enemy/Boss/State/States/BossEnemyLightAttackState.h>
+#include <Game/Objects/GameScene/Enemy/Boss/State/States/BossEnemyJumpAttackState.h>
 #include <Game/Objects/GameScene/Enemy/Boss/State/States/BossEnemyStrongAttackState.h>
 #include <Game/Objects/GameScene/Enemy/Boss/State/States/BossEnemyChargeAttackState.h>
 #include <Game/Objects/GameScene/Enemy/Boss/State/States/BossEnemyRushAttackState.h>
 #include <Game/Objects/GameScene/Enemy/Boss/State/States/BossEnemyContinuousAttackState.h>
+#include <Game/Objects/GameScene/Enemy/Boss/State/States/BossEnemyProjectileAttackState.h>
 #include <Game/Objects/GameScene/Enemy/Boss/State/States/GreatAttackState/BossEnemyGreatAttackState.h>
 
 //============================================================================
 //	BossEnemyStateController classMethods
 //============================================================================
 
-void BossEnemyStateController::Init(BossEnemy& owner) {
+void BossEnemyStateController::Init(BossEnemy& owner, uint32_t phaseCount) {
 
 	// 各状態を初期化
 	states_.emplace(BossEnemyState::Idle, std::make_unique<BossEnemyIdleState>());
@@ -39,6 +41,8 @@ void BossEnemyStateController::Init(BossEnemy& owner) {
 	states_.emplace(BossEnemyState::RushAttack, std::make_unique<BossEnemyRushAttackState>());
 	states_.emplace(BossEnemyState::ContinuousAttack, std::make_unique<BossEnemyContinuousAttackState>());
 	states_.emplace(BossEnemyState::GreatAttack, std::make_unique<BossEnemyGreatAttackState>());
+	states_.emplace(BossEnemyState::JumpAttack, std::make_unique<BossEnemyJumpAttackState>());
+	states_.emplace(BossEnemyState::ProjectileAttack, std::make_unique<BossEnemyProjectileAttackState>(phaseCount));
 
 	// json適応
 	ApplyJson();
@@ -202,7 +206,9 @@ void BossEnemyStateController::UpdateStateTimer() {
 		return;
 	}
 
-	if (forcedState_.has_value()) {
+	// 強制遷移中は即座に遷移させる
+	// コンボデバッグモード中に無視フラグが立っていると強制遷移しない
+	if (forcedState_.has_value() && !(debugComboMode_ && debugIgnoreForcedState_)) {
 
 		requested_ = *forcedState_;
 		forcedState_.reset();
@@ -250,9 +256,28 @@ void BossEnemyStateController::UpdateStateTimer() {
 
 		// 状態遷移の時間を更新
 		stateTimer_.Update();
-		if (stateTimer_.current_ >= phase.nextStateDuration) {
+		// 処理時間
+		// debugComboMode == true:  デバッグ用の固定時間
+		// debugComboMode == false: フェーズごとの設定時間
+		const float duration = debugComboMode_ ? debugNextStateDuration_ : phase.nextStateDuration;
 
-			ChooseNextState(phase);
+		// 遷移時間が過ぎていたら
+		if (duration <= stateTimer_.current_) {
+			// デバッグ用コンボ固定モードかどうか
+			if (debugComboMode_) {
+				// 最初のコンボ実行時にコンボを固定する
+				if (currentSequenceIndex_ == 0) {
+
+					debugComboIndex_ = std::clamp(debugComboIndex_, 0, static_cast<int>(stateTable_.combos.size() - 1));
+					prevComboIndex_ = currentComboIndex_ = debugComboIndex_;
+				}
+				ChooseNextStateDebug();
+			}
+			// 通常時の遷移
+			else {
+
+				ChooseNextState(phase);
+			}
 			stateTimer_.Reset();
 		}
 	}
@@ -427,6 +452,42 @@ void BossEnemyStateController::SyncPhaseCount() {
 	}
 }
 
+void BossEnemyStateController::ChooseNextStateDebug() {
+
+	if (debugComboIndex_ < 0) {
+		return;
+	}
+
+	// インデックスからコンボを取得
+	const BossEnemyCombo& combo = stateTable_.combos[debugComboIndex_];
+	if (combo.sequence.empty()) {
+		return;
+	}
+
+	// 次に再生する状態を取得
+	uint32_t sequenceIndex = currentSequenceIndex_;
+	BossEnemyState nextState = combo.sequence[sequenceIndex];
+
+	// 連続同一状態の抑制
+	if (1 < combo.sequence.size() && !combo.allowRepeat && nextState == current_) {
+
+		// コンボ最後まで行ったらリセット
+		sequenceIndex = (sequenceIndex + 1) % combo.sequence.size();
+		nextState = combo.sequence[sequenceIndex];
+	}
+
+	// indexを次に進める
+	currentSequenceIndex_ = sequenceIndex + 1;
+	// 範囲を超えたらリセットして次に始めた時に最初からになるようにする
+	if (combo.sequence.size() <= currentSequenceIndex_) {
+
+		currentSequenceIndex_ = 0;
+	}
+
+	// 次の状態を設定
+	requested_ = nextState;
+}
+
 void BossEnemyStateController::DrawHighlighted(bool highlight, const ImVec4& col, const std::function<void()>& draw) {
 
 	if (highlight) {
@@ -467,6 +528,26 @@ void BossEnemyStateController::EditStateTable() {
 	if (!curPhaseCombos.empty() && currentComboSlot_ < curPhaseCombos.size()) {
 		currentComboID = curPhaseCombos[currentComboSlot_];
 	}
+
+	//--------------------------------------------------------------------
+	// コンボのデバッグモード
+	//--------------------------------------------------------------------
+
+	ImGui::SeparatorText("Debug Combo");
+	ImGui::Checkbox("debugComboMode", &debugComboMode_);
+	if (debugComboMode_) {
+
+		ImGui::SameLine();
+		ImGui::Checkbox("ignoreForcedState", &debugIgnoreForcedState_);
+		if (!stateTable_.combos.empty()) {
+			if (debugComboIndex_ < 0) {
+				debugComboIndex_ = 0;
+			}
+			ImGui::DragInt("debugComboIndex", &debugComboIndex_, 1, 0, static_cast<int>(stateTable_.combos.size() - 1));
+		}
+		ImGui::DragFloat("debugNextStateDuration", &debugNextStateDuration_, 0.01f, 0.01f, 10.0f);
+	}
+	ImGui::Separator();
 
 	//--------------------------------------------------------------------
 	// 概要表示

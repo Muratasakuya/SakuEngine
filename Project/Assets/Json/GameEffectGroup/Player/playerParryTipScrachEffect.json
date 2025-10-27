@@ -2,18 +2,25 @@
     "Nodes": [
         {
             "Emit": {
-                "Mode": "EmitCount",
-                "count": 6,
+                "Mode": "Always",
+                "count": 1,
                 "delay": 0.0,
                 "duration": 0.0,
-                "interval": 0.6399999856948853
+                "interval": 0.0
             },
             "Module": {
                 "LifeEndMode": "Advance",
                 "PosePreset": "None",
+                "posOption": "World",
+                "sendLifeEndMode": false,
+                "sendSpawnerRotation": false,
+                "sendSpawnerTranslation": true,
+                "sendUpdaterKeyPath": false,
+                "sendUpdaterRotation": false,
+                "sendUpdaterTranslate": false,
                 "spawnPos": {
                     "x": 0.0,
-                    "y": 0.4000000059604645,
+                    "y": 0.0,
                     "z": 0.0
                 },
                 "spawnRotate": {
@@ -21,13 +28,20 @@
                     "y": 0.0,
                     "z": 0.0
                 },
+                "spawnRotateOption": "None",
                 "spawnerScaleEnable": false,
                 "spawnerScaleValue": 1.0,
+                "updateRotate": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "updateRotateOption": "None",
                 "updaterScaleEnable": false,
                 "updaterScaleValue": 1.0
             },
             "ParticleSystem": {
-                "path": "Particle/playerParryHitPointEffect.json"
+                "path": "Particle/Player/playerScratchPoint.json"
             },
             "StartAfter": {
                 "Condition": "None",
@@ -35,25 +49,32 @@
                 "nodeKey": ""
             },
             "Stop": {
-                "Condition": "None",
+                "Condition": "ExternalStop",
                 "emptyGroupIndex": -1,
                 "emptyNodeKey": ""
             },
-            "key": "playerParryHitPointEffect",
-            "name": "playerParryHitPointEffect",
+            "key": "playerScratchPoint",
+            "name": "playerScratchPoint",
             "startOffset": 0.0
         },
         {
             "Emit": {
                 "Mode": "Always",
                 "count": 1,
-                "delay": 0.10000000149011612,
-                "duration": 2.1600000858306885,
+                "delay": 0.0,
+                "duration": 0.0,
                 "interval": 0.0
             },
             "Module": {
                 "LifeEndMode": "Advance",
                 "PosePreset": "None",
+                "posOption": "World",
+                "sendLifeEndMode": false,
+                "sendSpawnerRotation": false,
+                "sendSpawnerTranslation": true,
+                "sendUpdaterKeyPath": false,
+                "sendUpdaterRotation": false,
+                "sendUpdaterTranslate": false,
                 "spawnPos": {
                     "x": 0.0,
                     "y": 0.4000000059604645,
@@ -64,13 +85,20 @@
                     "y": 0.0,
                     "z": 0.0
                 },
+                "spawnRotateOption": "None",
                 "spawnerScaleEnable": false,
                 "spawnerScaleValue": 1.0,
+                "updateRotate": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "updateRotateOption": "None",
                 "updaterScaleEnable": false,
                 "updaterScaleValue": 1.0
             },
             "ParticleSystem": {
-                "path": "Particle/test.json"
+                "path": "Particle/Player/playerScratchPointDispersion.json"
             },
             "StartAfter": {
                 "Condition": "None",
@@ -78,12 +106,12 @@
                 "nodeKey": ""
             },
             "Stop": {
-                "Condition": "AfterDuration",
+                "Condition": "ExternalStop",
                 "emptyGroupIndex": 0,
-                "emptyNodeKey": "playerParryHitPointEffect"
+                "emptyNodeKey": "playerScratchPoint"
             },
-            "key": "test",
-            "name": "test",
+            "key": "playerScratchPointDispersion",
+            "name": "playerScratchPointDispersion",
             "startOffset": 0.0
         }
     ],

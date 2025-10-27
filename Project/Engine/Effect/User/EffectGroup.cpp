@@ -8,6 +8,8 @@
 #include <Engine/Effect/Particle/Core/ParticleManager.h>
 #include <Engine/Effect/Particle/System/ParticleSystem.h>
 #include <Engine/Effect/User/Methods/EffectSequencer.h>
+#include <Engine/Effect/User/Methods/EffectCommandRouter.h>
+#include <Engine/Effect/User/Methods/EffectModuleBinder.h>
 
 //============================================================================
 //	EffectGroup classMethods
@@ -88,6 +90,69 @@ void EffectGroup::ClearParent() {
 
 	parentAnchorId_ = 0;
 	parentAnchorName_.clear();
+}
+
+void EffectGroup::SetLifeEndMode(const std::string& nodeKey, ParticleLifeEndMode mode, bool isAllNode) {
+
+	// コマンド作成
+	ParticleCommand command = EffectModuleBinder::MakeCommand<ParticleLifeEndMode>(
+		ParticleCommandTarget::Updater, ParticleCommandID::SetLifeEndMode, mode);
+	// 全てのノードに設定するかどうか
+	if (isAllNode) {
+		for (const auto& node : nodes_) {
+
+			// コマンド送信
+			EffectCommandRouter::Send(node.system, command);
+		}
+		return;
+	}
+	// 指定ノードのみに設定
+	for (const auto& node : nodes_) {
+		if (node.key == nodeKey && node.system) {
+
+			// コマンド送信
+			EffectCommandRouter::Send(node.system, command);
+		}
+	}
+}
+
+void EffectGroup::SetKeyframePath(const std::string& nodeKey, const std::vector<Vector3>& keys) {
+
+	for (const auto& node : nodes_) {
+		if (node.key == nodeKey) {
+
+			// コマンド作成
+			ParticleCommand command = EffectModuleBinder::MakeCommand<std::vector<Vector3>>(
+				ParticleCommandTarget::Updater, ParticleCommandID::SetKeyframePath, keys);
+			// KeyframePathに設定
+			command.filter.updaterId = ParticleUpdateModuleID::KeyframePath;
+
+			// コマンド送信
+			EffectCommandRouter::Send(node.system, command);
+			break;
+		}
+	}
+}
+
+bool EffectGroup::IsFinishedAllNode() const {
+
+	for (const auto& node : nodes_) {
+
+		// まだ発生していないので終了しているはずがない
+		if (!node.runtime.didFirstEmit) {
+			return false;
+		}
+
+		// 1つでも終了していないノードがあればfalseを返す
+		for (const auto& group : node.system->GetCPUGroup()) {
+			if (0 < group.group.GetNumInstance()) {
+
+				return false;
+			}
+		}
+	}
+	// 終了している
+	return true;
 }
 
 Vector3 EffectGroup::ResolveAnchorPos() const {

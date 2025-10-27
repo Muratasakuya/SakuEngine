@@ -73,6 +73,61 @@
         "nextAnimDuration_": 0.3199999928474426,
         "rotationLerpRate_": 8.0
     },
+    "JumpAttack": {
+        "JumpKeyframes": [
+            {
+                "x": -73.30598449707031,
+                "y": 0.0,
+                "z": -49.251617431640625
+            },
+            {
+                "x": -30.40515899658203,
+                "y": 20.0,
+                "z": -37.7070426940918
+            },
+            {
+                "x": 12.495664596557617,
+                "y": 18.299999237060547,
+                "z": -26.162464141845703
+            },
+            {
+                "x": 55.396488189697266,
+                "y": 0.0,
+                "z": -14.617890357971191
+            }
+        ],
+        "LerpTranslationXZ": {
+            "Loop": {
+                "loop": {
+                    "loopCount": 1,
+                    "type": "Repeat"
+                }
+            },
+            "ReturnTimer": {
+                "easeingType_": "Linear",
+                "target_": 0.0
+            },
+            "Timer": {
+                "easeingType_": "EaseInExpo",
+                "target_": 0.5699999928474426
+            },
+            "move_.end": {
+                "x": 55.396488189697266,
+                "y": 0.7339220643043518,
+                "z": -14.617890357971191
+            },
+            "move_.start": {
+                "x": -73.30598449707031,
+                "y": 0.0,
+                "z": -49.251617431640625
+            },
+            "useReturnTimer_": false
+        },
+        "jumpEasing_": "EaseInQuad",
+        "nextAnimDuration_": 0.1599999964237213,
+        "rotationLerpRate_": 8.0,
+        "targetDistance_": 12.0
+    },
     "LightAttack": {
         "attackOffsetTranslation_": -18.899999618530273,
         "easingType_": 4,
@@ -80,6 +135,21 @@
         "lerpTime_": 0.20000000298023224,
         "nextAnimDuration_": 0.03200000151991844,
         "rotationLerpRate_": 14.0
+    },
+    "ProjectileAttack": {
+        "LaunchTimer": {
+            "easeingType_": "Linear",
+            "target_": 0.7200000286102295
+        },
+        "bulletAttackDuration": 0.25999999046325684,
+        "launchOffsetPos": {
+            "x": 10.0,
+            "y": -1.0,
+            "z": 0.0
+        },
+        "launchTopPosY": 23.0,
+        "rotationLerpRate_": 4.800000190734863,
+        "targetDistance_": 8.0
     },
     "RushAttack": {
         "attackCoolTime_": 0.8799999952316284,

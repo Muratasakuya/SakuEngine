@@ -29,6 +29,8 @@ public:
 
 	//--------- accessor -----------------------------------------------------
 
+	// 剣先の座標を取得
+	const Vector3& GetTipTranslation() const { return tipTranslation_; }
 private:
 	//========================================================================
 	//	private Methods
@@ -38,6 +40,11 @@ private:
 
 	// parameters
 	Transform3D initTransform_; // 初期化時の値
+
+	// 剣先の座標
+	Vector3 tipTranslation_;
+	// オフセット
+	Vector3 tipOffset_;
 
 	//--------- functions ----------------------------------------------------
 

@@ -4,7 +4,7 @@
 //	include
 //============================================================================
 #include <Game/Objects/GameScene/Player/State/Interface/PlayerIState.h>
-#include <Engine/Effect/User/GameEffect.h>
+#include <Engine/Effect/User/EffectGroup.h>
 #include <Engine/Utility/Enum/Easing.h>
 
 //============================================================================
@@ -24,6 +24,7 @@ public:
 	void Enter(Player& player) override;
 
 	void Update(Player& player) override;
+	void UpdateAlways(Player& player) override;
 
 	void Exit(Player& player) override;
 
@@ -80,9 +81,12 @@ private:
 
 	std::optional<RequestState> request_;
 
-	// パリィ
-	// エフェクト、エンジン機能変更中...
-	//std::unique_ptr<GameEffect> parryEffect_;
+	// パリィエフェクト
+	// ヒットした瞬間
+	std::unique_ptr<EffectGroup> parryHitEffect_;
+	float parryHitEffectPosY_;
+	// 引きずる剣先
+	std::unique_ptr<EffectGroup> tipScrackEffect_;
 
 	//--------- functions ----------------------------------------------------
 

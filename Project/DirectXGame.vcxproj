@@ -683,6 +683,14 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\Objects\GameScene\Enemy\Boss\State\States\BossEnemyContinuousAttackState.cpp">
       <SubType />
     </ClCompile>
+    <ClCompile Include="Game\Objects\GameScene\Enemy\Boss\State\States\BossEnemyJumpAttackState.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="Game\Objects\GameScene\Enemy\Boss\State\States\BossEnemyProjectileAttackState.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="Game\Objects\GameScene\Enemy\Boss\State\States\GreatAttackState\BossEnemyGreatAttackState.cpp">
       <SubType />
     </ClCompile>
@@ -1486,6 +1494,14 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </ClInclude>
     <ClInclude Include="Game\Objects\GameScene\Enemy\Boss\State\States\BossEnemyContinuousAttackState.h">
       <SubType />
+    </ClInclude>
+    <ClInclude Include="Game\Objects\GameScene\Enemy\Boss\State\States\BossEnemyJumpAttackState.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Game\Objects\GameScene\Enemy\Boss\State\States\BossEnemyProjectileAttackState.h">
+      <SubType>
+      </SubType>
     </ClInclude>
     <ClInclude Include="Game\Objects\GameScene\Enemy\Boss\State\States\GreatAttackState\BossEnemyGreatAttackState.h">
       <SubType />

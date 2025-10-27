@@ -9,6 +9,13 @@
 //	ParticleUpdateRotationModule classMethods
 //============================================================================
 
+void ParticleUpdateRotationModule::Init() {
+
+	// 初期化値
+	lerpRotation_.start = Quaternion::IdentityQuaternion();
+	lerpRotation_.target = Quaternion::IdentityQuaternion();
+}
+
 void ParticleUpdateRotationModule::SetCommand(const ParticleCommand& command) {
 
 	switch (command.id) {
@@ -215,6 +222,9 @@ Json ParticleUpdateRotationModule::ToJson() {
 }
 
 void ParticleUpdateRotationModule::FromJson(const Json& data) {
+
+	// 1度初期化
+	Init();
 
 	const auto& easingType = EnumAdapter<EasingType>::FromString(data.value("easingType", "EaseInSine"));
 	easing_ = easingType.value();

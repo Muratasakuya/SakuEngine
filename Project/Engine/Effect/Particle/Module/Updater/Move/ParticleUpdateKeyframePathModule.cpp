@@ -30,6 +30,14 @@ void ParticleUpdateKeyframePathModule::SetCommand(const ParticleCommand& command
 		}
 		break;
 	}
+	case ParticleCommandID::SetKeyframePath: {
+		if (const auto& key = std::get_if<std::vector<Vector3>>(&command.value)) {
+
+			// キーの位置全て設定
+			keys_ = *key;
+		}
+		break;
+	}
 	}
 }
 
@@ -129,7 +137,7 @@ void ParticleUpdateKeyframePathModule::Execute(
 	}
 
 	// 補間位置
-	float t = particle.keyPathStartT + std::clamp(particle.progress, 0.0f, 1.0f);
+	float t = /*particle.keyPathStartT +*/ std::clamp(particle.progress, 0.0f, 1.0f);
 	t = std::clamp(t, 0.0f, 1.0f);
 
 	Vector3 onPath = LerpKeyframe::GetValue<Vector3>(keys_, t, type_);

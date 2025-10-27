@@ -37,8 +37,7 @@ public:
 	void SetFovY(float fovY) { fovY_ = fovY; }
 	void SetState(FollowCameraState state);
 	void SetOverlayState(FollowCameraOverlayState state, bool isStart);
-
-	float GetFovY() const { return fovY_; }
+	void WarmStart() { stateController_->WarmStartFollow(*this); }
 
 	// エディターによるカメラアニメーション
 	void StartPlayerActionAnim(PlayerState state);

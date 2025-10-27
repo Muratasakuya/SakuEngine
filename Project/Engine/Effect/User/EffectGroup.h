@@ -50,6 +50,20 @@ public:
 	void SetParent(uint32_t anchorId) { parentAnchorId_ = anchorId; }
 	// 親への追従を解除
 	void ClearParent();
+
+	// --------- accessor ----------------------------------------------------
+
+	// ワールド座標を設定
+	void SetWorldPos(const Vector3& worldPos) { effectWorldPos_ = worldPos; }
+
+	// 特定のノードへのコマンド設定
+	// 寿命管理設定
+	void SetLifeEndMode(const std::string& nodeKey, ParticleLifeEndMode mode, bool isAllNode = true);
+	// キーフレームパスの設定
+	void SetKeyframePath(const std::string& nodeKey, const std::vector<Vector3>& keys);
+
+	// すべてのノードが処理を終えているか
+	bool IsFinishedAllNode() const;
 private:
 	//========================================================================
 	//	private Methods

@@ -31,8 +31,9 @@ enum class ParticleCommandID {
 	SetBillboardRotation, // ビルボード回転の設定
 
 	// 更新モジュール
-	SetLifeEndMode, // パーティクルの寿命管理設定
-	Scaling,        // スケーリング処理
+	SetLifeEndMode,  // パーティクルの寿命管理設定
+	Scaling,         // スケーリング処理
+	SetKeyframePath, // キーフレームパスの設定
 
 	// 共通
 	SetTranslation, // 座標の設定
@@ -56,7 +57,7 @@ struct ParticleCommandFilter {
 
 // 使用できる型
 using ParticleCommandValue = std::variant<
-	bool, int32_t, uint32_t, float, Vector3,
+	bool, int32_t, uint32_t, float, Vector3, std::vector<Vector3>,
 	Vector4, Quaternion, Color, Matrix4x4, ParticleLifeEndMode>;
 
 struct ParticleCommand {

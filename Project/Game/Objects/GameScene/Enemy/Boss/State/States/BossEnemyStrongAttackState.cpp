@@ -5,6 +5,7 @@
 //============================================================================
 #include <Engine/Core/Graphics/Renderer/LineRenderer.h>
 #include <Engine/Utility/Timer/GameTimer.h>
+#include <Game/Camera/Follow/FollowCamera.h>
 #include <Game/Objects/GameScene/Player/Entity/Player.h>
 #include <Game/Objects/GameScene/Enemy/Boss/Entity/BossEnemy.h>
 
@@ -30,7 +31,7 @@ void BossEnemyStrongAttackState::Enter(BossEnemy& bossEnemy) {
 	// 攻撃予兆を出す
 	Vector3 sign = bossEnemy.GetTranslation();
 	sign.y = 2.0f;
-	attackSign_->Emit(ProjectToScreen(sign, *followCamera_));
+	attackSign_->Emit(Math::ProjectToScreen(sign, *followCamera_));
 
 	// パリィ可能にする
 	bossEnemy.ResetParryTiming();
