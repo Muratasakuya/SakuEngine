@@ -19,6 +19,8 @@ public:
 	ParticleUpdateRotationModule() = default;
 	~ParticleUpdateRotationModule() = default;
 
+	void Init() override;
+
 	void Execute(CPUParticle::ParticleData& particle, float deltaTime) override;
 
 	void ImGui() override;
