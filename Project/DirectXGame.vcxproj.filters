@@ -2307,6 +2307,7 @@
     <ClCompile Include="Engine\Effect\User\EffectGroup.cpp" />
     <ClCompile Include="Engine\Effect\Particle\Module\Updater\Transform\ParticleUpdateTranslateModule.cpp" />
     <ClCompile Include="Game\Objects\GameScene\Enemy\Boss\State\States\BossEnemyJumpAttackState.cpp" />
+    <ClCompile Include="Game\Objects\GameScene\Enemy\Boss\State\States\BossEnemyProjectileAttackState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\Camera\Follow\State\States\FollowCameraReturnDefaultRotate.h" />
@@ -2321,5 +2322,6 @@
     <ClInclude Include="Engine\Effect\User\EffectGroup.h" />
     <ClInclude Include="Engine\Effect\Particle\Module\Updater\Transform\ParticleUpdateTranslateModule.h" />
     <ClInclude Include="Game\Objects\GameScene\Enemy\Boss\State\States\BossEnemyJumpAttackState.h" />
+    <ClInclude Include="Game\Objects\GameScene\Enemy\Boss\State\States\BossEnemyProjectileAttackState.h" />
   </ItemGroup>
 </Project>

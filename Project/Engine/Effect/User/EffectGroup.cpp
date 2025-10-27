@@ -90,6 +90,27 @@ void EffectGroup::ClearParent() {
 	parentAnchorName_.clear();
 }
 
+bool EffectGroup::IsFinishedAllNode() const {
+
+	for (const auto& node : nodes_) {
+
+		// まだ発生していないので終了しているはずがない
+		if (!node.runtime.didFirstEmit) {
+			return false;
+		}
+
+		// 1つでも終了していないノードがあればfalseを返す
+		for (const auto& group : node.system->GetCPUGroup()) {
+			if (0 < group.group.GetNumInstance()) {
+
+				return false;
+			}
+		}
+	}
+	// 終了している
+	return true;
+}
+
 Vector3 EffectGroup::ResolveAnchorPos() const {
 
 	// 親がいない場合は自身の基準の座標を返す

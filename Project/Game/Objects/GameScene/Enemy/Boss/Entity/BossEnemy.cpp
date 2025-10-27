@@ -83,7 +83,7 @@ void BossEnemy::InitState() {
 
 	// 初期化、ここで初期状態も設定
 	stateController_ = std::make_unique<BossEnemyStateController>();
-	stateController_->Init(*this);
+	stateController_->Init(*this, static_cast<uint32_t>(stats_.hpThresholds.size()));
 }
 
 void BossEnemy::InitHUD() {
@@ -128,14 +128,14 @@ void BossEnemy::DerivedInit() {
 	// collision初期化、設定
 	InitCollision();
 
+	// json適応
+	ApplyJson();
+
 	// 状態初期化
 	InitState();
 
 	// HUD初期化
 	InitHUD();
-
-	// json適応
-	ApplyJson();
 
 	// 一度更新しておく
 	// HUDの更新

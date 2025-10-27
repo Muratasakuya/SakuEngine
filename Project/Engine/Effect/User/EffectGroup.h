@@ -55,6 +55,9 @@ public:
 
 	// ワールド座標を設定
 	void SetWorldPos(const Vector3& worldPos) { effectWorldPos_ = worldPos; }
+	
+	// すべてのノードが処理を終えているか
+	bool IsFinishedAllNode() const;
 private:
 	//========================================================================
 	//	private Methods

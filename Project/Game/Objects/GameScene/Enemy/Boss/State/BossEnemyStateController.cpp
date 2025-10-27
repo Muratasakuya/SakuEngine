@@ -21,13 +21,14 @@
 #include <Game/Objects/GameScene/Enemy/Boss/State/States/BossEnemyChargeAttackState.h>
 #include <Game/Objects/GameScene/Enemy/Boss/State/States/BossEnemyRushAttackState.h>
 #include <Game/Objects/GameScene/Enemy/Boss/State/States/BossEnemyContinuousAttackState.h>
+#include <Game/Objects/GameScene/Enemy/Boss/State/States/BossEnemyProjectileAttackState.h>
 #include <Game/Objects/GameScene/Enemy/Boss/State/States/GreatAttackState/BossEnemyGreatAttackState.h>
 
 //============================================================================
 //	BossEnemyStateController classMethods
 //============================================================================
 
-void BossEnemyStateController::Init(BossEnemy& owner) {
+void BossEnemyStateController::Init(BossEnemy& owner, uint32_t phaseCount) {
 
 	// 各状態を初期化
 	states_.emplace(BossEnemyState::Idle, std::make_unique<BossEnemyIdleState>());
@@ -41,6 +42,7 @@ void BossEnemyStateController::Init(BossEnemy& owner) {
 	states_.emplace(BossEnemyState::ContinuousAttack, std::make_unique<BossEnemyContinuousAttackState>());
 	states_.emplace(BossEnemyState::GreatAttack, std::make_unique<BossEnemyGreatAttackState>());
 	states_.emplace(BossEnemyState::JumpAttack, std::make_unique<BossEnemyJumpAttackState>());
+	states_.emplace(BossEnemyState::ProjectileAttack, std::make_unique<BossEnemyProjectileAttackState>(phaseCount));
 
 	// json適応
 	ApplyJson();

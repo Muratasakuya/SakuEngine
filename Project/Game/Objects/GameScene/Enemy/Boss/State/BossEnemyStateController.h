@@ -29,7 +29,7 @@ public:
 	~BossEnemyStateController() = default;
 
 	// 各状態の初期化
-	void Init(BossEnemy& owner);
+	void Init(BossEnemy& owner, uint32_t phaseCount);
 
 	// 状態更新
 	void Update(BossEnemy& owner);
