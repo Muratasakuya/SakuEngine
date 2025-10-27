@@ -43,7 +43,6 @@ private:
 	// 状態
 	enum class State {
 
-		Pre,    // 予備動作
 		Launch, // 発生装置起動
 		Attack, // 順に攻撃
 	};
@@ -73,8 +72,6 @@ private:
 	// 実際に発生させる位置
 	std::vector<Vector3> launchPositions_;
 
-	// 準備エフェクト
-	std::unique_ptr<EffectGroup> preEffect_;
 	// 発生起動エフェクト
 	std::unique_ptr<EffectGroup> launchEffect_;
 	// 弾

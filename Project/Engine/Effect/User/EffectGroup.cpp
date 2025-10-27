@@ -92,11 +92,36 @@ void EffectGroup::ClearParent() {
 	parentAnchorName_.clear();
 }
 
-void EffectGroup::SetKeyframePath(const std::string& nodeKey, const std::vector<Vector3>& keys) {
+void EffectGroup::SetLifeEndMode(const std::string& nodeKey, ParticleLifeEndMode mode, bool isAllNode) {
 
-	for (auto& node : nodes_) {
+	// コマンド作成
+	ParticleCommand command = EffectModuleBinder::MakeCommand<ParticleLifeEndMode>(
+		ParticleCommandTarget::Updater, ParticleCommandID::SetLifeEndMode, mode);
+	// 全てのノードに設定するかどうか
+	if (isAllNode) {
+		for (const auto& node : nodes_) {
+
+			// コマンド送信
+			EffectCommandRouter::Send(node.system, command);
+		}
+		return;
+	}
+	// 指定ノードのみに設定
+	for (const auto& node : nodes_) {
 		if (node.key == nodeKey && node.system) {
 
+			// コマンド送信
+			EffectCommandRouter::Send(node.system, command);
+		}
+	}
+}
+
+void EffectGroup::SetKeyframePath(const std::string& nodeKey, const std::vector<Vector3>& keys) {
+
+	for (const auto& node : nodes_) {
+		if (node.key == nodeKey) {
+
+			// コマンド作成
 			ParticleCommand command = EffectModuleBinder::MakeCommand<std::vector<Vector3>>(
 				ParticleCommandTarget::Updater, ParticleCommandID::SetKeyframePath, keys);
 			// KeyframePathに設定

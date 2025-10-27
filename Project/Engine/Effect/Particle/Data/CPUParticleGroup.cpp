@@ -155,10 +155,10 @@ void CPUParticleGroup::UpdatePhase() {
 		phases_[particle.phaseIndex]->UpdateParticle(particle, deltaTime);
 
 		// 削除、フェーズ判定処理
+		// 寿命終了後、モードに応じて処理
+		auto* lifeModule = phases_[particle.phaseIndex]->GetLifeTimeModule();
 		if (particle.lifeTime <= particle.currentTime) {
 
-			// 寿命終了後、モードに応じて処理
-			auto* lifeModule = phases_[particle.phaseIndex]->GetLifeTimeModule();
 			switch (lifeModule->GetEndMode()) {
 			case ParticleLifeEndMode::Advance: {
 
@@ -215,32 +215,31 @@ void CPUParticleGroup::UpdatePhase() {
 				particle.lifeTime = phases_[particle.phaseIndex]->GetLifeTime();
 				break;
 			}
-			case ParticleLifeEndMode::Kill: {
+			}
+		}
+		// Killの場合は即削除
+		if (lifeModule->GetEndMode() == ParticleLifeEndMode::Kill) {
+			// トレイルモジュールがあるなら
+			if (HasTrailModule()) {
 
-				// トレイルモジュールがあるなら
-				if (HasTrailModule()) {
+				auto* trailModule = phases_[particle.phaseIndex]->GetTrailModule();
+				// falseを返せば削除、trueなら消え後処理開始
+				if (trailModule->OnOwnerLifeEnd(particle)) {
 
-					auto* trailModule = phases_[particle.phaseIndex]->GetTrailModule();
-					// falseを返せば削除、trueなら消え後処理開始
-					if (trailModule->OnOwnerLifeEnd(particle)) {
-
-						// 描画するかしないかでスケールを設定
-						// trueならそのまま、falseなら0.0f
-						it->transform.scale = trailModule->IsLifeEndDrawOrigin() ?
-							it->transform.scale : Vector3::AnyInit(0.0f);
-					} else {
-
-						it = particles_.erase(it);
-						continue;
-					}
+					// 描画するかしないかでスケールを設定
+					// trueならそのまま、falseなら0.0f
+					it->transform.scale = trailModule->IsLifeEndDrawOrigin() ?
+						it->transform.scale : Vector3::AnyInit(0.0f);
 				} else {
 
-					// 削除
 					it = particles_.erase(it);
 					continue;
 				}
-				break;
-			}
+			} else {
+
+				// 削除
+				it = particles_.erase(it);
+				continue;
 			}
 		}
 

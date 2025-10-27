@@ -15,10 +15,6 @@
 BossEnemyProjectileAttackState::BossEnemyProjectileAttackState(uint32_t phaseCount) {
 
 	// エフェクトの初期化
-	// 予備動作エフェクト
-	preEffect_ = std::make_unique<EffectGroup>();
-	preEffect_->Init("preProjectileEffect", "BossEnemyEffect");
-	preEffect_->LoadJson("GameEffectGroup/BossEnemy/bossEnemyPreProjectileEffect.json");
 	// 発生起動エフェクト
 	launchEffect_ = std::make_unique<EffectGroup>();
 	launchEffect_->Init("launchProjectileEffect", "BossEnemyEffect");
@@ -30,11 +26,9 @@ BossEnemyProjectileAttackState::BossEnemyProjectileAttackState(uint32_t phaseCou
 
 	for (uint32_t index = 0; index < phaseCount + 1; ++index) {
 
-		// 3..5..7..
-		uint32_t count = 3 + index * 2;
-
 		// フェーズに応じた弾の数
-		phaseBulletCounts_.emplace_back(count);
+		// 3から5だけ
+		phaseBulletCounts_.emplace_back(std::clamp(3 + index * 2, uint32_t(3), uint32_t(5)));
 	}
 	canExit_ = false;
 }
@@ -42,10 +36,10 @@ BossEnemyProjectileAttackState::BossEnemyProjectileAttackState(uint32_t phaseCou
 void BossEnemyProjectileAttackState::Enter(BossEnemy& bossEnemy) {
 
 	// 初期状態を設定
-	currentState_ = State::Pre;
+	currentState_ = State::Launch;
 
-	// 予備動作エフェクト開始
-	preEffect_->Emit(bossEnemy.GetTranslation());
+	// 発生起動エフェクト前処理
+	BeginLaunchPhase(bossEnemy);
 }
 
 void BossEnemyProjectileAttackState::Update(BossEnemy& bossEnemy) {
@@ -55,11 +49,6 @@ void BossEnemyProjectileAttackState::Update(BossEnemy& bossEnemy) {
 
 	// 状態に応じて更新
 	switch (currentState_) {
-	case BossEnemyProjectileAttackState::State::Pre:
-
-		// 予備動作更新
-		UpdatePre(bossEnemy);
-		break;
 	case BossEnemyProjectileAttackState::State::Launch:
 
 		// 発生起動更新
@@ -73,21 +62,7 @@ void BossEnemyProjectileAttackState::Update(BossEnemy& bossEnemy) {
 	}
 }
 
-void  BossEnemyProjectileAttackState::UpdatePre(BossEnemy& bossEnemy) {
-
-	// エフェクトの処理が終了したら次の状態に進ませる
-	if (preEffect_->IsFinishedAllNode()) {
-
-		// 次の状態へ
-		currentState_ = State::Launch;
-
-		// 発生起動エフェクト前処理
-		BeginLaunchPhase(bossEnemy);
-	}
-}
-
-void  BossEnemyProjectileAttackState::UpdateLaunch(BossEnemy& bossEnemy) {
-
+void BossEnemyProjectileAttackState::UpdateLaunch(BossEnemy& bossEnemy) {
 
 	// 発生時間を更新する
 	launchTimer_.Update();
@@ -244,7 +219,6 @@ void BossEnemyProjectileAttackState::SetLaunchPositions(const BossEnemy& bossEne
 void BossEnemyProjectileAttackState::UpdateAlways(BossEnemy& bossEnemy) {
 
 	// エフェクトの更新
-	preEffect_->Update();
 	launchEffect_->Update();
 	bulletEffect_->Update();
 }

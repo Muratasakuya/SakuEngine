@@ -57,8 +57,11 @@ public:
 	void SetWorldPos(const Vector3& worldPos) { effectWorldPos_ = worldPos; }
 
 	// 特定のノードへのコマンド設定
+	// 寿命管理設定
+	void SetLifeEndMode(const std::string& nodeKey, ParticleLifeEndMode mode, bool isAllNode = true);
+	// キーフレームパスの設定
 	void SetKeyframePath(const std::string& nodeKey, const std::vector<Vector3>& keys);
-	
+
 	// すべてのノードが処理を終えているか
 	bool IsFinishedAllNode() const;
 private:
