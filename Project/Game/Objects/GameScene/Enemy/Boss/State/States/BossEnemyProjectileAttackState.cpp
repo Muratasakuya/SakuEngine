@@ -17,12 +17,15 @@ BossEnemyProjectileAttackState::BossEnemyProjectileAttackState(uint32_t phaseCou
 	// 予備動作エフェクト
 	preEffect_ = std::make_unique<EffectGroup>();
 	preEffect_->Init("preProjectileEffect", "BossEnemyEffect");
+	preEffect_->LoadJson("GameEffectGroup/BossEnemy/bossEnemyPreProjectileEffect.json");
 	// 発生起動エフェクト
 	launchEffect_ = std::make_unique<EffectGroup>();
 	launchEffect_->Init("launchProjectileEffect", "BossEnemyEffect");
+	launchEffect_->LoadJson("GameEffectGroup/BossEnemy/bossEnemylaunchProjectileEffect.json");
 	// 弾エフェクト
 	bulletEffect_ = std::make_unique<EffectGroup>();
 	bulletEffect_->Init("bossEnemyProjectileBulletEffect", "BossEnemyEffect");
+	bulletEffect_->LoadJson("GameEffectGroup/BossEnemy/bossEnemyProjectileBulletEffect.json");
 
 	for (uint32_t index = 0; index < phaseCount + 1; ++index) {
 
