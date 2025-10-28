@@ -651,7 +651,7 @@
     <ClCompile Include="Engine\Effect\Particle\Module\Updater\Transform\ParticleUpdateScaleModule.cpp">
       <Filter>Engine\Effect\Particle\Module\Updater\Transform</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Effect\Particle\Module\Updater\Material\ParticleUpdateUVModule.cpp">
+    <ClCompile Include="Engine\Effect\Particle\Module\Updater\Material\ParticleUpdateColorUVModule.cpp">
       <Filter>Engine\Effect\Particle\Module\Updater\Material</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Effect\Particle\Module\Updater\Move\ParticleUpdateVelocityModule.cpp">
@@ -1482,7 +1482,7 @@
     <ClInclude Include="Engine\Effect\Particle\Module\Updater\Transform\ParticleUpdateScaleModule.h">
       <Filter>Engine\Effect\Particle\Module\Updater\Transform</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Effect\Particle\Module\Updater\Material\ParticleUpdateUVModule.h">
+    <ClInclude Include="Engine\Effect\Particle\Module\Updater\Material\ParticleUpdateColorUVModule.h">
       <Filter>Engine\Effect\Particle\Module\Updater\Material</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Effect\Particle\Module\Updater\Move\ParticleUpdateVelocityModule.h">
@@ -2308,6 +2308,7 @@
     <ClCompile Include="Engine\Effect\Particle\Module\Updater\Transform\ParticleUpdateTranslateModule.cpp" />
     <ClCompile Include="Game\Objects\GameScene\Enemy\Boss\State\States\BossEnemyJumpAttackState.cpp" />
     <ClCompile Include="Game\Objects\GameScene\Enemy\Boss\State\States\BossEnemyProjectileAttackState.cpp" />
+    <ClCompile Include="Engine\Effect\Particle\Module\Updater\Material\ParticleUpdateNoiseUVModule.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\Camera\Follow\State\States\FollowCameraReturnDefaultRotate.h" />
@@ -2324,5 +2325,6 @@
     <ClInclude Include="Game\Objects\GameScene\Enemy\Boss\State\States\BossEnemyJumpAttackState.h" />
     <ClInclude Include="Game\Objects\GameScene\Enemy\Boss\State\States\BossEnemyProjectileAttackState.h" />
     <ClInclude Include="Engine\Utility\Enum\Distance.h" />
+    <ClInclude Include="Engine\Effect\Particle\Module\Updater\Material\ParticleUpdateNoiseUVModule.h" />
   </ItemGroup>
 </Project>

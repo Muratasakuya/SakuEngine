@@ -8,18 +8,18 @@
 #include <Engine/Utility/Enum/Easing.h>
 
 //============================================================================
-//	ParticleUpdateUVModule class
-//	UVTransformの更新を行うモジュール
+//	ParticleUpdateColorUVModule class
+//	colorUVTransformの更新を行うモジュール
 //============================================================================
-class ParticleUpdateUVModule :
+class ParticleUpdateColorUVModule :
 	public ICPUParticleUpdateModule {
 public:
 	//========================================================================
 	//	public Methods
 	//========================================================================
 
-	ParticleUpdateUVModule() = default;
-	~ParticleUpdateUVModule() = default;
+	ParticleUpdateColorUVModule() = default;
+	~ParticleUpdateColorUVModule() = default;
 
 	void Init() override;
 
@@ -33,11 +33,11 @@ public:
 
 	//--------- accessor -----------------------------------------------------
 
-	const char* GetName() const override { return "UV"; }
+	const char* GetName() const override { return "ColorUV"; }
 
 	//-------- registryID ----------------------------------------------------
 
-	static constexpr ParticleUpdateModuleID ID = ParticleUpdateModuleID::UV;
+	static constexpr ParticleUpdateModuleID ID = ParticleUpdateModuleID::ColorUV;
 	ParticleUpdateModuleID GetID() const override { return ID; }
 private:
 	//========================================================================

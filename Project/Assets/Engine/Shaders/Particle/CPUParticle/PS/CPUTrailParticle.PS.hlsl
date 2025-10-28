@@ -30,7 +30,9 @@ struct Material {
 	float alphaReference;
 	float noiseAlphaReference;
 
-	float4x4 uvTransform;
+	// UV変換行列
+	float4x4 colorUVTransform;
+	float4x4 noiseUVTransform;
 	
 	uint postProcessMask;
 };
@@ -118,15 +120,12 @@ PSOutput main(MSOutput input) {
 	uint id = input.instanceID;
 	Material material = gMaterials[id];
 	TextureInfo textureInfo = gTextueInfos[id];
-	
-	// uv変形
-	float4 transformUV = mul(float4(input.texcoord, 0.0f, 1.0f), material.uvTransform);
 
 	// ノイズ棄却判定
-	CheckNoiseDiscard(material, textureInfo, transformUV);
+	CheckNoiseDiscard(material, textureInfo, mul(float4(input.texcoord, 0.0f, 1.0f), material.noiseUVTransform));
 
 	// テクスチャ色取得、棄却判定
-	float4 textureColor = GetTextureColor(textureInfo, transformUV);
+	float4 textureColor = GetTextureColor(textureInfo, mul(float4(input.texcoord, 0.0f, 1.0f), material.colorUVTransform));
 	CheckDiscard(textureColor.a, material.alphaReference);
 	
 	// 色

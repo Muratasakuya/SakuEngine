@@ -25,7 +25,8 @@
 #include <Engine/Effect/Particle/Module/Updater/Material/ParticleUpdateColorModule.h>
 #include <Engine/Effect/Particle/Module/Updater/Material/ParticleUpdateEmissiveModule.h>
 #include <Engine/Effect/Particle/Module/Updater/Material/ParticleUpdateAlphaReferenceModule.h>
-#include <Engine/Effect/Particle/Module/Updater/Material/ParticleUpdateUVModule.h>
+#include <Engine/Effect/Particle/Module/Updater/Material/ParticleUpdateColorUVModule.h>
+#include <Engine/Effect/Particle/Module/Updater/Material/ParticleUpdateNoiseUVModule.h>
 // Move
 #include <Engine/Effect/Particle/Module/Updater/Move/ParticleUpdateVelocityModule.h>
 #include <Engine/Effect/Particle/Module/Updater/Move/ParticleUpdateGravityModule.h>
@@ -120,7 +121,8 @@ void ParticleManager::RegisterModules() {
 	uRegistry.Register<ParticleUpdateVelocityModule>();
 	uRegistry.Register<ParticleUpdateRotationModule>();
 	uRegistry.Register<ParticleUpdateScaleModule>();
-	uRegistry.Register<ParticleUpdateUVModule>();
+	uRegistry.Register<ParticleUpdateColorUVModule>();
+	uRegistry.Register<ParticleUpdateNoiseUVModule>();
 	uRegistry.Register<ParticleUpdateGravityModule>();
 	uRegistry.Register<ParticleUpdateNoiseForceModule>();
 	uRegistry.Register<ParticleUpdateEmissiveModule>();

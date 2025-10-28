@@ -226,6 +226,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Editor\Curve\CurveValueEditor.cpp">
       <SubType />
     </ClCompile>
+    <ClCompile Include="Engine\Effect\Particle\Module\Updater\Material\ParticleUpdateNoiseUVModule.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="Engine\Effect\Particle\Module\Updater\Transform\ParticleUpdateTranslateModule.cpp">
       <SubType>
       </SubType>
@@ -331,7 +335,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Effect\Particle\Module\Updater\Transform\ParticleUpdateScaleModule.cpp">
       <SubType />
     </ClCompile>
-    <ClCompile Include="Engine\Effect\Particle\Module\Updater\Material\ParticleUpdateUVModule.cpp">
+    <ClCompile Include="Engine\Effect\Particle\Module\Updater\Material\ParticleUpdateColorUVModule.cpp">
       <SubType />
     </ClCompile>
     <ClCompile Include="Engine\Effect\Particle\Module\Updater\Move\ParticleUpdateVelocityModule.cpp">
@@ -952,6 +956,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Editor\Curve\CurveValueEditor.h">
       <SubType />
     </ClInclude>
+    <ClInclude Include="Engine\Effect\Particle\Module\Updater\Material\ParticleUpdateNoiseUVModule.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="Engine\Effect\Particle\Module\Updater\Transform\ParticleUpdateTranslateModule.h">
       <SubType>
       </SubType>
@@ -1104,7 +1112,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Effect\Particle\Module\Updater\Transform\ParticleUpdateScaleModule.h">
       <SubType />
     </ClInclude>
-    <ClInclude Include="Engine\Effect\Particle\Module\Updater\Material\ParticleUpdateUVModule.h">
+    <ClInclude Include="Engine\Effect\Particle\Module\Updater\Material\ParticleUpdateColorUVModule.h">
       <SubType />
     </ClInclude>
     <ClInclude Include="Engine\Effect\Particle\Module\Updater\Move\ParticleUpdateVelocityModule.h">

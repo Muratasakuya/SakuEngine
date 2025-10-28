@@ -1,4 +1,4 @@
-#include "ParticleUpdateUVModule.h"
+#include "ParticleUpdateNoiseUVModule.h"
 
 //============================================================================
 //	include
@@ -6,10 +6,10 @@
 #include <Engine/Utility/Enum/EnumAdapter.h>
 
 //============================================================================
-//	ParticleUpdateUVModule classMethods
+//	ParticleUpdateNoiseUVModule classMethods
 //============================================================================
 
-void ParticleUpdateUVModule::Init() {
+void ParticleUpdateNoiseUVModule::Init() {
 
 	// 初期化値
 	updateType_ = UpdateType::Lerp;
@@ -18,13 +18,13 @@ void ParticleUpdateUVModule::Init() {
 	scale_.target = Vector3::AnyInit(1.0f);
 }
 
-void ParticleUpdateUVModule::Execute(
+void ParticleUpdateNoiseUVModule::Execute(
 	CPUParticle::ParticleData& particle, [[maybe_unused]] float deltaTime) {
 
 	Vector3 translation{};
 	Vector3 scale{};
 	switch (updateType_) {
-	case ParticleUpdateUVModule::UpdateType::Lerp:
+	case ParticleUpdateNoiseUVModule::UpdateType::Lerp:
 
 		// UV座標補間
 		translation = Vector3::Lerp(translation_.start,
@@ -34,10 +34,10 @@ void ParticleUpdateUVModule::Execute(
 		scale = Vector3::Lerp(scale_.start,
 			scale_.target, EasedValue(easing_, particle.progress));
 		break;
-	case ParticleUpdateUVModule::UpdateType::Scroll:
+	case ParticleUpdateNoiseUVModule::UpdateType::Scroll:
 
 		// UVスクロール
-		translation = particle.material.uvTransform.GetTranslationValue();
+		translation = particle.material.noiseUVTransform.GetTranslationValue();
 		translation.x += scrollValue_.x;
 		translation.y += scrollValue_.y;
 
@@ -58,29 +58,29 @@ void ParticleUpdateUVModule::Execute(
 		rotation_.target, EasedValue(easing_, particle.progress));
 
 	// uvMatrixの更新
-	particle.material.uvTransform = Matrix4x4::MakeAffineMatrix(
+	particle.material.noiseUVTransform = Matrix4x4::MakeAffineMatrix(
 		scale, Vector3(0.0f, 0.0f, rotationZ), translation);
 }
 
-void ParticleUpdateUVModule::ImGui() {
+void ParticleUpdateNoiseUVModule::ImGui() {
 
 	EnumAdapter<UpdateType>::Combo("updateType", &updateType_);
 
 	ImGui::SeparatorText("Translation");
 
 	switch (updateType_) {
-	case ParticleUpdateUVModule::UpdateType::Lerp:
+	case ParticleUpdateNoiseUVModule::UpdateType::Lerp:
 
 		ImGui::DragFloat2("startTranslation", &translation_.start.x, 0.01f);
 		ImGui::DragFloat2("targetTranslation", &translation_.target.x, 0.01f);
 
 		Easing::SelectEasingType(easing_, GetName());
 		break;
-	case ParticleUpdateUVModule::UpdateType::Scroll:
+	case ParticleUpdateNoiseUVModule::UpdateType::Scroll:
 
 		ImGui::DragFloat2("scrollValue", &scrollValue_.x, 0.01f);
 		break;
-	case ParticleUpdateUVModule::UpdateType::Serial:
+	case ParticleUpdateNoiseUVModule::UpdateType::Serial:
 
 		serialScroll_.ImGui();
 		break;
@@ -97,7 +97,7 @@ void ParticleUpdateUVModule::ImGui() {
 	ImGui::DragFloat2("targetScale", &scale_.target.x, 0.01f);
 }
 
-Json ParticleUpdateUVModule::ToJson() {
+Json ParticleUpdateNoiseUVModule::ToJson() {
 
 	Json data;
 
@@ -120,7 +120,7 @@ Json ParticleUpdateUVModule::ToJson() {
 	return data;
 }
 
-void ParticleUpdateUVModule::FromJson(const Json& data) {
+void ParticleUpdateNoiseUVModule::FromJson(const Json& data) {
 
 	const auto& updateType = EnumAdapter<UpdateType>::FromString(data.value("updateType", ""));
 	updateType_ = updateType.value();

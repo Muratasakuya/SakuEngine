@@ -235,7 +235,8 @@ namespace CPUParticle {
 		float alphaReference;
 		float noiseAlphaReference;
 
-		Matrix4x4 uvTransform = Matrix4x4::MakeIdentity4x4();
+		Matrix4x4 colorUVTransform = Matrix4x4::MakeIdentity4x4();
+		Matrix4x4 noiseUVTransform = Matrix4x4::MakeIdentity4x4();
 
 		// 適応するポストエフェクトのビット
 		uint32_t postProcessMask;

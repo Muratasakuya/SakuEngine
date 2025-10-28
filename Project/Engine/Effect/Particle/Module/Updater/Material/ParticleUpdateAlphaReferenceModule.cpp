@@ -41,6 +41,7 @@ void ParticleUpdateAlphaReferenceModule::Execute(
 void ParticleUpdateAlphaReferenceModule::ImGui() {
 
 	ImGui::Checkbox("useNoiseTexture", &useNoiseTexture_);
+	Easing::SelectEasingType(easing_, GetName());
 
 	ImGui::DragFloat("startColorReference", &color_.start, 0.01f);
 	ImGui::DragFloat("targetColorReference", &color_.target, 0.01f);
@@ -51,8 +52,6 @@ void ParticleUpdateAlphaReferenceModule::ImGui() {
 
 	ImGui::DragFloat("starttNoiseReference", &noise_.start, 0.01f);
 	ImGui::DragFloat("targetNoiseReference", &noise_.target, 0.01f);
-
-	Easing::SelectEasingType(easing_, GetName());
 }
 
 Json ParticleUpdateAlphaReferenceModule::ToJson() {
