@@ -844,7 +844,7 @@ void BossEnemyStateController::EditStateTable() {
 
 				int comboID = phase.comboIndices[slotIdx];
 				bool isCurrentCombo = (phaseIdx == currentPhase_) && (comboID == currentComboID);
-				const std::string name = "Combo" + std::to_string(comboID);
+				const std::string name = "C:" + std::to_string(comboID);
 
 				ImGui::PushID(static_cast<int>(slotIdx));
 
