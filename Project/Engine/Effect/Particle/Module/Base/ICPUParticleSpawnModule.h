@@ -50,6 +50,7 @@ public:
 	void ShareCommonParam(ICPUParticleSpawnModule* other);
 
 	float GetLifeTime() const { return lifeTime_.GetValue(); }
+	const CPUParticle::TextureInfoForGPU& GetTextureInfo() const { return textureInfo_; }
 protected:
 	//========================================================================
 	//	protected Methods

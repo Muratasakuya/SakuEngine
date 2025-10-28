@@ -172,6 +172,9 @@ void CPUParticleGroup::UpdatePhase() {
 					particle.progress = 0.0f;
 					// 次のフェーズの生存時間で初期化
 					particle.lifeTime = phases_[particle.phaseIndex]->GetLifeTime();
+
+					// テクスチャの情報を次のフェーズのものに更新する
+					particle.textureInfo = phases_[particle.phaseIndex]->GetSpawner()->GetTextureInfo();
 					continue;
 				} else {
 

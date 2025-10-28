@@ -67,6 +67,7 @@ public:
 	float GetLifeTime() const;
 	const ParticleUpdateLifeTimeModule* GetLifeTimeModule() const;
 	ParticleUpdateTrailModule* GetTrailModule() const;
+	ICPUParticleSpawnModule* GetSpawner() const { return spawner_; }
 
 	bool HasTrailModule() const;
 private:
