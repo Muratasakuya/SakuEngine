@@ -118,6 +118,7 @@ private:
 	// editor
 	int selectedPhaseIndex_;
 	BossEnemyState editingState_;
+	bool isDrawDistanceLevel_ = false;
 
 	//--------- functions ----------------------------------------------------
 
@@ -140,5 +141,6 @@ private:
 
 	// helper
 	void SetInitTransform();
+	void CalDistanceToTarget();
 	void DebugCommand();
 };

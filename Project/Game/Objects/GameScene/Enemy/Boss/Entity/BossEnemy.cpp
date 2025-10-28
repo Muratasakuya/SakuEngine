@@ -59,11 +59,6 @@ void BossEnemy::InitAnimations() {
 	int id = ActionProgressMonitor::GetInstance()->AddObject("bossEnemy");
 	ActionProgressMonitor::GetInstance()->AddOverall(id, "followMove", [this]() -> float {return 0.0f; });
 	ActionProgressMonitor::GetInstance()->AddOverall(id, "charge", [this]() -> float {return 0.0f; });
-
-	// アニメーションに合わせて発生させるエフェクト
-	// エフェクト、エンジン機能変更中...
-	/*animationEffect_ = std::make_unique<BossEnemyAnimationEffect>();
-	animationEffect_->Init(*this);*/
 }
 
 void BossEnemy::InitCollision() {
@@ -104,6 +99,39 @@ void BossEnemy::SetInitTransform() {
 	transform_->translation = initTransform_.translation;
 }
 
+void BossEnemy::CalDistanceToTarget() {
+
+	// 距離レベルを計算
+	Vector3 diff = player_->GetTranslation() - transform_->translation;
+	// 距離
+	const float distance = diff.Length();
+	stats_.currentDistanceToTarget = distance;
+
+	// しきい値を距離昇順でソートする
+	std::vector<std::pair<float, DistanceLevel>> distancePair;
+	distancePair.reserve(stats_.distanceLevels.size());
+	for (const auto& [level, radius] : stats_.distanceLevels) {
+
+		distancePair.emplace_back(radius, level);
+	}
+	// 昇順ソート
+	std::sort(distancePair.begin(), distancePair.end(),
+		[](const auto& a, const auto& b) { return a.first < b.first; });
+	auto it = std::lower_bound(distancePair.begin(), distancePair.end(), distance,
+		[](const auto& e, float val) { return e.first < val; });
+
+	// 範囲内ならその距離レベルを設定
+	if (it != distancePair.end()) {
+
+		stats_.currentDistanceLevel = it->second;
+	}
+	// Farよりも遠ければFarにする
+	else {
+
+		stats_.currentDistanceLevel = DistanceLevel::Far;
+	}
+}
+
 void BossEnemy::DebugCommand() {
 
 #if defined(_DEBUG) || defined(_DEVELOPBUILD)
@@ -128,6 +156,11 @@ void BossEnemy::DerivedInit() {
 
 	// collision初期化、設定
 	InitCollision();
+
+	// 距離レベル仮初期化
+	stats_.distanceLevels.emplace(DistanceLevel::Near, 2.0f);
+	stats_.distanceLevels.emplace(DistanceLevel::Middle, 4.0f);
+	stats_.distanceLevels.emplace(DistanceLevel::Far, 6.0f);
 
 	// json適応
 	ApplyJson();
@@ -156,8 +189,6 @@ void BossEnemy::SetFollowCamera(FollowCamera* followCamera) {
 
 	stateController_->SetFollowCamera(followCamera, *this);
 	hudSprites_->SetFollowCamera(followCamera);
-	// エフェクト、エンジン機能変更中...
-	//animationEffect_->SetFollowCamera(followCamera);
 }
 
 void BossEnemy::SetAlpha(float alpha) {
@@ -251,6 +282,9 @@ void BossEnemy::UpdatePlayGame() {
 
 		std::sort(stats_.hpThresholds.begin(), stats_.hpThresholds.end(), std::greater<int>());
 	}
+
+	// 状態処理開始前に距離レベルを決定する
+	CalDistanceToTarget();
 
 	// 状態の更新
 	stateController_->SetStatas(stats_);
@@ -403,6 +437,45 @@ void BossEnemy::DerivedImGui() {
 
 	ImGui::Text("parryTimingTickets: %d", parryTimingTickets_);
 	ImGui::Text(std::format("ConsumeParryTiming: {}", ConsumeParryTiming()).c_str());
+
+	ImGui::SeparatorText("DistanceLevel");
+
+	ImGui::Checkbox("isDrawDistanceLevel", &isDrawDistanceLevel_);
+
+	for (auto& [level, distance] : stats_.distanceLevels) {
+
+		const std::string label = EnumAdapter<DistanceLevel>::ToString(level);
+		ImGui::DragFloat(label.c_str(), &distance, 0.1f, 0.0f, 1000.0f);
+	}
+	// 現在の距離
+	ImGui::Text("currentDistanceToTarget: %.2f", stats_.currentDistanceToTarget);
+	ImGui::Text("currentDistanceLevel: %s", EnumAdapter<DistanceLevel>::ToString(stats_.currentDistanceLevel));
+
+	// 距離レベルの描画
+	if (isDrawDistanceLevel_) {
+
+		// 向き
+		Vector3 playerPos = player_->GetTranslation();
+		Vector3 enemyPos = transform_->translation;
+		// y座標を固定
+		playerPos.y = enemyPos.y = 4.0f;
+		Vector3 direction = Vector3(playerPos - enemyPos).Normalize();
+
+		// 距離レベルの描画
+		// Near
+		LineRenderer::GetInstance()->DrawLine3D(enemyPos,
+			enemyPos + direction * stats_.distanceLevels[DistanceLevel::Near], Color::Red());
+		// Middle
+		LineRenderer::GetInstance()->DrawLine3D(enemyPos,
+			enemyPos + direction * stats_.distanceLevels[DistanceLevel::Middle], Color::Green());
+		// Far
+		LineRenderer::GetInstance()->DrawLine3D(enemyPos,
+			enemyPos + direction * stats_.distanceLevels[DistanceLevel::Far], Color::Cyan());
+
+		// 今
+		LineRenderer::GetInstance()->DrawLine3D(enemyPos,
+			enemyPos + direction * stats_.currentDistanceToTarget, Color::Yellow());
+	}
 
 	ImGui::Separator();
 
@@ -585,6 +658,14 @@ void BossEnemy::ApplyJson() {
 			stats_.blockFalterStates.push_back(state.value());
 		}
 	}
+
+	if (data.contains("DistanceLevels")) {
+		for (const auto& [key, value] : data["DistanceLevels"].items()) {
+
+			DistanceLevel level = EnumAdapter<DistanceLevel>::FromString(key).value();
+			stats_.distanceLevels[level] = value.get<float>();
+		}
+	}
 }
 
 void BossEnemy::SaveJson() {
@@ -614,6 +695,11 @@ void BossEnemy::SaveJson() {
 	for (const auto& state : stats_.blockFalterStates) {
 
 		data["BlockFalterState"].push_back(EnumAdapter<BossEnemyState>::ToString(state));
+	}
+
+	for (const auto& [level, value] : stats_.distanceLevels) {
+
+		data["DistanceLevels"][EnumAdapter<DistanceLevel>::ToString(level)] = value;
 	}
 
 	JsonAdapter::Save("Enemy/Boss/initParameter.json", data);

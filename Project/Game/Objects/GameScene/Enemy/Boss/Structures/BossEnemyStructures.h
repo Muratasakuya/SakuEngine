@@ -60,6 +60,13 @@ struct BossEnemyStats {
 
 	std::unordered_map<BossEnemyState, int> damages; // 各攻撃のダメージ量
 	int damageRandomRange;                           // ダメージのランダム範囲
+
+	// 距離レベル判定距離
+	std::unordered_map<DistanceLevel, float> distanceLevels;
+	// プレイヤーまでの現在距離
+	float currentDistanceToTarget;
+	// プレイヤーまでの距離レベル
+	DistanceLevel currentDistanceLevel;
 };
 
 // コンボリスト

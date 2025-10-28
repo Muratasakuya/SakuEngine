@@ -118,6 +118,11 @@
         "6": 600,
         "7": 450
     },
+    "DistanceLevels": {
+        "Far": 200.0,
+        "Middle": 100.0,
+        "Near": 60.0
+    },
     "Material0": {
         "castShadow": 1,
         "color": {

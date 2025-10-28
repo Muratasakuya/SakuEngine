@@ -291,16 +291,16 @@
             "castShadow": 1,
             "color": {
                 "a": 1.0,
-                "b": 0.6666666865348816,
-                "g": 0.9490196108818054,
-                "r": 0.12156862765550613
+                "b": 1.0,
+                "g": 1.0,
+                "r": 1.0
             },
             "emissionColor": {
-                "x": 0.12156862765550613,
-                "y": 0.9490196108818054,
-                "z": 0.6666666865348816
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
             },
-            "emissiveIntensity": 4.0,
+            "emissiveIntensity": 0.0,
             "enableBlinnPhongReflection": 0,
             "enableDithering": 0,
             "enableHalfLambert": 1,
@@ -574,16 +574,16 @@
             "castShadow": 1,
             "color": {
                 "a": 1.0,
-                "b": 0.6680092215538025,
-                "g": 0.9507692456245422,
-                "r": 0.12286866456270218
+                "b": 1.0,
+                "g": 1.0,
+                "r": 1.0
             },
             "emissionColor": {
-                "x": 0.12286866456270218,
-                "y": 0.9507692456245422,
-                "z": 0.6680092215538025
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
             },
-            "emissiveIntensity": 4.0,
+            "emissiveIntensity": 0.0,
             "enableBlinnPhongReflection": 0,
             "enableDithering": 0,
             "enableHalfLambert": 1,
