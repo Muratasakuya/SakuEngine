@@ -5,6 +5,7 @@
 //============================================================================
 #include <Engine/MathLib/MathUtils.h>
 #include <Engine/Utility/Timer/StateTimer.h>
+#include <Engine/Utility/Enum/Distance.h>
 
 // c++
 #include <cstdint>

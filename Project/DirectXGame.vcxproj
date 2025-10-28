@@ -1308,6 +1308,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <SubType />
     </ClInclude>
     <ClInclude Include="Engine\Utility\Curve\CurveValue.h" />
+    <ClInclude Include="Engine\Utility\Enum\Distance.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="Engine\Utility\Enum\ObjectUpdateMode.h">
       <SubType />
     </ClInclude>
