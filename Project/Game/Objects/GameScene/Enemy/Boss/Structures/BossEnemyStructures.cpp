@@ -4,6 +4,7 @@
 //	BossEnemyStructures classMethods
 //============================================================================
 #include <Engine/Utility/Json/JsonAdapter.h>
+#include <Engine/Utility/Enum/EnumAdapter.h>
 
 //============================================================================
 //	BossEnemyStructures classMethods
@@ -18,6 +19,19 @@ void BossEnemyCombo::FromJson(const Json& data) {
 	}
 	allowRepeat = data.value("allowRepeat", true);
 	teleportType = static_cast<BossEnemyTeleportType>(data.value("teleportType", 0));
+
+	requiredDistanceLevels.clear();
+	if (data.contains("requiredDistanceLevels")) {
+		for (const auto& v : data["requiredDistanceLevels"]) {
+			if (v.is_string()) {
+				if (auto ev = EnumAdapter<DistanceLevel>::FromString(v.get<std::string>()); ev) {
+					requiredDistanceLevels.emplace_back(*ev);
+				}
+			} else if (v.is_number_integer()) {
+				requiredDistanceLevels.emplace_back(static_cast<DistanceLevel>(v.get<int>()));
+			}
+		}
+	}
 }
 
 void BossEnemyCombo::ToJson(Json& data) {
@@ -29,6 +43,12 @@ void BossEnemyCombo::ToJson(Json& data) {
 	}
 	data["allowRepeat"] = allowRepeat;
 	data["teleportType"] = static_cast<int>(teleportType);
+
+	data["requiredDistanceLevels"].clear();
+	for (auto lv : requiredDistanceLevels) {
+
+		data["requiredDistanceLevels"].push_back(EnumAdapter<DistanceLevel>::ToString(lv));
+	}
 }
 
 void BossEnemyPhase::FromJson(const Json& data) {

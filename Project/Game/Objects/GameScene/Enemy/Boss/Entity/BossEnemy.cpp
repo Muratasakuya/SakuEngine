@@ -243,6 +243,22 @@ bool BossEnemy::IsDead() const {
 	return stats_.currentHP == 0;
 }
 
+uint32_t BossEnemy::GetCurrentPhaseIndex() const {
+
+	// 現在のHP割合
+	uint32_t hpRate = (stats_.currentHP * 100) / stats_.maxHP;
+
+	uint32_t phaseIndex = 0;
+	for (uint32_t threshold : stats_.hpThresholds) {
+		if (hpRate < threshold) {
+
+			// 閾値以下ならフェーズを進める
+			++phaseIndex;
+		}
+	}
+	return phaseIndex;
+}
+
 void BossEnemy::Update(GameSceneState sceneState) {
 
 	// シーンの状態に応じた更新処理
@@ -394,7 +410,7 @@ void BossEnemy::TellParryTiming() {
 void BossEnemy::DerivedImGui() {
 
 	// 文字サイズを設定
-	ImGui::SetWindowFontScale(0.64f);
+	ImGui::SetWindowFontScale(0.58f);
 
 	ImGui::SeparatorText("HP");
 

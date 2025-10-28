@@ -11,6 +11,7 @@
 // 距離レベル
 enum class DistanceLevel {
 
+	None,    // 無し
 	Near,   // 近
 	Middle, // 中
 	Far,    // 遠

@@ -76,6 +76,9 @@ struct BossEnemyCombo {
 	bool allowRepeat;                     // 同じComboを繰り返してもよいか
 	BossEnemyTeleportType teleportType;   // テレポートの種類
 
+	// コンボを発動できる距離レベル、何も値が入っていなければどこでも処理できるようにする
+	std::vector<DistanceLevel> requiredDistanceLevels;
+
 	void FromJson(const Json& data);
 	void ToJson(Json& data);
 };

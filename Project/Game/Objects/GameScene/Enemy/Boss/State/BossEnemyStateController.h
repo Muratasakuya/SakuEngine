@@ -112,7 +112,7 @@ private:
 
 	// update
 	// HPに応じたフェーズ更新
-	void UpdatePhase();
+	void UpdatePhase(const BossEnemy& owner);
 	// 状態タイマー更新
 	void UpdateStateTimer();
 

@@ -54,6 +54,8 @@ private:
 
 	// フェーズに応じた弾を飛ばす数、奇数個
 	std::vector<uint32_t> phaseBulletCounts_;
+	// 現在のフェーズインデックス、Enterで取得して変更しない
+	uint32_t currentPhaseIndex_;
 	// 発生させる順番のインデックス
 	std::vector<int32_t> launchIndices_;
 
@@ -87,6 +89,7 @@ private:
 	std::vector<bool> bulletEmited_;
 
 	// エディター
+	bool isEditMode_ = false;
 	int32_t editingPhase_; // 編集中のフェーズ
 	Vector3 editStartPos_; // デバッグ用開始位置
 	Vector3 editEndPos_;   // デバッグ用終了位置

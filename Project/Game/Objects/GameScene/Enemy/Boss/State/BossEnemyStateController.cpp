@@ -100,7 +100,7 @@ void BossEnemyStateController::Update(BossEnemy& owner) {
 	}
 
 	// 状態切り替えの設定処理
-	UpdatePhase();
+	UpdatePhase(owner);
 	CheckStunToughness();
 
 	// 怯み依頼処理
@@ -133,24 +133,14 @@ void BossEnemyStateController::Update(BossEnemy& owner) {
 	UpdateReFalterCooldown(owner);
 }
 
-void BossEnemyStateController::UpdatePhase() {
+void BossEnemyStateController::UpdatePhase(const BossEnemy& owner) {
 
 	if (stats_.maxHP == 0) {
 		return;
 	}
 
-	// 現在のHP割合
-	uint32_t hpRate = (stats_.currentHP * 100) / stats_.maxHP;
-
 	// HP割合に応じて現在のフェーズを計算して設定
-	currentPhase_ = 0;
-	for (uint32_t threshold : stats_.hpThresholds) {
-		if (hpRate < threshold) {
-
-			// 閾値以下ならフェーズを進める
-			++currentPhase_;
-		}
-	}
+	currentPhase_ = owner.GetCurrentPhaseIndex();
 
 	// phaseが切り替わったら全てリセットする
 	if (prevPhase_ != currentPhase_) {
@@ -395,45 +385,88 @@ void BossEnemyStateController::ChangeState(BossEnemy& owner) {
 
 void BossEnemyStateController::ChooseNextState(const BossEnemyPhase& phase) {
 
-	// 新しいコンボを抽選して設定
-	const bool startingNewCombo = (currentSequenceIndex_ == 0);
+	// 現在のコンボシークエンスが0なら新しいコンボを選択する
+	const bool startingNewCombo = currentSequenceIndex_ == 0;
+	int maxComboCount = static_cast<int>(stateTable_.combos.size() - 1);
 	if (startingNewCombo) {
-		if (phase.comboIndices.empty()) return;
 
-		int tryCount = 0;
-		// 同じコンボは連続で選択できないようにする
-		// tryCountが6を超えたらその状態にする
+		// フェーズがコンボを所持していなければ処理しない
+		if (phase.comboIndices.empty()) {
+			return;
+		}
+
+		// 距離レベルを満たすコンボのインデックスフィルター配列
+		std::vector<int> filteredComboIndices;
+		filteredComboIndices.reserve(phase.comboIndices.size());
+		for (int index = 0; index < phase.comboIndices.size(); ++index) {
+
+			int comboIndex = std::clamp(phase.comboIndices[index], 0, maxComboCount);
+			const BossEnemyCombo combo = stateTable_.combos[comboIndex];
+
+			// 現在の距離レベルを満たしているかチェック
+			auto it = std::ranges::find(combo.requiredDistanceLevels, stats_.currentDistanceLevel);
+			// 条件を満たしていれば追加
+			if (combo.requiredDistanceLevels.empty() || it != combo.requiredDistanceLevels.end()) {
+
+				filteredComboIndices.emplace_back(comboIndex);
+			}
+		}
+
+		// 該当するコンボがなければすべてを対象にする
+		const std::vector<int>& source = filteredComboIndices.empty() ?
+			phase.comboIndices : filteredComboIndices;
+
+		// フィルターされたコンボの中からランダムに選択
+		const int maxTriCount = 4; // 同じコンボを連続で処理しないように被ったらリトライする最大回数
+		int tryCount = 0;          // 試行回数
 		do {
-			currentComboSlot_ = (phase.comboIndices.size() == 1) ? 0
-				: RandomGenerator::Generate(0, int(phase.comboIndices.size() - 1));
+			// 1つだけならそのインデックスを渡す
+			if (source.size() == 1) {
 
-			currentComboIndex_ = std::clamp(phase.comboIndices[currentComboSlot_],
-				0, int(stateTable_.combos.size() - 1));
+				currentComboIndex_ = source.front();
+			} else {
+
+				// ランダムで選択する
+				int randomIndex = RandomGenerator::Generate(0, static_cast<int>(source.size() - 1));
+				currentComboIndex_ = std::clamp(source[randomIndex], 0, maxComboCount);
+			}
 			++tryCount;
-		} while (currentComboIndex_ == prevComboIndex_ &&
-			!stateTable_.combos[currentComboIndex_].allowRepeat && tryCount < 6);
+		}
+		// 同じコンボを選択したとき試行回数の最大を超えるまでループする
+		while (currentComboIndex_ == prevComboIndex_ &&
+			!stateTable_.combos[currentComboIndex_].allowRepeat && tryCount < maxTriCount);
 
+		// 現在のコンボスロットを更新
+		auto it = std::find(phase.comboIndices.begin(), phase.comboIndices.end(), currentComboIndex_);
+		currentComboSlot_ = (it != phase.comboIndices.end()) ?
+			static_cast<uint32_t>(std::distance(phase.comboIndices.begin(), it)) : 0;
+
+		// 前回のコンボインデックスを更新
 		prevComboIndex_ = currentComboIndex_;
 		currentSequenceIndex_ = 0;
 	}
 
-	// 次に再生する状態を取得
+	// 次に再生する状態をコンボのインデックスから取得
 	const BossEnemyCombo& combo = stateTable_.combos[currentComboIndex_];
 	uint32_t sequenceIndex = currentSequenceIndex_;
-	BossEnemyState next = combo.sequence[sequenceIndex];
 
+	// コンボ内のシークエンスから状態を取得
+	BossEnemyState next = combo.sequence[sequenceIndex];
 	if (!startingNewCombo && !combo.allowRepeat && next == current_) {
 
+		// コンボ内のシークエンスが最後まで行ったらリセットする
 		sequenceIndex = (sequenceIndex + 1) % combo.sequence.size();
 		next = combo.sequence[sequenceIndex];
 	}
 
-	// indexを次に進める
+	// シークエンスを進めておく
 	currentSequenceIndex_ = sequenceIndex + 1;
 	if (combo.sequence.size() <= currentSequenceIndex_) {
+
 		currentSequenceIndex_ = 0;
 	}
 
+	// 次の状態を設定
 	requested_ = next;
 }
 
@@ -583,13 +616,14 @@ void BossEnemyStateController::EditStateTable() {
 		stateTable_.combos.emplace_back(BossEnemyCombo{});
 	}
 
-	if (ImGui::BeginTable("##ComboList", 5, tableFlags)) {
+	if (ImGui::BeginTable("##ComboList", 6, tableFlags)) {
 
-		ImGui::TableSetupColumn("Combo");     // 0
-		ImGui::TableSetupColumn("Sequence");  // 1
-		ImGui::TableSetupColumn("Repeat");    // 2
-		ImGui::TableSetupColumn("Teleport");  // 3
-		ImGui::TableSetupColumn("AddState");  // 4
+		ImGui::TableSetupColumn("Combo");    // 0
+		ImGui::TableSetupColumn("Sequence"); // 1
+		ImGui::TableSetupColumn("Rep");      // 2
+		ImGui::TableSetupColumn("Teleport"); // 3
+		ImGui::TableSetupColumn("Distance"); // 4
+		ImGui::TableSetupColumn("AddState"); // 5
 		ImGui::TableHeadersRow();
 
 		for (int comboIdx = 0; comboIdx < static_cast<int>(stateTable_.combos.size()); ++comboIdx) {
@@ -690,7 +724,34 @@ void BossEnemyStateController::EditStateTable() {
 			ImGui::PopItemWidth();
 
 			//----------------------------------------------------------------
-			// 列4: AddStateドロップダウン
+			// 列4: 距離レベルの追加
+			//----------------------------------------------------------------
+
+			ImGui::TableNextColumn();
+			{
+				int id = 0;
+				for (const auto& [level, _radius] : stats_.distanceLevels) {
+					bool checked = (std::ranges::find(combo.requiredDistanceLevels, level)
+						!= combo.requiredDistanceLevels.end());
+					ImGui::PushID(id++);
+					if (ImGui::Checkbox(EnumAdapter<DistanceLevel>::ToString(level), &checked)) {
+						if (checked) {
+							combo.requiredDistanceLevels.push_back(level);
+						} else {
+							if (auto it = std::ranges::find(combo.requiredDistanceLevels, level);
+								it != combo.requiredDistanceLevels.end()) {
+								combo.requiredDistanceLevels.erase(it);
+							}
+						}
+					}
+					ImGui::PopID();
+					ImGui::SameLine();
+				}
+				ImGui::NewLine();
+			}
+
+			//----------------------------------------------------------------
+			// 列5: AddStateドロップダウン
 			//----------------------------------------------------------------
 			ImGui::TableNextColumn();
 			{

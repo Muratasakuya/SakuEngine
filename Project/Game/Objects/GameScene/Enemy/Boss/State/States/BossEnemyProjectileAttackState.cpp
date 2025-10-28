@@ -45,6 +45,10 @@ void BossEnemyProjectileAttackState::Enter(BossEnemy& bossEnemy) {
 	// 初期状態を設定
 	currentState_ = State::Launch;
 
+	// 現在のフェーズインデックスを取得
+	// エディター操作中ならエディターで設定したインデックスを使用する
+	currentPhaseIndex_ = isEditMode_ ? editingPhase_ : bossEnemy.GetCurrentPhaseIndex();
+
 	// 発生起動エフェクト前処理
 	BeginLaunchPhase(bossEnemy);
 }
@@ -75,7 +79,7 @@ void BossEnemyProjectileAttackState::UpdateLaunch() {
 	launchTimer_.Update();
 
 	// 経過進捗で等間隔に発生させる
-	uint32_t count = phaseBulletCounts_[editingPhase_];
+	uint32_t count = phaseBulletCounts_[currentPhaseIndex_];
 	for (uint32_t i = 0; i < count; ++i) {
 
 		// 発生していなければ
@@ -102,14 +106,14 @@ void BossEnemyProjectileAttackState::UpdateLaunch() {
 
 		// 攻撃エフェクト前処理
 		// 発生済みフラグをリセット
-		bulletEmited_.assign(phaseBulletCounts_[editingPhase_], false);
+		bulletEmited_.assign(phaseBulletCounts_[currentPhaseIndex_], false);
 	}
 }
 
 void  BossEnemyProjectileAttackState::UpdateAttack(const BossEnemy& bossEnemy) {
 
 	// 弾の数と一発の弾の攻撃時間を目標時間にする
-	uint32_t count = phaseBulletCounts_[editingPhase_];
+	uint32_t count = phaseBulletCounts_[currentPhaseIndex_];
 	attackTimer_.Update(bulletAttackDuration_ * static_cast<float>(count));
 
 	// プレイヤーの座標
@@ -152,11 +156,11 @@ void  BossEnemyProjectileAttackState::UpdateAttack(const BossEnemy& bossEnemy) {
 void BossEnemyProjectileAttackState::BeginLaunchPhase(BossEnemy& bossEnemy) {
 
 	// 発生位置を設定する
-	SetLaunchPositions(bossEnemy, editingPhase_);
+	SetLaunchPositions(bossEnemy, currentPhaseIndex_);
 	// 発生順序のインデックスを設定する
 	SetLeftToRightIndices(bossEnemy);
 	// 発生済みフラグをリセット
-	launchEmited_.assign(phaseBulletCounts_[editingPhase_], false);
+	launchEmited_.assign(phaseBulletCounts_[currentPhaseIndex_], false);
 }
 
 void BossEnemyProjectileAttackState::SetLeftToRightIndices(const BossEnemy& bossEnemy) {
@@ -245,6 +249,7 @@ void BossEnemyProjectileAttackState::ImGui(const BossEnemy& bossEnemy) {
 
 	ImGui::Text("currentState: %s", EnumAdapter<State>::ToString(currentState_));
 
+	ImGui::Checkbox("isEditMode", &isEditMode_);
 	ImGui::DragInt("editingPhase", &editingPhase_, 1, 0, static_cast<uint32_t>(phaseBulletCounts_.size() - 1));
 	ImGui::DragFloat("rotationLerpRate", &rotationLerpRate_, 0.01f);
 	ImGui::DragFloat("nextAnimDuration", &nextAnimDuration_, 0.01f);
@@ -262,7 +267,7 @@ void BossEnemyProjectileAttackState::ImGui(const BossEnemy& bossEnemy) {
 	ImGui::DragFloat("targetDistance", &targetDistance_, 0.01f);
 
 	// 座標の更新
-	SetLaunchPositions(bossEnemy, editingPhase_);
+	SetLaunchPositions(bossEnemy, isEditMode_ ? editingPhase_ : bossEnemy.GetCurrentPhaseIndex());
 
 	ImGui::SeparatorText("Debug");
 

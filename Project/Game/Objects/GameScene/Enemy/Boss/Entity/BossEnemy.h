@@ -84,6 +84,7 @@ public:
 
 	int GetDamage() const;
 	bool IsDead() const;
+	uint32_t GetCurrentPhaseIndex() const;
 	const ParryParameter& GetParryParam() const { return stateController_->GetParryParam(); }
 private:
 	//========================================================================
