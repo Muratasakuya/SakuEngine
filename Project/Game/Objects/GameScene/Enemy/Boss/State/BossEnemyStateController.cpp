@@ -437,7 +437,8 @@ void BossEnemyStateController::ChooseNextState(const BossEnemyPhase& phase) {
 			!stateTable_.combos[currentComboIndex_].allowRepeat && tryCount < maxTriCount);
 
 		// 現在のコンボスロットを更新
-		auto it = std::find(phase.comboIndices.begin(), phase.comboIndices.end(), currentComboIndex_);
+		int currentComboIndex = currentComboIndex_;
+		auto it = std::find(phase.comboIndices.begin(), phase.comboIndices.end(), currentComboIndex);
 		currentComboSlot_ = (it != phase.comboIndices.end()) ?
 			static_cast<uint32_t>(std::distance(phase.comboIndices.begin(), it)) : 0;
 

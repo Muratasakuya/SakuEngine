@@ -12,6 +12,30 @@
 //	BossEnemyProjectileAttackState classMethods
 //============================================================================
 
+void BossEnemyProjectileAttackState::BulletCollision::Init() {
+
+	// 衝突初期化
+	collider = std::make_unique<Collider>();
+	// 球で追加
+	CollisionBody* body = collider->AddCollider(CollisionShape::Sphere());
+	// タイプ設定
+	body->SetType(ColliderType::Type_BossWeapon);
+	body->SetTargetType(ColliderType::Type_Player);
+	// 判定設定
+	CollisionShape::Sphere sphere = CollisionShape::Sphere::Default();
+	sphere.radius = 4.0f;
+	body->SetShape(sphere);
+
+	// その他デフォで初期化
+	isActive = false;
+	moveTimer.Reset();
+	transform.Init();
+	// 絶対に当たらない場所で初期化
+	transform.translation = collisionSafePos_;
+	startPos = collisionSafePos_;
+	targetPos = collisionSafePos_;
+}
+
 BossEnemyProjectileAttackState::BossEnemyProjectileAttackState(uint32_t phaseCount) {
 
 	// エフェクトの初期化
@@ -25,6 +49,11 @@ BossEnemyProjectileAttackState::BossEnemyProjectileAttackState(uint32_t phaseCou
 		effect = std::make_unique<EffectGroup>();
 		effect->Init("bossEnemyProjectileBulletEffect", "BossEnemyEffect");
 		effect->LoadJson("GameEffectGroup/BossEnemy/bossEnemyProjectileBulletEffect.json");
+	}
+	// 弾の衝突判定初期化
+	for (auto& bullet : bulletColliders_) {
+
+		bullet.Init();
 	}
 
 	for (uint32_t index = 0; index < phaseCount + 1; ++index) {
@@ -142,6 +171,14 @@ void  BossEnemyProjectileAttackState::UpdateAttack(const BossEnemy& bossEnemy) {
 				bulletEffects_[i]->SetKeyframePath(bulletParticleNodeKey_, keys);
 				// 発生済み
 				bulletEmited_[i] = true;
+
+				// 衝突判定の設定
+				BulletCollision& bulletCollider = bulletColliders_[i];
+				// アクティブ状態にして補間を開始させる
+				bulletCollider.isActive = true;
+				// 補間座標の設定
+				bulletCollider.startPos = start;
+				bulletCollider.targetPos = target;
 			}
 		}
 	}
@@ -230,10 +267,50 @@ void BossEnemyProjectileAttackState::SetLaunchPositions(const BossEnemy& bossEne
 void BossEnemyProjectileAttackState::UpdateAlways([[maybe_unused]] BossEnemy& bossEnemy) {
 
 	// エフェクトの更新
+	// 発生起動エフェクト
 	launchEffect_->Update();
+	// 弾エフェクト
 	for (const auto& effect : bulletEffects_) {
 
 		effect->Update();
+	}
+
+	// 衝突判定の更新
+	// 弾
+	for (auto& bullet : bulletColliders_) {
+
+		bullet.Update(bulletLerpDuration_);
+	}
+}
+
+void BossEnemyProjectileAttackState::BulletCollision::Update(float duration) {
+
+	// アクティブ状態のときに座標を更新する
+	if (isActive) {
+
+		LerpTranslation(duration);
+	}
+	// 衝突判定は常に更新しておく
+	collider->UpdateAllBodies(transform);
+}
+
+void BossEnemyProjectileAttackState::BulletCollision::LerpTranslation(float duration) {
+
+	// 時間を更新
+	moveTimer.Update(duration);
+
+	// 弾の衝突座標を補間する
+	transform.translation = Vector3::Lerp(startPos, targetPos, moveTimer.t_);
+	transform.UpdateMatrix();
+
+	// 終了次第補間を終了し安全な座標に移す
+	if (moveTimer.IsReached()) {
+
+		// リセット
+		moveTimer.Reset();
+		transform.translation = collisionSafePos_;
+		// 非アクティブ状態にする
+		isActive = false;
 	}
 }
 
@@ -265,6 +342,7 @@ void BossEnemyProjectileAttackState::ImGui(const BossEnemy& bossEnemy) {
 
 	ImGui::DragFloat("bulletAttackDuration", &bulletAttackDuration_, 0.01f);
 	ImGui::DragFloat("targetDistance", &targetDistance_, 0.01f);
+	ImGui::DragFloat("bulletLerpDuration", &bulletLerpDuration_, 0.01f);
 
 	// 座標の更新
 	SetLaunchPositions(bossEnemy, isEditMode_ ? editingPhase_ : bossEnemy.GetCurrentPhaseIndex());
@@ -275,6 +353,13 @@ void BossEnemyProjectileAttackState::ImGui(const BossEnemy& bossEnemy) {
 	for (const auto& emited : bulletEmited_) {
 
 		ImGui::Text("bulletEmited[%d]: %s", index++, emited ? "true" : "false");
+	}
+	ImGui::Separator();
+	for (const auto& bullet : bulletColliders_) {
+
+		ImGui::Text("bulletCollider isActive: %s", bullet.isActive ? "true" : "false");
+		ImGui::Text("position: (%.2f, %.2f, %.2f)", bullet.transform.translation.x,
+			bullet.transform.translation.y, bullet.transform.translation.z);
 	}
 
 	// 現在発生させる位置のデバッグ表示
@@ -292,6 +377,7 @@ void BossEnemyProjectileAttackState::ApplyJson(const Json& data) {
 	rotationLerpRate_ = data.value("rotationLerpRate_", 1.0f);
 	nextAnimDuration_ = data.value("nextAnimDuration_", 0.16f);
 	launchTopPosY_ = data.value("launchTopPosY", 4.0f);
+	bulletLerpDuration_ = data.value("bulletLerpDuration_", 0.32f);
 	launchOffsetPos_ = Vector3::FromJson(data.value("launchOffsetPos", Json()));
 }
 
@@ -303,5 +389,6 @@ void BossEnemyProjectileAttackState::SaveJson(Json& data) {
 	data["rotationLerpRate_"] = rotationLerpRate_;
 	data["nextAnimDuration_"] = nextAnimDuration_;
 	data["launchTopPosY"] = launchTopPosY_;
+	data["bulletLerpDuration_"] = bulletLerpDuration_;
 	data["launchOffsetPos"] = launchOffsetPos_.ToJson();
 }

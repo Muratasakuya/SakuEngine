@@ -4,6 +4,7 @@
 //	include
 //============================================================================
 #include <Engine/Effect/User/EffectGroup.h>
+#include <Engine/Collision/Collider.h>
 #include <Game/Objects/GameScene/Enemy/Boss/State/Interface/BossEnemyIState.h>
 
 //============================================================================
@@ -47,6 +48,30 @@ private:
 		Attack, // 順に攻撃
 	};
 
+	// 弾の衝突情報
+	struct BulletCollision {
+
+		std::unique_ptr<Collider> collider; // 衝突判定
+
+		bool isActive;         // 有効フラグ
+		Vector3 startPos;      // 発生位置
+		Vector3 targetPos;     // 目標位置
+		StateTimer moveTimer;  // 座標移動タイマー
+		Transform3D transform; // 弾の仮Transform
+
+		// 絶対に当たらない座標
+		const Vector3 collisionSafePos_ = Vector3(0.0f, -128.0f, 0.0f);
+
+		// 初期化
+		void Init();
+
+		// 更新
+		void Update(float duration);
+
+		// 位置補間
+		void LerpTranslation(float duration);
+	};
+
 	//--------- variables ----------------------------------------------------
 
 	// 現在の状態
@@ -83,6 +108,10 @@ private:
 	static const uint32_t kMaxBulletCount_ = 5;
 	std::array<std::unique_ptr<EffectGroup>, kMaxBulletCount_> bulletEffects_;
 	const std::string bulletParticleNodeKey_ = "bossAttackProjectile";
+	// 弾の衝突判定
+	std::array<BulletCollision, kMaxBulletCount_> bulletColliders_;
+	// 弾の補間速度
+	float bulletLerpDuration_;
 
 	// エフェクト発生済みフラグ
 	std::vector<bool> launchEmited_;
