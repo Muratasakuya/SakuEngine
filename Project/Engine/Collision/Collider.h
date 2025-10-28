@@ -52,6 +52,9 @@ public:
 
 	//--------- accessor -----------------------------------------------------
 
+	// 指定インデックスの球形状の半径を設定する
+	void SetSphereRadius(float radius, std::optional<uint32_t> index = std::nullopt);
+
 	// 子として扱うかどうかの設定(ワールド行列を使った更新に切替)
 	void SetIsChild(bool isChild) { isChild_ = isChild; }
 	// 直近フレームでEnter状態かどうか

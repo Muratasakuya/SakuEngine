@@ -69,7 +69,7 @@ void Collider::UpdateSphereBody(CollisionBody* body, const Transform3D& transfor
 	Vector3 bodyTranslation = isChild_ ? transform.GetWorldPos() : transform.translation;
 	Vector3 center = bodyTranslation + offset.center;
 
-	body->UpdateSphere(CollisionShape::Sphere(center));
+	body->UpdateSphere(CollisionShape::Sphere(center, offset.radius));
 }
 
 void Collider::UpdateAABBBody(CollisionBody* body, const Transform3D& transform, const CollisionShape::AABB& offset) {
@@ -276,6 +276,36 @@ void Collider::BuildBodies(const Json& data) {
 		SetTypeFromJson(*body, colliderData);
 
 		++index;
+	}
+}
+
+void Collider::SetSphereRadius(float radius, std::optional<uint32_t> index) {
+
+	// 指定インデックスの球形状の半径を設定する
+	if (index.has_value()) {
+
+		auto& offset = bodyOffsets_[index.value()];
+		std::visit([&](const auto& shape) {
+			using T = std::decay_t<decltype(shape)>;
+			if constexpr (std::is_same_v<T, CollisionShape::Sphere>) {
+
+				std::get<CollisionShape::Sphere>(offset).radius = radius;
+			}
+			}, offset);
+	}
+	// 全ての球形状の半径を設定する
+	else {
+		for (uint32_t i = 0; i < bodyOffsets_.size(); ++i) {
+
+			auto& offset = bodyOffsets_[i];
+			std::visit([&](const auto& shape) {
+				using T = std::decay_t<decltype(shape)>;
+				if constexpr (std::is_same_v<T, CollisionShape::Sphere>) {
+
+					std::get<CollisionShape::Sphere>(offset).radius = radius;
+				}
+				}, offset);
+		}
 	}
 }
 

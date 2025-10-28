@@ -110,6 +110,8 @@ private:
 	const std::string bulletParticleNodeKey_ = "bossAttackProjectile";
 	// 弾の衝突判定
 	std::array<BulletCollision, kMaxBulletCount_> bulletColliders_;
+	// 判定の半径
+	float bulletCollisionRadius_;
 	// 弾の補間速度
 	float bulletLerpDuration_;
 

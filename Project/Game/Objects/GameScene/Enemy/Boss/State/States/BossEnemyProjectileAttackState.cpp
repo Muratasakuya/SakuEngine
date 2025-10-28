@@ -17,14 +17,10 @@ void BossEnemyProjectileAttackState::BulletCollision::Init() {
 	// 衝突初期化
 	collider = std::make_unique<Collider>();
 	// 球で追加
-	CollisionBody* body = collider->AddCollider(CollisionShape::Sphere());
+	CollisionBody* body = collider->AddCollider(CollisionShape::Sphere(), true);
 	// タイプ設定
 	body->SetType(ColliderType::Type_BossWeapon);
 	body->SetTargetType(ColliderType::Type_Player);
-	// 判定設定
-	CollisionShape::Sphere sphere = CollisionShape::Sphere::Default();
-	sphere.radius = 4.0f;
-	body->SetShape(sphere);
 
 	// その他デフォで初期化
 	isActive = false;
@@ -343,6 +339,12 @@ void BossEnemyProjectileAttackState::ImGui(const BossEnemy& bossEnemy) {
 	ImGui::DragFloat("bulletAttackDuration", &bulletAttackDuration_, 0.01f);
 	ImGui::DragFloat("targetDistance", &targetDistance_, 0.01f);
 	ImGui::DragFloat("bulletLerpDuration", &bulletLerpDuration_, 0.01f);
+	if (ImGui::DragFloat("bulletCollisionRadius", &bulletCollisionRadius_, 0.01f)) {
+		for (const auto& bullet : bulletColliders_) {
+
+			bullet.collider->SetSphereRadius(bulletCollisionRadius_);
+		}
+	}
 
 	// 座標の更新
 	SetLaunchPositions(bossEnemy, isEditMode_ ? editingPhase_ : bossEnemy.GetCurrentPhaseIndex());
@@ -378,7 +380,14 @@ void BossEnemyProjectileAttackState::ApplyJson(const Json& data) {
 	nextAnimDuration_ = data.value("nextAnimDuration_", 0.16f);
 	launchTopPosY_ = data.value("launchTopPosY", 4.0f);
 	bulletLerpDuration_ = data.value("bulletLerpDuration_", 0.32f);
+	bulletCollisionRadius_ = data.value("bulletCollisionRadius_", 4.0f);
 	launchOffsetPos_ = Vector3::FromJson(data.value("launchOffsetPos", Json()));
+
+	// 弾の衝突判定の半径を適応
+	for (const auto& bullet : bulletColliders_) {
+
+		bullet.collider->SetSphereRadius(bulletCollisionRadius_);
+	}
 }
 
 void BossEnemyProjectileAttackState::SaveJson(Json& data) {
@@ -390,5 +399,6 @@ void BossEnemyProjectileAttackState::SaveJson(Json& data) {
 	data["nextAnimDuration_"] = nextAnimDuration_;
 	data["launchTopPosY"] = launchTopPosY_;
 	data["bulletLerpDuration_"] = bulletLerpDuration_;
+	data["bulletCollisionRadius_"] = bulletCollisionRadius_;
 	data["launchOffsetPos"] = launchOffsetPos_.ToJson();
 }
