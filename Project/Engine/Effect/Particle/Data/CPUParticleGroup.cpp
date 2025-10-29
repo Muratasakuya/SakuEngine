@@ -313,6 +313,11 @@ void CPUParticleGroup::UpdateTransferData(uint32_t particleIndex,
 		transferPrimitives_.crescent[particleIndex] = particle.primitive.crescent;
 		break;
 	}
+	case ParticlePrimitiveType::Lightning: {
+
+		transferPrimitives_.lightning[particleIndex] = particle.primitive.lightning;
+		break;
+	}
 	}
 
 	// トレイルの処理を行っている場合のみ
@@ -359,6 +364,11 @@ void CPUParticleGroup::TransferBuffer() {
 		primitiveBuffer_.crescent.TransferData(transferPrimitives_.crescent);
 		break;
 	}
+	case ParticlePrimitiveType::Lightning: {
+
+		primitiveBuffer_.lightning.TransferData(transferPrimitives_.lightning);
+		break;
+	}
 	}
 
 	// トレイルの処理を行っている場合のみ
@@ -398,6 +408,11 @@ void CPUParticleGroup::ResizeTransferData(uint32_t size) {
 	case ParticlePrimitiveType::Crescent: {
 
 		transferPrimitives_.crescent.resize(size);
+		break;
+	}
+	case ParticlePrimitiveType::Lightning: {
+
+		transferPrimitives_.lightning.resize(size);
 		break;
 	}
 	}

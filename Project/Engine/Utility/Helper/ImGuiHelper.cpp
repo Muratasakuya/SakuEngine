@@ -368,3 +368,13 @@ bool ImGuiHelper::EditPostProcessMask(uint32_t& ioMask) {
 	ImGui::EndChild();
 	return changed;
 }
+
+bool ImGuiHelper::DragUint32(const char* label, uint32_t& value, int maxValue) {
+
+	int intValue = static_cast<int>(value);
+
+	bool result = ImGui::DragInt(label, &intValue, 1, 0, maxValue);
+	value = static_cast<uint32_t>(intValue);
+
+	return result;
+}

@@ -12,10 +12,11 @@
 // 形状
 enum class ParticlePrimitiveType {
 
-	Plane,    // 平面
-	Ring,     // リング
-	Cylinder, // 円柱
-	Crescent, // 三日月
+	Plane,     // 平面
+	Ring,      // リング
+	Cylinder,  // 円柱
+	Crescent,  // 三日月
+	Lightning, // 雷
 	Count
 };
 
@@ -118,5 +119,38 @@ struct CrescentForGPU {
 
 		divide = 8;
 		uvMode = 1;
+	}
+};
+
+// 雷
+struct LightningForGPU {
+
+	Vector3 start; // 開始位置
+	Vector3 end;   // 終了位置
+
+	float width;        // 幅
+	uint32_t nodeCount; // ノード数
+
+	float amplitudeRatio; // 振幅倍率
+	float frequency;      // うねり回数
+	float smoothness;     // 0.0f~1.0f、大きいほど滑らかになる
+	float time;           // 更新時間
+
+	float seed; // 乱数シード値
+
+	void Init() {
+
+		start = Vector3(0.0f, 32.0f, 0.0f);
+		end = Vector3(0.0f, 1.0f, 0.0f);
+
+		width = 2.0f;
+		nodeCount = 20;
+
+		amplitudeRatio = 0.48f;
+		frequency = 6.0f;
+		smoothness = 0.32f;
+		time = 0.0f;
+
+		seed = 1337.0f;
 	}
 };
