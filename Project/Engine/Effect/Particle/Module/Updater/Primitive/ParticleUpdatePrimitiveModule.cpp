@@ -11,6 +11,7 @@
 #include <Engine/Effect/Particle/Module/Updater/Primitive/Derived/ParticleRingUpdater.h>
 #include <Engine/Effect/Particle/Module/Updater/Primitive/Derived/ParticleCylinderUpdater.h>
 #include <Engine/Effect/Particle/Module/Updater/Primitive/Derived/ParticleCrescentUpdater.h>
+#include <Engine/Effect/Particle/Module/Updater/Primitive/Derived/ParticleLightningUpdater.h>
 
 //============================================================================
 //	ParticleUpdatePrimitiveModule classMethods
@@ -31,6 +32,9 @@ void ParticleUpdatePrimitiveModule::Init() {
 	// Crescent
 	updaters_[static_cast<uint32_t>(ParticlePrimitiveType::Crescent)] = std::make_unique<ParticleCrescentUpdater>();
 	updaters_[static_cast<uint32_t>(ParticlePrimitiveType::Crescent)]->Init();
+	// Lightning
+	updaters_[static_cast<uint32_t>(ParticlePrimitiveType::Lightning)] = std::make_unique<ParticleLightningUpdater>();
+	updaters_[static_cast<uint32_t>(ParticlePrimitiveType::Lightning)]->Init();
 }
 
 void ParticleUpdatePrimitiveModule::Execute(

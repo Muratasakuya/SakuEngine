@@ -116,6 +116,9 @@ public:
 
 	// ポストプロセスのマスクの設定
 	static bool EditPostProcessMask(uint32_t& ioMask);
+
+	// uint32_tのDrag編集
+	static bool DragUint32(const char* label, uint32_t& value, int maxValue = 0xffff);
 };
 
 //============================================================================

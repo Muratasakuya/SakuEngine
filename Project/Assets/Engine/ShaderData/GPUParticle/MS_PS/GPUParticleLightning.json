@@ -1,0 +1,42 @@
+{
+    "Type": "MS",
+    "ShaderPass":[
+        {
+            "Type": "Graphics",
+            "MeshShader": "LightningParticle.MS.hlsl",
+            "PixelShader": "GPUParticle.PS.hlsl"
+        }
+    ],
+    "RootParameter": [
+        { "RootIndex": 0, "Type": "SRV", "Visibility": "MESH", "ShaderRegister": 0 },
+        { "RootIndex": 1, "Type": "SRV", "Visibility": "MESH", "ShaderRegister": 1 },
+        { "RootIndex": 2, "Type": "CBV", "Visibility": "MESH", "ShaderRegister": 0 },
+        { "RootIndex": 3, "Type": "SRV", "Visibility": "PIXEL", "ShaderRegister": 0 },
+        { "RootIndex": 4, "Type": "TABLE", "Visibility": "PIXEL","DescriptorRange": { "Type": "SRV", "BaseShaderRegister": 1 } }
+    ],
+    "StaticSampler": [
+        { "SamplerIndex": 0, "Filter": "LINEAR", "AddressMode": "WRAP","ComparisonFunc": "NEVER", "ShaderRegister": 0 }
+    ],
+    "Rasterizer":[
+        {
+            "CullMode": "NONE",
+            "FillMode": "SOLID",
+            "DepthClipEnable": "FALSE",
+            "AntialiasedLineEnable": "FALSE"
+        }
+    ],
+    "DepthStencil":[
+        {
+            "DepthEnable": "TRUE",
+            "DepthWriteMask": "ZERO",
+            "DepthFunc": "LESS_EQUAL"
+        }
+    ],
+    "PipelineState":[
+        {
+            "DSVFormat": "D24_UNORM_S8_UINT",
+            "RTVFormats": ["R32G32B32A32_FLOAT","R16_UINT"],
+            "BlendMode": "ALL"
+        }
+    ]
+}

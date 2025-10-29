@@ -46,6 +46,10 @@ D3D12_GPU_VIRTUAL_ADDRESS BaseParticleGroup::GetPrimitiveBufferAdress() const {
 
 		return primitiveBuffer_.crescent.GetResource()->GetGPUVirtualAddress();
 	}
+	case ParticlePrimitiveType::Lightning: {
+
+		return primitiveBuffer_.lightning.GetResource()->GetGPUVirtualAddress();
+	}
 	case ParticlePrimitiveType::Count: {
 
 		ASSERT(false, "ParticlePrimitiveType::Count is not buffer");
@@ -103,6 +107,16 @@ void BaseParticleGroup::CreatePrimitiveBuffer(ID3D12Device* device,
 		std::vector<CrescentForGPU> crescents(maxParticle, crescent);
 		primitiveBuffer_.crescent.CreateSRVBuffer(device, maxParticle);
 		primitiveBuffer_.crescent.TransferData(crescents);
+		break;
+	}
+	case ParticlePrimitiveType::Lightning: {
+
+		LightningForGPU lightning{};
+		lightning.Init();
+
+		std::vector<LightningForGPU> lightnings(maxParticle, lightning);
+		primitiveBuffer_.lightning.CreateSRVBuffer(device, maxParticle);
+		primitiveBuffer_.lightning.TransferData(lightnings);
 		break;
 	}
 	}
