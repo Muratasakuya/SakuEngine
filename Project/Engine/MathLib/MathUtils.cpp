@@ -21,6 +21,19 @@ float Math::GetYawRadian(const Vector3& direction) {
 	return std::atan2(direction.z, direction.x);
 }
 
+float Math::WrapDegree(float value) {
+
+	while (value < 0.0f) {
+
+		value += 360.0f;
+	}
+	while (value >= 360.0f) {
+
+		value -= 360.0f;
+	}
+	return value;
+}
+
 float Math::WrapPi(float value) {
 
 	while (value > pi) {

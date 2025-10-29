@@ -41,6 +41,7 @@ namespace Math {
 	float GetYawRadian(const Vector3& direction);
 
 	// 角度を[-π,π]範囲に折り返す
+	float WrapDegree(float value);
 	float WrapPi(float value);
 
 	// from→toのヨー最短方向を{-1,0,+1}で返す

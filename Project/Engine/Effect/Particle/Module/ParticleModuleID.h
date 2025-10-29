@@ -9,6 +9,7 @@ enum class ParticleSpawnModuleID {
 
 	Sphere,
 	Hemisphere,
+	Circle,
 	Box,
 	Cone,
 	PolygonVertex,

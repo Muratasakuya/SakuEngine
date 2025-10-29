@@ -226,6 +226,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Editor\Curve\CurveValueEditor.cpp">
       <SubType />
     </ClCompile>
+    <ClCompile Include="Engine\Effect\Particle\Module\Spawner\ParticleSpawnCircleModule.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="Engine\Effect\Particle\Module\Updater\Material\ParticleUpdateNoiseUVModule.cpp">
       <SubType>
       </SubType>
@@ -959,6 +963,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </ClInclude>
     <ClInclude Include="Engine\Editor\Curve\CurveValueEditor.h">
       <SubType />
+    </ClInclude>
+    <ClInclude Include="Engine\Effect\Particle\Module\Spawner\ParticleSpawnCircleModule.h">
+      <SubType>
+      </SubType>
     </ClInclude>
     <ClInclude Include="Engine\Effect\Particle\Module\Updater\Material\ParticleUpdateNoiseUVModule.h">
       <SubType>
