@@ -17,6 +17,7 @@ void ParticleLightningUpdater::Init() {
 	start_.Init();
 	target_.Init();
 
+	isLookAtEnd_ = false;
 	isDrawDebugPoint_ = false;
 }
 
@@ -28,6 +29,28 @@ void ParticleLightningUpdater::Update(CPUParticle::ParticleData& particle, Easin
 	// 値の補間
 	lightning.start = Vector3::Lerp(start_.start, target_.start, EasedValue(easingType, lifeProgress));
 	lightning.end = Vector3::Lerp(start_.end, target_.end, EasedValue(easingType, lifeProgress));
+	// 進行方向に雷の終了地点を回転させる
+	if (isLookAtEnd_) {
+
+		Vector3 base = lightning.end - lightning.start;  // 現在の向き
+		Vector3 velocity = particle.velocity;            // 目標の向き
+
+		float baseLength = base.Length();
+		float velocityLength = velocity.Length();
+		// 両方とも長さが十分にある場合のみ回転を行う
+		if (baseLength > std::numeric_limits<float>::epsilon() &&
+			velocityLength > std::numeric_limits<float>::epsilon()) {
+
+			// 開始地点から終了地点へのベクトルを、速度ベクトルの方向に回転させる
+			Quaternion rotation = Quaternion::FromToRotation(base, velocity);
+			Vector3 rotated = rotation * base;
+
+			// 終了座標を回転後の位置に更新
+			lightning.end = lightning.start + rotated;
+		}
+	}
+
+	// 幅
 	lightning.width = std::lerp(start_.width, target_.width, EasedValue(easingType, lifeProgress));
 
 	// ノード数の設定
@@ -47,6 +70,8 @@ void ParticleLightningUpdater::ImGui() {
 	ImGui::Checkbox("isDrawDebugPoint", &isDrawDebugPoint_);
 
 	ImGui::Separator();
+
+	ImGui::Checkbox("isLookAtEnd", &isLookAtEnd_);
 
 	ImGui::DragFloat3("startStart:  Cyan", &start_.start.x, 0.01f);
 	ImGui::DragFloat3("targetStart: Cyan", &target_.start.x, 0.01f);
@@ -92,6 +117,8 @@ void ParticleLightningUpdater::FromJson(const Json& data) {
 
 	const auto& lightningData = data["lightning"];
 
+	isLookAtEnd_ = lightningData.value("isLookAtEnd", isLookAtEnd_);
+
 	start_.start = Vector3::FromJson(lightningData["startStart"]);
 	target_.start = Vector3::FromJson(lightningData["targetStart"]);
 
@@ -120,6 +147,8 @@ void ParticleLightningUpdater::FromJson(const Json& data) {
 void ParticleLightningUpdater::ToJson(Json& data) const {
 
 	Json lightningData;
+
+	lightningData["isLookAtEnd"] = isLookAtEnd_;
 
 	lightningData["startStart"] = start_.start.ToJson();
 	lightningData["targetStart"] = target_.start.ToJson();

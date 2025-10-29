@@ -56,6 +56,7 @@ void ParticlePlaneUpdater::FromJson(const Json& data) {
 	const auto& planeType = EnumAdapter<ParticlePlaneType>::FromString(data["plane"]["mode"]);
 	start_.mode = static_cast<uint32_t>(planeType.value());
 	target_.mode = static_cast<uint32_t>(planeType.value());
+	planeType_ = planeType.value();
 }
 
 void ParticlePlaneUpdater::ToJson(Json& data) const {
