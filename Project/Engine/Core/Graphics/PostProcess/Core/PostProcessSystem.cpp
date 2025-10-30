@@ -370,13 +370,21 @@ void PostProcessSystem::ImGui() {
 		// buffer があるタイプだけ
 		if (auto it = buffers_.find(process); it != buffers_.end()) {
 
+			ImGui::PushID("bufferParam");
+
 			it->second->ImGui();
+
+			ImGui::PopID();
 
 			// updaterがあれば下に表示する
 			if (Algorithm::Find(updaters_, process)) {
 
 				ImGui::SeparatorText("Updater");
+				ImGui::PushID("updaterParam");
+
 				updaters_[process]->ImGui();
+
+				ImGui::PopID();
 			}
 		} else {
 

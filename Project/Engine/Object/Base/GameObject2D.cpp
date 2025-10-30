@@ -51,6 +51,12 @@ void GameObject2D::ProjectToScreen(const Vector3& translation, const BaseCamera&
 	transform_->translation = Vector2(screenX, screenY);
 }
 
+void GameObject2D::SetWindowSize() {
+
+	// ウィンドウサイズに設定
+	transform_->size = Vector2(Config::kWindowWidthf, Config::kWindowHeightf);
+}
+
 bool GameObject2D::ImGuiSize() {
 
 	bool edit = false;

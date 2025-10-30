@@ -1,0 +1,15 @@
+{
+    "aberration": 0.0,
+    "barrel": -0.9599999785423279,
+    "cornerFeather": 128.0,
+    "cornerRadius": 57.5,
+    "noise": 0.10000000149011612,
+    "resolution": {
+        "x": 1920.0,
+        "y": 1080.0
+    },
+    "scanlineCount": 1080.0,
+    "scanlineIntensity": 0.4099999964237213,
+    "vignette": 1.2000000476837158,
+    "zoom": 6.400000095367432
+}

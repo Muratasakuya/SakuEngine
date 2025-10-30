@@ -45,6 +45,7 @@ public:
 	void ProjectToScreen(const Vector3& translation, const BaseCamera& camera);
 	// サイズ
 	void SetSize(const Vector2& size) { transform_->size = size; }
+	void SetWindowSize();
 	void SetTextureSize(const Vector2& size) { transform_->textureSize = size; }
 	void SetTextureLeftTop(const Vector2& leftTop) { transform_->textureLeftTop = leftTop; }
 	// アンカー

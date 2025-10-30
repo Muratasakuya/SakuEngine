@@ -1,16 +1,10 @@
 {
   "Textures": [
-    "title",
-    "nowLoading",
-    "powerIcon",
-    "gameStartText",
-    "gameFinishText",
-    "gameFinishTextBackground",
-    "okText",
-    "cancelText",
     "white",
-    "gamePadOrMouse",
-    "noise"
+    "noise",
+    "titleName",
+    "nowLoading",
+    "powerButton"
   ],
   "Models": [
     "demoCamera"

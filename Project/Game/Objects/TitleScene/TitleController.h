@@ -4,6 +4,7 @@
 //	include
 //============================================================================
 #include <Engine/Editor/Base/IGameEditor.h>
+#include <Engine/Object/Base/GameObject2D.h>
 
 //============================================================================
 //	TitleController class
@@ -41,6 +42,9 @@ private:
 	//========================================================================
 
 	//--------- variables ----------------------------------------------------
+
+	std::unique_ptr<GameObject2D> background_;
+	std::unique_ptr<GameObject2D> titleName_;
 
 	// デバッグ用フラグ
 	bool isGameStart_ = false;

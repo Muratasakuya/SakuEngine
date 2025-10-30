@@ -813,6 +813,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\Objects\TitleScene\TitleController.cpp">
       <SubType />
     </ClCompile>
+    <ClCompile Include="Game\PostEffect\CRTDisplayUpdater.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="Game\PostEffect\GlitchUpdater.cpp" />
     <ClCompile Include="Game\PostEffect\RadialBlurUpdater.cpp">
       <SubType />
@@ -1631,6 +1635,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\Objects\SceneTransition\FadeTransition.h" />
     <ClInclude Include="Game\Objects\TitleScene\TitleController.h">
       <SubType />
+    </ClInclude>
+    <ClInclude Include="Game\PostEffect\CRTDisplayUpdater.h">
+      <SubType>
+      </SubType>
     </ClInclude>
     <ClInclude Include="Game\PostEffect\GlitchUpdater.h" />
     <ClInclude Include="Game\PostEffect\RadialBlurUpdater.h">
