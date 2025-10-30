@@ -132,6 +132,17 @@ void EffectModuleBinder::ApplyUpdate(ParticleSystem* system, const EffectModuleS
 		EffectCommandRouter::Send(system, command);
 	}
 
+	// Lightning
+	if (module.sendUpdaterLightning) {
+
+		// 位置コマンド送信
+		ParticleCommand command = MakeCommand<Vector3>(ParticleCommandTarget::Updater,
+			ParticleCommandID::SetTranslation, worldPos);
+		// Lightningモジュールのみ
+		command.filter.updaterId = ParticleUpdateModuleID::Primitive;
+		EffectCommandRouter::Send(system, command);
+	}
+
 	// LifeEndMode
 	if (module.sendLifeEndMode) {
 

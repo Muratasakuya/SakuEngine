@@ -17,6 +17,15 @@
 //	ParticleUpdatePrimitiveModule classMethods
 //============================================================================
 
+void ParticleUpdatePrimitiveModule::SetCommand(const ParticleCommand& command) {
+
+	// updaterにコマンドを送る
+	for (const auto& updater : updaters_) {
+
+		updater->SetCommand(command);
+	}
+}
+
 void ParticleUpdatePrimitiveModule::Init() {
 
 	// 初期化値、全ての形状を初期化

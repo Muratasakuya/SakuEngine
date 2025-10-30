@@ -152,6 +152,7 @@ struct EffectModuleSetting {
 	bool sendUpdaterRotation = false;
 	bool sendUpdaterKeyPath = false;
 	bool sendUpdaterTranslate = false;
+	bool sendUpdaterLightning = false;
 	bool sendLifeEndMode = false;
 
 	// コマンド設定用オプション

@@ -18,6 +18,12 @@ PlayerAttack_4thState::PlayerAttack_4thState(Player* player) {
 
 	player_ = nullptr;
 	player_ = player;
+
+	// エフェクト作成
+	groundCrackEffect_ = std::make_unique<EffectGroup>();
+	groundCrackEffect_->Init("groundCrack", "PlayerEffect");
+	groundCrackEffect_->LoadJson("GameEffectGroup/Player/groundCrackEffect.json");
+	groundCrackEmitted_ = false;
 }
 
 void PlayerAttack_4thState::Enter(Player& player) {
@@ -70,6 +76,15 @@ void PlayerAttack_4thState::Update(Player& player) {
 	// animationが終わったら時間経過を進める
 	if (canExit_) {
 
+		// 発生していないときのみ
+		if (!groundCrackEmitted_) {
+
+			// 地割れエフェクトの発生
+			groundCrackEffect_->Emit(player.GetTranslation());
+			// 発生済みにする
+			groundCrackEmitted_ = true;
+		}
+
 		// シェイク前にアニメーションを終了させる
 		followCamera_->EndPlayerActionAnim(PlayerState::Attack_4th, false);
 
@@ -79,12 +94,19 @@ void PlayerAttack_4thState::Update(Player& player) {
 	}
 }
 
+void PlayerAttack_4thState::UpdateAlways(Player& player) {
+
+	// 地割れエフェクトの更新
+	groundCrackEffect_->Update();
+}
+
 void PlayerAttack_4thState::Exit([[maybe_unused]] Player& player) {
 
 	// リセット
 	attackPosLerpTimer_ = 0.0f;
 	exitTimer_ = 0.0f;
 	moveTimer_.Reset();
+	groundCrackEmitted_ = false;
 
 	// カメラアニメーションを終了させる
 	followCamera_->EndPlayerActionAnim(PlayerState::Attack_4th, false);

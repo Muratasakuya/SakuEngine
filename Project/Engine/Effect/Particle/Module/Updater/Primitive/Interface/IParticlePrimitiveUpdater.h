@@ -3,6 +3,7 @@
 //============================================================================
 //	include
 //============================================================================
+#include <Engine/Effect/Particle/Command/ParticleCommand.h>
 #include <Engine/Effect/Particle/Structures/ParticleStructures.h>
 #include <Engine/Effect/Particle/Structures/ParticlePrimitiveStructures.h>
 #include <Engine/Utility/Enum/Easing.h>
@@ -33,5 +34,9 @@ public:
 
 	//--------- accessor -----------------------------------------------------
 
+	// コマンドの設定
+	virtual void SetCommand([[maybe_unused]] const ParticleCommand& command) {}
+
+	// プリミティブ形状の種類を取得
 	virtual ParticlePrimitiveType GetType() = 0;
 };

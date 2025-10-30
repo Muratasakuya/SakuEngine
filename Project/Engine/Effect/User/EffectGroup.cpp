@@ -449,6 +449,7 @@ void EffectGroup::EditNode() {
 
 			// 座標パス
 			ImGui::Checkbox("sendUpdaterTranslate", &node.module.sendUpdaterTranslate);
+			ImGui::Checkbox("sendUpdaterLightning", &node.module.sendUpdaterLightning);
 			ImGui::Checkbox("sendUpdaterKeyPath", &node.module.sendUpdaterKeyPath);
 
 			ImGui::EndTabItem();
@@ -654,6 +655,7 @@ void EffectGroup::LoadJson(const std::string& fileName) {
 				node.module.sendUpdaterRotation = module->value("sendUpdaterRotation", false);
 				node.module.sendUpdaterKeyPath = module->value("sendUpdaterKeyPath", false);
 				node.module.sendUpdaterTranslate = module->value("sendUpdaterTranslate", false);
+				node.module.sendUpdaterLightning = module->value("sendUpdaterLightning", false);
 				node.module.sendLifeEndMode = module->value("sendLifeEndMode", false);
 				// オプション
 				node.module.posOption = EnumAdapter<EffectPosOption>::FromString(module->value("posOption", "World")).value();
@@ -736,6 +738,7 @@ void EffectGroup::SaveJson(const std::string& filePath) {
 			module["sendUpdaterRotation"] = node.module.sendUpdaterRotation;
 			module["sendUpdaterKeyPath"] = node.module.sendUpdaterKeyPath;
 			module["sendUpdaterTranslate"] = node.module.sendUpdaterTranslate;
+			module["sendUpdaterLightning"] = node.module.sendUpdaterLightning;
 			module["sendLifeEndMode"] = node.module.sendLifeEndMode;
 			// オプション
 			module["posOption"] = EnumAdapter<EffectPosOption>::ToString(node.module.posOption);

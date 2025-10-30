@@ -31,9 +31,10 @@ enum class ParticleCommandID {
 	SetBillboardRotation, // ビルボード回転の設定
 
 	// 更新モジュール
-	SetLifeEndMode,  // パーティクルの寿命管理設定
-	Scaling,         // スケーリング処理
-	SetKeyframePath, // キーフレームパスの設定
+	SetLifeEndMode,      // パーティクルの寿命管理設定
+	Scaling,             // スケーリング処理
+	SetKeyframePath,     // キーフレームパスの設定
+	SetLightningSegment, // 雷の位置設定
 
 	// 共通
 	SetTranslation, // 座標の設定

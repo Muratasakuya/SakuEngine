@@ -11,6 +11,36 @@
 //	ParticleLightningUpdater classMethods
 //============================================================================
 
+void ParticleLightningUpdater::SetCommand(const ParticleCommand& command) {
+
+	switch (command.id) {
+	case ParticleCommandID::SetTranslation: {
+		if (const auto& translation = std::get_if<Vector3>(&command.value)) {
+
+			// 親として動かす座標
+			parentTranslation_ = *translation;
+		}
+		break;
+	}
+	case ParticleCommandID::SetLightningSegment: {
+		if (const auto& segment = std::get_if<std::vector<Vector3>>(&command.value)) {
+
+			// 2点なければ処理しない
+			if (segment->size() != 2) {
+				return;
+			}
+			// 開始地点
+			start_.start = segment->front();
+			target_.start = segment->front();
+			// 最終地点
+			start_.end = segment->back();
+			target_.end = segment->back();
+		}
+		break;
+	}
+	}
+}
+
 void ParticleLightningUpdater::Init() {
 
 	// 初期化値
@@ -19,6 +49,7 @@ void ParticleLightningUpdater::Init() {
 
 	isLookAtEnd_ = false;
 	isDrawDebugPoint_ = false;
+	parentTranslation_ = Vector3::AnyInit(0.0f);
 }
 
 void ParticleLightningUpdater::Update(CPUParticle::ParticleData& particle, EasingType easingType) {
@@ -26,14 +57,22 @@ void ParticleLightningUpdater::Update(CPUParticle::ParticleData& particle, Easin
 	LightningForGPU& lightning = particle.primitive.lightning;
 	const float lifeProgress = particle.progress;
 
+	//	親座標を考慮した位置を取得する
+	auto GetParentedPos = [this](const Vector3& pos) {
+		return pos + parentTranslation_; };
+
 	// 値の補間
-	lightning.start = Vector3::Lerp(start_.start, target_.start, EasedValue(easingType, lifeProgress));
-	lightning.end = Vector3::Lerp(start_.end, target_.end, EasedValue(easingType, lifeProgress));
+	// 開始地点
+	lightning.start = Vector3::Lerp(GetParentedPos(start_.start),
+		GetParentedPos(target_.start), EasedValue(easingType, lifeProgress));
+	// 終了地点
+	lightning.end = Vector3::Lerp(GetParentedPos(start_.end),
+		GetParentedPos(target_.end), EasedValue(easingType, lifeProgress));
 	// 進行方向に雷の終了地点を回転させる
 	if (isLookAtEnd_) {
 
-		Vector3 base = lightning.end - lightning.start;  // 現在の向き
-		Vector3 velocity = particle.velocity;            // 目標の向き
+		Vector3 base = lightning.end - lightning.start; // 現在の向き
+		Vector3 velocity = particle.velocity;           // 目標の向き
 
 		float baseLength = base.Length();
 		float velocityLength = velocity.Length();

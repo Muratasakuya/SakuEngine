@@ -34,6 +34,8 @@ public:
 
 	//--------- accessor -----------------------------------------------------
 
+	void SetCommand(const ParticleCommand& command) override;
+
 	const char* GetName() const override { return "Primitive"; }
 
 	//-------- registryID ----------------------------------------------------

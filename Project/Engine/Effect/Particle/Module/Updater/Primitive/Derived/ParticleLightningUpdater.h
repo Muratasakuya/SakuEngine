@@ -31,14 +31,18 @@ public:
 
 	//--------- accessor -----------------------------------------------------
 
-	ParticlePrimitiveType GetType() override { return ParticlePrimitiveType::Lightning; }
+	void SetCommand(const ParticleCommand& command) override;
 
+	ParticlePrimitiveType GetType() override { return ParticlePrimitiveType::Lightning; }
 private:
 	//========================================================================
 	//	private Methods
 	//========================================================================
 
 	//--------- variables ----------------------------------------------------
+
+	// 親座標
+	Vector3 parentTranslation_;
 
 	// 進行方向に雷の終了地点を向けるか
 	bool isLookAtEnd_;
