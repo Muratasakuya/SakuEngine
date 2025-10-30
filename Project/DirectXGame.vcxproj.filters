@@ -2295,6 +2295,8 @@
     <ClCompile Include="Engine\Effect\Particle\Module\Spawner\ParticleSpawnCircleModule.cpp" />
     <ClCompile Include="Game\PostEffect\CRTDisplayUpdater.cpp" />
     <ClCompile Include="Game\Objects\TitleScene\Background\TitleBackground.cpp" />
+    <ClCompile Include="Game\Objects\Common\Input\Device\SelectUIGamePadInput.cpp" />
+    <ClCompile Include="Game\Objects\Common\Input\Device\SelectUIKeyInput.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\Camera\Follow\State\States\FollowCameraReturnDefaultRotate.h" />
@@ -2316,5 +2318,8 @@
     <ClInclude Include="Engine\Effect\Particle\Module\Spawner\ParticleSpawnCircleModule.h" />
     <ClInclude Include="Game\PostEffect\CRTDisplayUpdater.h" />
     <ClInclude Include="Game\Objects\TitleScene\Background\TitleBackground.h" />
+    <ClInclude Include="Game\Objects\Common\Input\Device\SelectUIGamePadInput.h" />
+    <ClInclude Include="Game\Objects\Common\Input\Device\SelectUIKeyInput.h" />
+    <ClInclude Include="Game\Objects\Common\Input\SelectUIInputAction.h" />
   </ItemGroup>
 </Project>

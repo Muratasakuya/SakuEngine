@@ -672,6 +672,14 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\Objects\Base\GameTimerDisplay.cpp">
       <SubType />
     </ClCompile>
+    <ClCompile Include="Game\Objects\Common\Input\Device\SelectUIGamePadInput.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="Game\Objects\Common\Input\Device\SelectUIKeyInput.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="Game\Objects\Common\GameButtonBlinkingUpdater.cpp">
       <SubType />
     </ClCompile>
@@ -1497,6 +1505,18 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </ClInclude>
     <ClInclude Include="Game\Objects\Base\IGameButtonResponseUpdater.h">
       <SubType />
+    </ClInclude>
+    <ClInclude Include="Game\Objects\Common\Input\Device\SelectUIGamePadInput.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Game\Objects\Common\Input\Device\SelectUIKeyInput.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Game\Objects\Common\Input\SelectUIInputAction.h">
+      <SubType>
+      </SubType>
     </ClInclude>
     <ClInclude Include="Game\Objects\Base\ITransition.h" />
     <ClInclude Include="Game\Objects\Common\GameButtonBlinkingUpdater.h">
