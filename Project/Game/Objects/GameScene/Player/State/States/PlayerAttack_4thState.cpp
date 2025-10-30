@@ -80,7 +80,11 @@ void PlayerAttack_4thState::Update(Player& player) {
 		if (!groundCrackEmitted_) {
 
 			// 地割れエフェクトの発生
-			groundCrackEffect_->Emit(player.GetTranslation());
+			// Y座標は固定
+			Vector3 emitPos = player.GetTranslation();
+			// 地面に隠れない位置に調整
+			emitPos.y = 1.0f;
+			groundCrackEffect_->Emit(emitPos);
 			// 発生済みにする
 			groundCrackEmitted_ = true;
 		}

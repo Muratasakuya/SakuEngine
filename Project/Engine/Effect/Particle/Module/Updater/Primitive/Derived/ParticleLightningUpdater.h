@@ -46,6 +46,8 @@ private:
 
 	// 進行方向に雷の終了地点を向けるか
 	bool isLookAtEnd_;
+	// 発生地点を参照するか
+	bool isRefSpawnPos_;
 
 	// 開始地点と終了地点をデバッグ表示するか
 	bool isDrawDebugPoint_;

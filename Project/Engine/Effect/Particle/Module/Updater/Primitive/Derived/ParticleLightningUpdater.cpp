@@ -49,6 +49,7 @@ void ParticleLightningUpdater::Init() {
 
 	isLookAtEnd_ = false;
 	isDrawDebugPoint_ = false;
+	isRefSpawnPos_ = false;
 	parentTranslation_ = Vector3::AnyInit(0.0f);
 }
 
@@ -57,8 +58,13 @@ void ParticleLightningUpdater::Update(CPUParticle::ParticleData& particle, Easin
 	LightningForGPU& lightning = particle.primitive.lightning;
 	const float lifeProgress = particle.progress;
 
-	//	親座標を考慮した位置を取得する
-	auto GetParentedPos = [this](const Vector3& pos) {
+	// 親座標を考慮した位置を取得する
+	auto GetParentedPos = [&](const Vector3& pos) {
+		// 発生地点を参照する場合
+		if (isRefSpawnPos_) {
+
+			return pos + parentTranslation_ + particle.spawnTranlation;
+		}
 		return pos + parentTranslation_; };
 
 	// 値の補間
@@ -111,6 +117,7 @@ void ParticleLightningUpdater::ImGui() {
 	ImGui::Separator();
 
 	ImGui::Checkbox("isLookAtEnd", &isLookAtEnd_);
+	ImGui::Checkbox("isRefSpawnPos", &isRefSpawnPos_);
 
 	ImGui::DragFloat3("startStart:  Cyan", &start_.start.x, 0.01f);
 	ImGui::DragFloat3("targetStart: Cyan", &target_.start.x, 0.01f);
@@ -157,6 +164,7 @@ void ParticleLightningUpdater::FromJson(const Json& data) {
 	const auto& lightningData = data["lightning"];
 
 	isLookAtEnd_ = lightningData.value("isLookAtEnd", isLookAtEnd_);
+	isRefSpawnPos_ = lightningData.value("isLookAtEnd", isRefSpawnPos_);
 
 	start_.start = Vector3::FromJson(lightningData["startStart"]);
 	target_.start = Vector3::FromJson(lightningData["targetStart"]);
@@ -188,6 +196,7 @@ void ParticleLightningUpdater::ToJson(Json& data) const {
 	Json lightningData;
 
 	lightningData["isLookAtEnd"] = isLookAtEnd_;
+	lightningData["isRefSpawnPos_"] = isRefSpawnPos_;
 
 	lightningData["startStart"] = start_.start.ToJson();
 	lightningData["targetStart"] = target_.start.ToJson();
