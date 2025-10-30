@@ -38,6 +38,8 @@ struct Lightning {
 	float frequency;
 	float smoothness;
 	float time;
+	
+	float angle;
 
 	float seed;
 };
@@ -71,14 +73,81 @@ float2 LightningOffset2D(float t, float seed, float amplitude, float frequency, 
 	float falloff = pow(saturate(1.0f - edge), lerp(0.5f, 3.0f, saturate(smoothness)));
 	// ねじれ位相
 	float basePh = seed * 0.37f + time;
-	float phase1 = (frequency * 6.2831853f) * t + basePh;
-	float phase2 = (frequency * 0.73f * 6.2831853f) * t + basePh * 1.31f + 1.234f;
+	float phase1 = (frequency * PI2) * t + basePh;
+	float phase2 = (frequency * 0.73f * PI2) * t + basePh * 1.31f + 1.234f;
 	// ノイズ＋正弦の合成
 	float n1 = hash11(t * 157.0f + seed) * 2.0f - 1.0f;
 	float n2 = hash11(t * 313.0f + seed) * 2.0f - 1.0f;
 	float offsetX = (n1 * 0.5f + sin(phase1) * 0.5f) * amplitude * (0.3f + 0.7f * falloff);
 	float offsetY = (n2 * 0.5f + cos(phase2) * 0.5f) * amplitude * (0.3f + 0.7f * falloff);
 	return float2(offsetX, offsetY);
+}
+
+// 円弧ジオメトリ
+struct ArcGeometory {
+	
+	float3 C;
+	float R;
+	float3 n;
+	float3 vS;
+	float phi;
+	float3 span0;
+	float3 span1;
+};
+
+// start、endとangle から、円の中心、半径、法線、基底を構築
+ArcGeometory BuildArc(float3 start, float3 end, float angle, float seed, float3 bendUpWS) {
+
+	ArcGeometory g;
+
+	float3 chord = end - start;
+	float L = max(length(chord), 1e-5f);
+	float3 dir = chord / L;
+
+	// sdirはdirと直交
+	float3 sdir = cross(bendUpWS, dir);
+	if (length(sdir) < 1e-5f) {
+		
+		// ほぼ平行だった場合は別の軸で再計算
+		float3 alt = (abs(dir.x) < 0.9f) ? float3(1, 0, 0) : float3(0, 0, 1);
+		sdir = cross(alt, dir);
+	}
+	sdir = normalize(sdir);
+
+	// 符号で膨らむ向きを反転
+	sdir *= (angle >= 0.0f) ? 1.0f : -1.0f;
+
+	// 角度と中心、半径
+	float theta = abs(angle);
+	theta = min(theta, 3.12413936f);
+
+	float R = (theta < 1e-6f) ? 1e30f : (L / (2.0f * sin(theta * 0.5f)));
+	float cdist = (theta < 1e-6f) ? 0.0f : (R * cos(theta * 0.5f));
+	float3 mid = 0.5f * (start + end);
+	float3 C = mid + sdir * cdist;
+
+	// 平面法線とノイズ基底
+	float3 vS = normalize(start - C);
+	// 弧の平面法線
+	float3 n = normalize(cross(dir, sdir));
+	float3 span0 = normalize(cross(n, vS));
+	float3 span1 = normalize(cross(n, span0));
+
+	g.C = C;
+	g.R = R;
+	g.n = n;
+	g.vS = vS;
+	g.phi = theta;
+	g.span0 = span0;
+	g.span1 = span1;
+	return g;
+}
+
+// t∈[0,1]に対しての円弧上の点
+float3 ArcPoint(const ArcGeometory g, float t01) {
+	
+	float ang = g.phi * t01;
+	return normalize(g.vS * cos(ang) + cross(g.n, g.vS) * sin(ang));
 }
 
 //============================================================================
@@ -94,6 +163,7 @@ out vertices MSOutput verts[MAX_VERTS], out indices uint3 tris[MAX_PRIMS]) {
 	const uint instanceIndex = groupID.x;
 	// バッファアクセス
 	Lightning lightning = gLightnings[instanceIndex];
+	Transform transform = gTransform[instanceIndex];
 
 	// ノード数、3以上に収める
 	uint nodeCount = max(3, lightning.nodeCount);
@@ -131,34 +201,71 @@ out vertices MSOutput verts[MAX_VERTS], out indices uint3 tris[MAX_PRIMS]) {
 	MakeOrthoBasis(direction, right, binormal);
 
 	// seedによる一定のねじれを与えて回転
-	float twist = 6.2831853f * hash11(lightning.seed);
+	float twist = PI2 * hash11(lightning.seed);
 	float c = cos(twist);
 	float s = sin(twist);
 	float3 rightR = right * c + binormal * s;
 	float3 binormalR = -right * s + binormal * c;
+	
+	// ローカル＋ZをTransformの回転でワールドへ
+	float3 bendUpWS = mul(float4(0.0f, 0.0f, 1.0f, 0.0f), transform.rotationMatrix).xyz;
+	bendUpWS = normalize(bendUpWS);
+	
+	// 円弧ジオメトリの構築
+	ArcGeometory arc = BuildArc(lightning.start, lightning.end, lightning.angle, lightning.seed, bendUpWS);
+	bool useArc = (abs(lightning.angle) >= 1e-6f);
 
 	// 頂点生成
 	const float dt = 1.0f / float(nodeCount - 1);
 	for (uint i = groupThreadID.x; i < nodeCount; i += MS_GROUP_SIZE) {
 
+		// 0～1の補間値
 		float t01 = (nodeCount <= 1u) ? 0.0f : (float(i) * dt);
 
-		// ワールド中心線
-		float3 centerLocal = lerp(lightning.start, lightning.end, t01);
-		// 距離に比例
-		float amplitude = lightning.amplitudeRatio * len;
-		float2 off2 = LightningOffset2D(t01, lightning.seed, amplitude,
-		lightning.frequency, lightning.smoothness, lightning.time);
+		float3 centerWorld;
+		// 接線：ビルボードの横方向を作るのに使用
+		float3 tangent;
+		// ノイズ用基底
+		float3 span0, span1;
 
-		// 2D オフセットを3Dに展開する
-		float3 centerWorld = lerp(lightning.start, lightning.end, t01) + (rightR * off2.x + binormalR * off2.y);
+		// 弧上の点か直線補間か
+		if (useArc) {
 
-		// ビルボード横方向: 視線 × 局所進行方向
+			// 弧上の点と接線
+			float3 v = ArcPoint(arc, t01);
+			centerWorld = arc.C + arc.R * v;
+			tangent = normalize(cross(arc.n, v));
+
+			// 弧平面由来のノイズ基底
+			span0 = arc.span0;
+			span1 = arc.span1;
+		} else {
+
+			// 直線補間
+			centerWorld = lerp(lightning.start, lightning.end, t01);
+			tangent = direction;
+
+			// 直線時はseedでねじった基底を使用
+			span0 = rightR;
+			span1 = binormalR;
+		}
+
+		// ノイズのオフセット計算
+		// 振幅は経路長に比例させる
+		float pathLen = useArc ? (arc.R * arc.phi) : len;
+		float amplitude = lightning.amplitudeRatio * pathLen;
+
+		float2 off2 = LightningOffset2D(t01, lightning.seed, amplitude, lightning.frequency, lightning.smoothness, lightning.time);
+
+		// 平面内でオフセット
+		centerWorld += span0 * off2.x + span1 * off2.y;
+
+		// 帯の横方向、ビルボード処理
 		float3 toCam = normalize(gPerView.cameraPos - centerWorld);
-		float3 side = normalize(cross(direction, toCam));
+		float3 side = normalize(cross(toCam, tangent));
 		if (any(isnan(side)) || length(side) < 1e-5f) {
-
-			side = rightR;
+			// フォールバック
+			side = span0;
 		}
 
 		// 端を細くする
@@ -167,10 +274,9 @@ out vertices MSOutput verts[MAX_VERTS], out indices uint3 tris[MAX_PRIMS]) {
 		float halfWidth = lightning.width * 0.5f * taper;
 
 		// 左右の頂点インデックス
-		uint leftVertexIndex = 2u * i;
-		// 右頂点は左頂点の+1番目
+		uint leftVertexIndex = 2 * i;
 		uint rightVertexIndex = leftVertexIndex + 1;
-		
+
 		// 左右頂点
 		float3 pL = centerWorld - side * halfWidth;
 		float3 pR = centerWorld + side * halfWidth;
@@ -179,14 +285,16 @@ out vertices MSOutput verts[MAX_VERTS], out indices uint3 tris[MAX_PRIMS]) {
 		verts[leftVertexIndex].position = mul(float4(pL, 1.0f), gPerView.viewProjection);
 		verts[rightVertexIndex].position = mul(float4(pR, 1.0f), gPerView.viewProjection);
 
-		// UV
+		// UV（U=左右, V=縦）
 		verts[leftVertexIndex].texcoord = float2(0.0f, t01);
 		verts[rightVertexIndex].texcoord = float2(1.0f, t01);
 
-		// インデックスと頂点カラーは両方同じ
+		// 頂点カラー
 		verts[leftVertexIndex].vertexColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
-		verts[leftVertexIndex].instanceID = instanceIndex;
 		verts[rightVertexIndex].vertexColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
+
+		// InstanceID
+		verts[leftVertexIndex].instanceID = instanceIndex;
 		verts[rightVertexIndex].instanceID = instanceIndex;
 	}
 

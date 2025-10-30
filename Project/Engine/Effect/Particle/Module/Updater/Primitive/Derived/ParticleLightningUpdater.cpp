@@ -105,6 +105,7 @@ void ParticleLightningUpdater::Update(CPUParticle::ParticleData& particle, Easin
 	lightning.frequency = std::lerp(start_.frequency, target_.frequency, EasedValue(easingType, lifeProgress));
 	lightning.smoothness = std::lerp(start_.smoothness, target_.smoothness, EasedValue(easingType, lifeProgress));
 	lightning.seed = std::lerp(start_.seed, target_.seed, EasedValue(easingType, lifeProgress));
+	lightning.angle = std::lerp(start_.angle, target_.angle, EasedValue(easingType, lifeProgress));
 
 	// 経過時間の更新
 	lightning.time += GameTimer::GetScaledDeltaTime();
@@ -136,6 +137,9 @@ void ParticleLightningUpdater::ImGui() {
 
 	ImGui::DragFloat("startSmoothness", &start_.smoothness, 0.01f, 0.0f, 1.0f);
 	ImGui::DragFloat("targetSmoothness", &target_.smoothness, 0.01f, 0.0f, 1.0f);
+
+	ImGui::DragFloat("startAngle", &start_.angle, 1.0f, -180.0f, 180.0f);
+	ImGui::DragFloat("targetAngle", &target_.angle, 1.0f, -180.0f, 180.0f);
 
 	ImGuiHelper::DragUint32("startNodeCount", start_.nodeCount, 64);
 	ImGuiHelper::DragUint32("targetNodeCount", target_.nodeCount, 64);
@@ -184,6 +188,9 @@ void ParticleLightningUpdater::FromJson(const Json& data) {
 	start_.smoothness = lightningData.value("startSmoothness", start_.smoothness);
 	target_.smoothness = lightningData.value("targetSmoothness", target_.smoothness);
 
+	start_.angle = lightningData.value("startAngle", start_.angle);
+	target_.angle = lightningData.value("targetAngle", target_.angle);
+
 	start_.nodeCount = lightningData.value("startNodeCount", start_.nodeCount);
 	target_.nodeCount = lightningData.value("targetNodeCount", target_.nodeCount);
 
@@ -215,6 +222,9 @@ void ParticleLightningUpdater::ToJson(Json& data) const {
 
 	lightningData["startSmoothness"] = start_.smoothness;
 	lightningData["targetSmoothness"] = target_.smoothness;
+
+	lightningData["startAngle"] = start_.angle;
+	lightningData["targetAngle"] = target_.angle;
 
 	lightningData["startNodeCount"] = start_.nodeCount;
 	lightningData["targetNodeCount"] = target_.nodeCount;

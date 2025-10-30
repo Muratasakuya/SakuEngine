@@ -136,6 +136,8 @@ struct LightningForGPU {
 	float smoothness;     // 0.0f~1.0f、大きいほど滑らかになる
 	float time;           // 更新時間
 
+	float angle; // 雷の孤の角度、-180~180度
+
 	float seed; // 乱数シード値
 
 	void Init() {
@@ -150,6 +152,8 @@ struct LightningForGPU {
 		frequency = 6.0f;
 		smoothness = 0.32f;
 		time = 0.0f;
+
+		angle = 0.0f;
 
 		seed = 1337.0f;
 	}

@@ -55,9 +55,9 @@
                             },
                             "radius": 0.0,
                             "translation": {
-                                "x": 0.0,
-                                "y": 1.0,
-                                "z": 0.0
+                                "x": -2.0376124382019043,
+                                "y": 1.7999999523162842,
+                                "z": 36.174259185791016
                             }
                         },
                         "type": "Sphere"
@@ -215,7 +215,9 @@
                                 "easingType": "Linear",
                                 "lightning": {
                                     "isLookAtEnd": false,
+                                    "isRefSpawnPos_": false,
                                     "startAmplitude": 0.47999998927116394,
+                                    "startAngle": 0.0,
                                     "startEnd": {
                                         "x": 0.0,
                                         "y": 1.0,
@@ -232,6 +234,7 @@
                                     },
                                     "startWidth": 2.0,
                                     "targetAmplitude": 0.47999998927116394,
+                                    "targetAngle": 0.0,
                                     "targetEnd": {
                                         "x": 0.0,
                                         "y": 1.0,
@@ -367,9 +370,9 @@
                             },
                             "radius": 0.0,
                             "translation": {
-                                "x": 0.0,
-                                "y": 1.0,
-                                "z": 0.0
+                                "x": -2.0376124382019043,
+                                "y": 1.7999999523162842,
+                                "z": 36.174259185791016
                             }
                         },
                         "type": "Sphere"
@@ -527,7 +530,9 @@
                                 "easingType": "Linear",
                                 "lightning": {
                                     "isLookAtEnd": false,
+                                    "isRefSpawnPos_": false,
                                     "startAmplitude": 0.47999998927116394,
+                                    "startAngle": 0.0,
                                     "startEnd": {
                                         "x": 0.0,
                                         "y": 1.0,
@@ -544,6 +549,7 @@
                                     },
                                     "startWidth": 2.0,
                                     "targetAmplitude": 0.47999998927116394,
+                                    "targetAngle": 0.0,
                                     "targetEnd": {
                                         "x": 0.0,
                                         "y": 1.0,
@@ -688,9 +694,9 @@
                             },
                             "radius": 0.0,
                             "translation": {
-                                "x": 0.0,
-                                "y": 1.0,
-                                "z": 0.0
+                                "x": -2.0376124382019043,
+                                "y": 1.7999999523162842,
+                                "z": 36.174259185791016
                             }
                         },
                         "type": "Sphere"
@@ -848,7 +854,9 @@
                                 "easingType": "Linear",
                                 "lightning": {
                                     "isLookAtEnd": false,
+                                    "isRefSpawnPos_": false,
                                     "startAmplitude": 0.47999998927116394,
+                                    "startAngle": 0.0,
                                     "startEnd": {
                                         "x": 0.0,
                                         "y": 1.0,
@@ -865,6 +873,7 @@
                                     },
                                     "startWidth": 2.0,
                                     "targetAmplitude": 0.47999998927116394,
+                                    "targetAngle": 0.0,
                                     "targetEnd": {
                                         "x": 0.0,
                                         "y": 1.0,
@@ -963,9 +972,9 @@
                             },
                             "radius": 0.0,
                             "translation": {
-                                "x": 0.0,
-                                "y": 1.0,
-                                "z": 0.0
+                                "x": -2.0376124382019043,
+                                "y": 1.7999999523162842,
+                                "z": 36.174259185791016
                             }
                         },
                         "type": "Sphere"
@@ -1123,7 +1132,9 @@
                                 "easingType": "Linear",
                                 "lightning": {
                                     "isLookAtEnd": false,
+                                    "isRefSpawnPos_": false,
                                     "startAmplitude": 0.47999998927116394,
+                                    "startAngle": 0.0,
                                     "startEnd": {
                                         "x": 0.0,
                                         "y": 1.0,
@@ -1140,6 +1151,7 @@
                                     },
                                     "startWidth": 2.0,
                                     "targetAmplitude": 0.47999998927116394,
+                                    "targetAngle": 0.0,
                                     "targetEnd": {
                                         "x": 0.0,
                                         "y": 1.0,
@@ -1258,10 +1270,11 @@
                             },
                             "stepAngle_": 15.0,
                             "translation": {
-                                "x": 0.0,
-                                "y": 1.0,
-                                "z": 0.0
-                            }
+                                "x": -2.0376124382019043,
+                                "y": 1.7999999523162842,
+                                "z": 36.174259185791016
+                            },
+                            "velocityMode_": "Normal"
                         },
                         "type": "Circle"
                     },
@@ -1496,9 +1509,9 @@
                             },
                             "radius": 0.0,
                             "translation": {
-                                "x": 0.0,
-                                "y": 1.0,
-                                "z": 0.0
+                                "x": -2.0376124382019043,
+                                "y": 1.7999999523162842,
+                                "z": 36.174259185791016
                             }
                         },
                         "type": "Sphere"
@@ -1656,7 +1669,9 @@
                                 "easingType": "EaseOutCubic",
                                 "lightning": {
                                     "isLookAtEnd": false,
+                                    "isRefSpawnPos_": false,
                                     "startAmplitude": 0.47999998927116394,
+                                    "startAngle": 0.0,
                                     "startEnd": {
                                         "x": 0.0,
                                         "y": 1.0,
@@ -1673,6 +1688,7 @@
                                     },
                                     "startWidth": 2.0,
                                     "targetAmplitude": 0.47999998927116394,
+                                    "targetAngle": 0.0,
                                     "targetEnd": {
                                         "x": 0.0,
                                         "y": 1.0,
@@ -1849,9 +1865,9 @@
                             },
                             "radius": 0.0,
                             "translation": {
-                                "x": 0.0,
-                                "y": 1.0,
-                                "z": 0.0
+                                "x": -2.0376124382019043,
+                                "y": 1.7999999523162842,
+                                "z": 36.174259185791016
                             }
                         },
                         "type": "Sphere"
@@ -2009,7 +2025,9 @@
                                 "easingType": "EaseOutExpo",
                                 "lightning": {
                                     "isLookAtEnd": false,
+                                    "isRefSpawnPos_": false,
                                     "startAmplitude": 0.6399999856948853,
+                                    "startAngle": 0.0,
                                     "startEnd": {
                                         "x": 0.0,
                                         "y": 20.0,
@@ -2026,6 +2044,7 @@
                                     },
                                     "startWidth": 48.0,
                                     "targetAmplitude": 0.11999999731779099,
+                                    "targetAngle": 0.0,
                                     "targetEnd": {
                                         "x": 0.0,
                                         "y": 1.0,
@@ -2155,16 +2174,16 @@
                                 "useNoiseTexture_trail": 0
                             },
                             "emitterRotation": {
-                                "x": 0.0,
-                                "y": 0.0,
-                                "z": 0.0
+                                "x": -2.0376124382019043,
+                                "y": 1.7999999523162842,
+                                "z": 36.174259185791016
                             },
                             "height": 1.600000023841858,
                             "topRadius": 9.0,
                             "translation": {
-                                "x": 0.0,
-                                "y": 1.0,
-                                "z": 0.0
+                                "x": -2.0376124382019043,
+                                "y": 1.7999999523162842,
+                                "z": 36.174259185791016
                             }
                         },
                         "type": "Cone"
@@ -2365,16 +2384,16 @@
                                 "useNoiseTexture_trail": 0
                             },
                             "emitterRotation": {
-                                "x": 0.0,
-                                "y": 0.0,
-                                "z": 0.0
+                                "x": -2.0376124382019043,
+                                "y": 1.7999999523162842,
+                                "z": 36.174259185791016
                             },
                             "height": 2.0,
                             "topRadius": 33.150001525878906,
                             "translation": {
-                                "x": 0.0,
-                                "y": 0.0,
-                                "z": 0.0
+                                "x": -2.0376124382019043,
+                                "y": 1.7999999523162842,
+                                "z": 36.174259185791016
                             }
                         },
                         "type": "Cone"
@@ -2532,7 +2551,9 @@
                                 "easingType": "EaseOutExpo",
                                 "lightning": {
                                     "isLookAtEnd": true,
+                                    "isRefSpawnPos_": false,
                                     "startAmplitude": 1.2000000476837158,
+                                    "startAngle": 0.0,
                                     "startEnd": {
                                         "x": 0.0,
                                         "y": 0.0,
@@ -2549,6 +2570,7 @@
                                     },
                                     "startWidth": 4.0,
                                     "targetAmplitude": 0.019999999552965164,
+                                    "targetAngle": 0.0,
                                     "targetEnd": {
                                         "x": 0.0,
                                         "y": 32.0,
@@ -2673,9 +2695,9 @@
                             },
                             "radius": 0.0,
                             "translation": {
-                                "x": 0.0,
-                                "y": 1.0,
-                                "z": 0.0
+                                "x": -2.0376124382019043,
+                                "y": 1.7999999523162842,
+                                "z": 36.174259185791016
                             }
                         },
                         "type": "Sphere"
@@ -2833,7 +2855,9 @@
                                 "easingType": "EaseOutSine",
                                 "lightning": {
                                     "isLookAtEnd": false,
+                                    "isRefSpawnPos_": false,
                                     "startAmplitude": 0.47999998927116394,
+                                    "startAngle": 0.0,
                                     "startEnd": {
                                         "x": 0.0,
                                         "y": 1.0,
@@ -2850,6 +2874,7 @@
                                     },
                                     "startWidth": 2.0,
                                     "targetAmplitude": 0.47999998927116394,
+                                    "targetAngle": 0.0,
                                     "targetEnd": {
                                         "x": 0.0,
                                         "y": 1.0,
