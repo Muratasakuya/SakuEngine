@@ -23,12 +23,12 @@ void ParticleSpawnCircleModule::SetCommand(const ParticleCommand& command) {
 		break;
 	}
 	case ParticleCommandID::SetRotation: {
-		if (const auto& rotation = std::get_if<Vector3>(&command.value)) {
+		if (const auto& ERotation = std::get_if<Vector3>(&command.value)) {
 
-			rotation_ = Quaternion::EulerToQuaternion(*rotation);
-		} else if (const auto& rotation = std::get_if<Quaternion>(&command.value)) {
+			rotation_ = Quaternion::EulerToQuaternion(*ERotation);
+		} else if (const auto& QRotation = std::get_if<Quaternion>(&command.value)) {
 
-			rotation_ = *rotation;
+			rotation_ = *QRotation;
 		}
 		break;
 	}

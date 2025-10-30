@@ -6,13 +6,16 @@
 
 void TitleController::Init() {
 
-	// 表示スプライト
-	displaySprite_ = std::make_unique<TitleDisplaySprite>();
-	displaySprite_->Init();
+
 }
 
 void TitleController::Update() {
 
-	// 各機能の更新処理
-	displaySprite_->Update();
+
+}
+
+void TitleController::ImGui() {
+
+	ImGui::Checkbox("Game Start", &isGameStart_);
+	ImGui::Checkbox("Select Finish", &isSelectFinish_);
 }

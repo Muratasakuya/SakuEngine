@@ -3,19 +3,20 @@
 //============================================================================
 //	include
 //============================================================================
-#include <Game/Objects/TitleScene/DisplaySprite/TitleDisplaySprite.h>
+#include <Engine/Editor/Base/IGameEditor.h>
 
 //============================================================================
 //	TitleController class
 //	タイトルシーンのスプライト表示など、遷移までの管理
 //============================================================================
-class TitleController {
+class TitleController :
+	public IGameEditor {
 public:
 	//========================================================================
 	//	public Methods
 	//========================================================================
 
-	TitleController() = default;
+	TitleController() :IGameEditor("TitleController") {}
 	~TitleController() = default;
 
 	// 初期化
@@ -24,13 +25,16 @@ public:
 	// 更新、遷移判定もここで行っている
 	void Update();
 
+	// エディター
+	void ImGui() override;
+
 	//--------- accessor -----------------------------------------------------
 
 	// ゲーム終了フラグ
-	bool IsSelectFinish() const { return displaySprite_->IsSelectFinish(); }
+	bool IsSelectFinish() const { return isSelectFinish_; }
 
 	// ゲーム遷移フラグ
-	bool IsGameStart() const { return displaySprite_->IsGameStart(); }
+	bool IsGameStart() const { return isGameStart_; }
 private:
 	//========================================================================
 	//	private Methods
@@ -38,6 +42,7 @@ private:
 
 	//--------- variables ----------------------------------------------------
 
-	// 表示スプライト
-	std::unique_ptr<TitleDisplaySprite> displaySprite_;
+	// デバッグ用フラグ
+	bool isGameStart_ = false;
+	bool isSelectFinish_ = false;
 };

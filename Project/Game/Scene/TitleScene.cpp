@@ -90,8 +90,7 @@ void TitleScene::Update() {
 	//========================================================================
 
 	// ゲーム開始フラグが立てば開始
-	if (controller_->IsGameStart() &&
-		fadeTransition_ && sceneManager_->IsFinishedTransition()) {
+	if (controller_->IsGameStart() && fadeTransition_ && sceneManager_->IsFinishedTransition()) {
 
 		sceneManager_->SetNextScene(Scene::Game, std::move(fadeTransition_));
 	}
@@ -102,6 +101,5 @@ void TitleScene::ImGui() {
 	if (!fadeTransition_) {
 		return;
 	}
-
 	fadeTransition_->ImGui();
 }

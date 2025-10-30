@@ -1182,15 +1182,6 @@
     <ClCompile Include="Game\Objects\SceneTransition\FadeTransition.cpp">
       <Filter>Game\Objects\SceneTransition</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Objects\TitleScene\DisplaySprite\GameFinishUI.cpp">
-      <Filter>Game\Objects\TitleScene\DisplaySprite</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Objects\TitleScene\DisplaySprite\TitleDisplaySprite.cpp">
-      <Filter>Game\Objects\TitleScene\DisplaySprite</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Objects\TitleScene\PostEffect\TitlePostEffect.cpp">
-      <Filter>Game\Objects\TitleScene\PostEffect</Filter>
-    </ClCompile>
     <ClCompile Include="Game\Objects\TitleScene\TitleController.cpp">
       <Filter>Game\Objects\TitleScene</Filter>
     </ClCompile>
@@ -2093,15 +2084,6 @@
     </ClInclude>
     <ClInclude Include="Game\Objects\SceneTransition\FadeTransition.h">
       <Filter>Game\Objects\SceneTransition</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Objects\TitleScene\DisplaySprite\GameFinishUI.h">
-      <Filter>Game\Objects\TitleScene\DisplaySprite</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Objects\TitleScene\DisplaySprite\TitleDisplaySprite.h">
-      <Filter>Game\Objects\TitleScene\DisplaySprite</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Objects\TitleScene\PostEffect\TitlePostEffect.h">
-      <Filter>Game\Objects\TitleScene\PostEffect</Filter>
     </ClInclude>
     <ClInclude Include="Game\Objects\TitleScene\TitleController.h">
       <Filter>Game\Objects\TitleScene</Filter>
