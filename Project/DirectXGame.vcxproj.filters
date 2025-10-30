@@ -2294,6 +2294,7 @@
     <ClCompile Include="Engine\Effect\Particle\Module\Updater\Primitive\Derived\ParticleLightningUpdater.cpp" />
     <ClCompile Include="Engine\Effect\Particle\Module\Spawner\ParticleSpawnCircleModule.cpp" />
     <ClCompile Include="Game\PostEffect\CRTDisplayUpdater.cpp" />
+    <ClCompile Include="Game\Objects\TitleScene\Background\TitleBackground.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\Camera\Follow\State\States\FollowCameraReturnDefaultRotate.h" />
@@ -2314,5 +2315,6 @@
     <ClInclude Include="Engine\Effect\Particle\Module\Updater\Primitive\Derived\ParticleLightningUpdater.h" />
     <ClInclude Include="Engine\Effect\Particle\Module\Spawner\ParticleSpawnCircleModule.h" />
     <ClInclude Include="Game\PostEffect\CRTDisplayUpdater.h" />
+    <ClInclude Include="Game\Objects\TitleScene\Background\TitleBackground.h" />
   </ItemGroup>
 </Project>

@@ -57,6 +57,10 @@ public:
 	// エディター
 	void ImGui(float itemSize);
 
+	// json
+	void ToJson(Json& data);
+	void FromJson(const Json& data);
+
 	//--------- accessor -----------------------------------------------------
 
 	void SetTextureName(const std::string& textureName) { textureName_ = textureName; }
@@ -67,7 +71,6 @@ public:
 	void SetBlendMode(BlendMode blendMode) { blendMode_ = blendMode; }
 
 	static uint32_t GetIndexNum() { return kIndexNum_; }
-
 	SpriteLayer GetLayer() const { return layer_; }
 	uint16_t GetLayerIndex() const { return static_cast<uint16_t>(layerIndex_); }
 	bool UseAlphaTexture() const { return alphaTextureName_.has_value(); }

@@ -221,6 +221,7 @@ void Transform2D::Init(ID3D12Device* device) {
 	rotation = 0.0f;
 
 	size = Vector2::AnyInit(0.0f);
+	sizeScale = 1.0f;
 	// 中心で設定
 	anchorPoint = Vector2::AnyInit(0.5f);
 
@@ -234,7 +235,7 @@ void Transform2D::Init(ID3D12Device* device) {
 
 void Transform2D::UpdateMatrix() {
 
-	Vector3 scale = Vector3(size.x, size.y, 1.0f);
+	Vector3 scale = Vector3(size.x * sizeScale, size.y * sizeScale, 1.0f);
 	Vector3 rotate = Vector3(0.0f, 0.0f, rotation);
 	Vector3 translate = Vector3(translation.x, translation.y, 0.0f);
 
@@ -272,6 +273,17 @@ void Transform2D::ImGui(float itemSize) {
 		anchorPoint = Vector2::AnyInit(1.0f);
 	}
 
+	if (ImGui::Button("Set WindowSize", ImVec2(itemSize, 40.0f))) {
+
+		// ウィンドウサイズに設定
+		size = Vector2(Config::kWindowWidthf, Config::kWindowHeightf);
+	}
+	if (ImGui::Button("Set WindowHalfSize", ImVec2(itemSize, 40.0f))) {
+
+		// ウィンドウサイズの半分設定
+		size = Vector2(Config::kWindowWidthf / 2.0f, Config::kWindowHeightf / 2.0f);
+	}
+
 	ImGui::SeparatorText("Parameter");
 
 	ImGui::PushItemWidth(itemSize);
@@ -279,11 +291,34 @@ void Transform2D::ImGui(float itemSize) {
 	ImGui::SliderAngle("rotation", &rotation);
 
 	ImGui::DragFloat2("size", &size.x, 1.0f);
-	ImGui::DragFloat2("anchorPoint", &anchorPoint.x, 0.01f, 0.0f, 1.0f);
+	ImGui::DragFloat("sizeScale", &sizeScale, 0.01f);
 
+	ImGui::DragFloat2("anchorPoint", &anchorPoint.x, 0.01f, 0.0f, 1.0f);
 	ImGui::DragFloat2("textureLeftTop", &textureLeftTop.x, 1.0f);
 	ImGui::DragFloat2("textureSize", &textureSize.x, 1.0f);
 	ImGui::PopItemWidth();
+}
+
+void Transform2D::ToJson(Json& data) {
+
+	data["translation"] = translation.ToJson();
+	data["rotation"] = rotation;
+	data["size"] = size.ToJson();
+	data["sizeScale"] = sizeScale;
+	data["anchorPoint"] = anchorPoint.ToJson();
+	data["textureLeftTop"] = textureLeftTop.ToJson();
+	data["textureSize"] = textureSize.ToJson();
+}
+
+void Transform2D::FromJson(const Json& data) {
+
+	translation = JsonAdapter::ToObject<Vector2>(data["translation"]);
+	rotation = data["rotation"].get<float>();
+	size = JsonAdapter::ToObject<Vector2>(data["size"]);
+	sizeScale = data["sizeScale"].get<float>();
+	anchorPoint = JsonAdapter::ToObject<Vector2>(data["anchorPoint"]);
+	textureLeftTop = JsonAdapter::ToObject<Vector2>(data["textureLeftTop"]);
+	textureSize = JsonAdapter::ToObject<Vector2>(data["textureSize"]);
 }
 
 void Transform2D::SetCenterPos() {

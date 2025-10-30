@@ -3,39 +3,36 @@
 //============================================================================
 //	include
 //============================================================================
-#include <Engine/Editor/Base/IGameEditor.h>
-#include <Game/Objects/TitleScene/Background/TitleBackground.h>
+#include <Engine/Object/Base/GameObject2D.h>
 
 //============================================================================
-//	TitleController class
-//	タイトルシーンのスプライト表示など、遷移までの管理
+//	TitleBackground class
+//	タイトルの背景処理
 //============================================================================
-class TitleController :
-	public IGameEditor {
+class TitleBackground {
 public:
 	//========================================================================
 	//	public Methods
 	//========================================================================
 
-	TitleController() :IGameEditor("TitleController") {}
-	~TitleController() = default;
+	TitleBackground() = default;
+	~TitleBackground() = default;
 
-	// 初期化
+	// 初期化処理
 	void Init();
 
-	// 更新、遷移判定もここで行っている
+	// 更新処理
 	void Update();
 
 	// エディター
-	void ImGui() override;
+	void ImGui();
+
+	// json
+	void FromJson(const Json& json);
+	void ToJson(Json& json) const;
 
 	//--------- accessor -----------------------------------------------------
 
-	// ゲーム終了フラグ
-	bool IsSelectFinish() const { return isSelectFinish_; }
-
-	// ゲーム遷移フラグ
-	bool IsGameStart() const { return isGameStart_; }
 private:
 	//========================================================================
 	//	private Methods
@@ -44,15 +41,11 @@ private:
 	//--------- variables ----------------------------------------------------
 
 	// 背景
-	std::unique_ptr<TitleBackground> background_;
+	std::unique_ptr<GameObject2D> background_;
 
-	// デバッグ用フラグ
-	bool isGameStart_ = false;
-	bool isSelectFinish_ = false;
+	// タイトルの名前
+	std::unique_ptr<GameObject2D> titleName_;
 
 	//--------- functions ----------------------------------------------------
 
-	// json
-	void ApplyJson();
-	void SaveJson();
 };

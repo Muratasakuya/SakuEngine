@@ -1,29 +1,66 @@
 #include "TitleController.h"
 
 //============================================================================
+//	include
+//============================================================================
+#include <Engine/Utility/Json/JsonAdapter.h>
+
+//============================================================================
 //	TitleController classMethods
 //============================================================================
 
 void TitleController::Init() {
 
-	background_ = std::make_unique<GameObject2D>();
-	background_->Init("white", "background", "Title");
-	background_->SetCenterTranslation();
-	background_->SetWindowSize();
-	background_->SetPostProcessMask(Bit_CRTDisplay);
+	// 背景初期化
+	background_ = std::make_unique<TitleBackground>();
+	background_->Init();
 
-	titleName_ = std::make_unique<GameObject2D>();
-	titleName_->Init("titleName", "titleName", "Title");
-	titleName_->SetCenterTranslation();
-	titleName_->SetPostProcessMask(Bit_CRTDisplay);
+	// json適用
+	ApplyJson();
 }
 
 void TitleController::Update() {
 
+	background_->Update();
 }
 
 void TitleController::ImGui() {
 
-	ImGui::Checkbox("Game Start", &isGameStart_);
-	ImGui::Checkbox("Select Finish", &isSelectFinish_);
+	if (ImGui::Button("Save Json")) {
+
+		SaveJson();
+	}
+	if (ImGui::BeginTabBar("TitleController")) {
+		if (ImGui::BeginTabItem("Runtime")) {
+
+			ImGui::Checkbox("Game Start", &isGameStart_);
+			ImGui::Checkbox("Select Finish", &isSelectFinish_);
+			ImGui::EndTabItem();
+		}
+		if (ImGui::BeginTabItem("Background")) {
+
+			background_->ImGui();
+			ImGui::EndTabItem();
+		}
+		ImGui::EndTabBar();
+	}
+}
+
+void TitleController::ApplyJson() {
+
+	Json data;
+	if (!JsonAdapter::LoadCheck("Title/titleController.json", data)) {
+		return;
+	}
+
+	background_->FromJson(data["Background"]);
+}
+
+void TitleController::SaveJson() {
+
+	Json data;
+	
+	background_->ToJson(data["Background"]);
+
+	JsonAdapter::Save("Title/titleController.json", data);
 }

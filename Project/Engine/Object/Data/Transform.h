@@ -163,6 +163,13 @@ public:
 
 	void ImGui(float itemSize);
 
+	// json
+	void ToJson(Json& data);
+	void FromJson(const Json& data);
+
+	//--------- accessor -----------------------------------------------------
+
+	// 画面の中心に設定
 	void SetCenterPos();
 
 	//--------- variables ----------------------------------------------------
@@ -171,6 +178,7 @@ public:
 	float rotation;
 
 	Vector2 size;           // 表示サイズ
+	float sizeScale;        // XY共通スケール
 	Vector2 anchorPoint;    // アンカーポイント
 
 	Vector2 textureLeftTop; // テクスチャ左上座標

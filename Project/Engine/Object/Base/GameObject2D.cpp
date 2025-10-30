@@ -31,6 +31,81 @@ void GameObject2D::Init(const std::string& textureName,
 	DerivedInit();
 }
 
+void GameObject2D::ImGui() {
+
+	if (ImGui::BeginTabBar("Obj2DTab")) {
+		if (ImGui::BeginTabItem("Sprite")) {
+
+			sprite_->ImGui(itemWidth_);
+			ImGui::EndTabItem();
+		}
+
+		if (ImGui::BeginTabItem("Transform")) {
+
+			transform_->ImGui(itemWidth_);
+			ImGui::EndTabItem();
+		}
+
+		if (ImGui::BeginTabItem("Material")) {
+
+			material_->ImGui(itemWidth_);
+			ImGui::EndTabItem();
+		}
+
+		if (ImGui::BeginTabItem("Derived")) {
+
+			// 継承先のimgui実装
+			DerivedImGui();
+			ImGui::EndTabItem();
+		}
+		ImGui::EndTabBar();
+	}
+}
+
+void GameObject2D::ApplyJson(const Json& data) {
+
+	ApplyTransform(data);
+	ApplyMaterial(data);
+	ApplySprite(data);
+}
+
+void GameObject2D::SaveJson(Json& data) {
+
+	SaveTransform(data);
+	SaveMaterial(data);
+	SaveSprite(data);
+}
+
+void GameObject2D::ApplyTransform(const Json& data) {
+
+	transform_->FromJson(data["Transform"]);
+}
+
+void GameObject2D::SaveTransform(Json& data) {
+
+	transform_->ToJson(data["Transform"]);
+}
+
+void GameObject2D::ApplyMaterial(const Json& data) {
+
+	material_->FromJson(data["Material"]);
+}
+
+void GameObject2D::SaveMaterial(Json& data) {
+
+	material_->ToJson(data["Material"]);
+}
+
+void GameObject2D::ApplySprite(const Json& data) {
+
+	sprite_->FromJson(data["Sprite"]);
+}
+
+void GameObject2D::SaveSprite(Json& data) {
+
+	sprite_->ToJson(data["Sprite"]);
+}
+
 void GameObject2D::SetCenterTranslation() {
 
 	// 画面中心に設定
@@ -49,12 +124,6 @@ void GameObject2D::ProjectToScreen(const Vector3& translation, const BaseCamera&
 	float screenY = (1.0f - (clipPos.y * 0.5f + 0.5f)) * Config::kWindowHeightf;
 
 	transform_->translation = Vector2(screenX, screenY);
-}
-
-void GameObject2D::SetWindowSize() {
-
-	// ウィンドウサイズに設定
-	transform_->size = Vector2(Config::kWindowWidthf, Config::kWindowHeightf);
 }
 
 bool GameObject2D::ImGuiSize() {

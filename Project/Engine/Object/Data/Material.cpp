@@ -243,11 +243,13 @@ void SpriteMaterial::ImGui(float itemSize) {
 void SpriteMaterial::ToJson(Json& data) {
 
 	// Material
-	// color
 	data["color"] = material.color.ToJson();
 	data["emissionColor"] = material.emissionColor.ToJson();
-	data["emissiveIntensity"] = material.emissiveIntensity;
 	data["useVertexColor"] = material.useVertexColor;
+	data["useAlphaColor"] = material.useAlphaColor;
+	data["emissiveIntensity"] = material.emissiveIntensity;
+	data["alphaReference"] = material.alphaReference;
+	data["postProcessMask"] = material.postProcessMask;
 
 	// UV
 	data["uvScale"] = uvTransform.scale.ToJson();
@@ -258,11 +260,13 @@ void SpriteMaterial::ToJson(Json& data) {
 void SpriteMaterial::FromJson(const Json& data) {
 
 	// Material
-	// color
-	material.color = JsonAdapter::ToObject<Color>(data["color"]);
-	material.emissionColor = JsonAdapter::ToObject<Vector3>(data["emissionColor"]);
-	material.emissiveIntensity = data["emissiveIntensity"];
+	material.color = Color::FromJson(data["color"]);
+	material.emissionColor = Vector3::FromJson(data["emissionColor"]);
 	material.useVertexColor = data["useVertexColor"];
+	material.useAlphaColor = data["useAlphaColor"];
+	material.emissiveIntensity = data["emissiveIntensity"];
+	material.alphaReference = data["alphaReference"];
+	material.postProcessMask = data["postProcessMask"];
 
 	// UV
 	uvTransform.scale = JsonAdapter::ToObject<Vector3>(data["uvScale"]);

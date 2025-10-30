@@ -76,7 +76,6 @@ void GameObject3D::ImGui() {
 			DerivedImGui();
 			ImGui::EndTabItem();
 		}
-
 		ImGui::EndTabBar();
 	}
 
