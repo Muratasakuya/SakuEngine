@@ -55,24 +55,6 @@ float hash11(float x) {
 	return frac(sin(x * 12.9898f) * 43758.5453f);
 }
 
-// 
-float3 TransformPoint(float3 p, Transform t) {
-	
-	float3 ps = p * t.scale;
-	float3 pr = mul(float4(ps, 1.0f), t.rotationMatrix).xyz;
-	float3 pw = pr + t.translation;
-	if (t.aliveParent != 0) {
-		pw += t.parentMatrix[3].xyz;
-	}
-	return pw;
-}
-
-float3 TransformDir(float3 v, Transform t) {
-	
-	float3 d = mul(float4(v, 0.0f), t.rotationMatrix).xyz;
-	return normalize(d);
-}
-
 // 進行方向から直交基底を作成
 void MakeOrthoBasis(float3 dir, out float3 right, out float3 binormal) {
 	
@@ -112,7 +94,6 @@ out vertices MSOutput verts[MAX_VERTS], out indices uint3 tris[MAX_PRIMS]) {
 	const uint instanceIndex = groupID.x;
 	// バッファアクセス
 	Lightning lightning = gLightnings[instanceIndex];
-	Transform transform = gTransform[instanceIndex];
 
 	// ノード数、3以上に収める
 	uint nodeCount = max(3, lightning.nodeCount);
