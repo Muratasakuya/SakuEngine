@@ -54,11 +54,20 @@ private:
 		EvenPerFrame, // 発生の個数に応じて等間隔
 		Progressive,  // 発生させるごとに発生角度を進める
 	};
+	// 速度の設定
+	enum class VelocityMode {
+
+		Normal,    // 円周の法線方向
+		NextPoint, // 次の発生点に向けて発生
+		PrePoint,  // 前の発生点に向けて発生
+	};
 
 	//--------- variables ----------------------------------------------------
 
 	// 発生方法
 	SpawnMode mode_;
+	// 速度の設定
+	VelocityMode velocityMode_;
 
 	float radius_; // 円の半径
 
@@ -77,7 +86,9 @@ private:
 	int circleDivision_; // 分割数
 
 	//--------- functions ----------------------------------------------------
-	
+
 	// 角度を進める
 	void UpdateAdvanceProgressive(uint32_t emitCount);
+	// 速度取得
+	Vector3 GetVelocity(uint32_t index, uint32_t emitCount, const Vector3& direction) const;
 };
