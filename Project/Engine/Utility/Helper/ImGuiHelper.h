@@ -52,6 +52,14 @@ namespace detail {
 	}
 }
 
+// 入力状態
+struct InputImGui {
+
+	static constexpr int kBuffer = 128;
+	char input[kBuffer] = {};
+	std::string inputText;
+};
+
 // json保存状態
 struct JsonSaveState {
 
@@ -119,6 +127,9 @@ public:
 
 	// uint32_tのDrag編集
 	static bool DragUint32(const char* label, uint32_t& value, int maxValue = 0xffff);
+
+	// 入力
+	static bool InputText(const char* label, InputImGui& ioInput);
 };
 
 //============================================================================

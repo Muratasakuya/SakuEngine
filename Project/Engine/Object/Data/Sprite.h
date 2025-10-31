@@ -63,6 +63,9 @@ public:
 
 	//--------- accessor -----------------------------------------------------
 
+	// メタデータからテクスチャサイズ設定
+	void SetMetaDataTextureSize(Transform2D& transform);
+
 	void SetTextureName(const std::string& textureName) { textureName_ = textureName; }
 	void SetAlphaTextureName(const std::string& textureName) { alphaTextureName_ = textureName; }
 
@@ -114,6 +117,4 @@ private:
 
 	// バッファ作成
 	void InitBuffer(ID3D12Device* device);
-	// メタデータからテクスチャサイズ設定
-	void SetMetaDataTextureSize(Transform2D& transform);
 };

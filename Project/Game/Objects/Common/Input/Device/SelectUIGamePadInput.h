@@ -17,7 +17,7 @@ public:
 	//	public Methods
 	//========================================================================
 
-	SelectUIGamePadInput() = default;
+	SelectUIGamePadInput(Input* input) { input_ = input; }
 	~SelectUIGamePadInput() = default;
 
 	//--------- accessor -----------------------------------------------------

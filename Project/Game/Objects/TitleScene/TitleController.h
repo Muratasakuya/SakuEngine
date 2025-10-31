@@ -4,6 +4,7 @@
 //	include
 //============================================================================
 #include <Engine/Editor/Base/IGameEditor.h>
+#include <Game/Objects/Common/UI/GameUIFocusNavigator.h>
 #include <Game/Objects/TitleScene/Background/TitleBackground.h>
 
 //============================================================================
@@ -23,7 +24,7 @@ public:
 	// 初期化
 	void Init();
 
-	// 更新、遷移判定もここで行っている
+	// 更新
 	void Update();
 
 	// エディター
@@ -45,6 +46,9 @@ private:
 
 	// 背景
 	std::unique_ptr<TitleBackground> background_;
+
+	// 選択UI
+	std::unique_ptr<GameUIFocusNavigator> selectUINavigator_;
 
 	// デバッグ用フラグ
 	bool isGameStart_ = false;

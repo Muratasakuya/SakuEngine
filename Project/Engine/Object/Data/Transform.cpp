@@ -229,13 +229,18 @@ void Transform2D::Init(ID3D12Device* device) {
 	textureLeftTop = Vector2::AnyInit(0.0f);
 	textureSize = Vector2::AnyInit(0.0f);
 
+	// deviceがnullptrの場合はバッファを作成しない
+	if (!device) {
+		return;
+	}
+
 	// buffer初期化
 	buffer_.CreateBuffer(device);
 }
 
 void Transform2D::UpdateMatrix() {
 
-	Vector3 scale = Vector3(size.x * sizeScale, size.y * sizeScale, 1.0f);
+	Vector3 scale = Vector3(sizeScale, sizeScale, 1.0f);
 	Vector3 rotate = Vector3(0.0f, 0.0f, rotation);
 	Vector3 translate = Vector3(translation.x, translation.y, 0.0f);
 
@@ -245,40 +250,44 @@ void Transform2D::UpdateMatrix() {
 		matrix = parent->matrix * matrix;
 	}
 
-	// buffer転送
-	buffer_.TransferData(matrix);
+	// 作成されたときのみ
+	if (buffer_.IsCreatedResource()) {
+
+		// buffer転送
+		buffer_.TransferData(matrix);
+	}
 }
 
-void Transform2D::ImGui(float itemSize) {
+void Transform2D::ImGui(float itemSize, float buttonSize) {
 
 	ImGui::SeparatorText("Config");
 
-	if (ImGui::Button("Set CenterPos", ImVec2(itemSize, 40.0f))) {
+	if (ImGui::Button("Set CenterPos", ImVec2(itemSize, buttonSize))) {
 
 		SetCenterPos();
 	}
 
-	if (ImGui::Button("Set CenterAnchor", ImVec2(itemSize, 40.0f))) {
+	if (ImGui::Button("Set CenterAnchor", ImVec2(itemSize, buttonSize))) {
 
 		anchorPoint = Vector2::AnyInit(0.5f);
 	}
 
-	if (ImGui::Button("Set LeftAnchor", ImVec2(itemSize, 40.0f))) {
+	if (ImGui::Button("Set LeftAnchor", ImVec2(itemSize, buttonSize))) {
 
 		anchorPoint = Vector2::AnyInit(0.0f);
 	}
 
-	if (ImGui::Button("Set RightAnchor", ImVec2(itemSize, 40.0f))) {
+	if (ImGui::Button("Set RightAnchor", ImVec2(itemSize, buttonSize))) {
 
 		anchorPoint = Vector2::AnyInit(1.0f);
 	}
 
-	if (ImGui::Button("Set WindowSize", ImVec2(itemSize, 40.0f))) {
+	if (ImGui::Button("Set WindowSize", ImVec2(itemSize, buttonSize))) {
 
 		// ウィンドウサイズに設定
 		size = Vector2(Config::kWindowWidthf, Config::kWindowHeightf);
 	}
-	if (ImGui::Button("Set WindowHalfSize", ImVec2(itemSize, 40.0f))) {
+	if (ImGui::Button("Set WindowHalfSize", ImVec2(itemSize, buttonSize))) {
 
 		// ウィンドウサイズの半分設定
 		size = Vector2(Config::kWindowWidthf / 2.0f, Config::kWindowHeightf / 2.0f);
@@ -296,6 +305,18 @@ void Transform2D::ImGui(float itemSize) {
 	ImGui::DragFloat2("anchorPoint", &anchorPoint.x, 0.01f, 0.0f, 1.0f);
 	ImGui::DragFloat2("textureLeftTop", &textureLeftTop.x, 1.0f);
 	ImGui::DragFloat2("textureSize", &textureSize.x, 1.0f);
+
+	ImGui::SeparatorText("VertexOffset");
+
+	// 左下
+	ImGui::DragFloat2("leftBottom", &vertexOffset_[0].x, 0.1f);
+	// 左上
+	ImGui::DragFloat2("leftTop", &vertexOffset_[1].x, 0.1f);
+	// 右下
+	ImGui::DragFloat2("rightBottom", &vertexOffset_[2].x, 0.1f);
+	// 右上
+	ImGui::DragFloat2("rightTop", &vertexOffset_[3].x, 0.1f);
+
 	ImGui::PopItemWidth();
 }
 
@@ -308,6 +329,12 @@ void Transform2D::ToJson(Json& data) {
 	data["anchorPoint"] = anchorPoint.ToJson();
 	data["textureLeftTop"] = textureLeftTop.ToJson();
 	data["textureSize"] = textureSize.ToJson();
+
+	data["vertexOffset"] = Json::array();
+	for (const auto& offset : vertexOffset_) {
+
+		data["vertexOffset"].push_back(offset.ToJson());
+	}
 }
 
 void Transform2D::FromJson(const Json& data) {
@@ -319,6 +346,13 @@ void Transform2D::FromJson(const Json& data) {
 	anchorPoint = JsonAdapter::ToObject<Vector2>(data["anchorPoint"]);
 	textureLeftTop = JsonAdapter::ToObject<Vector2>(data["textureLeftTop"]);
 	textureSize = JsonAdapter::ToObject<Vector2>(data["textureSize"]);
+
+	if (data.contains("vertexOffset")) {
+		for (uint32_t i = 0; i < vertexOffset_.size(); ++i) {
+
+			vertexOffset_[i] = Vector2::FromJson(data["vertexOffset"][i]);
+		}
+	}
 }
 
 void Transform2D::SetCenterPos() {

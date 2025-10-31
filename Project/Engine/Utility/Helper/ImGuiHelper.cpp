@@ -378,3 +378,13 @@ bool ImGuiHelper::DragUint32(const char* label, uint32_t& value, int maxValue) {
 
 	return result;
 }
+
+bool ImGuiHelper::InputText(const char* label, InputImGui& ioInput) {
+
+	bool changed = ImGui::InputText(label, ioInput.input, InputImGui::kBuffer);
+	if (changed) {
+
+		ioInput.inputText = std::string(ioInput.input);
+	}
+	return changed;
+}

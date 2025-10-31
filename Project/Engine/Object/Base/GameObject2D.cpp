@@ -42,7 +42,12 @@ void GameObject2D::ImGui() {
 
 		if (ImGui::BeginTabItem("Transform")) {
 
-			transform_->ImGui(itemWidth_);
+			if (ImGui::Button("Synch TextureSize")) {
+
+				sprite_->SetMetaDataTextureSize(*transform_);
+			}
+
+			transform_->ImGui(itemWidth_, 24.0f);
 			ImGui::EndTabItem();
 		}
 
@@ -124,6 +129,11 @@ void GameObject2D::ProjectToScreen(const Vector3& translation, const BaseCamera&
 	float screenY = (1.0f - (clipPos.y * 0.5f + 0.5f)) * Config::kWindowHeightf;
 
 	transform_->translation = Vector2(screenX, screenY);
+}
+
+void GameObject2D::ImGuiSprite() {
+
+	sprite_->ImGui(itemWidth_);
 }
 
 bool GameObject2D::ImGuiSize() {

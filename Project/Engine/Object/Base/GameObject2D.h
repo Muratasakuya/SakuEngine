@@ -32,6 +32,7 @@ public:
 	void ImGui() override;
 	virtual void DerivedImGui() override {}
 	// 各パラメータ
+	void ImGuiSprite();
 	bool ImGuiSize();
 
 	// json

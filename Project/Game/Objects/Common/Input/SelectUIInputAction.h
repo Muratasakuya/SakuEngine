@@ -18,4 +18,5 @@ enum class SelectUIInputAction :
 	Down,  // 下
 	Left,  // 左
 	Right, // 右
+	Decide,// 決定
 };

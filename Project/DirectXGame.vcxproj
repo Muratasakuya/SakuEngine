@@ -683,6 +683,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\Objects\Common\GameButtonBlinkingUpdater.cpp">
       <SubType />
     </ClCompile>
+    <ClCompile Include="Game\Objects\Common\UI\GameUIFocusNavigator.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="Game\Objects\GameScene\Enemy\Boss\Collision\BossEnemyAttackCollision.cpp">
       <SubType />
     </ClCompile>
@@ -1521,6 +1525,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\Objects\Base\ITransition.h" />
     <ClInclude Include="Game\Objects\Common\GameButtonBlinkingUpdater.h">
       <SubType />
+    </ClInclude>
+    <ClInclude Include="Game\Objects\Common\UI\GameUIFocusNavigator.h">
+      <SubType>
+      </SubType>
     </ClInclude>
     <ClInclude Include="Game\Objects\GameScene\Enemy\Boss\Effect\BossEnemyAnimationEffect.h">
       <SubType />

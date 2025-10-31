@@ -161,7 +161,7 @@ public:
 
 	void UpdateMatrix();
 
-	void ImGui(float itemSize);
+	void ImGui(float itemSize, float buttonSize = 32.0f);
 
 	// json
 	void ToJson(Json& data);
