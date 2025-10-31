@@ -32,6 +32,14 @@ bool SelectUIKeyInput::IsPressed(SelectUIInputAction button) const {
 
 		return input_->PushKey(DIK_D) || input_->PushKey(DIK_RIGHT);
 	}
+	case SelectUIInputAction::Decide: {
+
+		return input_->PushKey(DIK_SPACE);
+	}
+	case SelectUIInputAction::Return: {
+
+		return input_->PushKey(DIK_ESCAPE);
+	}
 	}
 	return false;
 }
@@ -54,6 +62,14 @@ bool SelectUIKeyInput::IsTriggered(SelectUIInputAction button) const {
 	case SelectUIInputAction::Right: {
 
 		return input_->TriggerKey(DIK_D) || input_->TriggerKey(DIK_RIGHT);
+	}
+	case SelectUIInputAction::Decide: {
+
+		return input_->TriggerKey(DIK_SPACE);
+	}
+	case SelectUIInputAction::Return: {
+
+		return input_->TriggerKey(DIK_ESCAPE);
 	}
 	}
 	return false;

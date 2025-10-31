@@ -41,7 +41,6 @@ void GameUIFocusNavigator::AddUI() {
 	// デフォルト値
 	ui.isDefaultFocus = uiList_.empty(); // 最初に作るUIをデフォルトにする
 	ui.state = UIState::Unfocused;
-	ui.mapNumber = 0;
 
 	// スプライトを初期化
 	std::unique_ptr<GameObject2D> sprite = std::make_unique<GameObject2D>();
@@ -52,11 +51,9 @@ void GameUIFocusNavigator::AddUI() {
 	// デフォルトのスプライト表示
 	ui.sprites.emplace_back(std::move(sprite));
 
-	// 方向マップ初期化
-	ui.directionMap.emplace(Direction2D::Up, 0);
-	ui.directionMap.emplace(Direction2D::Bottom, 0);
-	ui.directionMap.emplace(Direction2D::Left, 0);
-	ui.directionMap.emplace(Direction2D::Right, 0);
+	// 座標初期化
+	ui.ownMapCoordinate = Vector2Int(0, 0);
+	ui.entryRules.clear();
 
 	// UIリストに追加
 	uiList_.emplace_back(std::move(ui));
@@ -158,32 +155,22 @@ void GameUIFocusNavigator::Update() {
 		// Update処理が始まったとき
 		else {
 
-			// デフォルトでフォーカスされるUIを探してフォーカスを当てる
+			// DisableからUpdateになった瞬間
 			int startIndex = -1;
-			for (int i = 0; i < static_cast<int>(uiList_.size()); ++i) {
-				if (uiList_[i].isDefaultFocus && uiList_[i].mapNumber == currentMapNumber_) {
+			// isDefaultFocusがtrueになっているUIかつ現在のマップ座標にいるUIを探す
+			const int uiListSize = static_cast<int>(uiList_.size());
+			for (int i = 0; i < uiListSize; ++i) {
+				if (uiList_[i].isDefaultFocus && uiList_[i].ownMapCoordinate == currentCoordinate_) {
 
 					startIndex = i;
 					break;
 				}
 			}
-			// デフォルトでフォーカスされるUIがなかったら
-			if (startIndex < 0) {
-				for (int i = 0; i < static_cast<int>(uiList_.size()); ++i) {
-					// マップ番号が同じでデフォルトフォーカスのUIを設定する
-					if (uiList_[i].isDefaultFocus) {
+			// なにも無ければ0番目をフォーカスさせる
+			if (startIndex < 0 && !uiList_.empty()) {
 
-						startIndex = i;
-						break;
-					}
-				}
-				// この時点でもなかったら0番目を設定する
-				if (startIndex < 0 && !uiList_.empty()) {
-
-					startIndex = 0;
-				}
+				startIndex = 0;
 			}
-			// フォーカス開始
 			SetFocus(startIndex, true);
 		}
 		// 状態を更新
@@ -194,51 +181,50 @@ void GameUIFocusNavigator::Update() {
 	if (currentState_ == NavigateState::Disable) {
 		return;
 	}
-	// 
-	if (!IsInputAccepted()) {
-
-		// 
-		StepStates();
-		return;
-	}
 
 	// 入力によるナビゲーション処理
-	auto moveBy = [&](Direction2D dir, SelectUIInputAction action) {
+	auto MoveFromInput = [&](Direction2D direction, SelectUIInputAction action) {
 
-		// なにも入力がなければ処理しない
+		// 入力がなければ終了
 		if (!inputMapper_->IsTriggered(action)) {
 			return;
 		}
-		// 範囲外チェック
+		// 現在フォーカス中のUIがなければ終了
 		if (focusedUIIndex_ < 0 || static_cast<int>(uiList_.size()) <= focusedUIIndex_) {
 			return;
 		}
 
-		// 選択されたUIの参照を取得
-		UI& currentUI = uiList_[focusedUIIndex_];
-		auto it = currentUI.directionMap.find(dir);
-		if (it == currentUI.directionMap.end()) {
-			return;
+		for (int i = 0; i < static_cast<int>(uiList_.size()); ++i) {
+			if (i == focusedUIIndex_) {
+				continue;
+			}
+			// 指定方向と現在座標からフォーカス可能なUIがあればそちらにフォーカスを移動する
+			if (CanFocusUIFrom(uiList_[i], currentCoordinate_, direction)) {
+
+				SetFocus(i, true);
+				return;
+			}
 		}
 
-		// 移動先のマップ番号を取得
-		int32_t nextMap = it->second;
-		// 移動先のUIインデックスを取得
-		int nextIndex = FindUIIndexByMapNumber(nextMap);
-		// 0以上、現在のフォーカスUIと異なるインデックスなら移動
-		if (0 <= nextIndex && nextIndex != focusedUIIndex_) {
+		// 指定方向の座標を計算
+		Vector2Int next = currentCoordinate_;
+		next += DirectionDelta(direction);
 
-			// マップ番号を更新
-			currentMapNumber_ = nextMap;
-			SetFocus(nextIndex, true);
+		// 指定座標にいるUIを探す
+		int index = FindUIIndexByCoord(next);
+		// 存在しなければ何もしないで終了
+		if (0 <= index && index != focusedUIIndex_) {
+
+			// フォーカス移動
+			SetFocus(index, true);
 		}
 		};
 
 	// 各方向への移動処理
-	moveBy(Direction2D::Left, SelectUIInputAction::Left);
-	moveBy(Direction2D::Right, SelectUIInputAction::Right);
-	moveBy(Direction2D::Up, SelectUIInputAction::Up);
-	moveBy(Direction2D::Bottom, SelectUIInputAction::Down);
+	MoveFromInput(Direction2D::Left, SelectUIInputAction::Left);
+	MoveFromInput(Direction2D::Right, SelectUIInputAction::Right);
+	MoveFromInput(Direction2D::Up, SelectUIInputAction::Up);
+	MoveFromInput(Direction2D::Bottom, SelectUIInputAction::Down);
 
 	// 決定入力判定
 	if (0 <= focusedUIIndex_ && focusedUIIndex_ < static_cast<int>(uiList_.size())) {
@@ -269,32 +255,22 @@ void GameUIFocusNavigator::SetFocus(int newIndex, bool asTrigger) {
 		return;
 	}
 
+	// 新しい入力があれば
 	if (focusedUIIndex_ != newIndex) {
 
-		// 以前フォーカスされていたUIの状態をNowUnfocusedにする
+		// 古いフォーカスUIの状態をNowUnfocusedにする
 		if (0 <= focusedUIIndex_ && focusedUIIndex_ < static_cast<int>(uiList_.size())) {
 
 			uiList_[focusedUIIndex_].state = UIState::NowUnfocused;
 		}
-
-		// 新たにフォーカスされたUIの状態をNowFocusedにする
+		// インデックス、座標を更新
 		focusedUIIndex_ = newIndex;
+		currentCoordinate_ = uiList_[focusedUIIndex_].ownMapCoordinate;
 		uiList_[focusedUIIndex_].state = UIState::NowFocused;
 	} else if (!asTrigger) {
 
-		// 同じUIにフォーカスを当てるときトリガー判定でなければFocused状態にする
 		uiList_[focusedUIIndex_].state = UIState::Focused;
 	}
-}
-
-int GameUIFocusNavigator::FindUIIndexByMapNumber(int32_t mapNumber) const {
-
-	for (int i = 0; i < static_cast<int>(uiList_.size()); ++i) {
-		if (uiList_[i].mapNumber == mapNumber) {
-			return i;
-		}
-	}
-	return -1;
 }
 
 void GameUIFocusNavigator::StepStates() {
@@ -324,13 +300,48 @@ void GameUIFocusNavigator::StepStates() {
 	}
 }
 
-bool GameUIFocusNavigator::IsInputAccepted() const {
+int GameUIFocusNavigator::FindUIIndexByCoord(const Vector2Int& coordinate) const {
 
-	if (inputAcceptMapNumbers_.empty()) {
-		return true;
+	// 指定座標にいるUIを探す
+	for (int i = 0; i < static_cast<int>(uiList_.size()); ++i) {
+		if (uiList_[i].ownMapCoordinate == coordinate) {
+
+			return i;
+		}
 	}
-	return std::find(inputAcceptMapNumbers_.begin(), inputAcceptMapNumbers_.end(), currentMapNumber_) !=
-		inputAcceptMapNumbers_.end();
+	return -1;
+}
+
+bool GameUIFocusNavigator::CanFocusUIFrom(const UI& ui, const Vector2Int& from, Direction2D direction) const {
+
+	// 指定方向と座標からフォーカス可能か
+	for (const auto& rule : ui.entryRules) {
+		if (rule.direction == direction && rule.from == from) {
+
+			return true;
+		}
+	}
+	return false;
+}
+
+Vector2Int GameUIFocusNavigator::DirectionDelta(Direction2D direction) {
+
+	// 各方向の座標を返す
+	switch (direction) {
+	case Direction2D::Left: {
+		return Vector2Int(-1, 0);
+	}
+	case Direction2D::Right: {
+		return Vector2Int(1, 0);
+	}
+	case Direction2D::Up: {
+		return Vector2Int(0, 1);
+	}
+	case Direction2D::Bottom: {
+		return Vector2Int(0, -1);
+	}
+	}
+	return Vector2Int(0, 0);
 }
 
 void GameUIFocusNavigator::ImGui() {
@@ -346,8 +357,6 @@ void GameUIFocusNavigator::ImGui() {
 	// ナビゲーターの状態
 	EnumAdapter<NavigateState>::Combo("currrentState", &currentState_);
 	ImGui::SeparatorText("Navigator Status");
-	ImGui::Text("Focused Index : %d", focusedUIIndex_);
-	ImGui::Text("Current Map : %d", currentMapNumber_);
 	if (0 <= focusedUIIndex_ && focusedUIIndex_ < static_cast<int>(uiList_.size())) {
 
 		const UI& ui = uiList_[focusedUIIndex_];
@@ -356,6 +365,11 @@ void GameUIFocusNavigator::ImGui() {
 	}
 
 	if (ImGui::BeginTabBar("GameUIFocusNavigator")) {
+		if (ImGui::BeginTabItem("CheckMap")) {
+
+			CheckCurrentMap();
+			ImGui::EndTabItem();
+		}
 		if (ImGui::BeginTabItem("UIEdit")) {
 
 			EditUI();
@@ -369,6 +383,87 @@ void GameUIFocusNavigator::ImGui() {
 		ImGui::EndTabBar();
 	}
 	ImGui::PopItemWidth();
+}
+
+void GameUIFocusNavigator::CheckCurrentMap() {
+
+	// 座標範囲を算出
+	int minX = currentCoordinate_.x, maxX = currentCoordinate_.x;
+	int minY = currentCoordinate_.y, maxY = currentCoordinate_.y;
+	for (const auto& ui : uiList_) {
+
+		minX = (std::min)(minX, ui.ownMapCoordinate.x);
+		maxX = (std::max)(maxX, ui.ownMapCoordinate.x);
+		minY = (std::min)(minY, ui.ownMapCoordinate.y);
+		maxY = (std::max)(maxY, ui.ownMapCoordinate.y);
+	}
+	// 表示に少し余白
+	minX -= 1;
+	maxX += 1;
+	minY -= 1;
+	maxY += 1;
+
+	ImGui::Text("Current : (%d, %d)", currentCoordinate_.x, currentCoordinate_.y);
+
+	// セルサイズ
+	const float cell = 64.0f;
+	const int cols = (maxX - minX + 1);
+	if (cols <= 0) {
+		return;
+	}
+
+	if (ImGui::BeginTable("MapTable", cols, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg)) {
+		for (int y = maxY; y >= minY; --y) {
+			ImGui::TableNextRow();
+			for (int x = minX; x <= maxX; ++x) {
+
+				ImGui::TableSetColumnIndex(x - minX);
+				ImGui::PushID(x * 10007 + y);
+
+				// セル描画
+				ImGui::BeginGroup();
+				ImGui::InvisibleButton("cell", ImVec2(cell, cell));
+
+				// セル内表示を重ねる
+				ImVec2 p0 = ImGui::GetItemRectMin();
+				ImVec2 p1 = ImGui::GetItemRectMax();
+				auto* drawList = ImGui::GetWindowDrawList();
+
+				// 枠
+				const bool isCurrent = currentCoordinate_ == Vector2Int(x, y);
+				drawList->AddRect(p0, p1, isCurrent ? IM_COL32(80, 200, 255, 255) : IM_COL32(80, 80, 80, 255), 0.0f, 0, 1.0f);
+
+				// UI名
+				int index = FindUIIndexByCoord(Vector2Int(x, y));
+				if (index >= 0) {
+
+					const char* nm = uiList_[index].name.c_str();
+					ImVec2 sz = ImGui::CalcTextSize(nm);
+					ImVec2 c = ImVec2((p0.x + p1.x - sz.x) * 0.5f, (p0.y + p1.y - sz.y) * 0.5f);
+					drawList->AddText(c, IM_COL32(255, 255, 255, 255), nm);
+				} else {
+
+					// 座標ラベル
+					char buf[32]; snprintf(buf, sizeof(buf), "(%d,%d)", x, y);
+					ImGui::CalcTextSize(buf);
+					drawList->AddText(ImVec2(p0.x + 4, p0.y + 4), IM_COL32(160, 160, 160, 255), buf);
+				}
+
+				// クリックで現在地、フォーカスを変更
+				if (ImGui::IsItemClicked()) {
+
+					currentCoordinate_ = Vector2Int(x, y);
+					if (0 <= index) {
+
+						SetFocus(index, true);
+					}
+				}
+				ImGui::EndGroup();
+				ImGui::PopID();
+			}
+		}
+		ImGui::EndTable();
+	}
 }
 
 void GameUIFocusNavigator::EditUI() {
@@ -470,32 +565,45 @@ void GameUIFocusNavigator::EditUI() {
 
 			// ボタンで指定UIのフォーカス
 			ImGui::Checkbox("isDefaultFocus", &ui.isDefaultFocus);
-			if (ImGui::Button("Focus this UI")) {
+			ImGui::DragInt2("ownCoordinate", &ui.ownMapCoordinate.x, 1);
+			if (ImGui::SmallButton("Focus")) {
 
-				currentMapNumber_ = ui.mapNumber;
-				SetFocus(FindUIIndexByMapNumber(currentMapNumber_), true);
+				SetFocus(selectedUIIndex_, true);
 			}
 
-			ImGui::DragInt("mapNumber", &ui.mapNumber, 1);
+			// フォーカスされるUIの受付UI情報
+			ImGui::SeparatorText("Entry Rules");
+			if (ImGui::BeginTable("EntryRules", 4, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg)) {
 
-			// 自身のUIマップ位置
-			{
-				int up = ui.directionMap[Direction2D::Up];
-				int down = ui.directionMap[Direction2D::Bottom];
-				int left = ui.directionMap[Direction2D::Left];
-				int right = ui.directionMap[Direction2D::Right];
-				if (ImGui::DragInt("Up", &up, 1)) {
-					ui.directionMap[Direction2D::Up] = up;
+				ImGui::TableSetupColumn("from.x");
+				ImGui::TableSetupColumn("from.y");
+				ImGui::TableSetupColumn("dir");
+				ImGui::TableSetupColumn(" ");
+				ImGui::TableHeadersRow();
+				for (int i = 0; i < static_cast<int>(ui.entryRules.size()); ++i) {
+
+					ImGui::TableNextRow();
+					ImGui::TableSetColumnIndex(0);
+					ImGui::DragInt(("##ex" + std::to_string(i)).c_str(), &ui.entryRules[i].from.x, 1);
+					ImGui::TableSetColumnIndex(1);
+					ImGui::DragInt(("##ey" + std::to_string(i)).c_str(), &ui.entryRules[i].from.y, 1);
+					ImGui::TableSetColumnIndex(2);
+					EnumAdapter<Direction2D>::Combo(("##edir" + std::to_string(i)).c_str(), &ui.entryRules[i].direction);
+					ImGui::TableSetColumnIndex(3);
+					if (ImGui::SmallButton(("Remove##er" + std::to_string(i)).c_str())) {
+
+						ui.entryRules.erase(ui.entryRules.begin() + i);
+						--i;
+					}
 				}
-				if (ImGui::DragInt("Down", &down, 1)) {
-					ui.directionMap[Direction2D::Bottom] = down;
-				}
-				if (ImGui::DragInt("Left", &left, 1)) {
-					ui.directionMap[Direction2D::Left] = left;
-				}
-				if (ImGui::DragInt("Right", &right, 1)) {
-					ui.directionMap[Direction2D::Right] = right;
-				}
+				ImGui::EndTable();
+			}
+			if (ImGui::SmallButton("Add Entry")) {
+
+				EntryRule rule;
+				rule.from = currentCoordinate_;
+				rule.direction = Direction2D::Right;
+				ui.entryRules.emplace_back(rule);
 			}
 
 			// Spriteリスト

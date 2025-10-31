@@ -14,9 +14,10 @@
 enum class SelectUIInputAction :
 	uint8_t {
 
-	Up,    // 上
-	Down,  // 下
-	Left,  // 左
-	Right, // 右
-	Decide,// 決定
+	Up,     // 上
+	Down,   // 下
+	Left,   // 左
+	Right,  // 右
+	Decide, // 決定
+	Return, // 戻る
 };

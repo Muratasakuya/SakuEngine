@@ -70,6 +70,13 @@ private:
 		Deciding = 5,     // 決定されている(更新)
 	};
 
+	// フォーカスされるUIの受付UI情報
+	struct EntryRule {
+
+		Vector2Int from;       // どの座標からか
+		Direction2D direction; // どの方向入力か
+	};
+
 	// UI構造体
 	struct UI {
 
@@ -84,10 +91,9 @@ private:
 		// 表示用スプライト
 		std::vector<std::unique_ptr<GameObject2D>> sprites;
 
-		// UIの位置しているマップ番号
-		int32_t mapNumber = 0;
-		// 自身が位置している場所、0,0,0,0で真ん中
-		std::unordered_map<Direction2D, int32_t> directionMap;
+		// UIの位置しているマップ位置
+		Vector2Int ownMapCoordinate;
+		std::vector<EntryRule> entryRules;
 
 		// 表示スプライトの親
 		std::unique_ptr<Transform2D> parentTransform;
@@ -124,7 +130,7 @@ private:
 
 	// フォーカス処理
 	int focusedUIIndex_ = -1;                    // 現在フォーカスしているUIのインデックス
-	int32_t currentMapNumber_ = 0;               // 現在のマップ番号
+	Vector2Int currentCoordinate_;               // 現在のマップ位置
 	std::vector<int32_t> inputAcceptMapNumbers_; // 入力を受け付けるマップ番号のリスト
 
 	//std::unordered_map<AnimationType, std::vector<std::unique_ptr<SimpleAnimation>>> animations_;
@@ -144,6 +150,9 @@ private:
 	void ApplyJson();
 	void SaveJson();
 
+	// TabItem: CheckCurrentMap
+	void CheckCurrentMap();
+
 	// TabItem: UI
 	void EditUI();
 	// UI追加、削除
@@ -160,10 +169,10 @@ private:
 
 	// 指定indexのUIをフォーカスにする
 	void SetFocus(int newIndex, bool asTrigger);
-	// 現在のマップ番号に一致するUIを探してインデックスを返す
-	int FindUIIndexByMapNumber(int32_t mapNumber) const;
 	// 1フレームでの状態遷移
 	void StepStates();
-	// 入力を受け付けられるマップ番号か
-	bool IsInputAccepted() const;
+
+	int FindUIIndexByCoord(const Vector2Int& coordinate) const;
+	bool CanFocusUIFrom(const UI& ui, const Vector2Int& from, Direction2D direction) const;
+	Vector2Int DirectionDelta(Direction2D direction);
 };

@@ -47,6 +47,14 @@ bool SelectUIGamePadInput::IsPressed(SelectUIInputAction button) const {
 
 		return input_->PushGamepadButton(GamePadButtons::ARROW_RIGHT);
 	}
+	case SelectUIInputAction::Decide: {
+
+		return input_->PushGamepadButton(GamePadButtons::A);
+	}
+	case SelectUIInputAction::Return: {
+
+		return input_->PushGamepadButton(GamePadButtons::B);
+	}
 	}
 	return false;
 }
@@ -69,6 +77,14 @@ bool SelectUIGamePadInput::IsTriggered(SelectUIInputAction button) const {
 	case SelectUIInputAction::Right: {
 
 		return input_->TriggerGamepadButton(GamePadButtons::ARROW_RIGHT);
+	}
+	case SelectUIInputAction::Decide: {
+
+		return input_->TriggerGamepadButton(GamePadButtons::A);
+	}
+	case SelectUIInputAction::Return: {
+
+		return input_->TriggerGamepadButton(GamePadButtons::B);
 	}
 	}
 	return false;

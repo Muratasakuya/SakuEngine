@@ -132,3 +132,23 @@ Vector2 Vector2::Lerp(const Vector2& v0, const Vector2& v1, float t) {
 
 	return Vector2(std::lerp(v0.x, v1.x, t), std::lerp(v0.y, v1.y, t));
 }
+
+//============================================================================*/
+//	Vector2Int classMethods
+//============================================================================*/
+
+void Vector2Int::operator+=(const Vector2Int& other) {
+
+	this->x += other.x;
+	this->y += other.y;
+}
+
+bool Vector2Int::operator==(const Vector2Int& other) const {
+
+	return this->x == other.x && this->y == other.y;
+}
+
+bool Vector2Int::operator!=(const Vector2Int& other) const {
+
+	return !(*this == other);
+}
