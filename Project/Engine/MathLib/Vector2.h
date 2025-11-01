@@ -89,4 +89,9 @@ public:
 
 	bool operator==(const Vector2Int& other) const;
 	bool operator!=(const Vector2Int& other) const;
+
+	//----------- json -------------------------------------------------------
+
+	Json ToJson() const;
+	static Vector2Int FromJson(const Json& data);
 };

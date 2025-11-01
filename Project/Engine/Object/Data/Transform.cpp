@@ -221,7 +221,7 @@ void Transform2D::Init(ID3D12Device* device) {
 	rotation = 0.0f;
 
 	size = Vector2::AnyInit(0.0f);
-	sizeScale = 1.0f;
+	sizeScale = Vector2::AnyInit(1.0f);
 	// 中心で設定
 	anchorPoint = Vector2::AnyInit(0.5f);
 
@@ -240,7 +240,7 @@ void Transform2D::Init(ID3D12Device* device) {
 
 void Transform2D::UpdateMatrix() {
 
-	Vector3 scale = Vector3(sizeScale, sizeScale, 1.0f);
+	Vector3 scale = Vector3(sizeScale.x, sizeScale.y, 1.0f);
 	Vector3 rotate = Vector3(0.0f, 0.0f, rotation);
 	Vector3 translate = Vector3(translation.x, translation.y, 0.0f);
 
@@ -300,7 +300,7 @@ void Transform2D::ImGui(float itemSize, float buttonSize) {
 	ImGui::SliderAngle("rotation", &rotation);
 
 	ImGui::DragFloat2("size", &size.x, 1.0f);
-	ImGui::DragFloat("sizeScale", &sizeScale, 0.01f);
+	ImGui::DragFloat2("sizeScale", &sizeScale.x, 0.01f);
 
 	ImGui::DragFloat2("anchorPoint", &anchorPoint.x, 0.01f, 0.0f, 1.0f);
 	ImGui::DragFloat2("textureLeftTop", &textureLeftTop.x, 1.0f);
@@ -325,7 +325,7 @@ void Transform2D::ToJson(Json& data) {
 	data["translation"] = translation.ToJson();
 	data["rotation"] = rotation;
 	data["size"] = size.ToJson();
-	data["sizeScale"] = sizeScale;
+	data["sizeScale"] = sizeScale.ToJson();
 	data["anchorPoint"] = anchorPoint.ToJson();
 	data["textureLeftTop"] = textureLeftTop.ToJson();
 	data["textureSize"] = textureSize.ToJson();
@@ -342,10 +342,17 @@ void Transform2D::FromJson(const Json& data) {
 	translation = JsonAdapter::ToObject<Vector2>(data["translation"]);
 	rotation = data["rotation"].get<float>();
 	size = JsonAdapter::ToObject<Vector2>(data["size"]);
-	sizeScale = data["sizeScale"].get<float>();
 	anchorPoint = JsonAdapter::ToObject<Vector2>(data["anchorPoint"]);
 	textureLeftTop = JsonAdapter::ToObject<Vector2>(data["textureLeftTop"]);
 	textureSize = JsonAdapter::ToObject<Vector2>(data["textureSize"]);
+
+	if (data.contains("sizeScale")) {
+
+		sizeScale = Vector2::FromJson(data["sizeScale"]);
+	} else {
+
+		sizeScale = Vector2::AnyInit(1.0f);
+	}
 
 	if (data.contains("vertexOffset")) {
 		for (uint32_t i = 0; i < vertexOffset_.size(); ++i) {

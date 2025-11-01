@@ -1,0 +1,2556 @@
+{
+    "UIs": [
+        {
+            "entryRules": [
+                {
+                    "direction": "Up",
+                    "from": {
+                        "x": 0,
+                        "y": -1
+                    }
+                }
+            ],
+            "isDefaultFocus": true,
+            "name": "StartUI",
+            "ownMapCoordinate": {
+                "x": 0,
+                "y": 0
+            },
+            "parentTransform": {
+                "anchorPoint": {
+                    "x": 0.5,
+                    "y": 0.5
+                },
+                "rotation": 0.0,
+                "size": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "sizeScale": {
+                    "x": 1.0,
+                    "y": 1.0
+                },
+                "textureLeftTop": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "textureSize": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "translation": {
+                    "x": 960.0,
+                    "y": 840.0
+                },
+                "vertexOffset": [
+                    {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    {
+                        "x": 0.0,
+                        "y": 0.0
+                    }
+                ]
+            },
+            "sprites": [
+                {
+                    "Deciding": {
+                        "AlphaChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "move_.end": 0.0,
+                                "move_.start": 0.0,
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": false
+                        },
+                        "ColorChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "move_.end": {
+                                    "a": 1.0,
+                                    "b": 0.0,
+                                    "g": 0.0,
+                                    "r": 0.0
+                                },
+                                "move_.start": {
+                                    "a": 1.0,
+                                    "b": 0.0,
+                                    "g": 0.0,
+                                    "r": 0.0
+                                },
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": false
+                        },
+                        "RotationChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "move_.end": 0.0,
+                                "move_.start": 0.0,
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": false
+                        },
+                        "ScaleChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "move_.end": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "move_.start": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": false
+                        },
+                        "SizeChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "move_.end": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "move_.start": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": false
+                        },
+                        "TranslationChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "move_.end": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "move_.start": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": false
+                        }
+                    },
+                    "Focused": {
+                        "AlphaChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "EaseOutExpo",
+                                    "target_": 0.3199999928474426
+                                },
+                                "move_.end": 1.0,
+                                "move_.start": 0.1599999964237213,
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": true
+                        },
+                        "ColorChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "move_.end": {
+                                    "a": 1.0,
+                                    "b": 0.0,
+                                    "g": 0.0,
+                                    "r": 0.0
+                                },
+                                "move_.start": {
+                                    "a": 1.0,
+                                    "b": 0.0,
+                                    "g": 0.0,
+                                    "r": 0.0
+                                },
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": false
+                        },
+                        "RotationChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "move_.end": 0.0,
+                                "move_.start": 0.0,
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": false
+                        },
+                        "ScaleChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "move_.end": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "move_.start": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": false
+                        },
+                        "SizeChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "EaseOutExpo",
+                                    "target_": 0.3199999928474426
+                                },
+                                "move_.end": {
+                                    "x": 320.0,
+                                    "y": 102.4000015258789
+                                },
+                                "move_.start": {
+                                    "x": 256.0,
+                                    "y": 81.91999816894531
+                                },
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": true
+                        },
+                        "TranslationChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "move_.end": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "move_.start": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": false
+                        }
+                    },
+                    "Material": {
+                        "alphaReference": 0.0,
+                        "color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "emissionColor": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "emissiveIntensity": 0.0,
+                        "postProcessMask": 32768,
+                        "useAlphaColor": 0,
+                        "useVertexColor": 0,
+                        "uvRotate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "uvScale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "uvTranslate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        }
+                    },
+                    "Sprite": {
+                        "blendMode": "kBlendModeNormal",
+                        "layer": "PostModel",
+                        "layerIndex": 0,
+                        "textureName": "gameStartText"
+                    },
+                    "Transform": {
+                        "anchorPoint": {
+                            "x": 0.5,
+                            "y": 0.5
+                        },
+                        "rotation": 0.0,
+                        "size": {
+                            "x": 320.0,
+                            "y": 102.4000015258789
+                        },
+                        "sizeScale": {
+                            "x": 1.0,
+                            "y": 1.0
+                        },
+                        "textureLeftTop": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "textureSize": {
+                            "x": 400.0,
+                            "y": 128.0
+                        },
+                        "translation": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "vertexOffset": [
+                            {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            {
+                                "x": 0.0,
+                                "y": 0.0
+                            }
+                        ]
+                    },
+                    "Unfocused": {
+                        "AlphaChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "EaseOutExpo",
+                                    "target_": 0.3199999928474426
+                                },
+                                "move_.end": 0.1599999964237213,
+                                "move_.start": 1.0,
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": true
+                        },
+                        "ColorChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "move_.end": {
+                                    "a": 1.0,
+                                    "b": 0.0,
+                                    "g": 0.0,
+                                    "r": 0.0
+                                },
+                                "move_.start": {
+                                    "a": 1.0,
+                                    "b": 0.0,
+                                    "g": 0.0,
+                                    "r": 0.0
+                                },
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": false
+                        },
+                        "RotationChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "move_.end": 0.0,
+                                "move_.start": 0.0,
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": false
+                        },
+                        "ScaleChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "move_.end": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "move_.start": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": false
+                        },
+                        "SizeChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "EaseOutExpo",
+                                    "target_": 0.3199999928474426
+                                },
+                                "move_.end": {
+                                    "x": 256.0,
+                                    "y": 81.91999816894531
+                                },
+                                "move_.start": {
+                                    "x": 320.0,
+                                    "y": 102.4000015258789
+                                },
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": true
+                        },
+                        "TranslationChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "move_.end": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "move_.start": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": false
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "entryRules": [
+                {
+                    "direction": "Bottom",
+                    "from": {
+                        "x": 0,
+                        "y": 0
+                    }
+                }
+            ],
+            "isDefaultFocus": false,
+            "name": "FinishUI",
+            "ownMapCoordinate": {
+                "x": 0,
+                "y": -1
+            },
+            "parentTransform": {
+                "anchorPoint": {
+                    "x": 0.5,
+                    "y": 0.5
+                },
+                "rotation": 0.0,
+                "size": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "sizeScale": {
+                    "x": 1.0,
+                    "y": 1.0
+                },
+                "textureLeftTop": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "textureSize": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "translation": {
+                    "x": 960.0,
+                    "y": 938.0
+                },
+                "vertexOffset": [
+                    {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    {
+                        "x": 0.0,
+                        "y": 0.0
+                    }
+                ]
+            },
+            "sprites": [
+                {
+                    "Deciding": {
+                        "AlphaChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "move_.end": 0.0,
+                                "move_.start": 0.0,
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": false
+                        },
+                        "ColorChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "move_.end": {
+                                    "a": 1.0,
+                                    "b": 0.0,
+                                    "g": 0.0,
+                                    "r": 0.0
+                                },
+                                "move_.start": {
+                                    "a": 1.0,
+                                    "b": 0.0,
+                                    "g": 0.0,
+                                    "r": 0.0
+                                },
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": false
+                        },
+                        "RotationChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "move_.end": 0.0,
+                                "move_.start": 0.0,
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": false
+                        },
+                        "ScaleChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "move_.end": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "move_.start": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": false
+                        },
+                        "SizeChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "move_.end": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "move_.start": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": false
+                        },
+                        "TranslationChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "move_.end": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "move_.start": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": false
+                        }
+                    },
+                    "Focused": {
+                        "AlphaChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "EaseOutExpo",
+                                    "target_": 0.3199999928474426
+                                },
+                                "move_.end": 1.0,
+                                "move_.start": 0.1599999964237213,
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": true
+                        },
+                        "ColorChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "move_.end": {
+                                    "a": 1.0,
+                                    "b": 0.0,
+                                    "g": 0.0,
+                                    "r": 0.0
+                                },
+                                "move_.start": {
+                                    "a": 1.0,
+                                    "b": 0.0,
+                                    "g": 0.0,
+                                    "r": 0.0
+                                },
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": false
+                        },
+                        "RotationChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "move_.end": 0.0,
+                                "move_.start": 0.0,
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": false
+                        },
+                        "ScaleChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "move_.end": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "move_.start": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": false
+                        },
+                        "SizeChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "EaseOutExpo",
+                                    "target_": 0.3199999928474426
+                                },
+                                "move_.end": {
+                                    "x": 320.0,
+                                    "y": 102.4000015258789
+                                },
+                                "move_.start": {
+                                    "x": 256.0,
+                                    "y": 81.91999816894531
+                                },
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": true
+                        },
+                        "TranslationChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "move_.end": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "move_.start": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": false
+                        }
+                    },
+                    "Material": {
+                        "alphaReference": 0.0,
+                        "color": {
+                            "a": 0.15999996662139893,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "emissionColor": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "emissiveIntensity": 0.0,
+                        "postProcessMask": 32768,
+                        "useAlphaColor": 0,
+                        "useVertexColor": 0,
+                        "uvRotate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "uvScale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "uvTranslate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        }
+                    },
+                    "Sprite": {
+                        "blendMode": "kBlendModeNormal",
+                        "layer": "PostModel",
+                        "layerIndex": 0,
+                        "textureName": "gameFinishText"
+                    },
+                    "Transform": {
+                        "anchorPoint": {
+                            "x": 0.5,
+                            "y": 0.5
+                        },
+                        "rotation": 0.0,
+                        "size": {
+                            "x": 256.0,
+                            "y": 81.91999816894531
+                        },
+                        "sizeScale": {
+                            "x": 1.0,
+                            "y": 1.0
+                        },
+                        "textureLeftTop": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "textureSize": {
+                            "x": 400.0,
+                            "y": 128.0
+                        },
+                        "translation": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "vertexOffset": [
+                            {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            {
+                                "x": 0.0,
+                                "y": 0.0
+                            }
+                        ]
+                    },
+                    "Unfocused": {
+                        "AlphaChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "EaseOutExpo",
+                                    "target_": 0.3199999928474426
+                                },
+                                "move_.end": 0.1599999964237213,
+                                "move_.start": 1.0,
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": true
+                        },
+                        "ColorChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "move_.end": {
+                                    "a": 1.0,
+                                    "b": 0.0,
+                                    "g": 0.0,
+                                    "r": 0.0
+                                },
+                                "move_.start": {
+                                    "a": 1.0,
+                                    "b": 0.0,
+                                    "g": 0.0,
+                                    "r": 0.0
+                                },
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": false
+                        },
+                        "RotationChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "move_.end": 0.0,
+                                "move_.start": 0.0,
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": false
+                        },
+                        "ScaleChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "move_.end": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "move_.start": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": false
+                        },
+                        "SizeChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "EaseOutExpo",
+                                    "target_": 0.3199999928474426
+                                },
+                                "move_.end": {
+                                    "x": 256.0,
+                                    "y": 81.91999816894531
+                                },
+                                "move_.start": {
+                                    "x": 320.0,
+                                    "y": 102.4000015258789
+                                },
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": true
+                        },
+                        "TranslationChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "move_.end": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "move_.start": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": false
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "entryRules": [
+                {
+                    "direction": "Bottom",
+                    "from": {
+                        "x": 0,
+                        "y": -1
+                    }
+                }
+            ],
+            "isDefaultFocus": false,
+            "name": "OptionUI",
+            "ownMapCoordinate": {
+                "x": 0,
+                "y": -2
+            },
+            "parentTransform": {
+                "anchorPoint": {
+                    "x": 0.5,
+                    "y": 0.5
+                },
+                "rotation": 0.0,
+                "size": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "sizeScale": {
+                    "x": 0.5,
+                    "y": 0.5
+                },
+                "textureLeftTop": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "textureSize": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "translation": {
+                    "x": 1820.0,
+                    "y": 990.0
+                },
+                "vertexOffset": [
+                    {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    {
+                        "x": 0.0,
+                        "y": 0.0
+                    }
+                ]
+            },
+            "sprites": [
+                {
+                    "Deciding": {
+                        "AlphaChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "move_.end": 0.0,
+                                "move_.start": 0.0,
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": false
+                        },
+                        "ColorChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "move_.end": {
+                                    "a": 1.0,
+                                    "b": 0.0,
+                                    "g": 0.0,
+                                    "r": 0.0
+                                },
+                                "move_.start": {
+                                    "a": 1.0,
+                                    "b": 0.0,
+                                    "g": 0.0,
+                                    "r": 0.0
+                                },
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": false
+                        },
+                        "RotationChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "move_.end": 0.0,
+                                "move_.start": 0.0,
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": false
+                        },
+                        "ScaleChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "move_.end": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "move_.start": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": false
+                        },
+                        "SizeChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "move_.end": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "move_.start": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": false
+                        },
+                        "TranslationChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "move_.end": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "move_.start": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": false
+                        }
+                    },
+                    "Focused": {
+                        "AlphaChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "move_.end": 0.0,
+                                "move_.start": 0.0,
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": false
+                        },
+                        "ColorChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "move_.end": {
+                                    "a": 1.0,
+                                    "b": 0.0,
+                                    "g": 0.0,
+                                    "r": 0.0
+                                },
+                                "move_.start": {
+                                    "a": 1.0,
+                                    "b": 0.0,
+                                    "g": 0.0,
+                                    "r": 0.0
+                                },
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": false
+                        },
+                        "RotationChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "move_.end": 0.0,
+                                "move_.start": 0.0,
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": false
+                        },
+                        "ScaleChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "move_.end": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "move_.start": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": false
+                        },
+                        "SizeChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "move_.end": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "move_.start": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": false
+                        },
+                        "TranslationChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "EaseOutQuint",
+                                    "target_": 0.3199999928474426
+                                },
+                                "move_.end": {
+                                    "x": -160.0,
+                                    "y": 0.0
+                                },
+                                "move_.start": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": true
+                        }
+                    },
+                    "Material": {
+                        "alphaReference": 0.0,
+                        "color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "emissionColor": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "emissiveIntensity": 12.0,
+                        "postProcessMask": 32768,
+                        "useAlphaColor": 0,
+                        "useVertexColor": 0,
+                        "uvRotate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "uvScale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "uvTranslate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        }
+                    },
+                    "Sprite": {
+                        "blendMode": "kBlendModeNormal",
+                        "layer": "PostModel",
+                        "layerIndex": 0,
+                        "textureName": "optionIcon"
+                    },
+                    "Transform": {
+                        "anchorPoint": {
+                            "x": 0.5,
+                            "y": 0.5
+                        },
+                        "rotation": 0.0,
+                        "size": {
+                            "x": 128.0,
+                            "y": 128.0
+                        },
+                        "sizeScale": {
+                            "x": 1.0,
+                            "y": 1.0
+                        },
+                        "textureLeftTop": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "textureSize": {
+                            "x": 128.0,
+                            "y": 128.0
+                        },
+                        "translation": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "vertexOffset": [
+                            {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            {
+                                "x": 0.0,
+                                "y": 0.0
+                            }
+                        ]
+                    },
+                    "Unfocused": {
+                        "AlphaChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "move_.end": 0.0,
+                                "move_.start": 0.0,
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": false
+                        },
+                        "ColorChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "move_.end": {
+                                    "a": 1.0,
+                                    "b": 0.0,
+                                    "g": 0.0,
+                                    "r": 0.0
+                                },
+                                "move_.start": {
+                                    "a": 1.0,
+                                    "b": 0.0,
+                                    "g": 0.0,
+                                    "r": 0.0
+                                },
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": false
+                        },
+                        "RotationChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "move_.end": 0.0,
+                                "move_.start": 0.0,
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": false
+                        },
+                        "ScaleChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "move_.end": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "move_.start": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": false
+                        },
+                        "SizeChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "move_.end": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "move_.start": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": false
+                        },
+                        "TranslationChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "EaseOutExpo",
+                                    "target_": 0.3199999928474426
+                                },
+                                "move_.end": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "move_.start": {
+                                    "x": -160.0,
+                                    "y": 0.0
+                                },
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": true
+                        }
+                    }
+                },
+                {
+                    "Deciding": {
+                        "AlphaChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "move_.end": 0.0,
+                                "move_.start": 0.0,
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": false
+                        },
+                        "ColorChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "move_.end": {
+                                    "a": 1.0,
+                                    "b": 0.0,
+                                    "g": 0.0,
+                                    "r": 0.0
+                                },
+                                "move_.start": {
+                                    "a": 1.0,
+                                    "b": 0.0,
+                                    "g": 0.0,
+                                    "r": 0.0
+                                },
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": false
+                        },
+                        "RotationChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "move_.end": 0.0,
+                                "move_.start": 0.0,
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": false
+                        },
+                        "ScaleChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "move_.end": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "move_.start": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": false
+                        },
+                        "SizeChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "move_.end": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "move_.start": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": false
+                        },
+                        "TranslationChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "move_.end": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "move_.start": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": false
+                        }
+                    },
+                    "Focused": {
+                        "AlphaChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "EaseOutExpo",
+                                    "target_": 0.3199999928474426
+                                },
+                                "move_.end": 1.0,
+                                "move_.start": 0.0,
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": true
+                        },
+                        "ColorChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "move_.end": {
+                                    "a": 1.0,
+                                    "b": 0.0,
+                                    "g": 0.0,
+                                    "r": 0.0
+                                },
+                                "move_.start": {
+                                    "a": 1.0,
+                                    "b": 0.0,
+                                    "g": 0.0,
+                                    "r": 0.0
+                                },
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": false
+                        },
+                        "RotationChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "move_.end": 0.0,
+                                "move_.start": 0.0,
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": false
+                        },
+                        "ScaleChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "move_.end": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "move_.start": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": false
+                        },
+                        "SizeChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "move_.end": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "move_.start": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": false
+                        },
+                        "TranslationChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "move_.end": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "move_.start": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": false
+                        }
+                    },
+                    "Material": {
+                        "alphaReference": 0.0,
+                        "color": {
+                            "a": 0.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "emissionColor": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "emissiveIntensity": 2.0,
+                        "postProcessMask": 32768,
+                        "useAlphaColor": 0,
+                        "useVertexColor": 0,
+                        "uvRotate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "uvScale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "uvTranslate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        }
+                    },
+                    "Sprite": {
+                        "blendMode": "kBlendModeNormal",
+                        "layer": "PostModel",
+                        "layerIndex": 0,
+                        "textureName": "optionText"
+                    },
+                    "Transform": {
+                        "anchorPoint": {
+                            "x": 0.5,
+                            "y": 0.5
+                        },
+                        "rotation": 0.0,
+                        "size": {
+                            "x": 320.0,
+                            "y": 102.4000015258789
+                        },
+                        "sizeScale": {
+                            "x": 1.0,
+                            "y": 1.0
+                        },
+                        "textureLeftTop": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "textureSize": {
+                            "x": 400.0,
+                            "y": 128.0
+                        },
+                        "translation": {
+                            "x": -40.0,
+                            "y": 0.0
+                        },
+                        "vertexOffset": [
+                            {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            {
+                                "x": 0.0,
+                                "y": 0.0
+                            }
+                        ]
+                    },
+                    "Unfocused": {
+                        "AlphaChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "EaseOutExpo",
+                                    "target_": 0.05999999865889549
+                                },
+                                "move_.end": 0.0,
+                                "move_.start": 1.0,
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": true
+                        },
+                        "ColorChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "move_.end": {
+                                    "a": 1.0,
+                                    "b": 0.0,
+                                    "g": 0.0,
+                                    "r": 0.0
+                                },
+                                "move_.start": {
+                                    "a": 1.0,
+                                    "b": 0.0,
+                                    "g": 0.0,
+                                    "r": 0.0
+                                },
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": false
+                        },
+                        "RotationChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "move_.end": 0.0,
+                                "move_.start": 0.0,
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": false
+                        },
+                        "ScaleChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "move_.end": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "move_.start": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": false
+                        },
+                        "SizeChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "move_.end": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "move_.start": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": false
+                        },
+                        "TranslationChannels": {
+                            "ValueSource": {
+                                "Loop": {
+                                    "loop": {
+                                        "loopCount": 1,
+                                        "type": "Repeat"
+                                    }
+                                },
+                                "ReturnTimer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "Timer": {
+                                    "easeingType_": "Linear",
+                                    "target_": 0.0
+                                },
+                                "move_.end": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "move_.start": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "useReturnTimer_": false
+                            },
+                            "applyMode": "Absolute",
+                            "isEnable": false
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}

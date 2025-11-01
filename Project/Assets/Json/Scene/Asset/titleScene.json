@@ -4,7 +4,10 @@
     "noise",
     "titleName",
     "nowLoading",
-    "powerButton"
+    "optionIcon",
+    "optionText",
+    "gameStartText",
+    "gameFinishText"
   ],
   "Models": [
     "demoCamera"

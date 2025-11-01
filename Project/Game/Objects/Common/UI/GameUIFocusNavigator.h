@@ -4,7 +4,7 @@
 //	include
 //============================================================================
 #include <Engine/Input/Base/InputMapper.h>
-#include <Engine/Object/Base/GameObject2D.h>
+#include <Engine/Object/Base/AnimationObject2D.h>
 #include <Engine/Utility/Enum/Direction.h>
 #include <Engine/Utility/Helper/ImGuiHelper.h>
 #include <Engine/Utility/Animation/SimpleAnimation.h>
@@ -48,12 +48,12 @@ private:
 	// アニメーションの種類
 	enum class AnimationType {
 
-		Translation, // 座標の移動補間(Vector2)
-		Scale,       // スケール補間(float)
-		Rotation,    // 回転補間(float)
-		Size,        // サイズ補間(Vector2)
-		Color,       // 色補間(Color)
-		Alpha,       // アルファ補間(float)
+		Translation, // 座標の移動補間
+		Scale,       // スケール補間
+		Rotation,    // 回転補間
+		Size,        // サイズ補間
+		Color,       // 色補間
+		Alpha,       // アルファ補間
 	};
 
 	// UIの状態
@@ -89,7 +89,7 @@ private:
 		bool isDefaultFocus = true;
 
 		// 表示用スプライト
-		std::vector<std::unique_ptr<GameObject2D>> sprites;
+		std::vector<std::unique_ptr<AnimationObject2D>> sprites;
 
 		// UIの位置しているマップ位置
 		Vector2Int ownMapCoordinate;
@@ -97,10 +97,6 @@ private:
 
 		// 表示スプライトの親
 		std::unique_ptr<Transform2D> parentTransform;
-
-		// 各状態用アニメーション
-		// 例: UIStateでトリガー判定があればUIStateの+1したStateのアニメーションを再生して更新する
-		//std::vector<std::unordered_map<UIState, std::unordered_map<AnimationType, SimpleAnimation*>>> stateAnimations;
 
 		UI() = default;
 		~UI() = default;
@@ -132,8 +128,6 @@ private:
 	int focusedUIIndex_ = -1;                    // 現在フォーカスしているUIのインデックス
 	Vector2Int currentCoordinate_;               // 現在のマップ位置
 	std::vector<int32_t> inputAcceptMapNumbers_; // 入力を受け付けるマップ番号のリスト
-
-	//std::unordered_map<AnimationType, std::vector<std::unique_ptr<SimpleAnimation>>> animations_;
 
 	// エディター
 	// 編集中の選択インデックス

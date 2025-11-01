@@ -84,6 +84,10 @@ Json Vector2::ToJson() const {
 
 Vector2 Vector2::FromJson(const Json& data) {
 
+	if (data.empty()) {
+		return Vector2{};
+	}
+
 	Vector2 v{};
 	if (data.contains("x") && data.contains("y")) {
 		v.x = data["x"].get<float>();
@@ -151,4 +155,22 @@ bool Vector2Int::operator==(const Vector2Int& other) const {
 bool Vector2Int::operator!=(const Vector2Int& other) const {
 
 	return !(*this == other);
+}
+
+Json Vector2Int::ToJson() const {
+	return Json{ {"x", x}, {"y", y} };
+}
+
+Vector2Int Vector2Int::FromJson(const Json& data) {
+
+	if (data.empty()) {
+		return Vector2Int{};
+	}
+
+	Vector2Int v{};
+	if (data.contains("x") && data.contains("y")) {
+		v.x = data["x"].get<int32_t>();
+		v.y = data["y"].get<int32_t>();
+	}
+	return v;
 }

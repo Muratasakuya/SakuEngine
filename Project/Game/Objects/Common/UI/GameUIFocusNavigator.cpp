@@ -17,7 +17,7 @@
 void GameUIFocusNavigator::Init(const std::string& groupName) {
 
 	// 初期化値
-	currentState_ = NavigateState::Disable;
+	currentState_ = NavigateState::Update;
 	groupName_ = groupName;
 
 	// 入力クラスの初期化
@@ -43,7 +43,14 @@ void GameUIFocusNavigator::AddUI() {
 	ui.state = UIState::Unfocused;
 
 	// スプライトを初期化
-	std::unique_ptr<GameObject2D> sprite = std::make_unique<GameObject2D>();
+	std::unique_ptr<AnimationObject2D> sprite = std::make_unique<AnimationObject2D>();
+
+	// アニメーションのキー登録
+	sprite->AddAnimationKey(EnumAdapter<UIState>::ToString(UIState::Focused));
+	sprite->AddAnimationKey(EnumAdapter<UIState>::ToString(UIState::Unfocused));
+	sprite->AddAnimationKey(EnumAdapter<UIState>::ToString(UIState::Deciding));
+
+	// スプライト初期化
 	sprite->Init("white", addUISpriteName_.inputText, groupName_);
 	// 親設定
 	sprite->SetParent(*ui.parentTransform.get());
@@ -71,7 +78,14 @@ void GameUIFocusNavigator::AddSprite() {
 
 	UI& ui = uiList_[selectedUIIndex_];
 	// スプライトを初期化
-	std::unique_ptr<GameObject2D> sprite = std::make_unique<GameObject2D>();
+	std::unique_ptr<AnimationObject2D> sprite = std::make_unique<AnimationObject2D>();
+
+	// アニメーションのキー登録
+	sprite->AddAnimationKey(EnumAdapter<UIState>::ToString(UIState::Focused));
+	sprite->AddAnimationKey(EnumAdapter<UIState>::ToString(UIState::Unfocused));
+	sprite->AddAnimationKey(EnumAdapter<UIState>::ToString(UIState::Deciding));
+
+	// スプライト初期化
 	sprite->Init("white", addUISpriteName_.inputText, groupName_);
 	// 親設定
 	sprite->SetParent(*ui.parentTransform);
@@ -119,7 +133,7 @@ void GameUIFocusNavigator::RemoveSprite() {
 	}
 	UI& ui = uiList_[selectedUIIndex_];
 	// 範囲外チェック
-	if (selectedSpriteIndex_ < 0 || static_cast<int>(ui.sprites.size() <= selectedSpriteIndex_)) {
+	if (selectedSpriteIndex_ < 0 || static_cast<int>(ui.sprites.size()) <= selectedSpriteIndex_) {
 		return;
 	}
 	// 削除
@@ -243,8 +257,54 @@ void GameUIFocusNavigator::Update() {
 		}
 	}
 
+	// 各UIのアニメーション開始判定
+	for (auto& ui : uiList_) {
+
+		std::string key;
+		if (ui.state == UIState::NowFocused) {
+
+			key = EnumAdapter<UIState>::ToString(UIState::Focused);
+		} else if (ui.state == UIState::NowUnfocused) {
+
+			key = EnumAdapter<UIState>::ToString(UIState::Unfocused);
+		} else if (ui.state == UIState::Decided) {
+
+			key = EnumAdapter<UIState>::ToString(UIState::Deciding);
+		}
+		// キーが入っていれば該当のアニメーションを開始する
+		if (!key.empty()) {
+			for (uint32_t i = 0; i < static_cast<uint32_t>(ui.sprites.size()); ++i) {
+
+				ui.sprites[i]->StartAnimations(key);
+			}
+		}
+	}
+
 	// 各UIの状態更新
 	StepStates();
+
+	for (auto& ui : uiList_) {
+
+		// 継続状態か
+		bool isContinuous =
+			(ui.state == UIState::Focused) ||
+			(ui.state == UIState::Unfocused) ||
+			(ui.state == UIState::Deciding);
+
+		if (isContinuous) {
+
+			for (uint32_t i = 0; i < static_cast<uint32_t>(ui.sprites.size()); ++i) {
+
+				ui.sprites[i]->UpdateAnimations();
+			}
+		} else {
+			// 状態が完了したらアニメーション処理を終了させる
+			for (uint32_t i = 0; i < static_cast<uint32_t>(ui.sprites.size()); ++i) {
+
+				ui.sprites[i]->ClearActiveAnimationKey();
+			}
+		}
+	}
 }
 
 void GameUIFocusNavigator::SetFocus(int newIndex, bool asTrigger) {
@@ -606,6 +666,15 @@ void GameUIFocusNavigator::EditUI() {
 				ui.entryRules.emplace_back(rule);
 			}
 
+			if (ImGui::Button("Add Sprite")) {
+				// 入力がなければ追加できないようにする
+				if (!addUISpriteName_.inputText.empty()) {
+
+					// スプライト追加
+					AddSprite();
+				}
+			}
+
 			// Spriteリスト
 			{
 				std::vector<std::string> spriteNames;
@@ -668,29 +737,174 @@ void GameUIFocusNavigator::ApplyJson() {
 	if (!JsonAdapter::LoadCheck("GameUIFocusNavigator/" + groupName_ + ".json", data)) {
 		return;
 	}
+
+	uiList_.clear();
+	if (!data.contains("UIs")) {
+		return;
+	}
+	for (const auto& u : data["UIs"]) {
+
+		UI ui;
+		ui.name = u.value("name", "");
+		ui.isDefaultFocus = u.value("isDefaultFocus", false);
+		ui.ownMapCoordinate = Vector2Int::FromJson(u.value("ownMapCoordinate", Json()));
+
+		ui.entryRules.clear();
+		if (u.contains("entryRules")) {
+			for (const auto& r : u["entryRules"]) {
+
+				EntryRule er;
+				er.from = Vector2Int::FromJson(r.value("from", Json()));
+				er.direction = EnumAdapter<Direction2D>::FromString(r.value("direction", "Right")).value();
+				ui.entryRules.emplace_back(er);
+			}
+		}
+
+		ui.parentTransform = std::make_unique<Transform2D>();
+		ui.parentTransform->Init(nullptr);
+		if (u.contains("parentTransform")) {
+
+			ui.parentTransform->FromJson(u["parentTransform"]);
+		}
+
+		ui.sprites.clear();
+		if (u.contains("sprites")) {
+			for (const auto& s : u["sprites"]) {
+
+				auto sprite = std::make_unique<AnimationObject2D>();
+				sprite->Init("white", "temp", groupName_);
+
+				// アニメーションのキー登録
+				sprite->AddAnimationKey(EnumAdapter<UIState>::ToString(UIState::Focused));
+				sprite->AddAnimationKey(EnumAdapter<UIState>::ToString(UIState::Unfocused));
+				sprite->AddAnimationKey(EnumAdapter<UIState>::ToString(UIState::Deciding));
+
+				sprite->SetParent(*ui.parentTransform);
+				sprite->ApplyJsonAndAnimation(s);
+				ui.sprites.emplace_back(std::move(sprite));
+			}
+		}
+		ui.state = UIState::Unfocused;
+		uiList_.emplace_back(std::move(ui));
+	}
+	focusedUIIndex_ = -1;
+	currentCoordinate_ = Vector2Int(0, 0);
 }
 
 void GameUIFocusNavigator::SaveJson() {
 
 	Json data;
+	data["UIs"] = Json::array();
+	for (const auto& ui : uiList_) {
 
+		Json u;
+		u["name"] = ui.name;
+		u["isDefaultFocus"] = ui.isDefaultFocus;
+		u["ownMapCoordinate"] = ui.ownMapCoordinate.ToJson();
+		u["entryRules"] = Json::array();
+		for (const auto& r : ui.entryRules) {
+
+			u["entryRules"].push_back({ {"from", r.from.ToJson()},
+				{"direction", EnumAdapter<Direction2D>::ToString(r.direction)} });
+		}
+
+		Json pt;
+		ui.parentTransform->ToJson(pt);
+		u["parentTransform"] = pt;
+
+		u["sprites"] = Json::array();
+		for (const auto& sp : ui.sprites) {
+
+			Json s;
+			sp->SaveJsonAndAnimation(s);
+			u["sprites"].push_back(s);
+		}
+		data["UIs"].push_back(u);
+	}
 	JsonAdapter::Save("GameUIFocusNavigator/" + groupName_ + ".json", data);
 }
 
 void GameUIFocusNavigator::LoadUI(const std::string& outRelPath) {
 
-	Json data;
-	if (!JsonAdapter::LoadCheck(outRelPath, data)) {
+	Json u;
+	if (!JsonAdapter::LoadCheck(outRelPath, u)) {
 		return;
 	}
-	// dataからUI情報を読み込み追加する
+
+	UI ui;
+	ui.name = u.value("name", "");
+	ui.isDefaultFocus = u.value("isDefaultFocus", false);
+
+	// 座標
+	ui.ownMapCoordinate = Vector2Int::FromJson(u.value("ownMapCoordinate", Json{}));
+
+	ui.entryRules.clear();
+	if (u.contains("entryRules")) {
+		for (const auto& r : u["entryRules"]) {
+
+			EntryRule er;
+			er.from = Vector2Int::FromJson(r.value("from", Json{}));
+			er.direction = EnumAdapter<Direction2D>::FromString(r.value("direction", "Right")).value();
+			ui.entryRules.emplace_back(er);
+		}
+	}
+
+	ui.parentTransform = std::make_unique<Transform2D>();
+	ui.parentTransform->Init(nullptr);
+	if (u.contains("parentTransform")) {
+
+		ui.parentTransform->FromJson(u["parentTransform"]);
+	}
+
+	// Sprites
+	ui.sprites.clear();
+	if (u.contains("sprites")) {
+		for (const auto& s : u["sprites"]) {
+
+			auto sp = std::make_unique<AnimationObject2D>();
+			sp->Init("white", "temp", groupName_);
+			sp->SetParent(*ui.parentTransform);
+			sp->ApplyJsonAndAnimation(s);
+			ui.sprites.emplace_back(std::move(sp));
+		}
+	}
+
+	ui.state = UIState::Unfocused;
+	uiList_.emplace_back(std::move(ui));
+	selectedUIIndex_ = static_cast<int>(uiList_.size()) - 1;
+	selectedSpriteIndex_ = uiList_.back().sprites.empty() ? -1 : 0;
 }
 
 void GameUIFocusNavigator::SaveUI(const std::string& outRelPath) {
 
-	Json data;
+	if (selectedUIIndex_ < 0 || static_cast<int>(uiList_.size()) <= selectedUIIndex_) {
+		return;
+	}
 
-	// 選択中のUI情報をdataに保存する
+	const UI& ui = uiList_[selectedUIIndex_];
+	Json u;
 
-	JsonAdapter::Save(outRelPath, data);
+	u["name"] = ui.name;
+	u["isDefaultFocus"] = ui.isDefaultFocus;
+	u["ownMapCoordinate"] = ui.ownMapCoordinate.ToJson();
+
+	u["entryRules"] = Json::array();
+	for (const auto& r : ui.entryRules) {
+
+		u["entryRules"].push_back({ {"from", r.from.ToJson()},
+			{"direction", EnumAdapter<Direction2D>::ToString(r.direction)} });
+	}
+
+	Json pt;
+	ui.parentTransform->ToJson(pt);
+	u["parentTransform"] = pt;
+
+	u["sprites"] = Json::array();
+	for (const auto& sp : ui.sprites) {
+
+		Json s;
+		sp->SaveJsonAndAnimation(s);
+		u["sprites"].push_back(s);
+	}
+	JsonAdapter::Save(outRelPath, u);
 }

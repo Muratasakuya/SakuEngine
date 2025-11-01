@@ -178,7 +178,7 @@ public:
 	float rotation;
 
 	Vector2 size;           // 表示サイズ
-	float sizeScale;        // XY共通スケール
+	Vector2 sizeScale;      // スケール
 	Vector2 anchorPoint;    // アンカーポイント
 
 	Vector2 textureLeftTop; // テクスチャ左上座標
