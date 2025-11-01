@@ -25,12 +25,16 @@ public:
 
 	void Init(const std::string& groupName);
 
-	void Update();
+	// 更新
+	// isCheckInputは入力をチェックするかどうか
+	void Update(bool isCheckInput);
 
 	void ImGui();
 
 	//--------- accessor -----------------------------------------------------
 
+	// 指定UIが決定されたか
+	bool IsDecidedUI(const std::string& uiName) const;
 private:
 	//========================================================================
 	//	private Methods

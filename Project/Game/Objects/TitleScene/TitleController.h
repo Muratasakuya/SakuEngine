@@ -59,4 +59,7 @@ private:
 	// json
 	void ApplyJson();
 	void SaveJson();
+
+	// 入力チェック
+	void CheckInputFromUINavigator();
 };

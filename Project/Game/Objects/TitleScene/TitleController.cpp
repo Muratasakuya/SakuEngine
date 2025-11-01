@@ -28,8 +28,31 @@ void TitleController::Update() {
 	// 背景更新
 	background_->Update();
 
+	// 入力チェック
+	CheckInputFromUINavigator();
+
 	// 選択UIナビゲーター更新
-	selectUINavigator_->Update();
+	// まだフラグなにもtrueになっていなければ入力を受け付けさせる
+	selectUINavigator_->Update(!isGameStart_ && !isSelectFinish_);
+}
+
+void TitleController::CheckInputFromUINavigator() {
+
+	// どちらかがtrueならチェックしない
+	if (isGameStart_ || isSelectFinish_) {
+		return;
+	}
+
+	// ゲーム開始フラグ
+	if (selectUINavigator_->IsDecidedUI("StartUI")) {
+
+		isGameStart_ = true;
+	}
+	// ゲーム終了フラグ
+	if (selectUINavigator_->IsDecidedUI("FinishUI")) {
+
+		isSelectFinish_ = true;
+	}
 }
 
 void TitleController::ImGui() {
@@ -75,7 +98,7 @@ void TitleController::ApplyJson() {
 void TitleController::SaveJson() {
 
 	Json data;
-	
+
 	background_->ToJson(data["Background"]);
 
 	JsonAdapter::Save("Title/titleController.json", data);

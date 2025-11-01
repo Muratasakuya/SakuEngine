@@ -30,6 +30,19 @@ void GameUIFocusNavigator::Init(const std::string& groupName) {
 	ApplyJson();
 }
 
+bool GameUIFocusNavigator::IsDecidedUI(const std::string& uiName) const {
+
+	bool result = false;
+	for (const auto& ui : uiList_) {
+		// 一致していてDecided状態ならtrueを返す
+		if (ui.name == uiName && ui.state == UIState::Deciding) {
+
+			result = true;
+		}
+	}
+	return result;
+}
+
 void GameUIFocusNavigator::AddUI() {
 
 	UI ui{};
@@ -152,7 +165,7 @@ void GameUIFocusNavigator::RemoveSprite() {
 	}
 }
 
-void GameUIFocusNavigator::Update() {
+void GameUIFocusNavigator::Update(bool isCheckInput) {
 
 	// 状態遷移開始時の処理
 	if (prevState_ != currentState_) {
@@ -235,10 +248,13 @@ void GameUIFocusNavigator::Update() {
 		};
 
 	// 各方向への移動処理
-	MoveFromInput(Direction2D::Left, SelectUIInputAction::Left);
-	MoveFromInput(Direction2D::Right, SelectUIInputAction::Right);
-	MoveFromInput(Direction2D::Up, SelectUIInputAction::Up);
-	MoveFromInput(Direction2D::Bottom, SelectUIInputAction::Down);
+	if (isCheckInput) {
+
+		MoveFromInput(Direction2D::Left, SelectUIInputAction::Left);
+		MoveFromInput(Direction2D::Right, SelectUIInputAction::Right);
+		MoveFromInput(Direction2D::Up, SelectUIInputAction::Up);
+		MoveFromInput(Direction2D::Bottom, SelectUIInputAction::Down);
+	}
 
 	// 決定入力判定
 	if (0 <= focusedUIIndex_ && focusedUIIndex_ < static_cast<int>(uiList_.size())) {
