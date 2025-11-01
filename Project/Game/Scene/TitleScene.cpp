@@ -5,6 +5,7 @@
 //============================================================================
 #include <Engine/Core/Graphics/Renderer/LineRenderer.h>
 #include <Engine/Core/Graphics/PostProcess/Core/PostProcessSystem.h>
+#include <Engine/Object/Core/ObjectManager.h>
 #include <Engine/Scene/SceneView.h>
 #include <Engine/Scene/Manager/SceneManager.h>
 
@@ -45,6 +46,12 @@ void TitleScene::Init() {
 	postProcess->AddProcess(PostProcessType::CRTDisplay);
 
 	//========================================================================
+	//	backObjects
+	//========================================================================
+
+	ObjectManager::GetInstance()->CreateSkybox("overcast_soil_puresky_4k");
+
+	//========================================================================
 	//	controller(objects)
 	//========================================================================
 
@@ -56,10 +63,10 @@ void TitleScene::Init() {
 	//========================================================================
 
 	// カメラの設定
-	camera3D_ = std::make_unique<BaseCamera>();
-	camera3D_->UpdateView();
+	titleViewCamera_ = std::make_unique<TitleViewCamera>();
+	titleViewCamera_->Init();
 
-	sceneView_->SetGameCamera(camera3D_.get());
+	sceneView_->SetGameCamera(titleViewCamera_.get());
 
 	// ライトの設定
 	light_ = std::make_unique<PunctualLight>();
@@ -72,6 +79,12 @@ void TitleScene::Init() {
 }
 
 void TitleScene::Update() {
+
+	//========================================================================
+	//	scene
+	//========================================================================
+
+	titleViewCamera_->Update();
 
 	//========================================================================
 	//	controller

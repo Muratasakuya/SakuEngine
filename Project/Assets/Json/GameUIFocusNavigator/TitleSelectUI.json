@@ -413,7 +413,7 @@
                             "y": 1.0,
                             "z": 1.0
                         },
-                        "emissiveIntensity": 0.0,
+                        "emissiveIntensity": 1.0,
                         "postProcessMask": 32768,
                         "useAlphaColor": 0,
                         "useVertexColor": 0,
@@ -1069,7 +1069,7 @@
                             "y": 1.0,
                             "z": 1.0
                         },
-                        "emissiveIntensity": 0.0,
+                        "emissiveIntensity": 1.0,
                         "postProcessMask": 32768,
                         "useAlphaColor": 0,
                         "useVertexColor": 0,

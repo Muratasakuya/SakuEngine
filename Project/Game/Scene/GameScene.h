@@ -9,9 +9,6 @@
 #include <Game/Scene/GameState/Interface/IGameSceneState.h>
 #include <Game/Objects/SceneTransition/FadeTransition.h>
 
-// effect
-#include <Engine/Effect/User/GameEffect.h>
-
 //============================================================================
 //	GameScene class
 //	ゲームシーン
@@ -59,9 +56,6 @@ private:
 
 	// sprites
 	std::unique_ptr<FadeSprite> fadeSprite_;
-
-	// editor
-	std::unique_ptr<LevelEditor> levelEditor_;
 
 	//--------- functions ----------------------------------------------------
 

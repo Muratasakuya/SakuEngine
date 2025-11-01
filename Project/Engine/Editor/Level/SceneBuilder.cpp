@@ -105,6 +105,9 @@ void SceneBuilder::BuildObjects(const Json& obj,
 		// collision反映
 		ApplyCollision(*newobject, obj);
 
+		// シーンが破棄されても削除しない
+		newobject->SetDestroyOnLoad(false);
+
 		// 登録
 		entities.emplace_back(std::move(newobject));
 	}
@@ -210,7 +213,8 @@ void SceneBuilder::ApplyMaterial(GameObject3D& object, const Json& data) {
 	object.ApplyMaterial(data);
 
 	// マテリアルの共通設定
-	object.SetPostProcessMask(Bit_Bloom | Bit_RadialBlur | Bit_Glitch | Bit_Grayscale | Bit_Vignette);
+	object.SetPostProcessMask(Bit_Bloom | Bit_RadialBlur |
+		Bit_Glitch | Bit_Grayscale | Bit_Vignette | Bit_CRTDisplay);
 }
 
 void SceneBuilder::ApplyCollision(GameObject3D& object, const Json& data) {

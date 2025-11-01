@@ -3,6 +3,7 @@
 //============================================================================
 //	include
 //============================================================================
+#include <Engine/Object/Core/ObjectManager.h>
 
 // imgui
 #include <imgui.h>
@@ -95,7 +96,7 @@ void Skybox::CreateCBuffer(ID3D12Device* device, uint32_t textureIndex) {
 	transform_.scale = Vector3::AnyInit(scale);
 	transform_.UpdateMatrix();
 
-	material_.color = Color::Convert(0x70655eff);
+	material_.color = Color::Convert(0x181818ff);
 	material_.textureIndex = textureIndex;
 
 	uvTransform_.scale = Vector3::AnyInit(1.0f);
@@ -113,7 +114,12 @@ void Skybox::CreateCBuffer(ID3D12Device* device, uint32_t textureIndex) {
 	materialBuffer_.TransferData(material_);
 }
 
-void Skybox::Create(ID3D12Device* device, uint32_t textureIndex) {
+void Skybox::Create(ID3D12Device* device, uint32_t textureIndex, uint32_t objectIndex) {
+
+	// data取得
+	tag_ = ObjectManager::GetInstance()->GetData<ObjectTag>(objectIndex);
+	// シーンを切り替えても破棄しないようにする
+	tag_->destroyOnLoad = false;
 
 	// 頂点buffer作成
 	CreateVertexBuffer(device);

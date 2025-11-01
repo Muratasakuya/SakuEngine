@@ -17,9 +17,6 @@
 // sprite
 #include <Game/Objects/GameScene/SpriteEffect/FadeSprite.h>
 
-// editor
-#include <Engine/Editor/Level/LevelEditor.h>
-
 //============================================================================
 //	GameContext
 //============================================================================
@@ -39,7 +36,4 @@ struct GameContext {
 
 	// sprite
 	FadeSprite* fadeSprite = nullptr;
-
-	// editor
-	LevelEditor* level = nullptr;
 };

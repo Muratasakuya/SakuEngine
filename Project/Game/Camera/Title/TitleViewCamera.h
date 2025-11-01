@@ -1,38 +1,31 @@
-#pragma once
-
 //============================================================================
 //	include
 //============================================================================
-#include <Engine/Scene/Methods/IScene.h>
-
-// controller
-#include <Game/Objects/TitleScene/TitleController.h>
-
-// scene
-#include <Engine/Scene/Light/PunctualLight.h>
-#include <Game/Camera/Title/TitleViewCamera.h>
-#include <Game/Objects/SceneTransition/FadeTransition.h>
+#include <Engine/Scene/Camera/BaseCamera.h>
+#include <Engine/Utility/Timer/StateTimer.h>
 
 //============================================================================
-//	TitleScene class
-//	タイトルシーン
+//	TitleViewCamera class
+//	タイトルシーンの視点
 //============================================================================
-class TitleScene :
-	public IScene,
-	public IGameEditor {
+class TitleViewCamera :
+	public BaseCamera {
 public:
 	//========================================================================
 	//	public Methods
 	//========================================================================
 
-	TitleScene() :IGameEditor("TitleScene") {}
-	~TitleScene() = default;
+	TitleViewCamera() = default;
+	~TitleViewCamera() = default;
 
-	void Init() override;
+	void Init();
 
 	void Update() override;
 
 	void ImGui() override;
+
+	//--------- accessor -----------------------------------------------------
+
 private:
 	//========================================================================
 	//	private Methods
@@ -40,11 +33,16 @@ private:
 
 	//--------- variables ----------------------------------------------------
 
-	// controller
-	std::unique_ptr<TitleController> controller_;
+	// Rotate
+	float rotateSpeed_;  // 回転速度
+	float initRotateX_;  // X軸回転角
+	float eulerRotateX_; // X軸回転角
+	Vector3 viewPoint_;  // 注視点
+	float viewOffset_;   // 注視点からのオフセット距離
 
-	// scene
-	std::unique_ptr<TitleViewCamera> titleViewCamera_;
-	std::unique_ptr<PunctualLight> light_;
-	std::unique_ptr<FadeTransition> fadeTransition_;
+	//--------- functions ----------------------------------------------------
+
+	// json
+	void ApplyJson();
+	void SaveJson();
 };

@@ -659,6 +659,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </ClCompile>
     <ClCompile Include="Engine\Editor\Level\LevelEditor.cpp" />
     <ClCompile Include="Engine\Editor\Level\SceneBuilder.cpp" />
+    <ClCompile Include="Game\Camera\Title\TitleViewCamera.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="Game\Objects\Base\GamecButtonFocusNavigator.cpp">
       <SubType />
     </ClCompile>
@@ -1514,6 +1518,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Editor\Level\LevelEditor.h" />
     <ClInclude Include="Engine\Editor\Level\LevelStructures.h" />
     <ClInclude Include="Engine\Editor\Level\SceneBuilder.h" />
+    <ClInclude Include="Game\Camera\Title\TitleViewCamera.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="Game\Objects\Base\GamecButtonFocusNavigator.h">
       <SubType />
     </ClInclude>

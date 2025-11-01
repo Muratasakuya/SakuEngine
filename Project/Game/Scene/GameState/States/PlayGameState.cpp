@@ -35,7 +35,6 @@ void PlayGameState::Update([[maybe_unused]] SceneManager* sceneManager) {
 	//========================================================================
 
 	context_->camera->Update(currentState);
-	context_->level->Update();
 
 	// 移動範囲を制限する
 	context_->fieldBoundary->ControlTargetMove();

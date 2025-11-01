@@ -7,9 +7,30 @@
     "optionIcon",
     "optionText",
     "gameStartText",
-    "gameFinishText"
+    "gameFinishText",
+    "overcast_soil_puresky_4k"
   ],
   "Models": [
-    "demoCamera"
+    "demoCamera",
+    "field",
+    "fieldUnder",
+    "fence",
+    "wall",
+    "antenna",
+    "columnMetalSupport",
+    "columnPipes",
+    "lghtStreet",
+    "lightSquare",
+    "platformField",
+    "platformRound",
+    "propCable",
+    "propCableLong",
+    "propRailOrigin",
+    "railLong",
+    "signCorner",
+    "steelbeams",
+    "tiltedWarningWall",
+    "warningWall",
+    "wallBottom"
   ]
 }
