@@ -194,6 +194,9 @@ public:
 
 	const Transform2D* parent = nullptr;
 
+	// 親がいてもその場で回転するかどうか
+	bool rotateAroundSelfWhenParented = true;
+
 	//--------- accessor -----------------------------------------------------
 
 	const DxConstBuffer<Matrix4x4>& GetBuffer() const { return buffer_; }

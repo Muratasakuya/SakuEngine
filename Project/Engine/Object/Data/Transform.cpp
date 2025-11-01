@@ -240,14 +240,25 @@ void Transform2D::Init(ID3D12Device* device) {
 
 void Transform2D::UpdateMatrix() {
 
-	Vector3 scale = Vector3(sizeScale.x, sizeScale.y, 1.0f);
-	Vector3 rotate = Vector3(0.0f, 0.0f, rotation);
-	Vector3 translate = Vector3(translation.x, translation.y, 0.0f);
-
-	matrix = Matrix4x4::MakeAffineMatrix(scale, rotate, translate);
+	// ローカル行列の計算
+	Matrix4x4 local = Matrix4x4::MakeAffineMatrix(Vector3(sizeScale.x, sizeScale.y, 1.0f),
+		Vector3(0.0f, 0.0f, rotation), Vector3(translation.x, translation.y, 0.0f));
 
 	if (parent) {
-		matrix = parent->matrix * matrix;
+		// その場で回転させる
+		if (rotateAroundSelfWhenParented) {
+
+			matrix = Matrix4x4::Multiply(local, parent->matrix);
+		}
+		// 親に合わせて回転させる
+		else {
+
+			matrix = Matrix4x4::Multiply(parent->matrix, local);
+		}
+	} else {
+
+		// 親がいない場合はローカル行列をそのまま設定
+		matrix = local;
 	}
 
 	// 作成されたときのみ
@@ -305,6 +316,7 @@ void Transform2D::ImGui(float itemSize, float buttonSize) {
 	ImGui::DragFloat2("anchorPoint", &anchorPoint.x, 0.01f, 0.0f, 1.0f);
 	ImGui::DragFloat2("textureLeftTop", &textureLeftTop.x, 1.0f);
 	ImGui::DragFloat2("textureSize", &textureSize.x, 1.0f);
+	ImGui::Checkbox("rotateAroundSelfWhenParented", &rotateAroundSelfWhenParented);
 
 	ImGui::SeparatorText("VertexOffset");
 
@@ -329,6 +341,7 @@ void Transform2D::ToJson(Json& data) {
 	data["anchorPoint"] = anchorPoint.ToJson();
 	data["textureLeftTop"] = textureLeftTop.ToJson();
 	data["textureSize"] = textureSize.ToJson();
+	data["rotateAroundSelfWhenParented"] = rotateAroundSelfWhenParented;
 
 	data["vertexOffset"] = Json::array();
 	for (const auto& offset : vertexOffset_) {
@@ -345,6 +358,7 @@ void Transform2D::FromJson(const Json& data) {
 	anchorPoint = JsonAdapter::ToObject<Vector2>(data["anchorPoint"]);
 	textureLeftTop = JsonAdapter::ToObject<Vector2>(data["textureLeftTop"]);
 	textureSize = JsonAdapter::ToObject<Vector2>(data["textureSize"]);
+	rotateAroundSelfWhenParented = data.value("rotateAroundSelfWhenParented", true);
 
 	if (data.contains("sizeScale")) {
 

@@ -21,6 +21,7 @@
                     "x": 0.5,
                     "y": 0.5
                 },
+                "rotateAroundSelfWhenParented": true,
                 "rotation": 0.0,
                 "size": {
                     "x": 0.0,
@@ -443,6 +444,7 @@
                             "x": 0.5,
                             "y": 0.5
                         },
+                        "rotateAroundSelfWhenParented": true,
                         "rotation": 0.0,
                         "size": {
                             "x": 320.0,
@@ -675,6 +677,7 @@
                     "x": 0.5,
                     "y": 0.5
                 },
+                "rotateAroundSelfWhenParented": true,
                 "rotation": 0.0,
                 "size": {
                     "x": 0.0,
@@ -1097,6 +1100,7 @@
                             "x": 0.5,
                             "y": 0.5
                         },
+                        "rotateAroundSelfWhenParented": true,
                         "rotation": 0.0,
                         "size": {
                             "x": 256.0,
@@ -1329,6 +1333,7 @@
                     "x": 0.5,
                     "y": 0.5
                 },
+                "rotateAroundSelfWhenParented": true,
                 "rotation": 0.0,
                 "size": {
                     "x": 0.0,
@@ -1609,15 +1614,15 @@
                                     "target_": 0.0
                                 },
                                 "Timer": {
-                                    "easeingType_": "Linear",
-                                    "target_": 0.0
+                                    "easeingType_": "EaseOutExpo",
+                                    "target_": 0.3199999928474426
                                 },
-                                "move_.end": 0.0,
+                                "move_.end": -3.140000104904175,
                                 "move_.start": 0.0,
                                 "useReturnTimer_": false
                             },
                             "applyMode": "Absolute",
-                            "isEnable": false
+                            "isEnable": true
                         },
                         "ScaleChannels": {
                             "ValueSource": {
@@ -1694,7 +1699,7 @@
                                     "target_": 0.3199999928474426
                                 },
                                 "move_.end": {
-                                    "x": -160.0,
+                                    "x": -270.0,
                                     "y": 0.0
                                 },
                                 "move_.start": {
@@ -1751,6 +1756,7 @@
                             "x": 0.5,
                             "y": 0.5
                         },
+                        "rotateAroundSelfWhenParented": true,
                         "rotation": 0.0,
                         "size": {
                             "x": 128.0,
@@ -1861,15 +1867,15 @@
                                     "target_": 0.0
                                 },
                                 "Timer": {
-                                    "easeingType_": "Linear",
-                                    "target_": 0.0
+                                    "easeingType_": "EaseOutExpo",
+                                    "target_": 0.3199999928474426
                                 },
                                 "move_.end": 0.0,
-                                "move_.start": 0.0,
+                                "move_.start": -3.140000104904175,
                                 "useReturnTimer_": false
                             },
                             "applyMode": "Absolute",
-                            "isEnable": false
+                            "isEnable": true
                         },
                         "ScaleChannels": {
                             "ValueSource": {
@@ -1950,7 +1956,7 @@
                                     "y": 0.0
                                 },
                                 "move_.start": {
-                                    "x": -160.0,
+                                    "x": -270.0,
                                     "y": 0.0
                                 },
                                 "useReturnTimer_": false
@@ -2341,6 +2347,7 @@
                             "x": 0.5,
                             "y": 0.5
                         },
+                        "rotateAroundSelfWhenParented": true,
                         "rotation": 0.0,
                         "size": {
                             "x": 320.0,
