@@ -60,6 +60,9 @@ private:
 	ParticleCommon::LerpValue<float> rotation_;
 	ParticleCommon::LerpValue<Vector3> scale_;
 
+	// ピボット
+	Vector2 pivot_;
+
 	// スクロール加算値
 	Vector2 scrollValue_;
 
