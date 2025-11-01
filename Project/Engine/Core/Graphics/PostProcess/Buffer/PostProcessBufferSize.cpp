@@ -192,8 +192,6 @@ void CRTDisplayForGPU::ImGui() {
 
 	ImGui::PushItemWidth(itemWidth_);
 
-	time += GameTimer::GetDeltaTime();
-
 	ImGui::Text("currentTime: %.3f", time);
 
 	ImGui::DragFloat2("resolution##CRTDisplayForGPU", &resolution.x, 0.1f);

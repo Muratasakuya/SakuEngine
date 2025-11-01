@@ -30,8 +30,6 @@ void GameScene::InitStates() {
 	context_.result = result_.get();
 	// sprite
 	context_.fadeSprite = fadeSprite_.get();
-	// editor
-	context_.level = levelEditor_.get();
 
 	// シーン状態クラスの初期化
 	states_[static_cast<uint32_t>(GameSceneState::Start)] = std::make_unique<StartGameState>(&context_);
@@ -65,12 +63,6 @@ void GameScene::Init() {
 	cameraManager_ = std::make_unique<CameraManager>();
 	gameLight_ = std::make_unique<PunctualLight>();
 	fieldBoundary_ = std::make_unique<FieldBoundary>();
-
-	//========================================================================
-	//	editor
-	//========================================================================
-
-	levelEditor_ = std::make_unique<LevelEditor>();
 
 	//========================================================================
 	//	frontObjects

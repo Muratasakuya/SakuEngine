@@ -391,6 +391,14 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <SubType>
       </SubType>
     </ClCompile>
+    <ClCompile Include="Engine\Object\Base\AnimationObject2D.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="Engine\Object\Base\AnimationObject3D.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="Engine\Object\Core\ObjectPoolManager.cpp" />
     <ClCompile Include="Engine\Collision\CollisionBody.cpp">
       <SubType />
@@ -651,6 +659,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </ClCompile>
     <ClCompile Include="Engine\Editor\Level\LevelEditor.cpp" />
     <ClCompile Include="Engine\Editor\Level\SceneBuilder.cpp" />
+    <ClCompile Include="Game\Camera\Title\TitleViewCamera.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="Game\Objects\Base\GamecButtonFocusNavigator.cpp">
       <SubType />
     </ClCompile>
@@ -672,8 +684,20 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\Objects\Base\GameTimerDisplay.cpp">
       <SubType />
     </ClCompile>
+    <ClCompile Include="Game\Objects\Common\Input\Device\SelectUIGamePadInput.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="Game\Objects\Common\Input\Device\SelectUIKeyInput.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="Game\Objects\Common\GameButtonBlinkingUpdater.cpp">
       <SubType />
+    </ClCompile>
+    <ClCompile Include="Game\Objects\Common\UI\GameUIFocusNavigator.cpp">
+      <SubType>
+      </SubType>
     </ClCompile>
     <ClCompile Include="Game\Objects\GameScene\Enemy\Boss\Collision\BossEnemyAttackCollision.cpp">
       <SubType />
@@ -810,17 +834,16 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <SubType />
     </ClCompile>
     <ClCompile Include="Game\Objects\SceneTransition\FadeTransition.cpp" />
-    <ClCompile Include="Game\Objects\TitleScene\DisplaySprite\GameFinishUI.cpp">
-      <SubType />
-    </ClCompile>
-    <ClCompile Include="Game\Objects\TitleScene\DisplaySprite\TitleDisplaySprite.cpp">
-      <SubType />
-    </ClCompile>
-    <ClCompile Include="Game\Objects\TitleScene\PostEffect\TitlePostEffect.cpp">
-      <SubType />
+    <ClCompile Include="Game\Objects\TitleScene\Background\TitleBackground.cpp">
+      <SubType>
+      </SubType>
     </ClCompile>
     <ClCompile Include="Game\Objects\TitleScene\TitleController.cpp">
       <SubType />
+    </ClCompile>
+    <ClCompile Include="Game\PostEffect\CRTDisplayUpdater.cpp">
+      <SubType>
+      </SubType>
     </ClCompile>
     <ClCompile Include="Game\PostEffect\GlitchUpdater.cpp" />
     <ClCompile Include="Game\PostEffect\RadialBlurUpdater.cpp">
@@ -1182,6 +1205,14 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Collision\CollisionManager.h">
       <SubType />
     </ClInclude>
+    <ClInclude Include="Engine\Object\Base\AnimationObject2D.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Engine\Object\Base\AnimationObject3D.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="Engine\Object\Data\Material.h">
       <SubType />
     </ClInclude>
@@ -1331,6 +1362,18 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Scene\SceneView.h">
       <SubType />
     </ClInclude>
+    <ClInclude Include="Engine\Utility\Animation\ValueSource\AnimationChannel.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Engine\Utility\Animation\ValueSource\Interface\IValueSource.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Engine\Utility\Animation\ValueSource\LerpValueSource.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="Engine\Utility\Curve\CurveValue.h" />
     <ClInclude Include="Engine\Utility\Enum\Distance.h">
       <SubType>
@@ -1475,6 +1518,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Editor\Level\LevelEditor.h" />
     <ClInclude Include="Engine\Editor\Level\LevelStructures.h" />
     <ClInclude Include="Engine\Editor\Level\SceneBuilder.h" />
+    <ClInclude Include="Game\Camera\Title\TitleViewCamera.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="Game\Objects\Base\GamecButtonFocusNavigator.h">
       <SubType />
     </ClInclude>
@@ -1499,9 +1546,25 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\Objects\Base\IGameButtonResponseUpdater.h">
       <SubType />
     </ClInclude>
+    <ClInclude Include="Game\Objects\Common\Input\Device\SelectUIGamePadInput.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Game\Objects\Common\Input\Device\SelectUIKeyInput.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Game\Objects\Common\Input\SelectUIInputAction.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="Game\Objects\Base\ITransition.h" />
     <ClInclude Include="Game\Objects\Common\GameButtonBlinkingUpdater.h">
       <SubType />
+    </ClInclude>
+    <ClInclude Include="Game\Objects\Common\UI\GameUIFocusNavigator.h">
+      <SubType>
+      </SubType>
     </ClInclude>
     <ClInclude Include="Game\Objects\GameScene\Enemy\Boss\Effect\BossEnemyAnimationEffect.h">
       <SubType />
@@ -1638,17 +1701,16 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <SubType />
     </ClInclude>
     <ClInclude Include="Game\Objects\SceneTransition\FadeTransition.h" />
-    <ClInclude Include="Game\Objects\TitleScene\DisplaySprite\GameFinishUI.h">
-      <SubType />
-    </ClInclude>
-    <ClInclude Include="Game\Objects\TitleScene\DisplaySprite\TitleDisplaySprite.h">
-      <SubType />
-    </ClInclude>
-    <ClInclude Include="Game\Objects\TitleScene\PostEffect\TitlePostEffect.h">
-      <SubType />
+    <ClInclude Include="Game\Objects\TitleScene\Background\TitleBackground.h">
+      <SubType>
+      </SubType>
     </ClInclude>
     <ClInclude Include="Game\Objects\TitleScene\TitleController.h">
       <SubType />
+    </ClInclude>
+    <ClInclude Include="Game\PostEffect\CRTDisplayUpdater.h">
+      <SubType>
+      </SubType>
     </ClInclude>
     <ClInclude Include="Game\PostEffect\GlitchUpdater.h" />
     <ClInclude Include="Game\PostEffect\RadialBlurUpdater.h">

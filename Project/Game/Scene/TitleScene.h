@@ -9,12 +9,9 @@
 #include <Game/Objects/TitleScene/TitleController.h>
 
 // scene
-#include <Engine/Scene/Camera/BaseCamera.h>
 #include <Engine/Scene/Light/PunctualLight.h>
+#include <Game/Camera/Title/TitleViewCamera.h>
 #include <Game/Objects/SceneTransition/FadeTransition.h>
-
-// editor
-#include <Engine/Editor/Base/IGameEditor.h>
 
 //============================================================================
 //	TitleScene class
@@ -47,7 +44,7 @@ private:
 	std::unique_ptr<TitleController> controller_;
 
 	// scene
-	std::unique_ptr<BaseCamera> camera3D_;
+	std::unique_ptr<TitleViewCamera> titleViewCamera_;
 	std::unique_ptr<PunctualLight> light_;
 	std::unique_ptr<FadeTransition> fadeTransition_;
 };

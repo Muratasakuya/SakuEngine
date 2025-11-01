@@ -6,9 +6,12 @@
 #include <Engine/Core/Graphics/GPUObject/DxConstBuffer.h>
 #include <Engine/Core/Graphics/GPUObject/VertexBuffer.h>
 #include <Engine/Core/Graphics/GPUObject/IndexBuffer.h>
+#include <Engine/MathLib/MathUtils.h>
+
+// data
 #include <Engine/Object/Data/Transform.h>
 #include <Engine/Object/Data/Material.h>
-#include <Engine/MathLib/MathUtils.h>
+#include <Engine/Object/Data/ObjectTag.h>
 
 //============================================================================
 //	Skybox class
@@ -39,7 +42,7 @@ public:
 	~Skybox() = default;
 
 	// 初期化
-	void Create(ID3D12Device* device, uint32_t textureIndex);
+	void Create(ID3D12Device* device, uint32_t textureIndex, uint32_t objectIndex);
 
 	// 更新
 	void Update();
@@ -64,6 +67,8 @@ private:
 	//========================================================================
 
 	//--------- variables ----------------------------------------------------
+
+	ObjectTag* tag_;
 
 	// 頂点buffer
 	VertexBuffer<Vector4> vertexBuffer_;

@@ -7,6 +7,7 @@
 #include <Engine/Scene/Methods/SceneFactory.h>
 #include <Engine/Scene/Methods/SceneTransition.h>
 #include <Engine/Editor/Base/IGameEditor.h>
+#include <Engine/Editor/Level/LevelEditor.h>
 
 // c++
 #include <memory>
@@ -64,6 +65,8 @@ private:
 	std::unique_ptr<SceneFactory> factory_;
 
 	std::unique_ptr<SceneTransition> sceneTransition_;
+
+	std::unique_ptr<LevelEditor> levelEditor_;
 
 	Scene currentSceneType_;
 	Scene nextSceneType_;

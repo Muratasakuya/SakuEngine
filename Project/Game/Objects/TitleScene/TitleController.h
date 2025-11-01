@@ -3,34 +3,40 @@
 //============================================================================
 //	include
 //============================================================================
-#include <Game/Objects/TitleScene/DisplaySprite/TitleDisplaySprite.h>
+#include <Engine/Editor/Base/IGameEditor.h>
+#include <Game/Objects/Common/UI/GameUIFocusNavigator.h>
+#include <Game/Objects/TitleScene/Background/TitleBackground.h>
 
 //============================================================================
 //	TitleController class
 //	タイトルシーンのスプライト表示など、遷移までの管理
 //============================================================================
-class TitleController {
+class TitleController :
+	public IGameEditor {
 public:
 	//========================================================================
 	//	public Methods
 	//========================================================================
 
-	TitleController() = default;
+	TitleController() :IGameEditor("TitleController") {}
 	~TitleController() = default;
 
 	// 初期化
 	void Init();
 
-	// 更新、遷移判定もここで行っている
+	// 更新
 	void Update();
+
+	// エディター
+	void ImGui() override;
 
 	//--------- accessor -----------------------------------------------------
 
 	// ゲーム終了フラグ
-	bool IsSelectFinish() const { return displaySprite_->IsSelectFinish(); }
+	bool IsSelectFinish() const { return isSelectFinish_; }
 
 	// ゲーム遷移フラグ
-	bool IsGameStart() const { return displaySprite_->IsGameStart(); }
+	bool IsGameStart() const { return isGameStart_; }
 private:
 	//========================================================================
 	//	private Methods
@@ -38,6 +44,22 @@ private:
 
 	//--------- variables ----------------------------------------------------
 
-	// 表示スプライト
-	std::unique_ptr<TitleDisplaySprite> displaySprite_;
+	// 背景
+	std::unique_ptr<TitleBackground> background_;
+
+	// 選択UI
+	std::unique_ptr<GameUIFocusNavigator> selectUINavigator_;
+
+	// デバッグ用フラグ
+	bool isGameStart_ = false;
+	bool isSelectFinish_ = false;
+
+	//--------- functions ----------------------------------------------------
+
+	// json
+	void ApplyJson();
+	void SaveJson();
+
+	// 入力チェック
+	void CheckInputFromUINavigator();
 };

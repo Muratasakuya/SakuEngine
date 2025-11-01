@@ -44,11 +44,16 @@ SceneManager::SceneManager(Scene scene, Asset* asset, SceneView* sceneView) :IGa
 
 	// 最初のシーンを読み込んで初期化
 	LoadScene(scene);
+
+	// scene初期化
+	levelEditor_ = std::make_unique<LevelEditor>();
+	levelEditor_->Init("levelEditor");
 	currentScene_->Init();
 }
 
 void SceneManager::Update() {
 
+	levelEditor_->Update();
 	currentScene_->Update();
 	sceneTransition_->Update();
 

@@ -153,7 +153,13 @@ inline void SimpleAnimation<T>::LerpValue(T& value) {
 	}
 
 	// 値の補間処理
-	value = Algorithm::Lerp<T>(from, to, easedT);
+	if constexpr (std::is_same_v<T, Color>) {
+
+		value = Color::Lerp(from, to, easedT);
+	} else {
+
+		value = Algorithm::Lerp<T>(from, to, easedT);
+	}
 
 	// ループ数が最後まで行けば終了
 	if (loop_.GetLoopCount() <= std::floor(rawT_)) {
@@ -215,8 +221,8 @@ inline void SimpleAnimation<T>::ImGui(const std::string& label, bool isLoop) {
 			ImGui::DragFloat3("end", &move_.end.x, dragValueFloat);
 		} else if constexpr (std::is_same_v<T, Color>) {
 
-			ImGui::ColorEdit4("start", &move_.start.a);
-			ImGui::ColorEdit4("end", &move_.end.a);
+			ImGui::ColorEdit4("start", &move_.start.r);
+			ImGui::ColorEdit4("end", &move_.end.r);
 		}
 	}
 	if (ImGui::CollapsingHeader("Timer", windowFlag)) {

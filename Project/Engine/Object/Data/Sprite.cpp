@@ -5,6 +5,7 @@
 //============================================================================
 #include <Engine/Asset/Asset.h>
 #include <Engine/Utility/Enum/EnumAdapter.h>
+#include <Engine/Utility/Helper/ImGuiHelper.h>
 
 // imgui
 #include <imgui.h>
@@ -34,10 +35,10 @@ Sprite::Sprite(ID3D12Device* device, Asset* asset,
 
 void Sprite::UpdateVertex(const Transform2D& transform) {
 
-	float left = 0.0f - transform.anchorPoint.x;
-	float right = 1.0f - transform.anchorPoint.x;
-	float top = 0.0f - transform.anchorPoint.y;
-	float bottom = 1.0f - transform.anchorPoint.y;
+	float left = (0.0f - transform.anchorPoint.x) * transform.size.x;
+	float right = (1.0f - transform.anchorPoint.x) * transform.size.x;
+	float top = (0.0f - transform.anchorPoint.y) * transform.size.y;
+	float bottom = (1.0f - transform.anchorPoint.y) * transform.size.y;
 
 	// textureに変更があったときのみ
 	if (preTextureName_ != textureName_) {
@@ -101,17 +102,18 @@ void Sprite::InitBuffer(ID3D12Device* device) {
 
 void Sprite::SetMetaDataTextureSize(Transform2D& transform) {
 
-	float left = 0.0f - transform.anchorPoint.x;
-	float right = 1.0f - transform.anchorPoint.x;
-	float top = 0.0f - transform.anchorPoint.y;
-	float bottom = 1.0f - transform.anchorPoint.y;
-
 	// textureMetadataの取得
 	const DirectX::TexMetadata& metadata = asset_->GetMetaData(textureName_);
 
 	// textureSizeの設定
 	transform.textureSize = { static_cast<float>(metadata.width) ,static_cast<float>(metadata.height) };
 	transform.size = transform.textureSize;
+
+	// アンカー基準のピクセル矩形
+	float left = (0.0f - transform.anchorPoint.x) * transform.size.x;
+	float right = (1.0f - transform.anchorPoint.x) * transform.size.x;
+	float top = (0.0f - transform.anchorPoint.y) * transform.size.y;
+	float bottom = (1.0f - transform.anchorPoint.y) * transform.size.y;
 
 	// 横
 	float texLeft = transform.textureLeftTop.x / static_cast<float>(metadata.width);
@@ -139,10 +141,104 @@ void Sprite::SetMetaDataTextureSize(Transform2D& transform) {
 void Sprite::ImGui(float itemSize) {
 
 	ImGui::PushItemWidth(itemSize);
-	
+
+	ImGui::Separator();
+
+	// テクスチャ選択
+	// 表示サイズ
+	const float imageSize = 88.0f;
+	ImGuiHelper::ImageButtonWithLabel("texture", textureName_,
+		(ImTextureID)asset_->GetGPUHandle(textureName_).ptr, { imageSize, imageSize });
+	std::string dragTextureName = ImGuiHelper::DragDropPayloadString(PendingType::Texture);
+	if (!dragTextureName.empty()) {
+
+		// textureを設定
+		textureName_ = dragTextureName;
+	}
+
 	EnumAdapter<SpriteLayer>::Combo("SpriteLayer", &layer_);
+	ImGui::Separator();
+
+	// 現在のlayerIndex_から「基準カテゴリ(base)」を復元
+	SpriteLayerIndex base = SpriteLayerIndex::None;
+	uint16_t baseVal = 0;
+	for (uint32_t i = 0; i < EnumAdapter<SpriteLayerIndex>::GetEnumCount(); ++i) {
+
+		SpriteLayerIndex v = EnumAdapter<SpriteLayerIndex>::GetValue(i);
+		uint16_t vv = static_cast<uint16_t>(v);
+		if (vv <= layerIndex_) {
+			base = v;
+			baseVal = vv;
+		}
+	}
+
+	// 次のカテゴリ境界(>baseVal で最小の値)を探索
+	uint16_t nextBoundary = (std::numeric_limits<uint16_t>::max)();
+	for (uint32_t i = 0; i < EnumAdapter<SpriteLayerIndex>::GetEnumCount(); ++i) {
+		uint16_t vv = static_cast<uint16_t>(EnumAdapter<SpriteLayerIndex>::GetValue(i));
+		if (vv > baseVal && vv < nextBoundary) {
+			nextBoundary = vv;
+		}
+	}
+	uint16_t maxSub = (nextBoundary == (std::numeric_limits<uint16_t>::max)()) ?
+		(std::numeric_limits<uint16_t>::max)() - baseVal :
+		static_cast<uint16_t>(nextBoundary - baseVal - 1);
+
+	// カテゴリ選択 + カテゴリ内順序
+	bool changed = false;
+	changed |= EnumAdapter<SpriteLayerIndex>::Combo("Layer Index", &base);
+
+	// カテゴリ変更されたら基準値を更新して上限も再計算
+	baseVal = static_cast<uint16_t>(base);
+	nextBoundary = (std::numeric_limits<uint16_t>::max)();
+	for (uint32_t i = 0; i < EnumAdapter<SpriteLayerIndex>::GetEnumCount(); ++i) {
+
+		uint16_t vv = static_cast<uint16_t>(EnumAdapter<SpriteLayerIndex>::GetValue(i));
+		if (vv > baseVal && vv < nextBoundary) {
+			nextBoundary = vv;
+		}
+	}
+	maxSub = (nextBoundary == (std::numeric_limits<uint16_t>::max)()) ?
+		(std::numeric_limits<uint16_t>::max)() - baseVal :
+		static_cast<uint16_t>(nextBoundary - baseVal - 1);
+
+	int subInt = static_cast<int>(layerIndex_ - baseVal);
+	changed |= ImGui::DragInt("Order Category", &subInt, 1.0f, 0, static_cast<int>(maxSub));
+	if (changed) {
+		if (subInt < 0) {
+
+			subInt = 0;
+		}
+		if (subInt > static_cast<int>(maxSub)) {
+
+			subInt = static_cast<int>(maxSub);
+		}
+		layerIndex_ = static_cast<uint16_t>(baseVal + static_cast<uint16_t>(subInt));
+	}
+	ImGui::SameLine();
+	ImGui::TextDisabled("(abs: %u)", static_cast<unsigned>(layerIndex_));
+
+	ImGui::Separator();
+
+	EnumAdapter<BlendMode>::Combo("BlendMode", &blendMode_);
 
 	ImGui::PopItemWidth();
+}
+
+void Sprite::ToJson(Json& data) {
+
+	data["textureName"] = textureName_;
+	data["layer"] = EnumAdapter<SpriteLayer>::ToString(layer_);
+	data["layerIndex"] = layerIndex_;
+	data["blendMode"] = EnumAdapter<BlendMode>::ToString(blendMode_);
+}
+
+void Sprite::FromJson(const Json& data) {
+
+	textureName_ = data["textureName"].get<std::string>();
+	layer_ = EnumAdapter<SpriteLayer>::FromString(data["layer"].get<std::string>()).value();
+	layerIndex_ = data["layerIndex"].get<uint16_t>();
+	blendMode_ = EnumAdapter<BlendMode>::FromString(data["blendMode"].get<std::string>()).value();
 }
 
 const D3D12_GPU_DESCRIPTOR_HANDLE& Sprite::GetTextureGPUHandle() const {

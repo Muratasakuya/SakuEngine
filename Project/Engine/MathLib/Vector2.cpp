@@ -84,6 +84,10 @@ Json Vector2::ToJson() const {
 
 Vector2 Vector2::FromJson(const Json& data) {
 
+	if (data.empty()) {
+		return Vector2{};
+	}
+
 	Vector2 v{};
 	if (data.contains("x") && data.contains("y")) {
 		v.x = data["x"].get<float>();
@@ -131,4 +135,42 @@ Vector2 Vector2::Normalize(const Vector2& v) {
 Vector2 Vector2::Lerp(const Vector2& v0, const Vector2& v1, float t) {
 
 	return Vector2(std::lerp(v0.x, v1.x, t), std::lerp(v0.y, v1.y, t));
+}
+
+//============================================================================*/
+//	Vector2Int classMethods
+//============================================================================*/
+
+void Vector2Int::operator+=(const Vector2Int& other) {
+
+	this->x += other.x;
+	this->y += other.y;
+}
+
+bool Vector2Int::operator==(const Vector2Int& other) const {
+
+	return this->x == other.x && this->y == other.y;
+}
+
+bool Vector2Int::operator!=(const Vector2Int& other) const {
+
+	return !(*this == other);
+}
+
+Json Vector2Int::ToJson() const {
+	return Json{ {"x", x}, {"y", y} };
+}
+
+Vector2Int Vector2Int::FromJson(const Json& data) {
+
+	if (data.empty()) {
+		return Vector2Int{};
+	}
+
+	Vector2Int v{};
+	if (data.contains("x") && data.contains("y")) {
+		v.x = data["x"].get<int32_t>();
+		v.y = data["y"].get<int32_t>();
+	}
+	return v;
 }

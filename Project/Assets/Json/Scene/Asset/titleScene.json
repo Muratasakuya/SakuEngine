@@ -1,18 +1,37 @@
 {
   "Textures": [
-    "title",
+    "white",
+    "noise",
+    "titleName",
     "nowLoading",
-    "powerIcon",
+    "optionIcon",
+    "optionText",
     "gameStartText",
     "gameFinishText",
-    "gameFinishTextBackground",
-    "okText",
-    "cancelText",
-    "white",
-    "gamePadOrMouse",
-    "noise"
+    "bariera_2m",
+    "overcast_soil_puresky_4k"
   ],
   "Models": [
-    "demoCamera"
+    "demoCamera",
+    "field",
+    "fieldUnder",
+    "fence",
+    "wall",
+    "antenna",
+    "columnMetalSupport",
+    "columnPipes",
+    "lghtStreet",
+    "lightSquare",
+    "platformField",
+    "platformRound",
+    "propCable",
+    "propCableLong",
+    "propRailOrigin",
+    "railLong",
+    "signCorner",
+    "steelbeams",
+    "tiltedWarningWall",
+    "warningWall",
+    "wallBottom"
   ]
 }

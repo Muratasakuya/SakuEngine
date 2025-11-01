@@ -71,3 +71,27 @@ public:
 
 	static Vector2 Lerp(const Vector2& v0, const Vector2& v1, float t);
 };
+
+//============================================================================
+//	Vector2Int class
+//============================================================================
+class Vector2Int final {
+public:
+
+	int32_t x, y;
+
+	Vector2Int() : x(0), y(0) {}
+	Vector2Int(int32_t x, int32_t y) : x(x), y(y) {}
+
+	//--------- operators ----------------------------------------------------
+
+	void operator+=(const Vector2Int& other);
+
+	bool operator==(const Vector2Int& other) const;
+	bool operator!=(const Vector2Int& other) const;
+
+	//----------- json -------------------------------------------------------
+
+	Json ToJson() const;
+	static Vector2Int FromJson(const Json& data);
+};

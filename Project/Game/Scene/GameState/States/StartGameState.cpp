@@ -5,7 +5,6 @@
 //============================================================================
 #include <Engine/Core/Debug/SpdLogger.h>
 #include <Engine/Core/Graphics/PostProcess/Core/PostProcessSystem.h>
-#include <Engine/Object/Core/ObjectManager.h>
 #include <Engine/Scene/SceneView.h>
 
 //============================================================================
@@ -39,18 +38,6 @@ void StartGameState::Init(SceneView* sceneView) {
 
 	// 衝突
 	context_->fieldBoundary->Init();
-
-	//========================================================================
-	//	backObjects
-	//========================================================================
-
-	ObjectManager::GetInstance()->CreateSkybox("overcast_soil_puresky_4k");
-
-	//========================================================================
-	//	editor
-	//========================================================================
-
-	context_->level->Init("levelEditor");
 
 	//========================================================================
 	//	frontObjects
@@ -119,7 +106,6 @@ void StartGameState::Update([[maybe_unused]] SceneManager* sceneManager) {
 	//========================================================================
 
 	context_->camera->Update(currentState);
-	context_->level->Update();
 
 	//========================================================================
 	//	sceneEvent

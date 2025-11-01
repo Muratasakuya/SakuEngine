@@ -29,10 +29,25 @@ public:
 	void DerivedInit() override {};
 
 	// imgui
-	void ImGui() override {};
+	void ImGui() override;
 	virtual void DerivedImGui() override {}
 	// 各パラメータ
+	void ImGuiSprite();
 	bool ImGuiSize();
+
+	// json
+	// 全てのデータを保存、読み込み
+	void ApplyJson(const Json& data);
+	void SaveJson(Json& data);
+	// transform
+	void ApplyTransform(const Json& data);
+	void SaveTransform(Json& data);
+	// material
+	void ApplyMaterial(const Json& data);
+	void SaveMaterial(Json& data);
+	// sprite
+	void ApplySprite(const Json& data);
+	void SaveSprite(Json& data);
 
 	//--------- accessor -----------------------------------------------------
 
@@ -47,6 +62,10 @@ public:
 	void SetSize(const Vector2& size) { transform_->size = size; }
 	void SetTextureSize(const Vector2& size) { transform_->textureSize = size; }
 	void SetTextureLeftTop(const Vector2& leftTop) { transform_->textureLeftTop = leftTop; }
+	// スケール
+	void SetSizeScale(const Vector2& sizeScale) { transform_->sizeScale = sizeScale; }
+	// 回転
+	void SetRotation(float rotation) { transform_->rotation = rotation; }
 	// アンカー
 	void SetAnchor(const Vector2& anchor) { transform_->anchorPoint = anchor; }
 	// 親

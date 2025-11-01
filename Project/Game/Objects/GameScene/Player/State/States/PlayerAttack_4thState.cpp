@@ -98,7 +98,7 @@ void PlayerAttack_4thState::Update(Player& player) {
 	}
 }
 
-void PlayerAttack_4thState::UpdateAlways(Player& player) {
+void PlayerAttack_4thState::UpdateAlways([[maybe_unused]] Player& player) {
 
 	// 地割れエフェクトの更新
 	groundCrackEffect_->Update();

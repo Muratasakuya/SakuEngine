@@ -1,20 +1,28 @@
-#pragma once
-
 //============================================================================
 //	include
 //============================================================================
+#include <Engine/Scene/Camera/BaseCamera.h>
+#include <Engine/Utility/Timer/StateTimer.h>
 
 //============================================================================
-//	TitlePostEffect class
+//	TitleViewCamera class
+//	タイトルシーンの視点
 //============================================================================
-class TitlePostEffect {
+class TitleViewCamera :
+	public BaseCamera {
 public:
 	//========================================================================
 	//	public Methods
 	//========================================================================
 
-	TitlePostEffect() = default;
-	~TitlePostEffect() = default;
+	TitleViewCamera() = default;
+	~TitleViewCamera() = default;
+
+	void Init();
+
+	void Update() override;
+
+	void ImGui() override;
 
 	//--------- accessor -----------------------------------------------------
 
@@ -25,8 +33,16 @@ private:
 
 	//--------- variables ----------------------------------------------------
 
-
+	// Rotate
+	float rotateSpeed_;  // 回転速度
+	float initRotateX_;  // X軸回転角
+	float eulerRotateX_; // X軸回転角
+	Vector3 viewPoint_;  // 注視点
+	float viewOffset_;   // 注視点からのオフセット距離
 
 	//--------- functions ----------------------------------------------------
 
+	// json
+	void ApplyJson();
+	void SaveJson();
 };

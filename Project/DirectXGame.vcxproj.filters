@@ -1182,15 +1182,6 @@
     <ClCompile Include="Game\Objects\SceneTransition\FadeTransition.cpp">
       <Filter>Game\Objects\SceneTransition</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Objects\TitleScene\DisplaySprite\GameFinishUI.cpp">
-      <Filter>Game\Objects\TitleScene\DisplaySprite</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Objects\TitleScene\DisplaySprite\TitleDisplaySprite.cpp">
-      <Filter>Game\Objects\TitleScene\DisplaySprite</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Objects\TitleScene\PostEffect\TitlePostEffect.cpp">
-      <Filter>Game\Objects\TitleScene\PostEffect</Filter>
-    </ClCompile>
     <ClCompile Include="Game\Objects\TitleScene\TitleController.cpp">
       <Filter>Game\Objects\TitleScene</Filter>
     </ClCompile>
@@ -2094,15 +2085,6 @@
     <ClInclude Include="Game\Objects\SceneTransition\FadeTransition.h">
       <Filter>Game\Objects\SceneTransition</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Objects\TitleScene\DisplaySprite\GameFinishUI.h">
-      <Filter>Game\Objects\TitleScene\DisplaySprite</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Objects\TitleScene\DisplaySprite\TitleDisplaySprite.h">
-      <Filter>Game\Objects\TitleScene\DisplaySprite</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Objects\TitleScene\PostEffect\TitlePostEffect.h">
-      <Filter>Game\Objects\TitleScene\PostEffect</Filter>
-    </ClInclude>
     <ClInclude Include="Game\Objects\TitleScene\TitleController.h">
       <Filter>Game\Objects\TitleScene</Filter>
     </ClInclude>
@@ -2311,6 +2293,14 @@
     <ClCompile Include="Engine\Effect\Particle\Module\Updater\Material\ParticleUpdateNoiseUVModule.cpp" />
     <ClCompile Include="Engine\Effect\Particle\Module\Updater\Primitive\Derived\ParticleLightningUpdater.cpp" />
     <ClCompile Include="Engine\Effect\Particle\Module\Spawner\ParticleSpawnCircleModule.cpp" />
+    <ClCompile Include="Game\PostEffect\CRTDisplayUpdater.cpp" />
+    <ClCompile Include="Game\Objects\TitleScene\Background\TitleBackground.cpp" />
+    <ClCompile Include="Game\Objects\Common\Input\Device\SelectUIGamePadInput.cpp" />
+    <ClCompile Include="Game\Objects\Common\Input\Device\SelectUIKeyInput.cpp" />
+    <ClCompile Include="Game\Objects\Common\UI\GameUIFocusNavigator.cpp" />
+    <ClCompile Include="Engine\Object\Base\AnimationObject2D.cpp" />
+    <ClCompile Include="Engine\Object\Base\AnimationObject3D.cpp" />
+    <ClCompile Include="Game\Camera\Title\TitleViewCamera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\Camera\Follow\State\States\FollowCameraReturnDefaultRotate.h" />
@@ -2330,5 +2320,17 @@
     <ClInclude Include="Engine\Effect\Particle\Module\Updater\Material\ParticleUpdateNoiseUVModule.h" />
     <ClInclude Include="Engine\Effect\Particle\Module\Updater\Primitive\Derived\ParticleLightningUpdater.h" />
     <ClInclude Include="Engine\Effect\Particle\Module\Spawner\ParticleSpawnCircleModule.h" />
+    <ClInclude Include="Game\PostEffect\CRTDisplayUpdater.h" />
+    <ClInclude Include="Game\Objects\TitleScene\Background\TitleBackground.h" />
+    <ClInclude Include="Game\Objects\Common\Input\Device\SelectUIGamePadInput.h" />
+    <ClInclude Include="Game\Objects\Common\Input\Device\SelectUIKeyInput.h" />
+    <ClInclude Include="Game\Objects\Common\Input\SelectUIInputAction.h" />
+    <ClInclude Include="Game\Objects\Common\UI\GameUIFocusNavigator.h" />
+    <ClInclude Include="Engine\Utility\Animation\ValueSource\Interface\IValueSource.h" />
+    <ClInclude Include="Engine\Utility\Animation\ValueSource\LerpValueSource.h" />
+    <ClInclude Include="Engine\Utility\Animation\ValueSource\AnimationChannel.h" />
+    <ClInclude Include="Engine\Object\Base\AnimationObject2D.h" />
+    <ClInclude Include="Engine\Object\Base\AnimationObject3D.h" />
+    <ClInclude Include="Game\Camera\Title\TitleViewCamera.h" />
   </ItemGroup>
 </Project>

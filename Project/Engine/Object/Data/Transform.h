@@ -161,8 +161,15 @@ public:
 
 	void UpdateMatrix();
 
-	void ImGui(float itemSize);
+	void ImGui(float itemSize, float buttonSize = 32.0f);
 
+	// json
+	void ToJson(Json& data);
+	void FromJson(const Json& data);
+
+	//--------- accessor -----------------------------------------------------
+
+	// 画面の中心に設定
 	void SetCenterPos();
 
 	//--------- variables ----------------------------------------------------
@@ -171,6 +178,7 @@ public:
 	float rotation;
 
 	Vector2 size;           // 表示サイズ
+	Vector2 sizeScale;      // スケール
 	Vector2 anchorPoint;    // アンカーポイント
 
 	Vector2 textureLeftTop; // テクスチャ左上座標
@@ -185,6 +193,9 @@ public:
 	Matrix4x4 matrix;
 
 	const Transform2D* parent = nullptr;
+
+	// 親がいてもその場で回転するかどうか
+	bool rotateAroundSelfWhenParented = true;
 
 	//--------- accessor -----------------------------------------------------
 

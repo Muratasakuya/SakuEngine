@@ -134,7 +134,7 @@ uint32_t ObjectManager::CreateSkybox(const std::string& textureName) {
 	auto* skybox = objectPoolManager_->AddData<Skybox>(object);
 
 	// dataを初期化
-	skybox->Create(device_, asset_->GetTextureGPUIndex(textureName));
+	skybox->Create(device_, asset_->GetTextureGPUIndex(textureName), object);
 	LOG_INFO("created skybox: textureName: [{}]", textureName);
 
 	return object;
