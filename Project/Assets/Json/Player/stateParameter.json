@@ -103,6 +103,16 @@
         "exitTime_": 0.10000000149011612,
         "moveValue_": 24.0,
         "nextAnimDuration_": 0.01600000075995922,
+        "rotateEffectOffsetRotation_": {
+            "x": 0.0,
+            "y": 1.5700000524520874,
+            "z": 0.0
+        },
+        "rotateEffectOffset_": {
+            "x": 0.0,
+            "y": 12.0,
+            "z": 0.0
+        },
         "rotationLerpRate_": 0.46000000834465027
     },
     "Avoid": {

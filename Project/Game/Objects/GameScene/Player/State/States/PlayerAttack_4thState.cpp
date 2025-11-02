@@ -20,10 +20,20 @@ PlayerAttack_4thState::PlayerAttack_4thState(Player* player) {
 	player_ = player;
 
 	// エフェクト作成
+	// 地割れエフェクト
 	groundCrackEffect_ = std::make_unique<EffectGroup>();
 	groundCrackEffect_->Init("groundCrack", "PlayerEffect");
 	groundCrackEffect_->LoadJson("GameEffectGroup/Player/groundCrackEffect.json");
 	groundCrackEmitted_ = false;
+
+	// 回転エフェクト
+	rotationEffect_ = std::make_unique<EffectGroup>();
+	rotationEffect_->Init("rotationEffect", "PlayerEffect");
+	rotationEffect_->LoadJson("GameEffectGroup/Player/playerAttack4thRotateEffect.json");
+
+	// 親の設定
+	rotationEffect_->SetParent("player4thAttackRotateSlash", player_->GetTransform());
+	rotationEffect_->SetParent("player4thAttackRotateLightning", player_->GetTransform());
 }
 
 void PlayerAttack_4thState::Enter(Player& player) {
@@ -54,6 +64,9 @@ void PlayerAttack_4thState::Enter(Player& player) {
 		// カメラアニメーション開始
 		followCamera_->StartPlayerActionAnim(PlayerState::Attack_4th);
 	}
+
+	// 回転エフェクトの発生
+	rotationEffect_->Emit(player_->GetRotation() * rotateEffectOffset_);
 }
 
 void PlayerAttack_4thState::Update(Player& player) {
@@ -102,6 +115,15 @@ void PlayerAttack_4thState::UpdateAlways([[maybe_unused]] Player& player) {
 
 	// 地割れエフェクトの更新
 	groundCrackEffect_->Update();
+	// 回転エフェクトの更新
+	// 親の回転を設定する
+	Quaternion offsetRotation =
+		Quaternion::Normalize(Quaternion::EulerToQuaternion(rotateEffectOffsetRotation_));
+	Quaternion rotation = Quaternion::Normalize(Quaternion::Multiply(player.GetRotation(), offsetRotation));
+
+	rotationEffect_->SetParentRotation("player4thAttackRotateSlash", rotation, ParticleUpdateModuleID::Rotation);
+	rotationEffect_->SetParentRotation("player4thAttackRotateLightning", rotation, ParticleUpdateModuleID::Primitive);
+	rotationEffect_->Update();
 }
 
 void PlayerAttack_4thState::Exit([[maybe_unused]] Player& player) {
@@ -122,6 +144,9 @@ void PlayerAttack_4thState::ImGui(const Player& player) {
 	ImGui::DragFloat("rotationLerpRate", &rotationLerpRate_, 0.001f);
 	ImGui::DragFloat("exitTime", &exitTime_, 0.01f);
 
+	ImGui::DragFloat3("rotateEffectOffset", &rotateEffectOffset_.x, 0.1f);
+	ImGui::DragFloat3("rotateEffectOffsetRotation", &rotateEffectOffsetRotation_.x, 0.01f);
+
 	PlayerBaseAttackState::ImGui(player);
 
 	moveTimer_.ImGui("MoveTimer");
@@ -133,6 +158,9 @@ void PlayerAttack_4thState::ApplyJson(const Json& data) {
 	nextAnimDuration_ = JsonAdapter::GetValue<float>(data, "nextAnimDuration_");
 	rotationLerpRate_ = JsonAdapter::GetValue<float>(data, "rotationLerpRate_");
 	exitTime_ = JsonAdapter::GetValue<float>(data, "exitTime_");
+
+	rotateEffectOffset_ = Vector3::FromJson(data.value("rotateEffectOffset_", Json()));
+	rotateEffectOffsetRotation_ = Vector3::FromJson(data.value("rotateEffectOffsetRotation_", Json()));
 
 	PlayerBaseAttackState::ApplyJson(data);
 
@@ -147,6 +175,9 @@ void PlayerAttack_4thState::SaveJson(Json& data) {
 	data["nextAnimDuration_"] = nextAnimDuration_;
 	data["rotationLerpRate_"] = rotationLerpRate_;
 	data["exitTime_"] = exitTime_;
+
+	data["rotateEffectOffset_"] = rotateEffectOffset_.ToJson();
+	data["rotateEffectOffsetRotation_"] = rotateEffectOffsetRotation_.ToJson();
 
 	PlayerBaseAttackState::SaveJson(data);
 
