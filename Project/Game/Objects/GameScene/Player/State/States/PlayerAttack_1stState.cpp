@@ -21,7 +21,7 @@ PlayerAttack_1stState::PlayerAttack_1stState(Player* player) {
 	// 剣エフェクト作成
 	slashEffect_ = std::make_unique<EffectGroup>();
 	slashEffect_->Init("slashEffect1st", "PlayerEffect");
-	slashEffect_->LoadJson("GameEffectGroup/Player/playerAttack1stSlashEffect.json");
+	slashEffect_->LoadJson("GameEffectGroup/Player/playerAttackSlashEffect_0.json");
 
 	// 親の設定
 	slashEffect_->SetParent("playerAttackSlash_0", player_->GetTransform());

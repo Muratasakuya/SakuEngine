@@ -3,6 +3,7 @@
 //============================================================================
 //	include
 //============================================================================
+#include <Engine/Effect/User/EffectGroup.h>
 #include <Game/Objects/GameScene/Player/State/Interface/PlayerBaseAttackState.h>
 
 // c++
@@ -25,6 +26,7 @@ public:
 	void Enter(Player& player) override;
 
 	void Update(Player& player) override;
+	void UpdateAlways(Player& player) override;
 
 	void Exit(Player& player) override;
 
@@ -71,6 +73,14 @@ private:
 	// debug
 	std::array<Vector3, kNumSegments> debugWayPoints_;
 	std::array<Vector3, kNumSegments> debugApproachWayPoints_;
+
+	// 剣エフェクト
+	// 1段目
+	std::unique_ptr<EffectGroup> slash1stEffect_;
+	Vector3 slash1stEffectOffset_; // 発生位置のオフセット
+	// 2段目
+	std::unique_ptr<EffectGroup> slash2ndEffect_;
+	Vector3 slash2ndEffectOffset_; // 発生位置のオフセット
 
 	//--------- functions ----------------------------------------------------
 
