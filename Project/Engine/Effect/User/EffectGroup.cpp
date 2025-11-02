@@ -147,7 +147,8 @@ void EffectGroup::SetKeyframePath(const std::string& nodeKey, const std::vector<
 	}
 }
 
-void EffectGroup::SetParentRotation(const std::string& nodeKey, const Quaternion& rotation) {
+void EffectGroup::SetParentRotation(const std::string& nodeKey, const Quaternion& rotation,
+	ParticleUpdateModuleID updaterID) {
 
 	for (const auto& node : nodes_) {
 		if (node.key == nodeKey) {
@@ -156,7 +157,7 @@ void EffectGroup::SetParentRotation(const std::string& nodeKey, const Quaternion
 			ParticleCommand command = EffectModuleBinder::MakeCommand<Quaternion>(
 				ParticleCommandTarget::Updater, ParticleCommandID::SetParentRotation, rotation);
 			// Rotationに設定
-			command.filter.updaterId = ParticleUpdateModuleID::Rotation;
+			command.filter.updaterId = updaterID;
 
 			// コマンド送信
 			EffectCommandRouter::Send(node.system, command);

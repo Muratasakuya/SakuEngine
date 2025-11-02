@@ -23,6 +23,11 @@ PlayerAttack_3rdState::PlayerAttack_3rdState(Player* player) {
 	// debug
 	debugForward_.emplace(PlayerWeaponType::Left, Vector3::AnyInit(0.0f));
 	debugForward_.emplace(PlayerWeaponType::Right, Vector3::AnyInit(0.0f));
+
+	// ダッシュエフェクト作成
+	catchDashEffect_ = std::make_unique<EffectGroup>();
+	catchDashEffect_->Init("catchDashEffect", "PlayerEffect");
+	catchDashEffect_->LoadJson("GameEffectGroup/Player/playerCatchDashEffect.json");
 }
 
 void PlayerAttack_3rdState::Enter(Player& player) {
@@ -82,6 +87,13 @@ void PlayerAttack_3rdState::Update(Player& player) {
 
 	// 進捗更新
 	totalTimer_.Update();
+}
+
+void PlayerAttack_3rdState::UpdateAlways(Player& player) {
+
+	// ダッシュエフェクトの更新
+	// 親の回転を設定する
+	catchDashEffect_->Update();
 }
 
 void PlayerAttack_3rdState::LerpWeapon(Player& player, PlayerWeaponType type) {
@@ -208,6 +220,13 @@ void PlayerAttack_3rdState::UpdateAnimKeyEvent(Player& player) {
 		catchTargetPos_ = (player.GetWeapon(PlayerWeaponType::Left)->GetTranslation() +
 			player.GetWeapon(PlayerWeaponType::Right)->GetTranslation()) / 2.0f;
 		catchTargetPos_.y = initPosY_;
+
+		// ダッシュエフェクトの発生
+		catchDashEffect_->SetParentRotation("playerAttack3rdDashEffect",
+			Quaternion::Normalize(player.GetRotation()), ParticleUpdateModuleID::Rotation);
+		catchDashEffect_->SetParentRotation("playerAttack3rdDashEffect",
+			Quaternion::Normalize(player.GetRotation()), ParticleUpdateModuleID::Primitive);
+		catchDashEffect_->Emit(player_->GetTranslation() + (player.GetRotation() * dashEffectOffset_));
 	}
 }
 
@@ -312,6 +331,7 @@ void PlayerAttack_3rdState::ImGui(const Player& player) {
 	ImGui::DragFloat("exitTime", &exitTime_, 0.01f);
 	ImGui::DragFloat("bossEnemyDistance", &bossEnemyDistance_, 0.01f);
 	ImGui::DragFloat("weaponPosY", &weaponPosY_, 0.01f);
+	ImGui::DragFloat3("dashEffectOffset", &dashEffectOffset_.x, 0.1f);
 
 	PlayerBaseAttackState::ImGui(player);
 
@@ -357,6 +377,8 @@ void PlayerAttack_3rdState::ApplyJson(const Json& data) {
 	bossEnemyDistance_ = JsonAdapter::GetValue<float>(data, "bossEnemyDistance_");
 	weaponPosY_ = JsonAdapter::GetValue<float>(data, "weaponPosY_");
 
+	dashEffectOffset_ = Vector3::FromJson(data.value("dashEffectOffset_", Json()));
+
 	PlayerBaseAttackState::ApplyJson(data);
 
 	backMoveTimer_.FromJson(data["BackMoveTimer"]);
@@ -391,6 +413,8 @@ void PlayerAttack_3rdState::SaveJson(Json& data) {
 	data["exitTime_"] = exitTime_;
 	data["bossEnemyDistance_"] = bossEnemyDistance_;
 	data["weaponPosY_"] = weaponPosY_;
+
+	data["dashEffectOffset_"] = dashEffectOffset_.ToJson();
 
 	PlayerBaseAttackState::SaveJson(data);
 

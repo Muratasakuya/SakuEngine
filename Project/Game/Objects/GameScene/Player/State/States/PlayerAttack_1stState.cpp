@@ -86,7 +86,8 @@ void PlayerAttack_1stState::Update(Player& player) {
 void PlayerAttack_1stState::UpdateAlways(Player& player) {
 
 	// 剣エフェクトの更新、親の回転を設定する
-	slashEffect_->SetParentRotation("playerAttackSlash_0", Quaternion::Normalize(player.GetRotation()));
+	slashEffect_->SetParentRotation("playerAttackSlash_0",
+		Quaternion::Normalize(player.GetRotation()), ParticleUpdateModuleID::Rotation);
 	slashEffect_->Update();
 }
 

@@ -44,9 +44,9 @@
                             },
                             "radius": 1.0,
                             "translation": {
-                                "x": 0.0,
-                                "y": 2.0,
-                                "z": 0.0
+                                "x": 5.825488567352295,
+                                "y": 5.500000476837158,
+                                "z": -373.95587158203125
                             }
                         },
                         "type": "Sphere"
@@ -61,43 +61,6 @@
                         {
                             "params": null,
                             "type": "Velocity"
-                        },
-                        {
-                            "params": {
-                                "angleAxis_": {
-                                    "x": 0.0,
-                                    "y": 0.0,
-                                    "z": 0.0
-                                },
-                                "angleSpeedRadian_": 0.0,
-                                "billboardType": "All",
-                                "easingType": "Linear",
-                                "lerpRotation": {
-                                    "start": {
-                                        "w": 1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "target": {
-                                        "w": 1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    }
-                                },
-                                "lockAxisType": "None",
-                                "lockRotation": {
-                                    "w": 1.0,
-                                    "x": 0.0,
-                                    "y": 0.0,
-                                    "z": 0.0
-                                },
-                                "slerpExtraTurns_": 0,
-                                "slerpPreferLongArc_": false,
-                                "updateType": "LockRotation"
-                            },
-                            "type": "Rotation"
                         },
                         {
                             "params": {
@@ -368,9 +331,9 @@
                             },
                             "radius": 0.0,
                             "translation": {
-                                "x": 0.0,
-                                "y": 4.0,
-                                "z": 0.0
+                                "x": 5.825488567352295,
+                                "y": 5.500000476837158,
+                                "z": -373.95587158203125
                             }
                         },
                         "type": "Sphere"
@@ -732,9 +695,9 @@
                             },
                             "radius": 0.0,
                             "translation": {
-                                "x": 0.0,
-                                "y": 4.0,
-                                "z": 0.0
+                                "x": 5.825488567352295,
+                                "y": 5.500000476837158,
+                                "z": -373.95587158203125
                             }
                         },
                         "type": "Sphere"

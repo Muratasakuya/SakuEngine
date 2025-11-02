@@ -43,6 +43,8 @@ private:
 
 	// 親座標
 	Vector3 parentTranslation_;
+	// 親回転
+	Quaternion parentRotation_;
 
 	// 進行方向に雷の終了地点を向けるか
 	bool isLookAtEnd_;

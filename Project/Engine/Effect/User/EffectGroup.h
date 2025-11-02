@@ -63,7 +63,8 @@ public:
 	// キーフレームパスの設定
 	void SetKeyframePath(const std::string& nodeKey, const std::vector<Vector3>& keys);
 	// 回転の設定
-	void SetParentRotation(const std::string& nodeKey, const Quaternion& rotation);
+	void SetParentRotation(const std::string& nodeKey, const Quaternion& rotation,
+		ParticleUpdateModuleID updaterID);
 
 	// すべてのノードが処理を終えているか
 	bool IsFinishedAllNode() const;

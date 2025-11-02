@@ -25,7 +25,7 @@ PlayerAttack_2ndState::PlayerAttack_2ndState(Player* player) {
 	slash1stEffect_->Init("slashEffect1st", "PlayerEffect");
 	slash1stEffect_->LoadJson("GameEffectGroup/Player/playerAttackSlashEffect_0.json");
 	// 2段目
-	slash2ndEffect_ = std::make_unique<EffectGroup>();	
+	slash2ndEffect_ = std::make_unique<EffectGroup>();
 	slash2ndEffect_->Init("slashEffect2nd", "PlayerEffect");
 	slash2ndEffect_->LoadJson("GameEffectGroup/Player/playerAttackSlashEffect_1.json");
 
@@ -128,10 +128,12 @@ void PlayerAttack_2ndState::UpdateAlways(Player& player) {
 
 	// 剣エフェクトの更新、親の回転を設定する
 	// 1段目
-	slash1stEffect_->SetParentRotation("playerAttackSlash_0", Quaternion::Normalize(player.GetRotation()));
+	slash1stEffect_->SetParentRotation("playerAttackSlash_0",
+		Quaternion::Normalize(player.GetRotation()), ParticleUpdateModuleID::Rotation);
 	slash1stEffect_->Update();
 	// 2段目
-	slash2ndEffect_->SetParentRotation("playerAttackSlash_1", Quaternion::Normalize(player.GetRotation()));
+	slash2ndEffect_->SetParentRotation("playerAttackSlash_1",
+		Quaternion::Normalize(player.GetRotation()), ParticleUpdateModuleID::Rotation);
 	slash2ndEffect_->Update();
 }
 
