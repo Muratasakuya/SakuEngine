@@ -13,6 +13,11 @@
         "moveValue_": 24.0,
         "nextAnimDuration_": 0.019999999552965164,
         "rotationLerpRate_": 0.46000000834465027,
+        "slashEffectOffset_": {
+            "x": -2.799999952316284,
+            "y": 4.5,
+            "z": 5.900000095367432
+        },
         "targetCameraRotateX_": 0.05000000074505806
     },
     "Attack_2nd": {

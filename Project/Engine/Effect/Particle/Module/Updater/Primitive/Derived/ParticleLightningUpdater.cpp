@@ -38,6 +38,14 @@ void ParticleLightningUpdater::SetCommand(const ParticleCommand& command) {
 		}
 		break;
 	}
+	case ParticleCommandID::SetRotation: {
+		if (const auto& rotation = std::get_if<Quaternion>(&command.value)) {
+
+			// 雷の位置を回転させる
+
+		}
+		break;
+	}
 	}
 }
 
@@ -168,7 +176,7 @@ void ParticleLightningUpdater::FromJson(const Json& data) {
 	const auto& lightningData = data["lightning"];
 
 	isLookAtEnd_ = lightningData.value("isLookAtEnd", isLookAtEnd_);
-	isRefSpawnPos_ = lightningData.value("isLookAtEnd", isRefSpawnPos_);
+	isRefSpawnPos_ = lightningData.value("isRefSpawnPos_", isRefSpawnPos_);
 
 	start_.start = Vector3::FromJson(lightningData["startStart"]);
 	target_.start = Vector3::FromJson(lightningData["targetStart"]);

@@ -37,8 +37,9 @@ enum class ParticleCommandID {
 	SetLightningSegment, // 雷の位置設定
 
 	// 共通
-	SetTranslation, // 座標の設定
-	SetRotation,    // 回転の設定
+	SetTranslation,    // 座標の設定
+	SetRotation,       // 回転の設定
+	SetParentRotation, // 親回転の設定
 };
 
 // 寿命が尽きた時の処理

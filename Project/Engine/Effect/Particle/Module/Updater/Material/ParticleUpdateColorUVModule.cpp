@@ -65,7 +65,7 @@ void ParticleUpdateColorUVModule::Execute(
 	// uvMatrixの更新
 	Vector3 pivot = Vector3(pivot_.x, pivot_.y, 0.0f);
 	Vector3 translationWithPivot = translation + pivot - Vector3::Transform(pivot, scaleRotateMatrix);
-	particle.material.noiseUVTransform = Matrix4x4::MakeAffineMatrix(
+	particle.material.colorUVTransform = Matrix4x4::MakeAffineMatrix(
 		scale, Vector3(0.0f, 0.0f, rotationZ), translationWithPivot);
 }
 

@@ -17,6 +17,14 @@ PlayerAttack_1stState::PlayerAttack_1stState(Player* player) {
 
 	player_ = nullptr;
 	player_ = player;
+
+	// 剣エフェクト作成
+	slashEffect_ = std::make_unique<EffectGroup>();
+	slashEffect_->Init("slashEffect1st", "PlayerEffect");
+	slashEffect_->LoadJson("GameEffectGroup/Player/playerAttack1stSlashEffect.json");
+
+	// 親の設定
+	slashEffect_->SetParent("playerAttackSlash_0", player_->GetTransform());
 }
 
 void PlayerAttack_1stState::Enter(Player& player) {
@@ -46,6 +54,9 @@ void PlayerAttack_1stState::Enter(Player& player) {
 		startPos_ = playerPos;
 		targetPos_ = startPos_ + player.GetTransform().GetForward() * moveValue_;
 	}
+
+	// 剣エフェクトの発生
+	slashEffect_->Emit(player_->GetRotation() * slashEffectOffset_);
 }
 
 void PlayerAttack_1stState::Update(Player& player) {
@@ -72,6 +83,13 @@ void PlayerAttack_1stState::Update(Player& player) {
 	}
 }
 
+void PlayerAttack_1stState::UpdateAlways(Player& player) {
+
+	// 剣エフェクトの更新、親の回転を設定する
+	slashEffect_->SetParentRotation("playerAttackSlash_0", Quaternion::Normalize(player.GetRotation()));
+	slashEffect_->Update();
+}
+
 void PlayerAttack_1stState::Exit([[maybe_unused]] Player& player) {
 
 	// リセット
@@ -86,6 +104,7 @@ void PlayerAttack_1stState::ImGui(const Player& player) {
 	ImGui::DragFloat("rotationLerpRate", &rotationLerpRate_, 0.001f);
 	ImGui::DragFloat("exitTime", &exitTime_, 0.01f);
 	ImGui::DragFloat("targetCameraRotateX", &targetCameraRotateX_, 0.01f);
+	ImGui::DragFloat3("slashEffectOffset", &slashEffectOffset_.x, 0.1f);
 
 	PlayerBaseAttackState::ImGui(player);
 
@@ -98,6 +117,8 @@ void PlayerAttack_1stState::ApplyJson(const Json& data) {
 	nextAnimDuration_ = JsonAdapter::GetValue<float>(data, "nextAnimDuration_");
 	rotationLerpRate_ = JsonAdapter::GetValue<float>(data, "rotationLerpRate_");
 	exitTime_ = JsonAdapter::GetValue<float>(data, "exitTime_");
+
+	slashEffectOffset_ = Vector3::FromJson(data.value("slashEffectOffset_", Json()));
 
 	PlayerBaseAttackState::ApplyJson(data);
 
@@ -113,6 +134,8 @@ void PlayerAttack_1stState::SaveJson(Json& data) {
 	data["nextAnimDuration_"] = nextAnimDuration_;
 	data["rotationLerpRate_"] = rotationLerpRate_;
 	data["exitTime_"] = exitTime_;
+
+	data["slashEffectOffset_"] = slashEffectOffset_.ToJson();
 
 	PlayerBaseAttackState::SaveJson(data);
 

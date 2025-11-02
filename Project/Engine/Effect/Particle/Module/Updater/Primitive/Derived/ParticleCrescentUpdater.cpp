@@ -37,14 +37,17 @@ void ParticleCrescentUpdater::Update(CPUParticle::ParticleData& particle, Easing
 	particle.primitive.crescent.endAngle = std::lerp(start_.endAngle,
 		target_.endAngle, EasedValue(easingType, particle.progress));
 
-	particle.primitive.crescent.lattice = std::lerp(start_.lattice,
-		target_.lattice, EasedValue(easingType, particle.progress));
-
 	particle.primitive.crescent.thickness = std::lerp(start_.thickness,
 		target_.thickness, EasedValue(easingType, particle.progress));
 
 	particle.primitive.crescent.pivot = Vector2::Lerp(start_.pivot,
 		target_.pivot, EasedValue(easingType, particle.progress));
+
+	particle.primitive.crescent.tipSharpness = Vector2::Lerp(start_.tipSharpness,
+		target_.tipSharpness, EasedValue(easingType, particle.progress));
+
+	particle.primitive.crescent.weight = Vector2::Lerp(start_.weight,
+		target_.weight, EasedValue(easingType, particle.progress));
 
 	particle.primitive.crescent.outerColor = Color::Lerp(start_.outerColor,
 		target_.outerColor, EasedValue(easingType, particle.progress));
@@ -73,14 +76,17 @@ void ParticleCrescentUpdater::ImGui() {
 	ImGui::DragFloat("startEndAngle", &start_.endAngle, 0.01f);
 	ImGui::DragFloat("targetEndAngle", &target_.endAngle, 0.01f);
 
-	ImGui::DragFloat("startLattice", &start_.lattice, 0.01f);
-	ImGui::DragFloat("targetLattice", &target_.lattice, 0.01f);
-
 	ImGui::DragFloat("startThickness", &start_.thickness, 0.01f, 0.1f, 8.0f);
 	ImGui::DragFloat("targetThickness", &target_.thickness, 0.01f, 0.1f, 8.0f);
 
 	ImGui::DragFloat2("startPivot", &start_.pivot.x, 0.01f);
 	ImGui::DragFloat2("targetPivot", &target_.pivot.x, 0.01f);
+
+	ImGui::DragFloat2("startTipSharpness", &start_.tipSharpness.x, 0.01f, 0.0f, 1.0f);
+	ImGui::DragFloat2("targetTipSharpness", &target_.tipSharpness.x, 0.01f, 0.0f, 1.0f);
+
+	ImGui::DragFloat2("startWeight", &start_.weight.x, 0.01f, 0.0f, 1.0f);
+	ImGui::DragFloat2("targetWeight", &target_.weight.x, 0.01f, 0.0f, 1.0f);
 
 	ImGui::ColorEdit4("startOuterColor", &start_.outerColor.r);
 	ImGui::ColorEdit4("targetOuterColor", &target_.outerColor.r);
@@ -108,13 +114,17 @@ void ParticleCrescentUpdater::FromJson(const Json& data) {
 	start_.endAngle = crescentData.value("startEndAngle", start_.endAngle);
 	target_.endAngle = crescentData.value("targetEndAngle", target_.endAngle);
 
-	start_.lattice = crescentData.value("startLattice", start_.lattice);
-	target_.lattice = crescentData.value("targetLattice", target_.lattice);
 	start_.thickness = crescentData.value("startThickness", start_.thickness);
 	target_.thickness = crescentData.value("targetThickness", target_.thickness);
 
 	start_.pivot = start_.pivot.FromJson(crescentData["startPivot"]);
 	target_.pivot = target_.pivot.FromJson(crescentData["targetPivot"]);
+
+	start_.tipSharpness = Vector2::FromJson(crescentData.value("startTipSharpness", Json()));
+	target_.tipSharpness = Vector2::FromJson(crescentData.value("targetTipSharpness", Json()));
+
+	start_.weight = Vector2::FromJson(crescentData.value("startWeight", Json()));
+	target_.weight = Vector2::FromJson(crescentData.value("targetWeight", Json()));
 
 	if (crescentData.contains("startOuterColor")) {
 
@@ -143,13 +153,17 @@ void ParticleCrescentUpdater::ToJson(Json& data) const {
 	data["crescent"]["startEndAngle"] = start_.endAngle;
 	data["crescent"]["targetEndAngle"] = target_.endAngle;
 
-	data["crescent"]["startLattice"] = start_.lattice;
-	data["crescent"]["targetLattice"] = target_.lattice;
 	data["crescent"]["startThickness"] = start_.thickness;
 	data["crescent"]["targetThickness"] = target_.thickness;
 
 	data["crescent"]["startPivot"] = start_.pivot.ToJson();
 	data["crescent"]["targetPivot"] = target_.pivot.ToJson();
+
+	data["crescent"]["startTipSharpness"] = start_.tipSharpness.ToJson();
+	data["crescent"]["targetTipSharpness"] = target_.tipSharpness.ToJson();
+
+	data["crescent"]["startWeight"] = start_.weight.ToJson();
+	data["crescent"]["targetWeight"] = target_.weight.ToJson();
 
 	data["crescent"]["startOuterColor"] = start_.outerColor.ToJson();
 	data["crescent"]["targetOuterColor"] = target_.outerColor.ToJson();

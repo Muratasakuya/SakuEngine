@@ -86,6 +86,19 @@ void EffectGroup::StopNode(const std::string& nodeKey) {
 	}
 }
 
+void EffectGroup::SetParent(const std::string& nodeKey, const BaseTransform& transform) {
+
+	for (auto& node : nodes_) {
+		// 指定ノードと一致するノードがあるか
+		if (node.key == nodeKey) {
+
+			// 親の設定
+			node.system->SetParent(transform);
+			break;
+		}
+	}
+}
+
 void EffectGroup::ClearParent() {
 
 	parentAnchorId_ = 0;
@@ -126,6 +139,24 @@ void EffectGroup::SetKeyframePath(const std::string& nodeKey, const std::vector<
 				ParticleCommandTarget::Updater, ParticleCommandID::SetKeyframePath, keys);
 			// KeyframePathに設定
 			command.filter.updaterId = ParticleUpdateModuleID::KeyframePath;
+
+			// コマンド送信
+			EffectCommandRouter::Send(node.system, command);
+			break;
+		}
+	}
+}
+
+void EffectGroup::SetParentRotation(const std::string& nodeKey, const Quaternion& rotation) {
+
+	for (const auto& node : nodes_) {
+		if (node.key == nodeKey) {
+
+			// コマンド作成
+			ParticleCommand command = EffectModuleBinder::MakeCommand<Quaternion>(
+				ParticleCommandTarget::Updater, ParticleCommandID::SetParentRotation, rotation);
+			// Rotationに設定
+			command.filter.updaterId = ParticleUpdateModuleID::Rotation;
 
 			// コマンド送信
 			EffectCommandRouter::Send(node.system, command);

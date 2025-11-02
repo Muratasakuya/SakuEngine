@@ -87,13 +87,18 @@ struct CrescentForGPU {
 	float endAngle;
 
 	// 変形
-	float lattice;
 	float thickness;
 	Vector2 pivot;
 
 	// 頂点色
 	Color outerColor;
 	Color innerColor;
+
+	// 端の尖り度
+	Vector2 tipSharpness;
+
+	// 孤の重心
+	Vector2 weight;
 
 	int divide;
 
@@ -110,12 +115,14 @@ struct CrescentForGPU {
 		startAngle = pi / 6.0f;
 		endAngle = pi * 5.0f / 6.0f;
 
-		lattice = 0.5f;
 		thickness = 0.1f;
 		pivot = Vector2::AnyInit(0.5f);
 
 		outerColor = Color::White();
 		innerColor = Color::White();
+
+		tipSharpness = Vector2::AnyInit(0.5f);
+		weight = Vector2::AnyInit(0.5f);
 
 		divide = 8;
 		uvMode = 1;
