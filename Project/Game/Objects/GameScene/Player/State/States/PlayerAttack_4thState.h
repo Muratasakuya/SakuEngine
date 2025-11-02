@@ -56,6 +56,10 @@ private:
 	// 地割れエフェクト
 	std::unique_ptr<EffectGroup> groundCrackEffect_;
 	bool groundCrackEmitted_ = false;
+	// 回転エフェクト
+	std::unique_ptr<EffectGroup> rotationEffect_;
+	Vector3 rotateEffectOffset_;
+	Vector3 rotateEffectOffsetRotation_;
 
 	//--------- functions ----------------------------------------------------
 

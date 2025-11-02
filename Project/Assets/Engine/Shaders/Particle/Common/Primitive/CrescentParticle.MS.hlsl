@@ -15,6 +15,10 @@
 #define CRESCENT_MAX_DIVIDE 30
 #endif
 
+#ifndef CRESCENT_WEIGHT_SCALE
+#define CRESCENT_WEIGHT_SCALE 0.5f
+#endif
+
 //============================================================================
 //	CBuffer
 //============================================================================
@@ -36,13 +40,18 @@ struct Crescent {
 	float endAngle;
 	
 	// 変形
-	float lattice;
 	float thickness;
 	float2 pivot;
 	
 	// 頂点色
 	float4 outerColor;
 	float4 innerColor;
+	
+	// 端の尖り度
+	float2 tipSharpness;
+	
+	// 孤の重心
+	float2 weight;
 	
 	uint divide;
 	uint uvMode;
@@ -57,14 +66,34 @@ StructuredBuffer<Transform> gTransform : register(t1);
 
 float2 ArcPoint(const Crescent crescent, float t, bool outer) {
 	
+	// 角度
 	float angRad = lerp(crescent.startAngle, crescent.endAngle, t);
+
+	// 端の尖り度
+	float tip = lerp(crescent.tipSharpness.x, crescent.tipSharpness.y, t);
+	tip = saturate(tip);
+	float taper = lerp(1.0f, sin(t * PI), tip);
+
+	// 半径
 	float thicknessR = crescent.outerRadius - crescent.innerRadius;
-	float innerDynamic = crescent.outerRadius - thicknessR * sin(t * PI);
+	float innerDynamic = crescent.outerRadius - thicknessR * taper;
+	float r = outer ? crescent.outerRadius : innerDynamic;
 
-	float latticeOff = (outer ? 1.0f : -1.0f) * crescent.lattice * 0.5f * sin(t * PI);
-	float r = (outer ? crescent.outerRadius : innerDynamic) + latticeOff;
+	// 円弧の基準位置
+	float2 dir = float2(cos(angRad), sin(angRad));
+	float2 pos = dir * r;
 
-	return float2(cos(angRad), sin(angRad)) * r;
+	// 接線方向
+	float2 tangent = float2(-dir.y, dir.x);
+
+	// weightで重い側へ伸ばす
+	float wdiff = crescent.weight.y - crescent.weight.x;
+	float wamount = wdiff * CRESCENT_WEIGHT_SCALE * thicknessR * sin(t * PI);
+
+	// 接線方向に押し出し
+	pos += tangent * wamount;
+
+	return pos;
 }
 
 //============================================================================
@@ -105,8 +134,10 @@ out vertices MSOutput verts[(CRESCENT_MAX_DIVIDE + 1) * 4], out indices uint3 po
 		// 幅設定
 		float halfT = 0.5f * crescent.thickness;
 		// 端(start/end)で0、中央で1になるスケール
-		float thickScale = sin(t * PI);
-		float z = (outer ? 0.0f : (frontSide ? halfT * thickScale : -halfT * thickScale));
+		float tip = lerp(crescent.tipSharpness.x, crescent.tipSharpness.y, t);
+		tip = saturate(tip);
+		float taper = lerp(1.0f, sin(t * PI), tip);
+		float z = (outer ? 0.0f : (frontSide ? halfT * taper : -halfT * taper));
 
 		// world行列を作成
 		float4x4 worldMatrix = MakeWorldMatrix(transform, gPerView.billboardMatrix, gPerView.cameraPos);

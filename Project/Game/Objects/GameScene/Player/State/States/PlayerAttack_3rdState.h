@@ -3,6 +3,7 @@
 //============================================================================
 //	include
 //============================================================================
+#include <Engine/Effect/User/EffectGroup.h>
 #include <Game/Objects/GameScene/Player/State/Interface/PlayerBaseAttackState.h>
 
 //============================================================================
@@ -22,6 +23,7 @@ public:
 	void Enter(Player& player) override;
 
 	void Update(Player& player) override;
+	void UpdateAlways(Player& player) override;
 
 	void Exit(Player& player) override;
 
@@ -97,6 +99,10 @@ private:
 	// 進捗度
 	StateTimer totalTimer_; // 更新合計時間
 	bool endAttached_ = false;
+
+	// 剣を取りに行くダッシュエフェクト
+	std::unique_ptr<EffectGroup> catchDashEffect_;
+	Vector3 dashEffectOffset_;
 
 	//--------- functions ----------------------------------------------------
 

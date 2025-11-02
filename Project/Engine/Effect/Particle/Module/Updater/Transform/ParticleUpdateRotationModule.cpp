@@ -12,6 +12,8 @@
 void ParticleUpdateRotationModule::Init() {
 
 	// 初期化値
+	lockRotation_ = Quaternion::IdentityQuaternion();
+	parentRotation_ = Quaternion::IdentityQuaternion();
 	lerpRotation_.start = Quaternion::IdentityQuaternion();
 	lerpRotation_.target = Quaternion::IdentityQuaternion();
 }
@@ -24,6 +26,14 @@ void ParticleUpdateRotationModule::SetCommand(const ParticleCommand& command) {
 
 			setRotation_ = *rotation;
 		}
+		break;
+	}
+	case ParticleCommandID::SetParentRotation: {
+		if (const auto& rotation = std::get_if<Quaternion>(&command.value)) {
+
+			parentRotation_ = *rotation;
+		}
+		break;
 	}
 	}
 }
@@ -59,6 +69,11 @@ Quaternion ParticleUpdateRotationModule::UpdateRotation(
 	CPUParticle::ParticleData& particle, float deltaTime) const {
 
 	switch (updateType_) {
+	case UpdateType::LockRotation: {
+
+		// そのまま返す
+		return lockRotation_;
+	}
 	case UpdateType::Slerp: {
 
 		const Quaternion start = Quaternion::Normalize(lerpRotation_.start);
@@ -130,7 +145,10 @@ Quaternion ParticleUpdateRotationModule::LockAxis(const Quaternion& rotation) co
 void ParticleUpdateRotationModule::UpdateMatrix(
 	CPUParticle::ParticleData& particle, const Quaternion& rotation) {
 
-	particle.rotation = Quaternion::Normalize(rotation);
+	// 親の回転を掛ける
+	particle.rotation = Quaternion::Normalize(
+		Quaternion::Multiply(parentRotation_, rotation));
+
 	// 全軸ビルボード処理
 	if (billboardType_ == ParticleBillboardType::All) {
 
@@ -171,6 +189,20 @@ void ParticleUpdateRotationModule::ImGui() {
 	EnumAdapter<LockAxisType>::Combo("lockAxisType", &lockAxisType_);
 
 	switch (updateType_) {
+	case UpdateType::LockRotation:
+
+		if (ImGui::DragFloat3("eulerLockRotation", &eulerLockRotation_.x, 0.01f)) {
+
+			lockRotation_ = Quaternion::EulerToQuaternion(eulerLockRotation_);
+			lockRotation_ = Quaternion::Normalize(lockRotation_);
+		}
+
+		if (ImGui::DragFloat4("lockRotation", &lockRotation_.x, 0.01f)) {
+
+			lockRotation_ = Quaternion::Normalize(lockRotation_);
+			eulerLockRotation_ = lockRotation_.ToEulerAngles(lockRotation_);
+		}
+		break;
 	case UpdateType::Slerp:
 
 		if (ImGui::DragFloat4("startRotation", &lerpRotation_.start.x, 0.01f)) {
@@ -205,6 +237,7 @@ Json ParticleUpdateRotationModule::ToJson() {
 
 	Json data;
 
+	data["lockRotation"] = lockRotation_.ToJson();
 	data["easingType"] = EnumAdapter<EasingType>::ToString(easing_);
 	data["billboardType"] = EnumAdapter<ParticleBillboardType>::ToString(billboardType_);
 	data["updateType"] = EnumAdapter<UpdateType>::ToString(updateType_);
@@ -225,6 +258,8 @@ void ParticleUpdateRotationModule::FromJson(const Json& data) {
 
 	// 1度初期化
 	Init();
+
+	lockRotation_ = Quaternion::FromJson(data.value("lockRotation", Json()));
 
 	const auto& easingType = EnumAdapter<EasingType>::FromString(data.value("easingType", "EaseInSine"));
 	easing_ = easingType.value();

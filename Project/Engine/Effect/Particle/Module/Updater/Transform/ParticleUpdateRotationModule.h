@@ -49,6 +49,7 @@ private:
 	// 更新の種類
 	enum class UpdateType {
 
+		LockRotation,    // 回転固定
 		Slerp,           // 補間
 		AngularVelocity, // 角速度
 		LookToVelocity   // 速度方向を向く
@@ -65,6 +66,10 @@ private:
 
 	//--------- variables ----------------------------------------------------
 
+	// 固定回転
+	Vector3 eulerLockRotation_;
+	Quaternion lockRotation_;
+
 	// 回転補間
 	// 追加回転数
 	int slerpExtraTurns_ = 0;
@@ -76,7 +81,8 @@ private:
 	float angleSpeedRadian_; // 回転速度
 
 	// 外部設定
-	std::optional<Quaternion> setRotation_;
+	std::optional<Quaternion> setRotation_; // そのまま回転を固定して設定
+	Quaternion parentRotation_;             // 親の回転
 
 	// ビルボードの種類
 	ParticleBillboardType billboardType_;

@@ -3,6 +3,7 @@
 //============================================================================
 //	include
 //============================================================================
+#include <Engine/Effect/User/EffectGroup.h>
 #include <Game/Objects/GameScene/Player/State/Interface/PlayerBaseAttackState.h>
 
 //============================================================================
@@ -22,6 +23,7 @@ public:
 	void Enter(Player& player) override;
 
 	void Update(Player& player) override;
+	void UpdateAlways(Player& player) override;
 
 	void Exit(Player& player) override;
 
@@ -50,6 +52,10 @@ private:
 	float moveValue_;   // 移動量
 	Vector3 startPos_;  // 開始座標
 	Vector3 targetPos_; // 目標座標
+
+	// 剣エフェクト
+	std::unique_ptr<EffectGroup> slashEffect_;
+	Vector3 slashEffectOffset_; // 発生位置のオフセット
 
 	//--------- functions ----------------------------------------------------
 

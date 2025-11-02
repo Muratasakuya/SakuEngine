@@ -1,0 +1,122 @@
+{
+    "Nodes": [
+        {
+            "Emit": {
+                "Mode": "Once",
+                "count": 1,
+                "delay": 0.0,
+                "duration": 0.0,
+                "interval": 0.0
+            },
+            "Module": {
+                "LifeEndMode": "Advance",
+                "PosePreset": "None",
+                "posOption": "World",
+                "sendLifeEndMode": false,
+                "sendSpawnerRotation": false,
+                "sendSpawnerTranslation": true,
+                "sendUpdaterKeyPath": false,
+                "sendUpdaterLightning": false,
+                "sendUpdaterRotation": false,
+                "sendUpdaterTranslate": false,
+                "spawnPos": {
+                    "x": 0.0,
+                    "y": 0.4000000059604645,
+                    "z": 0.0
+                },
+                "spawnRotate": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "spawnRotateOption": "None",
+                "spawnerScaleEnable": false,
+                "spawnerScaleValue": 1.0,
+                "updateRotate": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "updateRotateOption": "None",
+                "updaterScaleEnable": false,
+                "updaterScaleValue": 1.0
+            },
+            "ParticleSystem": {
+                "path": "Particle/Player/player4thAttackRotateSlash.json"
+            },
+            "StartAfter": {
+                "Condition": "None",
+                "groupIndex": -1,
+                "nodeKey": ""
+            },
+            "Stop": {
+                "Condition": "None",
+                "emptyGroupIndex": -1,
+                "emptyNodeKey": ""
+            },
+            "key": "player4thAttackRotateSlash",
+            "name": "player4thAttackRotateSlash",
+            "startOffset": 0.0
+        },
+        {
+            "Emit": {
+                "Mode": "Always",
+                "count": 1,
+                "delay": 0.0,
+                "duration": 0.5,
+                "interval": 0.0
+            },
+            "Module": {
+                "LifeEndMode": "Advance",
+                "PosePreset": "None",
+                "posOption": "World",
+                "sendLifeEndMode": false,
+                "sendSpawnerRotation": false,
+                "sendSpawnerTranslation": true,
+                "sendUpdaterKeyPath": false,
+                "sendUpdaterLightning": false,
+                "sendUpdaterRotation": false,
+                "sendUpdaterTranslate": false,
+                "spawnPos": {
+                    "x": 0.0,
+                    "y": 0.4000000059604645,
+                    "z": 0.0
+                },
+                "spawnRotate": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "spawnRotateOption": "None",
+                "spawnerScaleEnable": false,
+                "spawnerScaleValue": 1.0,
+                "updateRotate": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "updateRotateOption": "None",
+                "updaterScaleEnable": false,
+                "updaterScaleValue": 1.0
+            },
+            "ParticleSystem": {
+                "path": "Particle/Player/player4thAttackRotateLightning.json"
+            },
+            "StartAfter": {
+                "Condition": "None",
+                "groupIndex": -1,
+                "nodeKey": ""
+            },
+            "Stop": {
+                "Condition": "AfterDuration",
+                "emptyGroupIndex": -1,
+                "emptyNodeKey": ""
+            },
+            "key": "player4thAttackRotateLightning",
+            "name": "player4thAttackRotateLightning",
+            "startOffset": 0.0
+        }
+    ],
+    "parentAnchorId_": 0,
+    "parentAnchorName_": ""
+}

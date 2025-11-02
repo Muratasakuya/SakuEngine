@@ -38,6 +38,14 @@ void ParticleLightningUpdater::SetCommand(const ParticleCommand& command) {
 		}
 		break;
 	}
+	case ParticleCommandID::SetParentRotation: {
+		if (const auto& rotation = std::get_if<Quaternion>(&command.value)) {
+
+			// 親の回転
+			parentRotation_ = *rotation;
+		}
+		break;
+	}
 	}
 }
 
@@ -50,6 +58,7 @@ void ParticleLightningUpdater::Init() {
 	isLookAtEnd_ = false;
 	isDrawDebugPoint_ = false;
 	isRefSpawnPos_ = false;
+	parentRotation_ = Quaternion::IdentityQuaternion();
 	parentTranslation_ = Vector3::AnyInit(0.0f);
 }
 
@@ -58,39 +67,37 @@ void ParticleLightningUpdater::Update(CPUParticle::ParticleData& particle, Easin
 	LightningForGPU& lightning = particle.primitive.lightning;
 	const float lifeProgress = particle.progress;
 
-	// 親座標を考慮した位置を取得する
-	auto GetParentedPos = [&](const Vector3& pos) {
-		// 発生地点を参照する場合
+	// 親、発生の位置
+	auto GetT = [&]() {
+
+		Vector3 T = parentTranslation_;
 		if (isRefSpawnPos_) {
-
-			return pos + parentTranslation_ + particle.spawnTranlation;
+			T += particle.spawnTranlation;
 		}
-		return pos + parentTranslation_; };
+		return T; };
 
-	// 値の補間
-	// 開始地点
-	lightning.start = Vector3::Lerp(GetParentedPos(start_.start),
-		GetParentedPos(target_.start), EasedValue(easingType, lifeProgress));
-	// 終了地点
-	lightning.end = Vector3::Lerp(GetParentedPos(start_.end),
-		GetParentedPos(target_.end), EasedValue(easingType, lifeProgress));
-	// 進行方向に雷の終了地点を回転させる
+	// ローカル * 親回転からワールドの順で変換
+	auto ToWorld = [&](const Vector3& local) {
+		return (parentRotation_ * local) + GetT(); };
+
+	// ローカル値を補間
+	const Vector3 localStart = Vector3::Lerp(start_.start, target_.start, EasedValue(easingType, lifeProgress));
+	const Vector3 localEnd = Vector3::Lerp(start_.end, target_.end, EasedValue(easingType, lifeProgress));
+
+	// 親回転を適用してから平行移動
+	lightning.start = ToWorld(localStart);
+	lightning.end = ToWorld(localEnd);
+
+	// 進行方向に終了地点を向ける
 	if (isLookAtEnd_) {
 
-		Vector3 base = lightning.end - lightning.start; // 現在の向き
-		Vector3 velocity = particle.velocity;           // 目標の向き
+		Vector3 base = lightning.end - lightning.start; // World
+		Vector3 velocity = particle.velocity;           // World
+		if (base.Length() > std::numeric_limits<float>::epsilon() &&
+			velocity.Length() > std::numeric_limits<float>::epsilon()) {
 
-		float baseLength = base.Length();
-		float velocityLength = velocity.Length();
-		// 両方とも長さが十分にある場合のみ回転を行う
-		if (baseLength > std::numeric_limits<float>::epsilon() &&
-			velocityLength > std::numeric_limits<float>::epsilon()) {
-
-			// 開始地点から終了地点へのベクトルを、速度ベクトルの方向に回転させる
-			Quaternion rotation = Quaternion::FromToRotation(base, velocity);
+			Quaternion rotation= Quaternion::FromToRotation(base, velocity);
 			Vector3 rotated = rotation * base;
-
-			// 終了座標を回転後の位置に更新
 			lightning.end = lightning.start + rotated;
 		}
 	}
@@ -168,7 +175,7 @@ void ParticleLightningUpdater::FromJson(const Json& data) {
 	const auto& lightningData = data["lightning"];
 
 	isLookAtEnd_ = lightningData.value("isLookAtEnd", isLookAtEnd_);
-	isRefSpawnPos_ = lightningData.value("isLookAtEnd", isRefSpawnPos_);
+	isRefSpawnPos_ = lightningData.value("isRefSpawnPos_", isRefSpawnPos_);
 
 	start_.start = Vector3::FromJson(lightningData["startStart"]);
 	target_.start = Vector3::FromJson(lightningData["targetStart"]);

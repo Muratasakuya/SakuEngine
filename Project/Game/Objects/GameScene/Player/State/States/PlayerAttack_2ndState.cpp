@@ -18,6 +18,20 @@ PlayerAttack_2ndState::PlayerAttack_2ndState(Player* player) {
 
 	player_ = nullptr;
 	player_ = player;
+
+	// 剣エフェクト作成
+	// 1段目
+	slash1stEffect_ = std::make_unique<EffectGroup>();
+	slash1stEffect_->Init("slashEffect1st", "PlayerEffect");
+	slash1stEffect_->LoadJson("GameEffectGroup/Player/playerAttackSlashEffect_0.json");
+	// 2段目
+	slash2ndEffect_ = std::make_unique<EffectGroup>();
+	slash2ndEffect_->Init("slashEffect2nd", "PlayerEffect");
+	slash2ndEffect_->LoadJson("GameEffectGroup/Player/playerAttackSlashEffect_1.json");
+
+	// 親の設定
+	slash1stEffect_->SetParent("playerAttackSlash_0", player_->GetTransform());
+	slash2ndEffect_->SetParent("playerAttackSlash_1", player_->GetTransform());
 }
 
 void PlayerAttack_2ndState::Enter(Player& player) {
@@ -48,6 +62,9 @@ void PlayerAttack_2ndState::Enter(Player& player) {
 	// 回転補間させるかの設定
 	approachPhase_ = CheckInRange(attackLookAtCircleRange_,
 		Vector3(bossEnemy_->GetTranslation() - playerPos).Length());
+
+	// 剣エフェクトの発生
+	slash1stEffect_->Emit(player_->GetRotation() * slash1stEffectOffset_);
 }
 
 void PlayerAttack_2ndState::Update(Player& player) {
@@ -105,6 +122,19 @@ void PlayerAttack_2ndState::Update(Player& player) {
 		// 範囲内の経路完走後は最終点へ固定
 		player.SetTranslation(*targetTranslation_);
 	}
+}
+
+void PlayerAttack_2ndState::UpdateAlways(Player& player) {
+
+	// 剣エフェクトの更新、親の回転を設定する
+	// 1段目
+	slash1stEffect_->SetParentRotation("playerAttackSlash_0",
+		Quaternion::Normalize(player.GetRotation()), ParticleUpdateModuleID::Rotation);
+	slash1stEffect_->Update();
+	// 2段目
+	slash2ndEffect_->SetParentRotation("playerAttackSlash_1",
+		Quaternion::Normalize(player.GetRotation()), ParticleUpdateModuleID::Rotation);
+	slash2ndEffect_->Update();
 }
 
 void PlayerAttack_2ndState::CalcWayPoints(const Player& player, std::array<Vector3, kNumSegments>& dstWayPoints) {
@@ -180,6 +210,12 @@ bool PlayerAttack_2ndState::LerpAlongSegments(Player& player) {
 	// 補間が終了したら次の区間に進める
 	if (segmentTime_ <= segmentTimer_) {
 
+		// 剣エフェクトの発生
+		if (currentIndex_ == 0) {
+
+			slash2ndEffect_->Emit(player_->GetRotation() * slash2ndEffectOffset_);
+		}
+
 		segmentTimer_ = 0.0f;
 		++currentIndex_;
 		return (currentIndex_ >= wayPoints_.size());
@@ -204,6 +240,8 @@ void PlayerAttack_2ndState::ImGui(const Player& player) {
 	ImGui::DragFloat("swayRate", &swayRate_, 0.01f);
 	ImGui::DragFloat("leftPointAngle", &leftPointAngle_, 0.01f);
 	ImGui::DragFloat("rightPointAngle", &rightPointAngle_, 0.01f);
+	ImGui::DragFloat3("slash1stEffectOffset", &slash1stEffectOffset_.x, 0.1f);
+	ImGui::DragFloat3("slash2ndEffectOffset", &slash2ndEffectOffset_.x, 0.1f);
 
 	PlayerBaseAttackState::ImGui(player);
 
@@ -252,6 +290,9 @@ void PlayerAttack_2ndState::ApplyJson(const Json& data) {
 	leftPointAngle_ = JsonAdapter::GetValue<float>(data, "leftPointAngle_");
 	rightPointAngle_ = JsonAdapter::GetValue<float>(data, "rightPointAngle_");
 
+	slash1stEffectOffset_ = Vector3::FromJson(data.value("slash1stEffectOffset_", Json()));
+	slash2ndEffectOffset_ = Vector3::FromJson(data.value("slash2ndEffectOffset_", Json()));
+
 	targetCameraRotateX_ = data.value("targetCameraRotateX_", 0.0f);
 
 	approachForwardDistance_ = data.value("approachForwardDistance_", approachForwardDistance_);
@@ -273,6 +314,9 @@ void PlayerAttack_2ndState::SaveJson(Json& data) {
 	data["leftPointAngle_"] = leftPointAngle_;
 	data["rightPointAngle_"] = rightPointAngle_;
 	data["targetCameraRotateX_"] = targetCameraRotateX_;
+
+	data["slash1stEffectOffset_"] = slash1stEffectOffset_.ToJson();
+	data["slash2ndEffectOffset_"] = slash2ndEffectOffset_.ToJson();
 
 	data["approachForwardDistance_"] = approachForwardDistance_;
 	data["approachSwayLength_"] = approachSwayLength_;

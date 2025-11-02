@@ -281,6 +281,15 @@ out vertices MSOutput verts[MAX_VERTS], out indices uint3 tris[MAX_PRIMS]) {
 		float3 pL = centerWorld - side * halfWidth;
 		float3 pR = centerWorld + side * halfWidth;
 
+		// 親がいる場合
+		if (transform.aliveParent == 1) {
+		
+			// 親の平行移動成分
+			float3 parentPos = transform.parentMatrix[3].xyz;
+			pL += parentPos;
+			pR += parentPos;
+		}
+
 		// クリップ座標
 		verts[leftVertexIndex].position = mul(float4(pL, 1.0f), gPerView.viewProjection);
 		verts[rightVertexIndex].position = mul(float4(pR, 1.0f), gPerView.viewProjection);

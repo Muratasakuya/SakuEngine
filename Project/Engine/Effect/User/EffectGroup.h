@@ -48,6 +48,7 @@ public:
 
 	// 親の設定
 	void SetParent(uint32_t anchorId) { parentAnchorId_ = anchorId; }
+	void SetParent(const std::string& nodeKey, const BaseTransform& transform);
 	// 親への追従を解除
 	void ClearParent();
 
@@ -61,6 +62,9 @@ public:
 	void SetLifeEndMode(const std::string& nodeKey, ParticleLifeEndMode mode, bool isAllNode = true);
 	// キーフレームパスの設定
 	void SetKeyframePath(const std::string& nodeKey, const std::vector<Vector3>& keys);
+	// 回転の設定
+	void SetParentRotation(const std::string& nodeKey, const Quaternion& rotation,
+		ParticleUpdateModuleID updaterID);
 
 	// すべてのノードが処理を終えているか
 	bool IsFinishedAllNode() const;

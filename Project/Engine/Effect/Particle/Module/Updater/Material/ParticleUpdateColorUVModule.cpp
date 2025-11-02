@@ -16,6 +16,7 @@ void ParticleUpdateColorUVModule::Init() {
 
 	scale_.start = Vector3::AnyInit(1.0f);
 	scale_.target = Vector3::AnyInit(1.0f);
+	pivot_ = Vector2::AnyInit(0.5f);
 }
 
 void ParticleUpdateColorUVModule::Execute(
@@ -57,9 +58,15 @@ void ParticleUpdateColorUVModule::Execute(
 	float rotationZ = std::lerp(rotation_.start,
 		rotation_.target, EasedValue(easing_, particle.progress));
 
+	// スケールと回転の行列
+	Matrix4x4 scaleRotateMatrix = Matrix4x4::MakeAffineMatrix(
+		scale, Vector3(0.0f, 0.0f, rotationZ), Vector3(0.0f, 0.0f, 0.0f));
+
 	// uvMatrixの更新
+	Vector3 pivot = Vector3(pivot_.x, pivot_.y, 0.0f);
+	Vector3 translationWithPivot = translation + pivot - Vector3::Transform(pivot, scaleRotateMatrix);
 	particle.material.colorUVTransform = Matrix4x4::MakeAffineMatrix(
-		scale, Vector3(0.0f, 0.0f, rotationZ), translation);
+		scale, Vector3(0.0f, 0.0f, rotationZ), translationWithPivot);
 }
 
 void ParticleUpdateColorUVModule::ImGui() {
@@ -88,6 +95,8 @@ void ParticleUpdateColorUVModule::ImGui() {
 
 	ImGui::SeparatorText("Rotation");
 
+	ImGui::DragFloat2("pivot", &pivot_.x, 0.01f, -1.0f, 1.0f);
+
 	ImGui::DragFloat("startRotation", &rotation_.start, 0.01f);
 	ImGui::DragFloat("targetRotation", &rotation_.target, 0.01f);
 
@@ -106,6 +115,8 @@ Json ParticleUpdateColorUVModule::ToJson() {
 
 	data["translation"]["start"] = translation_.start.ToJson();
 	data["translation"]["target"] = translation_.target.ToJson();
+
+	data["pivot"] = pivot_.ToJson();
 
 	data["rotation"]["start"] = rotation_.start;
 	data["rotation"]["target"] = rotation_.target;
@@ -131,6 +142,14 @@ void ParticleUpdateColorUVModule::FromJson(const Json& data) {
 	const auto& translationData = data["translation"];
 	translation_.start = translation_.start.FromJson(translationData["start"]);
 	translation_.target = translation_.target.FromJson(translationData["target"]);
+
+	if (data.contains("pivot")) {
+
+		pivot_ = pivot_.FromJson(data["pivot"]);
+	} else {
+
+		pivot_ = Vector2::AnyInit(0.5f);
+	}
 
 	if (data.contains("rotation")) {
 
