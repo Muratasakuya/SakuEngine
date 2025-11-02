@@ -89,7 +89,7 @@ void PlayerAttack_3rdState::Update(Player& player) {
 	totalTimer_.Update();
 }
 
-void PlayerAttack_3rdState::UpdateAlways(Player& player) {
+void PlayerAttack_3rdState::UpdateAlways([[maybe_unused]] Player& player) {
 
 	// ダッシュエフェクトの更新
 	// 親の回転を設定する
