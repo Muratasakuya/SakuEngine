@@ -16,8 +16,8 @@
 namespace  Config {
 
 	// windowTitle
-	const constexpr wchar_t* kWindowTitle = L"Engine";
-	const constexpr char* kWindowTitleName = "Engine";
+	const constexpr wchar_t* kWindowTitle = L"BLADESLASH";
+	const constexpr char* kWindowTitleName = "BLADESLASH";
 	// fullscreen
 	const constexpr bool kFullscreenEnable = false;
 
