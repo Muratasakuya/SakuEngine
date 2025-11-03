@@ -39,15 +39,15 @@ void PlayerAttack_3rdState::Enter(Player& player) {
 	backStartPos_ = player.GetTranslation();
 
 	// 敵が攻撃可能範囲にいるかチェック
-	assisted_ = CheckInRange(attackPosLerpCircleRange_,
-		Vector3(bossEnemy_->GetTranslation() - backStartPos_).Length());
-	Vector3 direction = (bossEnemy_->GetTranslation() - backStartPos_).Normalize();
+	assisted_ = CheckInRange(attackPosLerpCircleRange_, PlayerIState::GetDistanceToBossEnemy());
+	Vector3 direction = PlayerIState::GetDirectionToBossEnemy();
 	// 補間先がいなければ正面向き
 	if (!assisted_) {
+
 		direction = player.GetTransform().GetForward();
+		direction.y = 0.0f;
+		direction = direction.Normalize();
 	}
-	direction.y = 0.0f;
-	direction = direction.Normalize();
 	backTargetPos_ = backStartPos_ + direction * backMoveValue_;
 	currentState_ = State::MoveBack;
 
@@ -55,8 +55,7 @@ void PlayerAttack_3rdState::Enter(Player& player) {
 	initPosY_ = player.GetTranslation().y;
 
 	// 回転補間範囲内に入っていたら
-	if (CheckInRange(attackLookAtCircleRange_,
-		Vector3(bossEnemy_->GetTranslation() - backStartPos_).Length())) {
+	if (CheckInRange(attackLookAtCircleRange_, PlayerIState::GetDistanceToBossEnemy())) {
 
 		// カメラアニメーション開始
 		followCamera_->StartPlayerActionAnim(PlayerState::Attack_3rd);

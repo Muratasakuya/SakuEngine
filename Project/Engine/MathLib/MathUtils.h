@@ -8,6 +8,7 @@
 #include <Engine/MathLib/Vector4.h>
 #include <Engine/MathLib/Quaternion.h>
 #include <Engine/MathLib/Matrix4x4.h>
+#include <Engine/Utility/Enum/Direction.h>
 
 // c++
 #include <numbers>
@@ -73,4 +74,7 @@ namespace Math {
 
 	// ワールド座標をスクリーン座標へ射影する
 	Vector2 ProjectToScreen(const Vector3& translation, const BaseCamera& camera);
+
+	// Quaternionから指定方向ベクトルを取得する
+	Vector3 QuaternionToDirection(const Quaternion& rotation, Direction3D direction);
 }

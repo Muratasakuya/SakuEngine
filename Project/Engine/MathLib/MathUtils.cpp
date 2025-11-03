@@ -204,3 +204,23 @@ Vector2 Math::ProjectToScreen(const Vector3& translation, const BaseCamera& came
 
 	return Vector2(screenX, screenY);
 }
+
+Vector3 Math::QuaternionToDirection(const Quaternion& rotation, Direction3D direction) {
+
+	Vector3 result{};
+	switch (direction) {
+	case Direction3D::Forward:
+		break;
+	case Direction3D::Backward:
+		break;
+	case Direction3D::Right:
+		break;
+	case Direction3D::Left:
+		break;
+	case Direction3D::Up:
+		break;
+	case Direction3D::Bottom:
+		break;
+	}
+	return result;
+}

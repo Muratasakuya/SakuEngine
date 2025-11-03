@@ -42,9 +42,8 @@ void PlayerAttack_4thState::Enter(Player& player) {
 	canExit_ = false;
 
 	// 敵が攻撃可能範囲にいるかチェック
-	const Vector3 playerPos = player.GetTranslation();
-	assisted_ = CheckInRange(attackPosLerpCircleRange_,
-		Vector3(bossEnemy_->GetTranslation() - playerPos).Length());
+	Vector3 playerPos = player.GetTranslation();
+	assisted_ = CheckInRange(attackPosLerpCircleRange_, PlayerIState::GetDistanceToBossEnemy());
 
 	// 補間座標を設定
 	if (!assisted_) {
@@ -58,8 +57,7 @@ void PlayerAttack_4thState::Enter(Player& player) {
 	}
 
 	// 回転補間範囲内に入っていたら
-	if (CheckInRange(attackLookAtCircleRange_,
-		Vector3(bossEnemy_->GetTranslation() - playerPos).Length())) {
+	if (CheckInRange(attackLookAtCircleRange_, PlayerIState::GetDistanceToBossEnemy())) {
 
 		// カメラアニメーション開始
 		followCamera_->StartPlayerActionAnim(PlayerState::Attack_4th);

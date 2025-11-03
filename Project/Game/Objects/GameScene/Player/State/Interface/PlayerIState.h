@@ -83,4 +83,14 @@ protected:
 
 	// helper
 	void SetRotateToDirection(Player& player, const Vector3& move);
+
+	// プレイヤー、敵の座標取得(Yを固定するため)
+	Vector3 GetPlayerFixedYPos() const;
+	Vector3 GetBossEnemyFixedYPos() const;
+
+	// プレイヤーの敵との距離
+	float GetDistanceToBossEnemy() const;
+
+	// プレイヤーから敵への方向
+	Vector3 GetDirectionToBossEnemy() const;
 };
