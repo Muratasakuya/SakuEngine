@@ -13,6 +13,8 @@ void PlayerStateCondition::FromJson(const Json& data) {
 
 	coolTime = JsonAdapter::GetValue<float>(data, "coolTime");
 	chainInputTime = JsonAdapter::GetValue<float>(data, "chainInputTime");
+	isArmor = data.value("isArmor", false);
+	enableInARowForceState = data.value("enableInARowForceState", false);
 
 	auto intsToStates = [](const Json& array) {
 		std::vector<PlayerState> out;
@@ -29,6 +31,8 @@ void PlayerStateCondition::ToJson(Json& data) {
 
 	data["coolTime"] = coolTime;
 	data["chainInputTime"] = chainInputTime;
+	data["isArmor"] = isArmor;
+	data["enableInARowForceState"] = enableInARowForceState;
 
 	auto statesToInts = [](const std::vector<PlayerState>& vector) {
 		std::vector<int> output;

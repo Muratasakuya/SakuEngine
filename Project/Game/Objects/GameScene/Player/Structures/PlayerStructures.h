@@ -25,6 +25,7 @@ enum class PlayerState {
 	Parry,         // 攻撃カウンター...  Space/ショルダーボタン
 	SwitchAlly,    // 味方を切り替えるか入力(Idle or StunAttack)
 	StunAttack,    // スタン攻撃、自動で行う
+	Falter,        // 攻撃を受けた時の怯み
 };
 
 // 武器の種類
@@ -56,6 +57,9 @@ struct PlayerStateCondition {
 	std::vector<PlayerState> allowedPreState; // 遷移元を制限
 	float chainInputTime;                     // 受付猶予
 	std::vector<PlayerState> interruptableBy; // 強制キャンセルできる遷移相手
+
+	bool isArmor = false;                     // 攻撃を受けても怯まない
+	bool enableInARowForceState = false;      // 連続で強制状態に入ることを許可する
 
 	void FromJson(const Json& data);
 	void ToJson(Json& data);

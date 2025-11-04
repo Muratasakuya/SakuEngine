@@ -126,7 +126,9 @@
             "allowedPreState": [],
             "chainInputTime": 0.0,
             "coolTime": 1.0,
-            "interruptableBy": []
+            "enableInARowForceState": false,
+            "interruptableBy": [],
+            "isArmor": false
         },
         "Attack_2nd": {
             "allowedPreState": [
@@ -134,7 +136,9 @@
             ],
             "chainInputTime": 0.6399999856948853,
             "coolTime": 0.0,
-            "interruptableBy": []
+            "enableInARowForceState": false,
+            "interruptableBy": [],
+            "isArmor": false
         },
         "Attack_3rd": {
             "allowedPreState": [
@@ -142,7 +146,9 @@
             ],
             "chainInputTime": 0.6399999856948853,
             "coolTime": 0.0,
-            "interruptableBy": []
+            "enableInARowForceState": false,
+            "interruptableBy": [],
+            "isArmor": true
         },
         "Attack_4th": {
             "allowedPreState": [
@@ -150,12 +156,15 @@
             ],
             "chainInputTime": 0.6399999856948853,
             "coolTime": 0.0,
-            "interruptableBy": []
+            "enableInARowForceState": false,
+            "interruptableBy": [],
+            "isArmor": true
         },
         "Avoid": {
             "allowedPreState": [],
             "chainInputTime": 0.0,
             "coolTime": 0.3199999928474426,
+            "enableInARowForceState": false,
             "interruptableBy": [
                 1,
                 2,
@@ -163,12 +172,14 @@
                 6,
                 7,
                 8
-            ]
+            ],
+            "isArmor": false
         },
         "Dash": {
             "allowedPreState": [],
             "chainInputTime": 0.0,
             "coolTime": 0.3199999928474426,
+            "enableInARowForceState": false,
             "interruptableBy": [
                 5,
                 6,
@@ -176,18 +187,30 @@
                 1,
                 7,
                 8
-            ]
+            ],
+            "isArmor": false
+        },
+        "Falter": {
+            "allowedPreState": [],
+            "chainInputTime": 0.0,
+            "coolTime": 0.0,
+            "enableInARowForceState": true,
+            "interruptableBy": [],
+            "isArmor": false
         },
         "Idle": {
             "allowedPreState": [],
             "chainInputTime": 0.0,
             "coolTime": 0.0,
-            "interruptableBy": []
+            "enableInARowForceState": false,
+            "interruptableBy": [],
+            "isArmor": false
         },
         "Parry": {
             "allowedPreState": [],
             "chainInputTime": 0.0,
             "coolTime": 0.23999999463558197,
+            "enableInARowForceState": true,
             "interruptableBy": [
                 5,
                 6,
@@ -196,31 +219,40 @@
                 3,
                 2,
                 1
-            ]
+            ],
+            "isArmor": true
         },
         "SkilAttack": {
             "allowedPreState": [],
             "chainInputTime": 0.0,
             "coolTime": 0.1599999964237213,
-            "interruptableBy": []
+            "enableInARowForceState": false,
+            "interruptableBy": [],
+            "isArmor": false
         },
         "StunAttack": {
             "allowedPreState": [],
             "chainInputTime": 0.0,
             "coolTime": 0.0,
-            "interruptableBy": []
+            "enableInARowForceState": false,
+            "interruptableBy": [],
+            "isArmor": false
         },
         "SwitchAlly": {
             "allowedPreState": [],
             "chainInputTime": 0.0,
             "coolTime": 0.0,
-            "interruptableBy": []
+            "enableInARowForceState": false,
+            "interruptableBy": [],
+            "isArmor": false
         },
         "Walk": {
             "allowedPreState": [],
             "chainInputTime": 0.0,
             "coolTime": 0.0,
-            "interruptableBy": []
+            "enableInARowForceState": false,
+            "interruptableBy": [],
+            "isArmor": false
         }
     },
     "Dash": {
@@ -264,6 +296,19 @@
         },
         "nextAnimDuration_": 0.017999999225139618,
         "rotationLerpRate_": 0.18000000715255737
+    },
+    "Falter": {
+        "DeltaWait": {
+            "easeingType_": "Linear",
+            "target_": 0.05999999865889549
+        },
+        "FalterTimer": {
+            "easeingType_": "EaseOutCubic",
+            "target_": 0.18000000715255737
+        },
+        "moveDistance_": -20.0,
+        "nextAnimDuration_": 0.03999999910593033,
+        "targetCameraRotateX_": 0.10000000149011612
     },
     "Idle": {
         "nextAnimDuration_": 0.20000000298023224

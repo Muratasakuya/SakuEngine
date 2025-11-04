@@ -55,6 +55,7 @@ void Player::InitAnimations() {
 	animation_->SetAnimationData("player_skilAttack_3rd");
 	animation_->SetAnimationData("player_stunAttack");
 	animation_->SetAnimationData("player_parry");
+	animation_->SetAnimationData("player_falter");
 
 	// 両手を親として更新させる
 	animation_->SetParentJoint("rightHand");
@@ -304,6 +305,9 @@ void Player::OnCollisionEnter(const CollisionBody* collisionBody) {
 
 		// HUDに通知
 		hudSprites_->SetDamage(damage);
+
+		// 怯み状態遷移へリクエスト
+		stateController_->RequestFalterState(*this);
 	}
 }
 

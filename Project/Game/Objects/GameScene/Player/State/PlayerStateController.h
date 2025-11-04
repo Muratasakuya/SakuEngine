@@ -37,8 +37,12 @@ public:
 	void SetBossEnemy(const BossEnemy* bossEnemy);
 	void SetFollowCamera(FollowCamera* followCamera);
 
+	// ステータス設定
 	void SetStatas(const PlayerStats& stats) { stats_ = stats; }
+	// 状態の強制遷移
 	void SetForcedState(Player& owner, PlayerState state);
+	// 怯みのリクエスト、遷移可能なら遷移
+	void RequestFalterState(Player& owner);
 
 	PlayerState GetCurrentState() const { return current_; }
 	PlayerState GetSwitchSelectState() const;

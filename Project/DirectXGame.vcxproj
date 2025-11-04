@@ -812,6 +812,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <SubType />
     </ClCompile>
     <ClCompile Include="Game\Objects\GameScene\Player\State\States\PlayerDashState.cpp" />
+    <ClCompile Include="Game\Objects\GameScene\Player\State\States\PlayerFalterState.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="Game\Objects\GameScene\Player\State\States\PlayerIdleState.cpp">
       <SubType />
     </ClCompile>
@@ -1683,6 +1687,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <SubType />
     </ClInclude>
     <ClInclude Include="Game\Objects\GameScene\Player\State\States\PlayerDashState.h" />
+    <ClInclude Include="Game\Objects\GameScene\Player\State\States\PlayerFalterState.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="Game\Objects\GameScene\Player\State\States\PlayerIdleState.h">
       <SubType />
     </ClInclude>

@@ -2302,6 +2302,7 @@
     <ClCompile Include="Engine\Object\Base\AnimationObject3D.cpp" />
     <ClCompile Include="Game\Camera\Title\TitleViewCamera.cpp" />
     <ClCompile Include="Game\PostEffect\GrayscaleUpdater.cpp" />
+    <ClCompile Include="Game\Objects\GameScene\Player\State\States\PlayerFalterState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\Camera\Follow\State\States\FollowCameraReturnDefaultRotate.h" />
@@ -2334,5 +2335,6 @@
     <ClInclude Include="Engine\Object\Base\AnimationObject3D.h" />
     <ClInclude Include="Game\Camera\Title\TitleViewCamera.h" />
     <ClInclude Include="Game\PostEffect\GrayscaleUpdater.h" />
+    <ClInclude Include="Game\Objects\GameScene\Player\State\States\PlayerFalterState.h" />
   </ItemGroup>
 </Project>

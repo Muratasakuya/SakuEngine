@@ -27,6 +27,7 @@
 #include <Game/Objects/GameScene/Player/State/States/PlayerParryState.h>
 #include <Game/Objects/GameScene/Player/State/States/PlayerSwitchAllyState.h>
 #include <Game/Objects/GameScene/Player/State/States/PlayerStunAttackState.h>
+#include <Game/Objects/GameScene/Player/State/States/PlayerFalterState.h>
 
 //============================================================================
 //	PlayerStateController classMethods
@@ -56,6 +57,7 @@ void PlayerStateController::Init(Player& owner) {
 	states_.emplace(PlayerState::Parry, std::make_unique<PlayerParryState>());
 	states_.emplace(PlayerState::SwitchAlly, std::make_unique<PlayerSwitchAllyState>());
 	states_.emplace(PlayerState::StunAttack, std::make_unique<PlayerStunAttackState>(owner.GetAlly()));
+	states_.emplace(PlayerState::Falter, std::make_unique<PlayerFalterState>(&owner));
 
 	// json適応
 	ApplyJson();
@@ -102,19 +104,18 @@ void PlayerStateController::SetFollowCamera(FollowCamera* followCamera) {
 
 void PlayerStateController::SetForcedState(Player& owner, PlayerState state) {
 
-	// 同じ状態へは遷移不可
-	if (current_ == state) {
-		// パリィのみ例外
-		if (state == PlayerState::Parry) {
-			if (const auto& currentState = states_[current_].get()) {
+	// 同じ状態への強制遷移が許可されていれば
+	if (current_ == state && conditions_.at(state).enableInARowForceState) {
 
-				currentState->Exit(owner);
-				currentState->Enter(owner);
-			}
-			currentEnterTime_ = GameTimer::GetTotalTime();
-			lastEnterTime_[current_] = currentEnterTime_;
-			owner.GetAttackCollision()->SetEnterState(current_);
+		// 状態をリセットして再度状態を処理する
+		if (const auto& currentState = states_[current_].get()) {
+
+			currentState->Exit(owner);
+			currentState->Enter(owner);
 		}
+		currentEnterTime_ = GameTimer::GetTotalTime();
+		lastEnterTime_[current_] = currentEnterTime_;
+		owner.GetAttackCollision()->SetEnterState(current_);
 		return;
 	}
 
@@ -143,6 +144,18 @@ void PlayerStateController::SetForcedState(Player& owner, PlayerState state) {
 	currentEnterTime_ = GameTimer::GetTotalTime();
 	lastEnterTime_[current_] = currentEnterTime_;
 	owner.GetAttackCollision()->SetEnterState(current_);
+}
+
+void PlayerStateController::RequestFalterState(Player& owner) {
+
+	// 現在の状態が攻撃を受けたら怯む状態なら遷移させる
+	if (conditions_.at(current_).isArmor) {
+		// 怯み無効状態なら遷移させない
+		return;
+	}
+
+	// 怯み状態に遷移させる
+	SetForcedState(owner, PlayerState::Falter);
 }
 
 PlayerState PlayerStateController::GetSwitchSelectState() const {
@@ -655,14 +668,15 @@ void PlayerStateController::ImGui(const Player& owner) {
 
 		// ---- Conditions ---------------------------------------------
 		if (ImGui::BeginTabItem("Conditions")) {
-			ImGui::Combo("Edit##cond-state",
-				&comboIndex_,
+			ImGui::Combo("Edit##cond-state", &comboIndex_,
 				EnumAdapter<PlayerState>::GetEnumArray().data(),
 				static_cast<int>(EnumAdapter<PlayerState>::GetEnumCount()));
 
 			PlayerState state = static_cast<PlayerState>(comboIndex_);
 			PlayerStateCondition& cond = conditions_[state];
 
+			ImGui::Checkbox("isArmor", &cond.isArmor);
+			ImGui::Checkbox("enableInARowForceState", &cond.enableInARowForceState);
 			ImGui::DragFloat("CoolTime", &cond.coolTime, 0.01f, 0.0f);
 			ImGui::DragFloat("InputWindow", &cond.chainInputTime, 0.01f, 0.0f);
 

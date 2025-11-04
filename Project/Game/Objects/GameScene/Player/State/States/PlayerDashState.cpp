@@ -112,7 +112,6 @@ bool PlayerDashState::GetCanExit() const {
 
 		return true;
 	}
-
 	return !inputMapper_->IsPressed(PlayerInputAction::Dash);
 }
 
