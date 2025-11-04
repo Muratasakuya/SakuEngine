@@ -89,6 +89,7 @@ void SceneBuilder::BuildObjects(const Json& obj,
 
 		// 同名削除処理
 		const std::string identifier = obj.value("name", "");
+
 		if (idDeleteOnSameName_) {
 
 			HandleDuplicateObject(entities, identifier);

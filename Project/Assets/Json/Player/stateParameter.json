@@ -236,10 +236,10 @@
                 "target_": 0.800000011920929
             },
             "Timer": {
-                "easeingType_": "EaseOutCubic",
+                "easeingType_": "EaseOutBack",
                 "target_": 0.18000000715255737
             },
-            "move_.end": 1.600000023841858,
+            "move_.end": 2.4000000953674316,
             "move_.start": 0.6399999856948853,
             "useReturnTimer_": false
         },

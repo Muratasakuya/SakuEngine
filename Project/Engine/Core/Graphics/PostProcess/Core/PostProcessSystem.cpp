@@ -502,7 +502,11 @@ void PostProcessSystem::CreateCBuffer(PostProcessType type) {
 		break;
 	}
 	case PostProcessType::Grayscale: {
-		// bufferなし
+
+		auto buffer = std::make_unique<PostProcessBuffer<GrayscaleForGPU>>();
+		buffer->Init(device_, 3);
+
+		buffers_[type] = std::move(buffer);
 		break;
 	}
 	case PostProcessType::SepiaTone: {

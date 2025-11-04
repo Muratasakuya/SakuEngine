@@ -74,7 +74,4 @@ namespace Math {
 
 	// ワールド座標をスクリーン座標へ射影する
 	Vector2 ProjectToScreen(const Vector3& translation, const BaseCamera& camera);
-
-	// Quaternionから指定方向ベクトルを取得する
-	Vector3 QuaternionToDirection(const Quaternion& rotation, Direction3D direction);
 }

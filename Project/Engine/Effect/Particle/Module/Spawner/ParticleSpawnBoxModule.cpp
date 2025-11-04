@@ -18,12 +18,14 @@ void ParticleSpawnBoxModule::SetCommand(const ParticleCommand& command) {
 
 			emitter_.translation = *translation;
 		}
+		break;
 	}
 	case ParticleCommandID::SetRotation: {
 		if (const auto& rotation = std::get_if<Vector3>(&command.value)) {
 
 			emitterRotation_ = *rotation;
 		}
+		break;
 	}
 	}
 }
