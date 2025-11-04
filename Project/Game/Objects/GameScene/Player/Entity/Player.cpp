@@ -109,8 +109,7 @@ void Player::InitEffects() {
 	// 回避エフェクトの初期化
 	avoidEffect_ = std::make_unique<EffectGroup>();
 	avoidEffect_->Init("avoidEffect", "PlayerEffect");
-
-	//slashEffect_->LoadJson("GameEffectGroup/Player/playerAttackSlashEffect_0.json");
+	avoidEffect_->LoadJson("GameEffectGroup/Player/playerAvoidEffect.json");
 }
 
 void Player::SetInitTransform() {
@@ -273,10 +272,6 @@ void Player::Update() {
 
 		isInvincible_ = !isInvincible_;
 	}
-
-	// エフェクトの更新
-	// エフェクト、エンジン機能変更中...
-	//animationEffect_->Update(*this);
 }
 
 void Player::CheckBossEnemyStun() {
@@ -317,6 +312,8 @@ void Player::OnCollisionEnter(const CollisionBody* collisionBody) {
 			// 回避エフェクトを出す
 			PostProcessSystem::GetInstance()->Start(PostProcessType::Grayscale);
 
+			Vector3 playerPos = transform_->translation;
+			avoidEffect_->Emit(playerPos);
 			return;
 		}
 

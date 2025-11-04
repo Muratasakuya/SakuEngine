@@ -40,9 +40,7 @@ void ParticleSpawnBoxModule::Init() {
 Vector3 ParticleSpawnBoxModule::GetRandomPoint() const {
 
 	Vector3 halfSize = emitter_.size * 0.5f;
-	Vector3 local = (RandomGenerator::Generate(Vector3(
-		-halfSize.x, -halfSize.y, -halfSize.z), halfSize) - 0.5f) * emitter_.size;
-	return local;
+	return RandomGenerator::Generate(Vector3(-halfSize.x, -halfSize.y, -halfSize.z), halfSize);
 }
 
 void ParticleSpawnBoxModule::UpdateEmitter() {
