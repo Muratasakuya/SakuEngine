@@ -3,6 +3,7 @@
 //============================================================================
 //	include
 //============================================================================
+#include <Engine/Core/Graphics/PostProcess/Core/PostProcessSystem.h>
 #include <Engine/Input/Input.h>
 #include <Engine/Utility/Random/RandomGenerator.h>
 #include <Engine/Utility/Enum/EnumAdapter.h>
@@ -103,6 +104,15 @@ void Player::InitHUD() {
 	stunHudSprites_->Init();
 }
 
+void Player::InitEffects() {
+
+	// 回避エフェクトの初期化
+	avoidEffect_ = std::make_unique<EffectGroup>();
+	avoidEffect_->Init("avoidEffect", "PlayerEffect");
+
+	//slashEffect_->LoadJson("GameEffectGroup/Player/playerAttackSlashEffect_0.json");
+}
+
 void Player::SetInitTransform() {
 
 	transform_->scale = initTransform_.scale;
@@ -127,6 +137,9 @@ void Player::DerivedInit() {
 
 	// HUD初期化
 	InitHUD();
+
+	// エフェクト初期化
+	InitEffects();
 
 	// json適応
 	ApplyJson();
@@ -252,6 +265,9 @@ void Player::Update() {
 	Collider::UpdateAllBodies(*transform_);
 	attackCollision_->Update(*transform_);
 
+	// エフェクトの更新
+	avoidEffect_->Update();
+
 	// 入力で攻撃を無効化できるようにする
 	if (Input::GetInstance()->TriggerKey(DIK_F9)) {
 
@@ -286,10 +302,6 @@ void Player::CheckBossEnemyStun() {
 
 void Player::OnCollisionEnter(const CollisionBody* collisionBody) {
 
-	if (isInvincible_) {
-		return;
-	}
-
 	// パリィ処理中なら攻撃を受けない
 	if (stateController_->IsActiveParry()) {
 		return;
@@ -299,8 +311,17 @@ void Player::OnCollisionEnter(const CollisionBody* collisionBody) {
 	if ((collisionBody->GetType() & (ColliderType::Type_BossWeapon | ColliderType::Type_BossBlade))
 		!= ColliderType::Type_None) {
 
-		// ダメージを受ける
-		const int damage = bossEnemy_->GetDamage();
+		// 攻撃を受けた瞬間に回避行動をしていれば攻撃を受けない
+		if (stateController_->IsAvoidance()) {
+
+			// 回避エフェクトを出す
+			PostProcessSystem::GetInstance()->Start(PostProcessType::Grayscale);
+
+			return;
+		}
+
+		// ダメージを受ける、無敵状態の時は0
+		const int damage = isInvincible_ ? 0 : bossEnemy_->GetDamage();
 		stats_.currentHP = (std::max)(0, stats_.currentHP - damage);
 
 		// HUDに通知

@@ -12,6 +12,12 @@
 //	PlayerAvoidSatate classMethods
 //============================================================================
 
+PlayerAvoidSatate::PlayerAvoidSatate(Player* player) {
+
+	player_ = nullptr;
+	player_ = player;
+}
+
 void PlayerAvoidSatate::Enter(Player& player) {
 
 	player.SetNextAnimation("player_avoid", false, nextAnimDuration_);
@@ -27,6 +33,9 @@ void PlayerAvoidSatate::Enter(Player& player) {
 
 	// 敵の方向を向かせる
 	player.SetRotation(Quaternion::LookRotation(direction, Vector3(0.0f, 1.0f, 0.0f)));
+
+	// 回避開始
+	isAvoidance_ = true;
 
 	canExit_ = false;
 }
@@ -48,6 +57,9 @@ void PlayerAvoidSatate::Update(Player& player) {
 	if (lerpTime_ < lerpTimer_) {
 
 		canExit_ = true;
+
+		// 回避終了
+		isAvoidance_ = false;
 	}
 }
 
@@ -56,6 +68,8 @@ void PlayerAvoidSatate::Exit([[maybe_unused]] Player& player) {
 	// リセット
 	lerpTimer_ = 0.0f;
 	canExit_ = false;
+	// 回避終了
+	isAvoidance_ = false;
 }
 
 void PlayerAvoidSatate::ImGui(const Player& player) {

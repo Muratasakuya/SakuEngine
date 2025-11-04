@@ -49,6 +49,9 @@ public:
 
 	bool IsTriggerParry() const { return inputMapper_->IsTriggered(PlayerInputAction::Parry); }
 	bool IsActiveParry() const { return parrySession_.active; }
+
+	// 今の状態で回避中か
+	bool IsAvoidance() const;
 private:
 	//========================================================================
 	//	private Methods

@@ -143,6 +143,7 @@ void BossEnemyJumpAttackState::SetLerpTranslation(const BossEnemy& bossEnemy) {
 
 void BossEnemyJumpAttackState::ImGui([[maybe_unused]] const BossEnemy& bossEnemy) {
 
+	ImGui::Text(std::format("canEixt: {}", canExit_).c_str());
 	ImGui::Text("currentState: %s", EnumAdapter<State>::ToString(currentState_));
 
 	ImGui::DragFloat("nextAnimDuration", &nextAnimDuration_, 0.01f);

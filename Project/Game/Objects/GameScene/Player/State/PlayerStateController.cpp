@@ -48,7 +48,7 @@ void PlayerStateController::Init(Player& owner) {
 	states_.emplace(PlayerState::Idle, std::make_unique<PlayerIdleState>());
 	states_.emplace(PlayerState::Walk, std::make_unique<PlayerWalkState>());
 	states_.emplace(PlayerState::Dash, std::make_unique<PlayerDashState>());
-	states_.emplace(PlayerState::Avoid, std::make_unique<PlayerAvoidSatate>());
+	states_.emplace(PlayerState::Avoid, std::make_unique<PlayerAvoidSatate>(&owner));
 	states_.emplace(PlayerState::Attack_1st, std::make_unique<PlayerAttack_1stState>(&owner));
 	states_.emplace(PlayerState::Attack_2nd, std::make_unique<PlayerAttack_2ndState>(&owner));
 	states_.emplace(PlayerState::Attack_3rd, std::make_unique<PlayerAttack_3rdState>(&owner));
@@ -164,11 +164,21 @@ PlayerState PlayerStateController::GetSwitchSelectState() const {
 	return static_cast<PlayerSwitchAllyState*>(states_.at(PlayerState::SwitchAlly).get())->GetSelectState();
 }
 
+bool PlayerStateController::IsAvoidance() const {
+
+	// 現在の状態で回避行動を行っているかどうか
+	if (auto* currentState = states_.at(current_).get()) {
+
+		return currentState->IsAvoidance();
+	}
+	// それ以外はfalse
+	return false;
+}
+
 void PlayerStateController::Update(Player& owner) {
 
 	// 外部進捗による更新中なら入力による状態遷移を行わない
-	bool isExternalActive = UpdateExternalSynch(owner);
-	if (isExternalActive) {
+	if (UpdateExternalSynch(owner)) {
 		return;
 	}
 
@@ -233,16 +243,14 @@ void PlayerStateController::UpdateInputState() {
 	}
 
 	// コンボ中は判定をスキップする
-	const bool inCombat = IsCombatState(current_);
-	const bool canExit = states_.at(current_)->GetCanExit();
-	const bool isInChain = IsInChain();
-	const bool actionLocked = (inCombat && !canExit) || (inCombat && isInChain);
+	bool inCombat = IsCombatState(current_);
+	bool actionLocked = (inCombat && !states_.at(current_)->GetCanExit()) || (inCombat && IsInChain());
 
 	// 移動方向
-	const Vector2 move(inputMapper_->GetVector(PlayerInputAction::MoveX),
+	Vector2 move(inputMapper_->GetVector(PlayerInputAction::MoveX),
 		inputMapper_->GetVector(PlayerInputAction::MoveZ));
 	// 動いたかどうか判定
-	const bool isMove = move.Length() > std::numeric_limits<float>::epsilon();
+	bool isMove = move.Length() > std::numeric_limits<float>::epsilon();
 
 	// 歩き、待機状態の状態遷移
 	{

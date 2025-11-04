@@ -17,7 +17,7 @@ public:
 	//	public Methods
 	//========================================================================
 
-	PlayerAvoidSatate() = default;
+	PlayerAvoidSatate(Player* player);
 	~PlayerAvoidSatate() = default;
 
 	void Enter(Player& player) override;

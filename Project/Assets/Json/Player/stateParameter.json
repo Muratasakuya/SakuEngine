@@ -118,7 +118,7 @@
     "Avoid": {
         "easingType_": 11,
         "lerpTime_": 0.25999999046325684,
-        "moveDistance_": -32.0,
+        "moveDistance_": -16.0,
         "nextAnimDuration_": 0.019999999552965164
     },
     "Conditions": {
