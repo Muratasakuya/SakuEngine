@@ -30,7 +30,7 @@
         "attackPosEaseType_": 14,
         "attackPosLerpCircleRange_": 40.0,
         "attackPosLerpTime_": 0.47999998927116394,
-        "exitTime_": 0.05999999865889549,
+        "exitTime_": 0.1599999964237213,
         "leftPointAngle_": 0.6399999856948853,
         "nextAnimDuration_": 0.04800000041723251,
         "rightPointAngle_": 0.9200000166893005,
@@ -100,7 +100,7 @@
         "attackPosEaseType_": 14,
         "attackPosLerpCircleRange_": 40.0,
         "attackPosLerpTime_": 0.4399999976158142,
-        "exitTime_": 0.10000000149011612,
+        "exitTime_": 0.23999999463558197,
         "moveValue_": 24.0,
         "nextAnimDuration_": 0.01600000075995922,
         "rotateEffectOffsetRotation_": {
@@ -117,7 +117,7 @@
     },
     "Avoid": {
         "easingType_": 11,
-        "lerpTime_": 0.25999999046325684,
+        "lerpTime_": 0.1599999964237213,
         "moveDistance_": -16.0,
         "nextAnimDuration_": 0.019999999552965164
     },
@@ -271,8 +271,8 @@
                 "easeingType_": "EaseOutBack",
                 "target_": 0.18000000715255737
             },
-            "move_.end": 2.4000000953674316,
-            "move_.start": 0.6399999856948853,
+            "move_.end": 2.0,
+            "move_.start": 0.1599999964237213,
             "useReturnTimer_": false
         },
         "decelLerp_": {
@@ -287,11 +287,11 @@
                 "target_": 0.800000011920929
             },
             "Timer": {
-                "easeingType_": "EaseInSine",
+                "easeingType_": "EaseInBack",
                 "target_": 0.18000000715255737
             },
-            "move_.end": 0.8600000143051147,
-            "move_.start": 1.600000023841858,
+            "move_.end": 0.7200000286102295,
+            "move_.start": 1.2999999523162842,
             "useReturnTimer_": false
         },
         "nextAnimDuration_": 0.017999999225139618,

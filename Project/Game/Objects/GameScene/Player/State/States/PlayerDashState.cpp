@@ -14,7 +14,7 @@
 
 void PlayerDashState::Enter(Player& player) {
 
-	player.SetNextAnimation("player_dash", true, nextAnimDuration_);
+	player.SetNextAnimation("player_dash", false, nextAnimDuration_);
 
 	// 加速開始
 	currentState_ = State::Accel;

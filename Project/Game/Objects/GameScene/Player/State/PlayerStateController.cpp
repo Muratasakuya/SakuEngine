@@ -70,6 +70,7 @@ void PlayerStateController::Init(Player& owner) {
 	requested_ = PlayerState::Idle;
 	currentEnterTime_ = GameTimer::GetTotalTime();
 	lastEnterTime_[current_] = currentEnterTime_;
+	isDashInput_ = false;
 	ChangeState(owner);
 }
 
@@ -183,7 +184,7 @@ void PlayerStateController::Update(Player& owner) {
 	}
 
 	// 入力に応じた状態の遷移
-	UpdateInputState();
+	UpdateInputState(owner);
 
 	// パリィ処理
 	UpdateParryState(owner);
@@ -235,7 +236,7 @@ void PlayerStateController::Update(Player& owner) {
 	owner.ClampInitPosY();
 }
 
-void PlayerStateController::UpdateInputState() {
+void PlayerStateController::UpdateInputState(Player& owner) {
 
 	// スタン処理中は状態遷移不可
 	if (IsStunProcessing()) {
@@ -254,7 +255,7 @@ void PlayerStateController::UpdateInputState() {
 
 	// 歩き、待機状態の状態遷移
 	{
-		if (!actionLocked) {
+		if (!actionLocked && current_ != PlayerState::Dash) {
 
 			// 移動していた場合は歩き、していなければ待機状態のまま
 			if (isMove) {
@@ -263,39 +264,38 @@ void PlayerStateController::UpdateInputState() {
 			} else {
 
 				Request(PlayerState::Idle);
-
-				// 移動していないときに回避を押したら回避に遷移させる
-				if (inputMapper_->IsTriggered(PlayerInputAction::Avoid)) {
-
-					Request(PlayerState::Avoid);
-					return;
-				}
 			}
 		}
 	}
 
 	// ダッシュ、攻撃の状態遷移
 	{
-		if (isMove && inputMapper_->IsPressed(PlayerInputAction::Dash)) {
+
+		// ダッシュ入力があったかどうか
+		if (inputMapper_->IsTriggered(PlayerInputAction::Dash)) {
+
+			isDashInput_ = true;
+		}
+		// 移動していなければダッシュ入力をリセット
+		if (!isMove) {
+
+			isDashInput_ = false;
+		}
+
+		// 移動している時にダッシュ入力があればダッシュ状態に遷移
+		if (isMove && isDashInput_) {
 
 			Request(PlayerState::Dash);
-		} else {
-			// ダッシュ中に離したら待機状態にする
-			if (current_ == PlayerState::Dash) {
+		} else if (!isMove && current_ == PlayerState::Dash) {
 
-				Request(PlayerState::Idle);
-			}
+			// 移動が止まったらダッシュ終了
+			Request(PlayerState::Idle);
 		}
 
 		if (inputMapper_->IsTriggered(PlayerInputAction::Attack)) {
 
-			// dash -> 1段
-			if (current_ == PlayerState::Dash) {
+			if (current_ == PlayerState::Attack_1st) {
 
-				Request(PlayerState::Attack_1st);
-			}
-			// 1段 -> 2段
-			else if (current_ == PlayerState::Attack_1st) {
 				Request(PlayerState::Attack_2nd);
 			}
 			// 2段 -> 3段
@@ -308,15 +308,28 @@ void PlayerStateController::UpdateInputState() {
 			}
 			// 1段目
 			else {
+
+				// 1段目の攻撃
 				Request(PlayerState::Attack_1st);
 			}
+			// ダッシュ入力をリセット
+			isDashInput_ = false;
+			return;
 		}
 
 		// スキル攻撃
 		if (inputMapper_->IsTriggered(PlayerInputAction::Skill)) {
 
 			Request(PlayerState::SkilAttack);
+			return;
 		}
+	}
+
+	// 回避入力
+	if (!isDashInput_ && inputMapper_->IsTriggered(PlayerInputAction::Avoid)) {
+
+		Request(PlayerState::Avoid);
+		return;
 	}
 
 	// パリィの入力判定
@@ -333,6 +346,12 @@ void PlayerStateController::UpdateInputState() {
 			parrySession_.total = std::max<uint32_t>(1, parryParam.continuousCount);
 			parrySession_.reservedStart = GameTimer::GetTotalTime();
 		}
+	}
+
+	// ダッシュ中にダッシュ入力があればダッシュ状態を再度強制遷移させる
+	if (current_ == PlayerState::Dash && inputMapper_->IsTriggered(PlayerInputAction::Dash)) {
+
+		SetForcedState(owner, PlayerState::Dash);
 	}
 }
 

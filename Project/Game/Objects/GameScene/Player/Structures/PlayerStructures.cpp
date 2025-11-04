@@ -47,6 +47,5 @@ void PlayerStateCondition::ToJson(Json& data) {
 bool PlayerStateCondition::CheckInterruptableByState(PlayerState current) {
 
 	// 含まれているかチェック
-	return !interruptableBy.empty() &&
-		std::ranges::find(interruptableBy, current) != interruptableBy.end();
+	return !interruptableBy.empty() && std::ranges::find(interruptableBy, current) != interruptableBy.end();
 }

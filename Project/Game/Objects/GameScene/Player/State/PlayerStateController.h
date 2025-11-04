@@ -99,6 +99,9 @@ private:
 	PlayerState current_;                  // 現在の状態
 	std::optional<PlayerState> requested_; // 次の状態
 
+	// 移動入力中のダッシュフラグ
+	bool isDashInput_;
+
 	// editor
 	int editingStateIndex_;
 	int comboIndex_;
@@ -112,7 +115,7 @@ private:
 	void SaveJson();
 
 	// update
-	void UpdateInputState();
+	void UpdateInputState(Player& owner);
 	void UpdateParryState(Player& owner);
 	void RequestParryState();
 	bool UpdateExternalSynch(Player& owner);
