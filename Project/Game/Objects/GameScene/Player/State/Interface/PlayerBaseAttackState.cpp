@@ -31,12 +31,13 @@ void PlayerBaseAttackState::AttackAssist(Player& player, bool onceTarget) {
 	lerpT = EasedValue(attackPosEaseType_, lerpT);
 
 	// 座標、距離を取得
-	const Vector3 playerPos = player.GetTranslation();
-	const Vector3 enemyPos = bossEnemy_->GetTranslation();
-	const float distance = (enemyPos - playerPos).Length();
-
-	// 指定円の中に敵がいれば座標を補完する
-	Vector3 direction = (enemyPos - playerPos).Normalize();
+	Vector3 playerPos = player.GetTranslation();
+	Vector3 enemyPos = PlayerIState::GetBossEnemyFixedYPos();
+	// y座標を合わせる
+	enemyPos.y = playerPos.y;
+	// プレイヤーとボス敵の距離、向きを取得
+	float distance = PlayerIState::GetDistanceToBossEnemy();
+	Vector3 direction = PlayerIState::GetDirectionToBossEnemy();
 
 	// 補間先を設定
 	if (onceTarget) {

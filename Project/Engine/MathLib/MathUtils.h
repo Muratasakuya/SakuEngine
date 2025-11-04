@@ -8,6 +8,7 @@
 #include <Engine/MathLib/Vector4.h>
 #include <Engine/MathLib/Quaternion.h>
 #include <Engine/MathLib/Matrix4x4.h>
+#include <Engine/Utility/Enum/Direction.h>
 
 // c++
 #include <numbers>

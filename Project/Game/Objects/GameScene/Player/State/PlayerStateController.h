@@ -37,14 +37,21 @@ public:
 	void SetBossEnemy(const BossEnemy* bossEnemy);
 	void SetFollowCamera(FollowCamera* followCamera);
 
+	// ステータス設定
 	void SetStatas(const PlayerStats& stats) { stats_ = stats; }
+	// 状態の強制遷移
 	void SetForcedState(Player& owner, PlayerState state);
+	// 怯みのリクエスト、遷移可能なら遷移
+	void RequestFalterState(Player& owner);
 
 	PlayerState GetCurrentState() const { return current_; }
 	PlayerState GetSwitchSelectState() const;
 
 	bool IsTriggerParry() const { return inputMapper_->IsTriggered(PlayerInputAction::Parry); }
 	bool IsActiveParry() const { return parrySession_.active; }
+
+	// 今の状態で回避中か
+	bool IsAvoidance() const;
 private:
 	//========================================================================
 	//	private Methods
@@ -92,6 +99,9 @@ private:
 	PlayerState current_;                  // 現在の状態
 	std::optional<PlayerState> requested_; // 次の状態
 
+	// 移動入力中のダッシュフラグ
+	bool isDashInput_;
+
 	// editor
 	int editingStateIndex_;
 	int comboIndex_;
@@ -105,7 +115,7 @@ private:
 	void SaveJson();
 
 	// update
-	void UpdateInputState();
+	void UpdateInputState(Player& owner);
 	void UpdateParryState(Player& owner);
 	void RequestParryState();
 	bool UpdateExternalSynch(Player& owner);

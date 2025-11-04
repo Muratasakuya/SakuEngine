@@ -275,8 +275,9 @@ Quaternion FollowCamera::GetTargetRotation() const {
 	forward.y = 0.0f;
 	forward = forward.Normalize();
 
-	float targetXRotation = anyTargetXRotation_.has_value() ?
-		anyTargetXRotation_.value() : targetXRotation_;
+	float targetXRotation = anyTargetXRotation_.has_value() ? anyTargetXRotation_.value() : targetXRotation_;
+	// 0.0f以下にはならないようにする
+	targetXRotation = (std::max)(0.0f, targetXRotation);
 
 	// Y軸の回転
 	Quaternion yawRotation = Quaternion::LookRotation(
@@ -285,7 +286,7 @@ Quaternion FollowCamera::GetTargetRotation() const {
 	Vector3 rightAxis = (yawRotation * Direction::Get(Direction3D::Right)).Normalize();
 	Quaternion pitchRotation = Quaternion::Normalize(Quaternion::MakeAxisAngle(
 		rightAxis, targetXRotation));
-	// 目標回転
+	// 目標回転 
 	Quaternion targetRotation = Quaternion::Normalize(pitchRotation * yawRotation);
 	return targetRotation;
 }
@@ -303,7 +304,8 @@ void FollowCamera::ImGui() {
 			}
 
 			ImGui::DragFloat3("translation", &transform_.translation.x, 0.01f);
-			ImGui::DragFloat3("rotation", &transform_.eulerRotate.x, 0.01f);
+			ImGui::Text("rotation: %.2f, %.2f, %.2f, %.2f", transform_.rotation.x,
+				transform_.rotation.y, transform_.rotation.z, transform_.rotation.w);
 
 			ImGui::DragFloat("fovY", &fovY_, 0.01f);
 			ImGui::DragFloat("nearClip", &nearClip_, 0.001f);

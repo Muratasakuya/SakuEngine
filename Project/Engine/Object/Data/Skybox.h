@@ -32,6 +32,7 @@ private:
 		uint32_t textureIndex;
 		float pad0[3];
 		Matrix4x4 uvTransform;
+		uint32_t postProcessMask;
 	};
 public:
 	//========================================================================

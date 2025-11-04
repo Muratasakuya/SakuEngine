@@ -11,6 +11,7 @@
 struct PSOutput {
 	
 	float4 color : SV_TARGET0;
+	uint mask : SV_TARGET1;
 };
 
 //============================================================================
@@ -22,6 +23,7 @@ cbuffer Material : register(b0) {
 	float4 color;
 	uint textureIndex;
 	float4x4 uvTransform;
+	uint postProcessMask;
 };
 
 //============================================================================
@@ -37,6 +39,9 @@ SamplerState gSampler : register(s0);
 PSOutput main(VSOutput input) {
 
 	PSOutput output;
+	
+	// マスク値を出力
+	output.mask = postProcessMask;
 
 	float3 transformUV = mul(uvTransform, float4(input.texcoord, 1.0f)).xyz;
 	float4 textureColor = gTextures[textureIndex].Sample(gSampler, transformUV);

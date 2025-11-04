@@ -20,6 +20,7 @@ void StartGameState::Init(SceneView* sceneView) {
 	PostProcessSystem* postProcessSystem = PostProcessSystem::GetInstance();
 	postProcessSystem->AddProcess(PostProcessType::RadialBlur);
 	postProcessSystem->AddProcess(PostProcessType::Bloom);
+	postProcessSystem->AddProcess(PostProcessType::Grayscale);
 
 	//========================================================================
 	//	sceneObject

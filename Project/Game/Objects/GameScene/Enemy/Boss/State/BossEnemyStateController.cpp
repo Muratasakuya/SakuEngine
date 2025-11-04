@@ -1,4 +1,4 @@
-#include "BossEnemyStateController.h"
+ #include "BossEnemyStateController.h"
 
 //============================================================================
 //	include
@@ -268,6 +268,8 @@ void BossEnemyStateController::UpdateStateTimer() {
 
 				ChooseNextState(phase);
 			}
+
+			// 経過時間をリセット
 			stateTimer_.Reset();
 		}
 	}
@@ -354,9 +356,16 @@ void BossEnemyStateController::UpdateReFalterCooldown(BossEnemy& owner) {
 void BossEnemyStateController::ChangeState(BossEnemy& owner) {
 
 	// 同じなら遷移させない
-	if (requested_.value() == current_) {
+	if (requested_.value() == current_ && !debugComboMode_) {
 		requested_ = std::nullopt;
 		return;
+	}
+	// デバッグ状態の時、現在の状態が終了していなければ遷移させない
+	if (debugComboMode_) {
+		if (!states_.at(current_)->GetCanExit()) {
+			requested_ = std::nullopt;
+			return;
+		}
 	}
 
 	// 現在の状態の終了処理
@@ -499,7 +508,7 @@ void BossEnemyStateController::ChooseNextStateDebug() {
 	}
 
 	// 次に再生する状態を取得
-	uint32_t sequenceIndex = currentSequenceIndex_;
+	uint32_t sequenceIndex = std::clamp(currentSequenceIndex_, uint32_t(0), static_cast<uint32_t>(combo.sequence.size() - 1));
 	BossEnemyState nextState = combo.sequence[sequenceIndex];
 
 	// 連続同一状態の抑制

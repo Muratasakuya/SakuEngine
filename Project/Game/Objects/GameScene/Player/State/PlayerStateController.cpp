@@ -27,6 +27,7 @@
 #include <Game/Objects/GameScene/Player/State/States/PlayerParryState.h>
 #include <Game/Objects/GameScene/Player/State/States/PlayerSwitchAllyState.h>
 #include <Game/Objects/GameScene/Player/State/States/PlayerStunAttackState.h>
+#include <Game/Objects/GameScene/Player/State/States/PlayerFalterState.h>
 
 //============================================================================
 //	PlayerStateController classMethods
@@ -47,7 +48,7 @@ void PlayerStateController::Init(Player& owner) {
 	states_.emplace(PlayerState::Idle, std::make_unique<PlayerIdleState>());
 	states_.emplace(PlayerState::Walk, std::make_unique<PlayerWalkState>());
 	states_.emplace(PlayerState::Dash, std::make_unique<PlayerDashState>());
-	states_.emplace(PlayerState::Avoid, std::make_unique<PlayerAvoidSatate>());
+	states_.emplace(PlayerState::Avoid, std::make_unique<PlayerAvoidSatate>(&owner));
 	states_.emplace(PlayerState::Attack_1st, std::make_unique<PlayerAttack_1stState>(&owner));
 	states_.emplace(PlayerState::Attack_2nd, std::make_unique<PlayerAttack_2ndState>(&owner));
 	states_.emplace(PlayerState::Attack_3rd, std::make_unique<PlayerAttack_3rdState>(&owner));
@@ -56,6 +57,7 @@ void PlayerStateController::Init(Player& owner) {
 	states_.emplace(PlayerState::Parry, std::make_unique<PlayerParryState>());
 	states_.emplace(PlayerState::SwitchAlly, std::make_unique<PlayerSwitchAllyState>());
 	states_.emplace(PlayerState::StunAttack, std::make_unique<PlayerStunAttackState>(owner.GetAlly()));
+	states_.emplace(PlayerState::Falter, std::make_unique<PlayerFalterState>(&owner));
 
 	// json適応
 	ApplyJson();
@@ -68,6 +70,7 @@ void PlayerStateController::Init(Player& owner) {
 	requested_ = PlayerState::Idle;
 	currentEnterTime_ = GameTimer::GetTotalTime();
 	lastEnterTime_[current_] = currentEnterTime_;
+	isDashInput_ = false;
 	ChangeState(owner);
 }
 
@@ -102,19 +105,18 @@ void PlayerStateController::SetFollowCamera(FollowCamera* followCamera) {
 
 void PlayerStateController::SetForcedState(Player& owner, PlayerState state) {
 
-	// 同じ状態へは遷移不可
-	if (current_ == state) {
-		// パリィのみ例外
-		if (state == PlayerState::Parry) {
-			if (const auto& currentState = states_[current_].get()) {
+	// 同じ状態への強制遷移が許可されていれば
+	if (current_ == state && conditions_.at(state).enableInARowForceState) {
 
-				currentState->Exit(owner);
-				currentState->Enter(owner);
-			}
-			currentEnterTime_ = GameTimer::GetTotalTime();
-			lastEnterTime_[current_] = currentEnterTime_;
-			owner.GetAttackCollision()->SetEnterState(current_);
+		// 状態をリセットして再度状態を処理する
+		if (const auto& currentState = states_[current_].get()) {
+
+			currentState->Exit(owner);
+			currentState->Enter(owner);
 		}
+		currentEnterTime_ = GameTimer::GetTotalTime();
+		lastEnterTime_[current_] = currentEnterTime_;
+		owner.GetAttackCollision()->SetEnterState(current_);
 		return;
 	}
 
@@ -145,22 +147,44 @@ void PlayerStateController::SetForcedState(Player& owner, PlayerState state) {
 	owner.GetAttackCollision()->SetEnterState(current_);
 }
 
+void PlayerStateController::RequestFalterState(Player& owner) {
+
+	// 現在の状態が攻撃を受けたら怯む状態なら遷移させる
+	if (conditions_.at(current_).isArmor) {
+		// 怯み無効状態なら遷移させない
+		return;
+	}
+
+	// 怯み状態に遷移させる
+	SetForcedState(owner, PlayerState::Falter);
+}
+
 PlayerState PlayerStateController::GetSwitchSelectState() const {
 
 	// SwitchAlly状態の時になにをplayerが選択したのか取得する
 	return static_cast<PlayerSwitchAllyState*>(states_.at(PlayerState::SwitchAlly).get())->GetSelectState();
 }
 
+bool PlayerStateController::IsAvoidance() const {
+
+	// 現在の状態で回避行動を行っているかどうか
+	if (auto* currentState = states_.at(current_).get()) {
+
+		return currentState->IsAvoidance();
+	}
+	// それ以外はfalse
+	return false;
+}
+
 void PlayerStateController::Update(Player& owner) {
 
 	// 外部進捗による更新中なら入力による状態遷移を行わない
-	bool isExternalActive = UpdateExternalSynch(owner);
-	if (isExternalActive) {
+	if (UpdateExternalSynch(owner)) {
 		return;
 	}
 
 	// 入力に応じた状態の遷移
-	UpdateInputState();
+	UpdateInputState(owner);
 
 	// パリィ処理
 	UpdateParryState(owner);
@@ -212,7 +236,7 @@ void PlayerStateController::Update(Player& owner) {
 	owner.ClampInitPosY();
 }
 
-void PlayerStateController::UpdateInputState() {
+void PlayerStateController::UpdateInputState(Player& owner) {
 
 	// スタン処理中は状態遷移不可
 	if (IsStunProcessing()) {
@@ -220,20 +244,18 @@ void PlayerStateController::UpdateInputState() {
 	}
 
 	// コンボ中は判定をスキップする
-	const bool inCombat = IsCombatState(current_);
-	const bool canExit = states_.at(current_)->GetCanExit();
-	const bool isInChain = IsInChain();
-	const bool actionLocked = (inCombat && !canExit) || (inCombat && isInChain);
+	bool inCombat = IsCombatState(current_);
+	bool actionLocked = (inCombat && !states_.at(current_)->GetCanExit()) || (inCombat && IsInChain());
 
 	// 移動方向
-	const Vector2 move(inputMapper_->GetVector(PlayerInputAction::MoveX),
+	Vector2 move(inputMapper_->GetVector(PlayerInputAction::MoveX),
 		inputMapper_->GetVector(PlayerInputAction::MoveZ));
 	// 動いたかどうか判定
-	const bool isMove = move.Length() > std::numeric_limits<float>::epsilon();
+	bool isMove = move.Length() > std::numeric_limits<float>::epsilon();
 
 	// 歩き、待機状態の状態遷移
 	{
-		if (!actionLocked) {
+		if (!actionLocked && current_ != PlayerState::Dash) {
 
 			// 移動していた場合は歩き、していなければ待機状態のまま
 			if (isMove) {
@@ -242,39 +264,38 @@ void PlayerStateController::UpdateInputState() {
 			} else {
 
 				Request(PlayerState::Idle);
-
-				// 移動していないときに回避を押したら回避に遷移させる
-				if (inputMapper_->IsTriggered(PlayerInputAction::Avoid)) {
-
-					Request(PlayerState::Avoid);
-					return;
-				}
 			}
 		}
 	}
 
 	// ダッシュ、攻撃の状態遷移
 	{
-		if (isMove && inputMapper_->IsPressed(PlayerInputAction::Dash)) {
+
+		// ダッシュ入力があったかどうか
+		if (inputMapper_->IsTriggered(PlayerInputAction::Dash)) {
+
+			isDashInput_ = true;
+		}
+		// 移動していなければダッシュ入力をリセット
+		if (!isMove) {
+
+			isDashInput_ = false;
+		}
+
+		// 移動している時にダッシュ入力があればダッシュ状態に遷移
+		if (isMove && isDashInput_) {
 
 			Request(PlayerState::Dash);
-		} else {
-			// ダッシュ中に離したら待機状態にする
-			if (current_ == PlayerState::Dash) {
+		} else if (!isMove && current_ == PlayerState::Dash) {
 
-				Request(PlayerState::Idle);
-			}
+			// 移動が止まったらダッシュ終了
+			Request(PlayerState::Idle);
 		}
 
 		if (inputMapper_->IsTriggered(PlayerInputAction::Attack)) {
 
-			// dash -> 1段
-			if (current_ == PlayerState::Dash) {
+			if (current_ == PlayerState::Attack_1st) {
 
-				Request(PlayerState::Attack_1st);
-			}
-			// 1段 -> 2段
-			else if (current_ == PlayerState::Attack_1st) {
 				Request(PlayerState::Attack_2nd);
 			}
 			// 2段 -> 3段
@@ -287,15 +308,28 @@ void PlayerStateController::UpdateInputState() {
 			}
 			// 1段目
 			else {
+
+				// 1段目の攻撃
 				Request(PlayerState::Attack_1st);
 			}
+			// ダッシュ入力をリセット
+			isDashInput_ = false;
+			return;
 		}
 
 		// スキル攻撃
 		if (inputMapper_->IsTriggered(PlayerInputAction::Skill)) {
 
 			Request(PlayerState::SkilAttack);
+			return;
 		}
+	}
+
+	// 回避入力
+	if (!isDashInput_ && inputMapper_->IsTriggered(PlayerInputAction::Avoid)) {
+
+		Request(PlayerState::Avoid);
+		return;
 	}
 
 	// パリィの入力判定
@@ -312,6 +346,12 @@ void PlayerStateController::UpdateInputState() {
 			parrySession_.total = std::max<uint32_t>(1, parryParam.continuousCount);
 			parrySession_.reservedStart = GameTimer::GetTotalTime();
 		}
+	}
+
+	// ダッシュ中にダッシュ入力があればダッシュ状態を再度強制遷移させる
+	if (current_ == PlayerState::Dash && inputMapper_->IsTriggered(PlayerInputAction::Dash)) {
+
+		SetForcedState(owner, PlayerState::Dash);
 	}
 }
 
@@ -655,14 +695,15 @@ void PlayerStateController::ImGui(const Player& owner) {
 
 		// ---- Conditions ---------------------------------------------
 		if (ImGui::BeginTabItem("Conditions")) {
-			ImGui::Combo("Edit##cond-state",
-				&comboIndex_,
+			ImGui::Combo("Edit##cond-state", &comboIndex_,
 				EnumAdapter<PlayerState>::GetEnumArray().data(),
 				static_cast<int>(EnumAdapter<PlayerState>::GetEnumCount()));
 
 			PlayerState state = static_cast<PlayerState>(comboIndex_);
 			PlayerStateCondition& cond = conditions_[state];
 
+			ImGui::Checkbox("isArmor", &cond.isArmor);
+			ImGui::Checkbox("enableInARowForceState", &cond.enableInARowForceState);
 			ImGui::DragFloat("CoolTime", &cond.coolTime, 0.01f, 0.0f);
 			ImGui::DragFloat("InputWindow", &cond.chainInputTime, 0.01f, 0.0f);
 

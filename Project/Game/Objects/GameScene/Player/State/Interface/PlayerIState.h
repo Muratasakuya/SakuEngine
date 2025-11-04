@@ -54,6 +54,7 @@ public:
 	void SetPreState(PlayerState preState) { preState_ = preState; }
 
 	virtual bool GetCanExit() const { return canExit_; }
+	bool IsAvoidance() const { return isAvoidance_; }
 protected:
 	//========================================================================
 	//	protected Methods
@@ -76,11 +77,23 @@ protected:
 	float nextAnimDuration_; // 次のアニメーション遷移にかかる時間
 	bool canExit_ = true;    // 遷移可能かどうか
 	float rotationLerpRate_; // 回転補間割合
-
+	
 	float targetCameraRotateX_; // 目標カメラX軸回転
+
+	bool isAvoidance_ = false; // 回避行動中かどうか
 
 	//--------- functions ----------------------------------------------------
 
 	// helper
 	void SetRotateToDirection(Player& player, const Vector3& move);
+
+	// プレイヤー、敵の座標取得(Yを固定するため)
+	Vector3 GetPlayerFixedYPos() const;
+	Vector3 GetBossEnemyFixedYPos() const;
+
+	// プレイヤーの敵との距離
+	float GetDistanceToBossEnemy() const;
+
+	// プレイヤーから敵への方向
+	Vector3 GetDirectionToBossEnemy() const;
 };

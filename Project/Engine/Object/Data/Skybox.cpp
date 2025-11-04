@@ -4,6 +4,7 @@
 //	include
 //============================================================================
 #include <Engine/Object/Core/ObjectManager.h>
+#include <Engine/Core/Graphics/PostProcess/PostProcessBit.h>
 
 // imgui
 #include <imgui.h>
@@ -104,6 +105,9 @@ void Skybox::CreateCBuffer(ID3D12Device* device, uint32_t textureIndex) {
 	// uvの更新
 	material_.uvTransform = Matrix4x4::MakeAffineMatrix(
 		uvTransform_.scale, uvTransform_.rotate, uvTransform_.translation);
+
+	// ポストエフェクトマスク初期化
+	material_.postProcessMask = Bit_Grayscale | Bit_Vignette | Bit_Bloom | Bit_RadialBlur;
 
 	// buffer作成
 	matrixBuffer_.CreateBuffer(device);

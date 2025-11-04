@@ -28,6 +28,17 @@ void BloomForGPU::ImGui() {
 	ImGui::PopItemWidth();
 }
 
+void GrayscaleForGPU::ImGui() {
+
+	ImGui::SeparatorText("Grayscale");
+
+	ImGui::PushItemWidth(itemWidth_);
+
+	ImGui::DragFloat("rate##Grayscale", &rate, 0.01f, 0.0f, 1.0f);
+
+	ImGui::PopItemWidth();
+}
+
 void DissolveForGPU::ImGui() {
 
 	ImGui::SeparatorText("Dissolve");

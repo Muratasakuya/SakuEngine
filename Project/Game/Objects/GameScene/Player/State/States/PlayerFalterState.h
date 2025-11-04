@@ -4,21 +4,21 @@
 //	include
 //============================================================================
 #include <Game/Objects/GameScene/Player/State/Interface/PlayerIState.h>
-#include <Engine/Utility/Enum/Easing.h>
+#include <Engine/Utility/Timer/StateTimer.h>
 
 //============================================================================
-//	PlayerAvoidSatate class
-//	回避状態、止まっている状態から後ろに後ずさりする
+//	PlayerFalterState class
+//	敵の攻撃を受けた時の怯み状態
 //============================================================================
-class PlayerAvoidSatate :
+class PlayerFalterState :
 	public PlayerIState {
 public:
 	//========================================================================
 	//	public Methods
 	//========================================================================
 
-	PlayerAvoidSatate(Player* player);
-	~PlayerAvoidSatate() = default;
+	PlayerFalterState(Player* player);
+	~PlayerFalterState() = default;
 
 	void Enter(Player& player) override;
 
@@ -39,12 +39,17 @@ private:
 
 	//--------- variables ----------------------------------------------------
 
-	// parameters
-	float lerpTimer_; // 補間時間
-	float lerpTime_;  // 補間にかける時間
-	EasingType easingType_;
-	float moveDistance_; // 移動距離
+	// 怯みの移動補間時間
+	StateTimer falterTimer_;
+	// 補間座標
+	Vector3 startPos_;
+	Vector3 targetPos_;
+	// 移動距離
+	float moveDistance_;
 
-	Vector3 startPos_;  // 開始座標
-	Vector3 targetPos_; // 目標座標
+	// デルタタイムの停止時間
+	StateTimer deltaWaitTimer_;
+
+	//--------- functions ----------------------------------------------------
+
 };

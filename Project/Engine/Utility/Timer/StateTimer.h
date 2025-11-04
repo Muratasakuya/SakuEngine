@@ -23,7 +23,7 @@ public:
 	StateTimer() = default;
 	~StateTimer() = default;
 
-	void Update(const std::optional<float>& target = std::nullopt);
+	void Update(const std::optional<float>& target = std::nullopt, bool isUseScaledDeltaTime = true);
 
 	void Reset();
 

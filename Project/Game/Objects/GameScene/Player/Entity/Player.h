@@ -3,6 +3,7 @@
 //============================================================================
 //	include
 //============================================================================
+#include <Engine/Effect/User/EffectGroup.h>
 #include <Engine/Object/Base/GameObject3D.h>
 
 // weapon
@@ -95,8 +96,8 @@ private:
 	std::unique_ptr<PlayerHUD> hudSprites_;
 	std::unique_ptr<PlayerStunHUD> stunHudSprites_;
 
-	// エフェクト、エンジン機能変更中...
-	//std::unique_ptr<PlayerAnimationEffect> animationEffect_;
+	// 回避エフェクト
+	std::unique_ptr<EffectGroup> avoidEffect_;
 
 	// parameters
 	Transform3D initTransform_; // 初期化時の値
@@ -125,6 +126,7 @@ private:
 	void InitCollision();
 	void InitState();
 	void InitHUD();
+	void InitEffects();
 
 	// helper
 	void SetInitTransform();

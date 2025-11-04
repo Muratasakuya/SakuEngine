@@ -1,0 +1,64 @@
+{
+    "Nodes": [
+        {
+            "Emit": {
+                "Mode": "Always",
+                "count": 1,
+                "delay": 0.0,
+                "duration": 0.45500001311302185,
+                "interval": 0.0
+            },
+            "Module": {
+                "LifeEndMode": "Advance",
+                "PosePreset": "None",
+                "posOption": "World",
+                "sendLifeEndMode": false,
+                "sendSpawnerRotation": false,
+                "sendSpawnerTranslation": true,
+                "sendUpdaterKeyPath": false,
+                "sendUpdaterLightning": false,
+                "sendUpdaterRotation": false,
+                "sendUpdaterTranslate": false,
+                "spawnPos": {
+                    "x": 0.0,
+                    "y": 1.6200000047683716,
+                    "z": 0.0
+                },
+                "spawnRotate": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "spawnRotateOption": "None",
+                "spawnerScaleEnable": false,
+                "spawnerScaleValue": 1.0,
+                "updateRotate": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "updateRotateOption": "None",
+                "updaterScaleEnable": false,
+                "updaterScaleValue": 1.0
+            },
+            "ParticleSystem": {
+                "path": "Particle/Player/playerAvoidEffect.json"
+            },
+            "StartAfter": {
+                "Condition": "None",
+                "groupIndex": -1,
+                "nodeKey": ""
+            },
+            "Stop": {
+                "Condition": "AfterDuration",
+                "emptyGroupIndex": -1,
+                "emptyNodeKey": ""
+            },
+            "key": "playerAvoidEffect",
+            "name": "playerAvoidEffect",
+            "startOffset": 0.0
+        }
+    ],
+    "parentAnchorId_": 0,
+    "parentAnchorName_": ""
+}

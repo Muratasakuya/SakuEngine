@@ -35,16 +35,14 @@ void PlayerAttack_1stState::Enter(Player& player) {
 	// 敵が攻撃可能範囲にいるかチェック
 	const Vector3 playerPos = player.GetTranslation();
 	// 補間座標を設定
-	if (!CheckInRange(attackPosLerpCircleRange_,
-		Vector3(bossEnemy_->GetTranslation() - playerPos).Length())) {
+	if (!CheckInRange(attackPosLerpCircleRange_, PlayerIState::GetDistanceToBossEnemy())) {
 
 		startPos_ = playerPos;
 		targetPos_ = startPos_ + player.GetTransform().GetForward() * moveValue_;
 	}
 
 	// 回転補間範囲内にいるかどうか
-	assisted_ = CheckInRange(attackLookAtCircleRange_,
-		Vector3(bossEnemy_->GetTranslation() - playerPos).Length());
+	assisted_ = CheckInRange(attackLookAtCircleRange_, PlayerIState::GetDistanceToBossEnemy());
 	if (assisted_) {
 
 		// カメラの向きを補正させる
@@ -53,6 +51,9 @@ void PlayerAttack_1stState::Enter(Player& player) {
 
 		startPos_ = playerPos;
 		targetPos_ = startPos_ + player.GetTransform().GetForward() * moveValue_;
+
+		// y座標を合わせる
+		targetPos_.y = startPos_.y;
 	}
 
 	// 剣エフェクトの発生

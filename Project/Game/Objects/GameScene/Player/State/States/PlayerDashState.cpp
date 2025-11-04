@@ -14,7 +14,7 @@
 
 void PlayerDashState::Enter(Player& player) {
 
-	player.SetNextAnimation("player_dash", true, nextAnimDuration_);
+	player.SetNextAnimation("player_dash", false, nextAnimDuration_);
 
 	// 加速開始
 	currentState_ = State::Accel;
@@ -37,6 +37,9 @@ void PlayerDashState::UpdateState() {
 	switch (currentState_) {
 	case PlayerDashState::State::Accel: {
 
+		// 回避中
+		isAvoidance_ = true;
+
 		// 加速させる
 		accelLerp_->LerpValue(moveSpeed_);
 		// 加速が終了したら次の状態に遷移
@@ -52,6 +55,9 @@ void PlayerDashState::UpdateState() {
 
 		// 時間経過後減速させる
 		if (sustainTime_ <= sustainTimer_) {
+
+			// 回避終了
+			isAvoidance_ = false;
 
 			currentState_ = State::Decel;
 			decelLerp_->Start();
@@ -103,6 +109,9 @@ void PlayerDashState::Exit(Player& player) {
 	sustainTimer_ = 0.0f;
 	move_.Init();
 
+	// 回避終了にしておく
+	isAvoidance_ = false;
+
 	player.ResetAnimation();
 }
 
@@ -112,7 +121,6 @@ bool PlayerDashState::GetCanExit() const {
 
 		return true;
 	}
-
 	return !inputMapper_->IsPressed(PlayerInputAction::Dash);
 }
 

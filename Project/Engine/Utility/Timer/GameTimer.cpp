@@ -25,7 +25,7 @@ std::vector<float> GameTimer::drawTimes_ = {};
 float GameTimer::deltaTime_ = 0.0f;
 float GameTimer::timeScale_ = 1.0f;
 EasingType GameTimer::easing_ = EasingType::EaseOutExpo;
-float GameTimer::lerpSpeed_ = 8.0f;
+float GameTimer::lerpSpeed_ = 32.0f;
 float GameTimer::waitTimer_ = 0.0f;
 float GameTimer::waitTime_ = 0.08f;
 bool GameTimer::returnScaleEnable_ = true;
@@ -51,9 +51,11 @@ void GameTimer::Update() {
 
 				timeScale_ += (1.0f - timeScale_) * easedT;
 				if (std::fabs(1.0f - timeScale_) < 0.01f) {
-					timeScale_ = 1.0f;
 
+					timeScale_ = 1.0f;
 					waitTimer_ = 0.0f;
+					// リセット
+					lerpSpeed_ = 32.0f;
 				}
 			}
 		}

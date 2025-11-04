@@ -41,14 +41,13 @@ void PlayerAttack_2ndState::Enter(Player& player) {
 
 	// 距離を比較
 	const Vector3 playerPos = player.GetTranslation();
-	const float distance = (bossEnemy_->GetTranslation() - playerPos).Length();
 
 	// 初期化
 	currentIndex_ = 0;
 	segmentTimer_ = 0.0f;
 	segmentTime_ = attackPosLerpTime_ / 3.0f;
 
-	if (attackPosLerpCircleRange_ < distance) {
+	if (attackPosLerpCircleRange_ < PlayerIState::GetDistanceToBossEnemy()) {
 
 		// 範囲外のとき
 		CalcApproachWayPoints(player, wayPoints_);
@@ -60,8 +59,7 @@ void PlayerAttack_2ndState::Enter(Player& player) {
 	startTranslation_ = playerPos;
 
 	// 回転補間させるかの設定
-	approachPhase_ = CheckInRange(attackLookAtCircleRange_,
-		Vector3(bossEnemy_->GetTranslation() - playerPos).Length());
+	approachPhase_ = CheckInRange(attackLookAtCircleRange_, PlayerIState::GetDistanceToBossEnemy());
 
 	// 剣エフェクトの発生
 	slash1stEffect_->Emit(player_->GetRotation() * slash1stEffectOffset_);
@@ -100,8 +98,7 @@ void PlayerAttack_2ndState::Update(Player& player) {
 		}
 
 		// 範囲内になったら敵補間へ切り替え
-		const float distance = (bossEnemy_->GetTranslation() - player.GetTranslation()).Length();
-		if (distance <= attackPosLerpCircleRange_) {
+		if (PlayerIState::GetDistanceToBossEnemy() <= attackPosLerpCircleRange_) {
 
 			approachPhase_ = false;
 			CalcWayPoints(player, wayPoints_);
@@ -141,15 +138,15 @@ void PlayerAttack_2ndState::CalcWayPoints(const Player& player, std::array<Vecto
 
 	// 目標座標を設定
 	startTranslation_ = player.GetTranslation();
-	const Vector3 enemyPos = bossEnemy_->GetTranslation();
-	Vector3 direction = (enemyPos - startTranslation_).Normalize();
-	direction.y = 0.0f;
-	direction = direction.Normalize();
-	targetTranslation_ = enemyPos - direction * attackOffsetTranslation_;
+	Vector3 enemyPos = PlayerIState::GetBossEnemyFixedYPos();
+	// プレイヤーのY座標と合わせる
+	enemyPos.y = startTranslation_.y;
+	// 目標座標を敵の方向に設定
+	targetTranslation_ = enemyPos - PlayerIState::GetDirectionToBossEnemy() * attackOffsetTranslation_;
 
 	//距離に応じて振れ幅を変更する
-	const float distance = (*targetTranslation_ - startTranslation_).Length();
-	const float swayLength = (std::max)(0.0f, (attackPosLerpCircleRange_ - distance)) * swayRate_;
+	float distance = (*targetTranslation_ - startTranslation_).Length();
+	float swayLength = (std::max)(0.0f, (attackPosLerpCircleRange_ - distance)) * swayRate_;
 
 	// 補間先を設定する
 	CalcWayPointsToTarget(startTranslation_, *targetTranslation_,
@@ -160,10 +157,9 @@ void PlayerAttack_2ndState::CalcWayPointsToTarget(const Vector3& start, const Ve
 	float leftT, float rightT, float swayLength, std::array<Vector3, kNumSegments>& dstWayPoints) {
 
 	Vector3 direction = Vector3(target - start).Normalize();
-	direction.y = 0.0f;
-	direction = direction.Normalize();
 	Vector3 right = Vector3::Cross(direction, Vector3(0.0f, 1.0f, 0.0f)).Normalize();
 
+	// 左右の補間点を計算
 	dstWayPoints[0] = Vector3::Lerp(start, target, leftT) - right * swayLength;  // 左
 	dstWayPoints[1] = Vector3::Lerp(start, target, rightT) + right * swayLength; // 右
 	dstWayPoints[2] = target;

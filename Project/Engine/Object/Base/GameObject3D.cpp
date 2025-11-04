@@ -221,7 +221,6 @@ void GameObject3D::SetPostProcessMask(uint32_t mask, std::optional<uint32_t> mes
 
 		(*materials_)[meshIndex.value()].postProcessMask = mask;
 	} else {
-
 		for (auto& material : *materials_) {
 
 			material.postProcessMask = mask;

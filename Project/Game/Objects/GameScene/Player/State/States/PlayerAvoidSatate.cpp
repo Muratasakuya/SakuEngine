@@ -12,6 +12,12 @@
 //	PlayerAvoidSatate classMethods
 //============================================================================
 
+PlayerAvoidSatate::PlayerAvoidSatate(Player* player) {
+
+	player_ = nullptr;
+	player_ = player;
+}
+
 void PlayerAvoidSatate::Enter(Player& player) {
 
 	player.SetNextAnimation("player_avoid", false, nextAnimDuration_);
@@ -19,9 +25,7 @@ void PlayerAvoidSatate::Enter(Player& player) {
 	const Vector3 playerPos = player.GetTranslation();
 	const Vector3 enemyPos = bossEnemy_->GetTranslation();
 	// 向き
-	Vector3 direction = (enemyPos - playerPos).Normalize();
-	direction.y = 0.0f;
-	direction = direction.Normalize();
+	Vector3 direction = PlayerIState::GetDirectionToBossEnemy();
 
 	// 補間座標を設定する
 	startPos_ = playerPos;
@@ -29,6 +33,9 @@ void PlayerAvoidSatate::Enter(Player& player) {
 
 	// 敵の方向を向かせる
 	player.SetRotation(Quaternion::LookRotation(direction, Vector3(0.0f, 1.0f, 0.0f)));
+
+	// 回避開始
+	isAvoidance_ = true;
 
 	canExit_ = false;
 }
@@ -50,6 +57,9 @@ void PlayerAvoidSatate::Update(Player& player) {
 	if (lerpTime_ < lerpTimer_) {
 
 		canExit_ = true;
+
+		// 回避終了
+		isAvoidance_ = false;
 	}
 }
 
@@ -58,6 +68,8 @@ void PlayerAvoidSatate::Exit([[maybe_unused]] Player& player) {
 	// リセット
 	lerpTimer_ = 0.0f;
 	canExit_ = false;
+	// 回避終了
+	isAvoidance_ = false;
 }
 
 void PlayerAvoidSatate::ImGui(const Player& player) {
