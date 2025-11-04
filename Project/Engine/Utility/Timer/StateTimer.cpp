@@ -13,10 +13,10 @@
 //	StateTimer classMethods
 //============================================================================
 
-void StateTimer::Update(const std::optional<float>& target) {
+void StateTimer::Update(const std::optional<float>& target, bool isUseScaledDeltaTime) {
 
 	float endTarget = target.has_value() ? target.value() : target_;
-	current_ += GameTimer::GetScaledDeltaTime();
+	current_ += isUseScaledDeltaTime ? GameTimer::GetScaledDeltaTime() : GameTimer::GetDeltaTime();
 	t_ = std::clamp(current_ / endTarget, 0.0f, 1.0f);
 	easedT_ = EasedValue(easeingType_, t_);
 }

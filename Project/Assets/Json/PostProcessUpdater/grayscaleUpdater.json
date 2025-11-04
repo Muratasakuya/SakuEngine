@@ -1,0 +1,25 @@
+{
+    "RateAnimation": {
+        "Loop": {
+            "loop": {
+                "loopCount": 1,
+                "type": "Repeat"
+            }
+        },
+        "ReturnTimer": {
+            "easeingType_": "Linear",
+            "target_": 0.0
+        },
+        "Timer": {
+            "easeingType_": "EaseOutSine",
+            "target_": 0.1599999964237213
+        },
+        "move_.end": 1.0,
+        "move_.start": 0.0,
+        "useReturnTimer_": false
+    },
+    "WaitGrayTimer": {
+        "easeingType_": "Linear",
+        "target_": 1.0
+    }
+}

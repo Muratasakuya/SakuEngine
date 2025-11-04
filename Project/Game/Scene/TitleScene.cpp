@@ -13,6 +13,7 @@
 #include <Game/PostEffect/RadialBlurUpdater.h>
 #include <Game/PostEffect/GlitchUpdater.h>
 #include <Game/PostEffect/CRTDisplayUpdater.h>
+#include <Game/PostEffect/GrayscaleUpdater.h>
 
 //============================================================================
 //	TitleScene classMethods
@@ -41,6 +42,7 @@ void TitleScene::Init() {
 	postProcess->RegisterUpdater(std::make_unique<RadialBlurUpdater>());
 	postProcess->RegisterUpdater(std::make_unique<GlitchUpdater>());
 	postProcess->RegisterUpdater(std::make_unique<CRTDisplayUpdater>());
+	postProcess->RegisterUpdater(std::make_unique<GrayscaleUpdater>());
 
 	// タイトルで使用するポストエフェクトを追加
 	postProcess->AddProcess(PostProcessType::CRTDisplay);
