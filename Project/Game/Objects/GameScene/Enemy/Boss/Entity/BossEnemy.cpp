@@ -352,7 +352,7 @@ void BossEnemy::CheckSceneState(GameSceneState sceneState) {
 void BossEnemy::OnCollisionEnter(const CollisionBody* collisionBody) {
 
 	// playerからの攻撃を受けた時
-	if (collisionBody->GetType() == ColliderType::Type_PlayerWeapon) {
+	if ((collisionBody->GetType() & ColliderType::Type_PlayerWeapon) != ColliderType::Type_None) {
 
 		// ダメージを受ける
 		const int damage = player_->GetDamage();
