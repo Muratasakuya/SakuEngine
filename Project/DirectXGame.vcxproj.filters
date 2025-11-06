@@ -2337,4 +2337,7 @@
     <ClInclude Include="Game\PostEffect\GrayscaleUpdater.h" />
     <ClInclude Include="Game\Objects\GameScene\Player\State\States\PlayerFalterState.h" />
   </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Assets\Engine\Shaders\PostProcess\PlayerAfterImage\PlayerAfterImage.hlsl" />
+  </ItemGroup>
 </Project>
