@@ -47,6 +47,7 @@ void BossEnemy::InitAnimations() {
 	animation_->SetAnimationData("bossEnemy_stun");
 	animation_->SetAnimationData("bossEnemy_stunUpdate");
 	animation_->SetAnimationData("bossEnemy_teleport");
+	animation_->SetAnimationData("bossEnemy_start");
 
 	// 右手を親として更新させる
 	animation_->SetParentJoint("rightHand");
