@@ -65,7 +65,6 @@ void DxCommand::Create(ID3D12Device* device) {
 void DxCommand::ExecuteGraphicsCommands(IDXGISwapChain4* swapChain) {
 
 	HRESULT hr = S_OK;
-	// GraphicsCommand
 	hr = commandList_->Close();
 	assert(SUCCEEDED(hr));
 
