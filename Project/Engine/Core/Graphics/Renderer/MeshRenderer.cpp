@@ -12,7 +12,6 @@
 #include <Engine/Core/Graphics/DxLib/DxUtils.h>
 #include <Engine/Object/Core/ObjectManager.h>
 #include <Engine/Object/System/Systems/InstancedMeshSystem.h>
-#include <Engine/Object/System/Systems/SkyboxRenderSystem.h>
 #include <Engine/Config.h>
 
 //============================================================================
@@ -104,68 +103,52 @@ void MeshRenderer::Rendering(bool debugEnable, SceneConstBuffer* sceneBuffer, Dx
 
 	// 描画情報取得
 	const auto& system = ObjectManager::GetInstance()->GetSystem<InstancedMeshSystem>();
-	MeshCommandContext commandContext{};
-
 	const auto& meshes = system->GetMeshes();
 	auto instancingBuffers = system->GetInstancingData();
-	const auto& viewMap = system->GetRenderViewPerModel();
+	const auto& renderData = system->GetRenderData();
 
-	if (meshes.empty()) {
+	// TLASが作成されていなければ描画しない
+	if (meshes.empty() || !rayScene_->GetTLASResource()) {
 		return;
 	}
-	if (!rayScene_->GetTLASResource()) {
-		return;
-	}
 
-	// renderTextureへの描画処理
-	// pipeline設定
-	commandList->SetGraphicsRootSignature(meshShaderPipeline_->GetRootSignature());
-	commandList->SetPipelineState(meshShaderPipeline_->GetGraphicsPipeline());
-
-	// 共通のbuffer設定
-	sceneBuffer->SetMainPassCommands(debugEnable, commandList);
-	// allTexture
-	commandList->SetGraphicsRootDescriptorTable(11, srvDescriptor_->GetDescriptorHeap()->GetGPUDescriptorHandleForHeapStart());
-
-	// RayQuery
-	// TLAS
-	commandList->SetGraphicsRootShaderResourceView(8, rayScene_->GetTLASResource()->GetGPUVirtualAddress());
-	// scene情報
-	sceneBuffer->SetRaySceneCommand(commandList, 15);
-
-	// skyboxがあるときのみ、とりあえず今は
-	if (skyBoxSystem->IsCreated()) {
-
-		// environmentTexture
-		commandList->SetGraphicsRootDescriptorTable(12,
-			srvDescriptor_->GetGPUHandle(skyBoxSystem->GetTextureIndex()));
-	}
-
+	// 絶対に被らないブレンドモードで初期化
+	BlendMode currentBlendMode = BlendMode::kBlendModeCount;
+	MeshCommandContext commandContext{};
 	for (const auto& [name, mesh] : meshes) {
 
 		// 作成しきれていないメッシュをスキップ
 		if (!system->IsReady(name)) {
-			 continue;
+			continue;
 		}
 		// 描画先のビットが立っていなければ描画しない
-		if (auto it = viewMap.find(name); it != viewMap.end()) {
+		if (auto it = renderData.find(name); it != renderData.end()) {
 
-			const uint8_t mask = static_cast<uint8_t>(it->second);
+			const uint8_t mask = static_cast<uint8_t>(it->second.renderView);
 			const uint8_t want = static_cast<uint8_t>(debugEnable ? MeshRenderView::Scene : MeshRenderView::Game);
+			// ビットが被っていなければ描画しない
 			if ((mask & want) == 0) {
 				continue;
 			}
-		} else {
-			continue;
+
+			// 違うブレンドモードならパイプラインを再設定
+			if (currentBlendMode != it->second.blendMode) {
+
+				// ブレンドモード更新
+				currentBlendMode = it->second.blendMode;
+				// パイプライン設定
+				SetPipeline(debugEnable, *skyBoxSystem, sceneBuffer, commandList, currentBlendMode);
+			}
 		}
 
-		// meshごとのmatrix設定
+		// 行列バッファ設定
 		commandList->SetGraphicsRootShaderResourceView(4,
 			instancingBuffers[name].matrixBuffer.GetResource()->GetGPUVirtualAddress());
 
+		// マルチメッシュ描画
 		for (uint32_t meshIndex = 0; meshIndex < mesh->GetMeshCount(); ++meshIndex) {
 
-			// meshごとのmaterial、lighting設定
+			// マテリアル、ライティング設定
 			commandList->SetGraphicsRootShaderResourceView(9,
 				instancingBuffers[name].materialsBuffer[meshIndex].GetResource()->GetGPUVirtualAddress());
 			commandList->SetGraphicsRootShaderResourceView(10,
@@ -183,12 +166,35 @@ void MeshRenderer::Rendering(bool debugEnable, SceneConstBuffer* sceneBuffer, Dx
 	}
 }
 
+void MeshRenderer::SetPipeline(bool debugEnable, const SkyboxRenderSystem& skybox,
+	SceneConstBuffer* sceneBuffer, ID3D12GraphicsCommandList6* commandList, BlendMode blendMode) {
+
+	// パイプラインのセット
+	commandList->SetGraphicsRootSignature(meshShaderPipeline_->GetRootSignature());
+	commandList->SetPipelineState(meshShaderPipeline_->GetGraphicsPipeline(blendMode));
+
+	// 共通のバッファ設定
+	sceneBuffer->SetMainPassCommands(debugEnable, commandList);
+	// SRVのセット
+	commandList->SetGraphicsRootDescriptorTable(11, srvDescriptor_->GetDescriptorHeap()->GetGPUDescriptorHandleForHeapStart());
+
+	// レイインスタンスバッファのセット(TLAS)
+	commandList->SetGraphicsRootShaderResourceView(8, rayScene_->GetTLASResource()->GetGPUVirtualAddress());
+	sceneBuffer->SetRaySceneCommand(commandList, 15);
+
+	// skyboxが作成済みの場合のみ
+	if (skybox.IsCreated()) {
+
+		// 環境テクスチャ
+		commandList->SetGraphicsRootDescriptorTable(12, srvDescriptor_->GetGPUHandle(skybox.GetTextureIndex()));
+	}
+}
+
 void MeshRenderer::BeginSkinnedTransition(bool debugEnable, uint32_t meshIndex, IMesh* mesh, DxCommand* dxCommand) {
 
+	// skinnedMeshなら頂点を読める状態にする
 #if defined(_DEBUG) || defined(_DEVELOPBUILD)
 	if (!debugEnable) {
-
-		// skinnedMeshなら頂点を読める状態にする
 		if (mesh->IsSkinned()) {
 
 			dxCommand->TransitionBarriers({ static_cast<SkinnedMesh*>(mesh)->GetOutputVertexBuffer(meshIndex).GetResource() },
@@ -197,7 +203,6 @@ void MeshRenderer::BeginSkinnedTransition(bool debugEnable, uint32_t meshIndex, 
 		}
 	}
 #else
-	// skinnedMeshなら頂点を読める状態にする
 	if (mesh->IsSkinned()) {
 
 		dxCommand->TransitionBarriers({ static_cast<SkinnedMesh*>(mesh)->GetOutputVertexBuffer(meshIndex).GetResource() },
@@ -209,10 +214,9 @@ void MeshRenderer::BeginSkinnedTransition(bool debugEnable, uint32_t meshIndex, 
 
 void MeshRenderer::EndSkinnedTransition(bool debugEnable, uint32_t meshIndex, IMesh* mesh, DxCommand* dxCommand) {
 
+	// skinnedMeshなら頂点を書き込み状態に戻す
 #if defined(_DEBUG) || defined(_DEVELOPBUILD)
 	if (debugEnable) {
-
-		// skinnedMeshなら頂点を書き込み状態に戻す
 		if (mesh->IsSkinned()) {
 
 			dxCommand->TransitionBarriers({ static_cast<SkinnedMesh*>(mesh)->GetOutputVertexBuffer(meshIndex).GetResource() },
@@ -221,7 +225,6 @@ void MeshRenderer::EndSkinnedTransition(bool debugEnable, uint32_t meshIndex, IM
 		}
 	}
 #else
-	// skinnedMeshなら頂点を書き込み状態に戻す
 	if (mesh->IsSkinned()) {
 
 		dxCommand->TransitionBarriers({ static_cast<SkinnedMesh*>(mesh)->GetOutputVertexBuffer(meshIndex).GetResource() },

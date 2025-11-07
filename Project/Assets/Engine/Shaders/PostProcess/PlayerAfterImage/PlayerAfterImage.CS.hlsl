@@ -10,8 +10,20 @@
 
 struct Material {
 	
-	// 1.0fが最大のグレースケール割合
+	// ディザリング率(0.0f~1.0f)
 	float rate;
+	
+	// パターン
+	int4x4 pattern;
+	// ピクセルの割る数
+	float divisor;
+	
+	// ディザリングカラー
+	float4 ditherColor;
+	
+	// 発光
+	float3 emissionColor;
+	float emissionIntensity;
 };
 
 //============================================================================
@@ -38,19 +50,38 @@ void main(uint3 DTid : SV_DispatchThreadID) {
 	}
 
 	// フラグが立っていなければ処理しない
-	if (!CheckPixelBitMask(Bit_Grayscale, pixelPos)) {
+	if (!CheckPixelBitMask(Bit_PlayerAfterImage, pixelPos)) {
 	
 		gOutputTexture[pixelPos] = gInputTexture.Load(int3(pixelPos, 0));
 		return;
 	}
-
+	
 	// 入力カラー
 	float4 color = gInputTexture.Load(int3(pixelPos, 0));
-	// 完全グレースケール値
-	float gray = dot(color.rgb, float3(0.2125f, 0.7154f, 0.0721f));
-	// 補間割合で元色とグレーをブレンド
-	float3 finalColor = lerp(color.rgb, gray.xxx, saturate(gMaterial.rate));
+	
+	// パターンインデックス
+	int2 posIndex = int2(fmod(pixelPos, gMaterial.divisor));
+	// ディザリング閾値
+	int threshold = gMaterial.pattern[posIndex.y][posIndex.x];
+	
+	// 閾値以下なら元の色を返す
+	if ((threshold - gMaterial.rate) < 0.0f) {
 
-	// 出力
-	gOutputTexture[pixelPos] = float4(finalColor, color.a);
+		gOutputTexture[pixelPos] = color;
+		return;
+	}
+
+	// α値、0.0f~1.0f
+	float a = saturate(gMaterial.ditherColor.a);
+
+	// 出力する色をブレンド
+	float3 outRGB = gMaterial.ditherColor.rgb * a + color.rgb * (1.0f - a);
+	float outA = a + color.a * (1.0f - a);
+
+	// 発光処理
+	float3 emissionColor = gMaterial.emissionColor * gMaterial.emissionIntensity;
+	outRGB += outRGB * emissionColor;
+
+	// 出力色
+	gOutputTexture[pixelPos] = float4(outRGB, outA);
 }

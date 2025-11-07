@@ -143,7 +143,8 @@ void Player::DerivedInit() {
 	// json適応
 	ApplyJson();
 
-	SetPostProcessMask(Bit_Bloom | Bit_DepthBasedOutline | Bit_Glitch | Bit_Grayscale);
+	SetPostProcessMask(Bit_Bloom | Bit_DepthBasedOutline |
+		Bit_Glitch | Bit_Grayscale | Bit_PlayerAfterImage);
 }
 
 void Player::SetBossEnemy(const BossEnemy* bossEnemy) {

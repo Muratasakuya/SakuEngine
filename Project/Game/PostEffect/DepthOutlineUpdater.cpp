@@ -25,6 +25,19 @@ void DepthOutlineUpdater::Update() {
 	bufferData_.projectionInverse = Matrix4x4::Inverse(sceneView_->GetCamera()->GetProjectionMatrix());
 }
 
+void DepthOutlineUpdater::Start(const Color& color, float edgeScale) {
+
+	// 太さ、色を指定
+	bufferData_.edgeScale = edgeScale;
+	bufferData_.color = Vector3(color.r, color.g, color.b);
+}
+
+void DepthOutlineUpdater::Reset() {
+
+	// 太さを0.0fにして効果を消す
+	bufferData_.edgeScale = 0.0f;
+}
+
 void DepthOutlineUpdater::ImGui() {
 
 	SaveButton();

@@ -13,9 +13,6 @@
 #include <Engine/Config.h>
 #include <Engine/Utility/Enum/EnumAdapter.h>
 
-// updaters
-#include <Engine/Core/Graphics/PostProcess/Buffer/Updater/DepthOutlineUpdater.h>
-
 //============================================================================
 //	PostProcessSystem classMethods
 //============================================================================
@@ -527,8 +524,6 @@ void PostProcessSystem::CreateCBuffer(PostProcessType type) {
 		buffer->Init(device_, 4);
 
 		buffers_[type] = std::move(buffer);
-		// 更新クラスを自動追加
-		RegisterUpdater(std::make_unique<DepthOutlineUpdater>());
 		break;
 	}
 	case PostProcessType::Lut: {
@@ -550,6 +545,14 @@ void PostProcessSystem::CreateCBuffer(PostProcessType type) {
 	case PostProcessType::CRTDisplay: {
 
 		auto buffer = std::make_unique<PostProcessBuffer<CRTDisplayForGPU>>();
+		buffer->Init(device_, 3);
+
+		buffers_[type] = std::move(buffer);
+		break;
+	}
+	case PostProcessType::PlayerAfterImage: {
+
+		auto buffer = std::make_unique<PostProcessBuffer<PlayerAfterImageForGPU>>();
 		buffer->Init(device_, 3);
 
 		buffers_[type] = std::move(buffer);

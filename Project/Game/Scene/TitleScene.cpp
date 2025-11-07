@@ -10,10 +10,12 @@
 #include <Engine/Scene/Manager/SceneManager.h>
 
 // postEffect
+#include <Game/PostEffect/DepthOutlineUpdater.h>
 #include <Game/PostEffect/RadialBlurUpdater.h>
 #include <Game/PostEffect/GlitchUpdater.h>
 #include <Game/PostEffect/CRTDisplayUpdater.h>
 #include <Game/PostEffect/GrayscaleUpdater.h>
+#include <Game/PostEffect/PlayerAfterImageUpdater.h>
 
 //============================================================================
 //	TitleScene classMethods
@@ -34,15 +36,18 @@ void TitleScene::Init() {
 		PostProcessType::CRTDisplay,
 		PostProcessType::Glitch,
 		PostProcessType::DepthBasedOutline,
-		PostProcessType::Grayscale });
+		PostProcessType::Grayscale,
+		PostProcessType::PlayerAfterImage });
 	// グリッチに使用するテクスチャを設定
 	postProcess->InputProcessTexture("noise", PostProcessType::Glitch);
 
 	// 更新クラスを登録
+	postProcess->RegisterUpdater(std::make_unique<DepthOutlineUpdater>());
 	postProcess->RegisterUpdater(std::make_unique<RadialBlurUpdater>());
 	postProcess->RegisterUpdater(std::make_unique<GlitchUpdater>());
 	postProcess->RegisterUpdater(std::make_unique<CRTDisplayUpdater>());
 	postProcess->RegisterUpdater(std::make_unique<GrayscaleUpdater>());
+	postProcess->RegisterUpdater(std::make_unique<PlayerAfterImageUpdater>());
 
 	// タイトルで使用するポストエフェクトを追加
 	postProcess->AddProcess(PostProcessType::CRTDisplay);

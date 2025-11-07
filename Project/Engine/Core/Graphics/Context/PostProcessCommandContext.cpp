@@ -39,6 +39,7 @@ void PostProcessCommandContext::Execute(PostProcessType type,
 	case PostProcessType::HorizontalBlur:
 	case PostProcessType::LuminanceBasedOutline:
 	case PostProcessType::CRTDisplay:
+	case PostProcessType::PlayerAfterImage:
 
 		commandList->Dispatch(threadGroupCountX, threadGroupCountY, 1);
 		break;

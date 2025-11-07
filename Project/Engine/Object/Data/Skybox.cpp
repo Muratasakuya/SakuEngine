@@ -97,7 +97,7 @@ void Skybox::CreateCBuffer(ID3D12Device* device, uint32_t textureIndex) {
 	transform_.scale = Vector3::AnyInit(scale);
 	transform_.UpdateMatrix();
 
-	material_.color = Color::Convert(0x181818ff);
+	material_.color = Color::Convert(0x060606ff);
 	material_.textureIndex = textureIndex;
 
 	uvTransform_.scale = Vector3::AnyInit(1.0f);

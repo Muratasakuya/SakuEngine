@@ -199,7 +199,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Core\Graphics\GPUObject\IndexBuffer.cpp">
       <SubType />
     </ClCompile>
-    <ClCompile Include="Engine\Core\Graphics\PostProcess\Buffer\Updater\DepthOutlineUpdater.cpp">
+    <ClCompile Include="Game\PostEffect\DepthOutlineUpdater.cpp">
       <SubType />
     </ClCompile>
     <ClCompile Include="Engine\Core\Graphics\PostProcess\Texture\MultiRenderTexture.cpp">
@@ -854,6 +854,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <SubType>
       </SubType>
     </ClCompile>
+    <ClCompile Include="Game\PostEffect\PlayerAfterImageUpdater.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="Game\PostEffect\RadialBlurUpdater.cpp">
       <SubType />
     </ClCompile>
@@ -956,7 +960,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Core\Graphics\GPUObject\VertexBuffer.h">
       <SubType />
     </ClInclude>
-    <ClInclude Include="Engine\Core\Graphics\PostProcess\Buffer\Updater\DepthOutlineUpdater.h">
+    <ClInclude Include="Game\PostEffect\DepthOutlineUpdater.h">
       <SubType />
     </ClInclude>
     <ClInclude Include="Engine\Core\Graphics\PostProcess\Buffer\Updater\Interface\IPostProcessUpdater.h">
@@ -1720,12 +1724,20 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\Objects\TitleScene\TitleController.h">
       <SubType />
     </ClInclude>
+    <ClInclude Include="Game\PostEffect\ActiveObjectOutlineUpdater.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="Game\PostEffect\CRTDisplayUpdater.h">
       <SubType>
       </SubType>
     </ClInclude>
     <ClInclude Include="Game\PostEffect\GlitchUpdater.h" />
     <ClInclude Include="Game\PostEffect\GrayscaleUpdater.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Game\PostEffect\PlayerAfterImageUpdater.h">
       <SubType>
       </SubType>
     </ClInclude>
@@ -1956,7 +1968,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Develop|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="Assets\Engine\Shaders\PostProcess\PlayerAfterImage\PlayerAfterImage.hlsl">
+    <FxCompile Include="Assets\Engine\Shaders\PostProcess\PlayerAfterImage\PlayerAfterImage.CS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Develop|x64'">Compute</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Develop|x64'">4.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>

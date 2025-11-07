@@ -31,6 +31,7 @@ enum class PostProcessType {
 	Lut,
 	Glitch,
 	CRTDisplay,
+	PlayerAfterImage,
 
 	Count
 };

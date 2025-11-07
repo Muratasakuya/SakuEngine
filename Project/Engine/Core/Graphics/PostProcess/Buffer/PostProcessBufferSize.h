@@ -307,3 +307,38 @@ public:
 
 	float pad0[2];
 };
+
+class PlayerAfterImageForGPU {
+public:
+	//========================================================================
+	//	public Methods
+	//========================================================================
+
+	void ImGui();
+
+	//--------- properties ---------------------------------------------------
+
+	// ディザリング率(0.0f~1.0f)
+	float rate = 1.0f;
+
+	float pad0[3];
+
+	// パターン
+	int pattern[4][4] = {
+	{  0, 32,  8, 40 },
+	{ 48, 16, 56, 24 },
+	{ 12, 44,  4, 36 },
+	{ 60, 28, 52, 20 } };
+
+	// ピクセルの割る数
+	float divisor = 4.0f;
+
+	float pad1[3];
+
+	// ディザリング色
+	Color ditherColor = Color::White();
+
+	// 発光
+	Vector3 emissionColor = Vector3::AnyInit(1.0f);
+	float emissionIntensity = 0.0f;
+};
