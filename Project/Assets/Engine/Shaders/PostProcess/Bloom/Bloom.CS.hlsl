@@ -5,6 +5,14 @@
 #include "../PostProcessCommon.hlsli"
 
 //============================================================================
+//	Constants
+//============================================================================
+
+#define BLOCK_W THREAD_POSTPROCESS_GROUP
+#define BLOCK_H THREAD_POSTPROCESS_GROUP
+#define RADIUS_MAX 10
+
+//============================================================================
 //	CBuffer
 //============================================================================
 
@@ -19,68 +27,154 @@ cbuffer Parameter : register(b0) {
 //	Function
 //============================================================================
 
-// ガウス関数
-float Gaussian(float x, float s) {
-	
+static const float3 LUMA = float3(0.2125f, 0.7154f, 0.0721f);
+
+float Gaussian1D(int d, float s) {
+	float x = (float) d;
 	return exp(-(x * x) / (2.0f * s * s));
+}
+
+// 共有メモリ
+groupshared float3 sTile[(BLOCK_H + 2 * RADIUS_MAX) * (BLOCK_W + 2 * RADIUS_MAX)];
+
+// 横ブラー結果
+groupshared float3 sHorz[(BLOCK_H + 2 * RADIUS_MAX) * BLOCK_W];
+
+inline uint TilePitch() {
+	
+	return (BLOCK_W + 2 * RADIUS_MAX);
+}
+inline uint TileIndex(uint lx, uint ly) {
+	
+	return ly * TilePitch() + lx;
+}
+inline uint HorzIndex(uint lx, uint ly) {
+	
+	return ly * BLOCK_W + lx;
 }
 
 //============================================================================
 //	Main
 //============================================================================
-[numthreads(THREAD_POSTPROCESS_GROUP, THREAD_POSTPROCESS_GROUP, 1)]
-void main(uint3 DTid : SV_DispatchThreadID) {
-	
+[numthreads(BLOCK_W, BLOCK_H, 1)]
+void main(uint3 DTid : SV_DispatchThreadID, uint3 GTid : SV_GroupThreadID, uint3 Gid : SV_GroupID) {
+
 	uint width, height;
 	gInputTexture.GetDimensions(width, height);
 
-	// 現在処理中のピクセル
-	int2 pixelPos = int2(DTid.xy);
+	// このグループのコア領域の左上
+	const int2 groupBase = int2(Gid.xy) * int2(BLOCK_W, BLOCK_H);
 
-	// 元カラー保持
-	float4 sceneColor = gInputTexture.Load(int3(pixelPos, 0));
-	// 範囲外
-	if (pixelPos.x >= width || pixelPos.y >= height) {
-		return;
-	}
-	
-	// フラグが立っていなければ処理しない
-	if (!CheckPixelBitMask(Bit_Bloom, pixelPos)) {
-
-		gOutputTexture[pixelPos] = sceneColor;
+	// 画像外なら早期リターン
+	if (groupBase.x + GTid.x >= width && groupBase.y + GTid.y >= height) {
 		return;
 	}
 
-	// サンプリング処理
-	float3 bloomAccum = 0.0f;
-	float weightSum = 0.0f;
+	// 実際にこのスレッドが担当する出力ピクセル
+	const int2 p = int2(groupBase + int2(GTid.xy));
+	const bool inBounds = (p.x < width) && (p.y < height);
+
+	// 半径クランプ
+	int r = min(radius, RADIUS_MAX);
+
+	//============================================================================
+	// プレフィルタをタイル＋ハローで共有メモリにロード
+	//============================================================================
 	
-	for (int y = -radius; y <= radius; ++y) {
-		
-		float wy = Gaussian((float) y, sigma);
-		for (int x = -radius; x <= radius; ++x) {
-			
-			float wx = Gaussian((float) x, sigma);
-			float w = wx * wy;
+	const uint tileW = BLOCK_W + 2 * r;
+	const uint tileH = BLOCK_H + 2 * r;
 
-			int2 samplePos = pixelPos + int2(x, y);
-			samplePos = clamp(samplePos, int2(0, 0), int2(int(width) - 1, int(height) - 1));
+	// タイル内を分担ロード
+	for (uint ly = GTid.y; ly < tileH; ly += BLOCK_H) {
 
-			float4 color = gInputTexture.Load(int3(samplePos, 0));
+		// グローバルY
+		int gy = int(groupBase.y) + int(ly) - r;
+		gy = clamp(gy, 0, int(height) - 1);
 
-			// 輝度抽出
-			float luminance = dot(color.rgb, float3(0.2125f, 0.7154f, 0.0721f));
-			if (luminance < threshold) {
-				color = float4(0.0f, 0.0f, 0.0f, 0.0f);
+		for (uint lx = GTid.x; lx < tileW; lx += BLOCK_W) {
+
+			// グローバルX
+			int gx = int(groupBase.x) + int(lx) - r;
+			gx = clamp(gx, 0, int(width) - 1);
+
+			int2 sp = int2(gx, gy);
+			float3 rgb = gInputTexture.Load(int3(sp, 0)).rgb;
+
+			float3 outRGB = 0.0f;
+			if (CheckPixelBitMask(Bit_Bloom, sp)) {
+				
+				float lum = dot(rgb, LUMA);
+				if (lum >= threshold) {
+					
+					outRGB = rgb;
+				}
 			}
 
-			bloomAccum += color.rgb * w;
-			weightSum += w;
+			sTile[TileIndex(lx, ly)] = outRGB;
 		}
 	}
+
+	GroupMemoryBarrierWithGroupSync();
+
+	//============================================================================
+	// 横ブラー
+	//============================================================================
 	
-	// 合成処理
-	float3 bloomColor = (weightSum > 0.0f) ? bloomAccum / weightSum : 0.0f;
-	float3 finalColor = sceneColor.rgb + bloomColor;
-	gOutputTexture[pixelPos] = float4(finalColor, 1.0f);
+	for (uint ly = GTid.y; ly < tileH; ly += BLOCK_H) {
+
+		if (GTid.x >= BLOCK_W) {
+			continue;
+		}
+
+		float3 accum = 0.0f;
+		float wsum = 0.0f;
+		const uint lxCenter = r + GTid.x;
+
+		[loop]
+		for (int dx = -r; dx <= r; ++dx) {
+
+			 // タイル内X
+			uint lx = lxCenter + dx;
+			float w = Gaussian1D(dx, sigma);
+			float3 c = sTile[TileIndex(lx, ly)];
+			accum += c * w;
+			wsum += w;
+		}
+
+		float3 h = (wsum > 0.0f) ? (accum / wsum) : 0.0f;
+		sHorz[HorzIndex(GTid.x, ly)] = h;
+	}
+
+	GroupMemoryBarrierWithGroupSync();
+
+	//============================================================================
+	// 縦ブラー、合成
+	//============================================================================
+
+	if (inBounds) {
+
+		const uint lyCenter = r + GTid.y;
+		float3 accum = 0.0f;
+		float wsum = 0.0f;
+
+		[loop]
+		for (int dy = -r; dy <= r; ++dy) {
+
+			uint ly = lyCenter + dy;
+			float3 c = sHorz[HorzIndex(GTid.x, ly)];
+			float w = Gaussian1D(dy, sigma);
+			accum += c * w;
+			wsum += w;
+		}
+
+		float3 bloom = (wsum > 0.0f) ? (accum / wsum) : 0.0f;
+		float3 scene = gInputTexture.Load(int3(p, 0)).rgb;
+		if (!CheckPixelBitMask(Bit_Bloom, p)) {
+
+			gOutputTexture[p] = float4(scene, 1.0f);
+		} else {
+			
+			gOutputTexture[p] = float4(scene + bloom, 1.0f);
+		}
+	}
 }
