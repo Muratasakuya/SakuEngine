@@ -36,7 +36,6 @@ float Gaussian1D(int d, float s) {
 
 // ‹¤—Lƒƒ‚ƒŠ
 groupshared float3 sTile[(BLOCK_H + 2 * RADIUS_MAX) * (BLOCK_W + 2 * RADIUS_MAX)];
-
 // ‰¡ƒuƒ‰[Œ‹‰Ê
 groupshared float3 sHorz[(BLOCK_H + 2 * RADIUS_MAX) * BLOCK_W];
 

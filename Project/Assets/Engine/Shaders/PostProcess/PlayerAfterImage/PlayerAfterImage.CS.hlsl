@@ -10,6 +10,9 @@
 
 struct Material {
 	
+	// 有効フラグ
+	int enable;
+	
 	// ディザリング率(0.0f~1.0f)
 	float rate;
 	
@@ -50,7 +53,7 @@ void main(uint3 DTid : SV_DispatchThreadID) {
 	}
 
 	// フラグが立っていなければ処理しない
-	if (!CheckPixelBitMask(Bit_PlayerAfterImage, pixelPos)) {
+	if (!CheckPixelBitMask(Bit_PlayerAfterImage, pixelPos) || gMaterial.enable == 0) {
 	
 		gOutputTexture[pixelPos] = gInputTexture.Load(int3(pixelPos, 0));
 		return;

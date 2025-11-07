@@ -65,11 +65,6 @@ void Player::InitAnimations() {
 	// keyEventを設定
 	animation_->SetKeyframeEvent("Player/animationEffectKey.json");
 	animation_->Update(transform_->matrix.world);
-
-	// アニメーションに合わせて発生させるエフェクト
-	// エフェクト、エンジン機能変更中...
-	/*animationEffect_ = std::make_unique<PlayerAnimationEffect>();
-	animationEffect_->Init(*this);*/
 }
 
 void Player::InitCollision() {
@@ -143,8 +138,12 @@ void Player::DerivedInit() {
 	// json適応
 	ApplyJson();
 
-	SetPostProcessMask(Bit_Bloom | Bit_DepthBasedOutline |
-		Bit_Glitch | Bit_Grayscale | Bit_PlayerAfterImage);
+	// ポストエフェクト設定
+	uint32_t postProcessBit = Bit_Bloom | Bit_DepthBasedOutline |
+		Bit_Glitch | Bit_Grayscale | Bit_PlayerAfterImage;
+	SetPostProcessMask(postProcessBit);
+	leftWeapon_->SetPostProcessMask(postProcessBit);
+	rightWeapon_->SetPostProcessMask(postProcessBit);
 }
 
 void Player::SetBossEnemy(const BossEnemy* bossEnemy) {

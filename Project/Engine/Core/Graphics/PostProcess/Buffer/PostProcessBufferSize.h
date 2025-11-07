@@ -318,10 +318,13 @@ public:
 
 	//--------- properties ---------------------------------------------------
 
+	// 有効フラグ
+	int32_t enable = 0;
+
 	// ディザリング率(0.0f~1.0f)
 	float rate = 1.0f;
 
-	float pad0[3];
+	float pad0[2];
 
 	// パターン
 	int pattern[4][4] = {

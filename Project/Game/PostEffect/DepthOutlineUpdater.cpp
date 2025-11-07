@@ -15,6 +15,9 @@ void DepthOutlineUpdater::Init() {
 
 	// json適応
 	ApplyJson();
+
+	// Resetで効果を消す
+	Reset();
 }
 
 void DepthOutlineUpdater::Update() {

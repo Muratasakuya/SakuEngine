@@ -19,6 +19,7 @@ void PlayerAfterImageUpdater::Update() {
 void PlayerAfterImageUpdater::Start(const Color& color) {
 
 	// レートを1.0fにしてディザリング処理させる
+	bufferData_.enable = 1;
 	bufferData_.rate = 1.0f;
 	bufferData_.ditherColor = color;
 	bufferData_.emissionColor = Vector3(color.r, color.g, color.b);
@@ -27,6 +28,7 @@ void PlayerAfterImageUpdater::Start(const Color& color) {
 void PlayerAfterImageUpdater::Reset() {
 
 	// レートを0.0fにしてディザリング処理させない
+	bufferData_.enable = 0;
 	bufferData_.rate = 0.0f;
 }
 

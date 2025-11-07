@@ -199,6 +199,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Core\Graphics\GPUObject\IndexBuffer.cpp">
       <SubType />
     </ClCompile>
+    <ClCompile Include="Game\Objects\GameScene\Player\Effect\PlayerAfterImageEffect.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="Game\PostEffect\DepthOutlineUpdater.cpp">
       <SubType />
     </ClCompile>
@@ -755,9 +759,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\Objects\GameScene\Player\Collision\PlayerAttackCollision.cpp">
       <SubType />
     </ClCompile>
-    <ClCompile Include="Game\Objects\GameScene\Player\Effect\PlayerAnimationEffect.cpp">
-      <SubType />
-    </ClCompile>
     <ClCompile Include="Game\Objects\GameScene\Player\Entity\PlayerWeapon.cpp">
       <SubType />
     </ClCompile>
@@ -959,6 +960,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </ClInclude>
     <ClInclude Include="Engine\Core\Graphics\GPUObject\VertexBuffer.h">
       <SubType />
+    </ClInclude>
+    <ClInclude Include="Game\Objects\GameScene\Player\Effect\PlayerAfterImageEffect.h">
+      <SubType>
+      </SubType>
     </ClInclude>
     <ClInclude Include="Game\PostEffect\DepthOutlineUpdater.h">
       <SubType />
@@ -1631,9 +1636,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <SubType />
     </ClInclude>
     <ClInclude Include="Game\Objects\GameScene\Player\Collision\PlayerAttackCollision.h">
-      <SubType />
-    </ClInclude>
-    <ClInclude Include="Game\Objects\GameScene\Player\Effect\PlayerAnimationEffect.h">
       <SubType />
     </ClInclude>
     <ClInclude Include="Game\Objects\GameScene\Player\Entity\PlayerWeapon.h">

@@ -28,6 +28,10 @@ PlayerAttack_3rdState::PlayerAttack_3rdState(Player* player) {
 	catchDashEffect_ = std::make_unique<EffectGroup>();
 	catchDashEffect_->Init("catchDashEffect", "PlayerEffect");
 	catchDashEffect_->LoadJson("GameEffectGroup/Player/playerCatchDashEffect.json");
+
+	// 残像表現エフェクト作成
+	afterImageEffect_ = std::make_unique<PlayerAfterImageEffect>();
+	afterImageEffect_->Init("playerAttack3rdDash");
 }
 
 void PlayerAttack_3rdState::Enter(Player& player) {
@@ -226,6 +230,14 @@ void PlayerAttack_3rdState::UpdateAnimKeyEvent(Player& player) {
 		catchDashEffect_->SetParentRotation("playerAttack3rdDashEffect",
 			Quaternion::Normalize(player.GetRotation()), ParticleUpdateModuleID::Primitive);
 		catchDashEffect_->Emit(player_->GetTranslation() + (player.GetRotation() * dashEffectOffset_));
+
+		// 残像表現エフェクト開始
+		std::vector<GameObject3D*> objects = {
+			&player,
+			player.GetWeapon(PlayerWeaponType::Left),
+			player.GetWeapon(PlayerWeaponType::Right)
+		};
+		afterImageEffect_->Start(objects);
 	}
 }
 
@@ -301,6 +313,14 @@ Vector3 PlayerAttack_3rdState::RotateYOffset(const Vector3& direction, float off
 
 void PlayerAttack_3rdState::Exit(Player& player) {
 
+	// 残像表現エフェクト終了
+	std::vector<GameObject3D*> objects = {
+		&player,
+		player.GetWeapon(PlayerWeaponType::Left),
+		player.GetWeapon(PlayerWeaponType::Right)
+	};
+	afterImageEffect_->End(objects);
+
 	// リセット
 	attackPosLerpTimer_ = 0.0f;
 	exitTimer_ = 0.0f;
@@ -342,6 +362,8 @@ void PlayerAttack_3rdState::ImGui(const Player& player) {
 	catchSwordTimer_.ImGui("CatchMoveTimer");
 
 	weaponMoveTimer_.ImGui("WeaponMoveTimer");
+
+	afterImageEffect_->ImGui();
 
 	for (auto& [type, param] : weaponParams_) {
 
