@@ -224,3 +224,20 @@ void CRTDisplayForGPU::ImGui() {
 
 	ImGui::PopItemWidth();
 }
+
+void PlayerAfterImageForGPU::ImGui() {
+
+	ImGui::Text("PlayerAfterImage");
+
+	ImGui::PushItemWidth(itemWidth_);
+
+	ImGui::DragInt("enable##PlayerAfterImageForGPU", &enable, 1, 0, 1);
+	ImGui::DragFloat("rate##PlayerAfterImageForGPU", &rate, 0.01f, 0.0f, 1.0f);
+	ImGui::DragFloat("divisor##PlayerAfterImageForGPU", &divisor, 0.01f, 0.01f, 4.0f);
+	ImGui::ColorEdit4("ditherColor##PlayerAfterImageForGPU", &ditherColor.r);
+
+	ImGui::ColorEdit3("emissionColor##PlayerAfterImageForGPU", &emissionColor.x);
+	ImGui::DragFloat("emissionIntensity##PlayerAfterImageForGPU", &emissionIntensity, 0.01f);
+
+	ImGui::PopItemWidth();
+}

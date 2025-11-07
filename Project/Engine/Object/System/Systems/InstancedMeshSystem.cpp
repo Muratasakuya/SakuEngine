@@ -193,7 +193,7 @@ void InstancedMeshSystem::Update(ObjectPoolManager& ObjectPoolManager) {
 	// bufferクリア
 	instancedBuffer_->Reset();
 	objectIDsPerModel_.clear();
-	renderViewPerModel_.clear();
+	renderData_.clear();
 
 	const auto& view = ObjectPoolManager.View(Signature());
 
@@ -213,7 +213,8 @@ void InstancedMeshSystem::Update(ObjectPoolManager& ObjectPoolManager) {
 			instancingName, transform->matrix, *materials, *animation);
 		objectIDsPerModel_[instancingName].emplace_back(object);
 
-		auto& mask = renderViewPerModel_[instancingName];
+		renderData_[instancingName] = *meshRender;
+		auto& mask = renderData_[instancingName].renderView;
 		const uint8_t current = static_cast<uint8_t>(mask);
 		const uint8_t add = static_cast<uint8_t>(meshRender->renderView);
 		mask = static_cast<MeshRenderView>(current | add);

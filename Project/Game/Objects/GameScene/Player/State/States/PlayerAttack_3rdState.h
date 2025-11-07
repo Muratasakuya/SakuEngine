@@ -4,6 +4,7 @@
 //	include
 //============================================================================
 #include <Engine/Effect/User/EffectGroup.h>
+#include <Game/Objects/GameScene/Player/Effect/PlayerAfterImageEffect.h>
 #include <Game/Objects/GameScene/Player/State/Interface/PlayerBaseAttackState.h>
 
 //============================================================================
@@ -103,6 +104,9 @@ private:
 	// 剣を取りに行くダッシュエフェクト
 	std::unique_ptr<EffectGroup> catchDashEffect_;
 	Vector3 dashEffectOffset_;
+
+	// 残像表現エフェクト
+	std::unique_ptr<PlayerAfterImageEffect> afterImageEffect_;
 
 	//--------- functions ----------------------------------------------------
 

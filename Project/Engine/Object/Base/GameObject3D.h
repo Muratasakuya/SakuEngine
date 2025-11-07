@@ -72,6 +72,7 @@ public:
 
 	// meshRender
 	void SetMeshRenderView(MeshRenderView renderView) { meshRender_->renderView = renderView; }
+	void SetBlendMode(BlendMode blendMode) { meshRender_->blendMode = blendMode; }
 
 	// animation
 	void SetNextAnimation(const std::string& nextAnimationName, bool loopAnimation, float transitionDuration);

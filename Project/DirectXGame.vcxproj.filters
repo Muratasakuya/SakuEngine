@@ -531,7 +531,7 @@
     <ClCompile Include="Engine\Core\Graphics\GPUObject\IndexBuffer.cpp">
       <Filter>Engine\Core\Graphics\GPUObject</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Core\Graphics\PostProcess\Buffer\Updater\DepthOutlineUpdater.cpp">
+    <ClCompile Include="Game\PostEffect\DepthOutlineUpdater.cpp">
       <Filter>Engine\Core\Graphics\PostProcess\Buffer\Updater</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Core\Graphics\PostProcess\Texture\MultiRenderTexture.cpp">
@@ -1065,9 +1065,6 @@
     <ClCompile Include="Game\Objects\GameScene\Player\Collision\PlayerAttackCollision.cpp">
       <Filter>Game\Objects\GameScene\Player\Collision</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Objects\GameScene\Player\Effect\PlayerAnimationEffect.cpp">
-      <Filter>Game\Objects\GameScene\Player\Effect</Filter>
-    </ClCompile>
     <ClCompile Include="Game\Objects\GameScene\Player\Entity\PlayerWeapon.cpp">
       <Filter>Game\Objects\GameScene\Player\Entity</Filter>
     </ClCompile>
@@ -1320,7 +1317,7 @@
     <ClInclude Include="Engine\Core\Graphics\GPUObject\VertexBuffer.h">
       <Filter>Engine\Core\Graphics\GPUObject</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Core\Graphics\PostProcess\Buffer\Updater\DepthOutlineUpdater.h">
+    <ClInclude Include="Game\PostEffect\DepthOutlineUpdater.h">
       <Filter>Engine\Core\Graphics\PostProcess\Buffer\Updater</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Core\Graphics\PostProcess\Buffer\Updater\Interface\IPostProcessUpdater.h">
@@ -1965,9 +1962,6 @@
     <ClInclude Include="Game\Objects\GameScene\Player\Collision\PlayerAttackCollision.h">
       <Filter>Game\Objects\GameScene\Player\Collision</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Objects\GameScene\Player\Effect\PlayerAnimationEffect.h">
-      <Filter>Game\Objects\GameScene\Player\Effect</Filter>
-    </ClInclude>
     <ClInclude Include="Game\Objects\GameScene\Player\Entity\PlayerWeapon.h">
       <Filter>Game\Objects\GameScene\Player\Entity</Filter>
     </ClInclude>
@@ -2303,6 +2297,8 @@
     <ClCompile Include="Game\Camera\Title\TitleViewCamera.cpp" />
     <ClCompile Include="Game\PostEffect\GrayscaleUpdater.cpp" />
     <ClCompile Include="Game\Objects\GameScene\Player\State\States\PlayerFalterState.cpp" />
+    <ClCompile Include="Game\PostEffect\PlayerAfterImageUpdater.cpp" />
+    <ClCompile Include="Game\Objects\GameScene\Player\Effect\PlayerAfterImageEffect.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\Camera\Follow\State\States\FollowCameraReturnDefaultRotate.h" />
@@ -2336,5 +2332,11 @@
     <ClInclude Include="Game\Camera\Title\TitleViewCamera.h" />
     <ClInclude Include="Game\PostEffect\GrayscaleUpdater.h" />
     <ClInclude Include="Game\Objects\GameScene\Player\State\States\PlayerFalterState.h" />
+    <ClInclude Include="Game\PostEffect\PlayerAfterImageUpdater.h" />
+    <ClInclude Include="Game\PostEffect\ActiveObjectOutlineUpdater.h" />
+    <ClInclude Include="Game\Objects\GameScene\Player\Effect\PlayerAfterImageEffect.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Assets\Engine\Shaders\PostProcess\PlayerAfterImage\PlayerAfterImage.CS.hlsl" />
   </ItemGroup>
 </Project>

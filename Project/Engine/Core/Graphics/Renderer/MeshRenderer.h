@@ -6,6 +6,7 @@
 #include <Engine/Core/Graphics/Pipeline/PipelineState.h>
 #include <Engine/Core/Graphics/Raytracing/RaytracingPipeline.h>
 #include <Engine/Core/Graphics/Raytracing/RaytracingScene.h>
+#include <Engine/Object/System/Systems/SkyboxRenderSystem.h>
 
 // c++
 #include <memory>
@@ -61,6 +62,10 @@ private:
 	std::unique_ptr<RaytracingScene> rayScene_;
 
 	//--------- functions ----------------------------------------------------
+
+	// パイプラインの設定
+	void SetPipeline(bool debugEnable, const SkyboxRenderSystem& skybox, SceneConstBuffer* sceneBuffer,
+		ID3D12GraphicsCommandList6* commandList, BlendMode blendMode);
 
 	// スキンドメッシュの頂点バッファを適切な状態に遷移(描画前)
 	void BeginSkinnedTransition(bool debugEnable, uint32_t meshIndex, IMesh* mesh, DxCommand* dxCommand);

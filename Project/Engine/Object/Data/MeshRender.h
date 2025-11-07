@@ -3,6 +3,7 @@
 //============================================================================
 //	include
 //============================================================================
+#include <Engine/Core/Graphics/DxLib/DxStructures.h>
 #include <Engine/Object/Data/MeshRenderStructure.h>
 #include <Engine/MathLib/MathUtils.h>
 
@@ -36,4 +37,7 @@ public:
 
 	// 描画先
 	MeshRenderView renderView;
+
+	// ブレンドモード
+	BlendMode blendMode;
 };
