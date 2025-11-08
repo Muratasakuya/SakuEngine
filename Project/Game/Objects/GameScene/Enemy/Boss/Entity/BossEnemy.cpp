@@ -289,12 +289,12 @@ void BossEnemy::Update(GameSceneState sceneState) {
 	}
 	// シーン状態のチェック
 	CheckSceneState(sceneState);
-}
-
-void BossEnemy::UpdateBeginGame() {
 
 	// 登場アニメーションの更新
 	startAnimation_->Update(*this);
+}
+
+void BossEnemy::UpdateBeginGame() {
 }
 
 void BossEnemy::UpdatePlayGame() {

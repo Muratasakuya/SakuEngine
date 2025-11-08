@@ -45,6 +45,10 @@ private:
 	// 処理が開始されたか
 	bool isStarted_;
 
+	// 開始呼び出しからの待機時間
+	StateTimer delayTimer_;
+	bool isWaited_;
+
 	// 座標アニメーション
 	SimpleAnimation<Vector3> posAnimation_;
 

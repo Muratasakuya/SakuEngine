@@ -30,7 +30,7 @@ bool BeginGameCamera::IsFinished() const {
 		return false;
 	}
 
-	bool isFinished = Camera3DEditor::GetInstance()->IsAnimationFinished("beginGameCameraSecond");
+	bool isFinished = Camera3DEditor::GetInstance()->IsAnimationFinished("beginGameCameraSecond"); 
 
 	// カメラアニメーションが終了したか
 	return isFinished;
@@ -52,7 +52,7 @@ void BeginGameCamera::Update() {
 	// 最初のアニメーションが終了したら次のアニメーションを開始
 	if (Camera3DEditor::GetInstance()->IsAnimationFinished("beginGameCameraFirst")) {
 
-		Camera3DEditor::GetInstance()->StartAnim("beginGameCameraSecond", false);
+		Camera3DEditor::GetInstance()->StartAnim("beginGameCameraSecond", false, false);
 		// この時点でアニメーションの開始フラグをfalseにする
 		isStarted_ = false;
 	}

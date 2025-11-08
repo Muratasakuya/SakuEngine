@@ -1,4 +1,8 @@
 {
+    "DelayTimer": {
+        "easeingType_": "Linear",
+        "target_": 1.3200000524520874
+    },
     "PosAnimation": {
         "Loop": {
             "loop": {
@@ -11,8 +15,8 @@
             "target_": 0.0
         },
         "Timer": {
-            "easeingType_": "Linear",
-            "target_": 0.6399999856948853
+            "easeingType_": "EaseInExpo",
+            "target_": 0.7200000286102295
         },
         "move_.end": {
             "x": 0.0,
@@ -21,7 +25,7 @@
         },
         "move_.start": {
             "x": 0.0,
-            "y": 64.0,
+            "y": 128.0,
             "z": 48.0
         },
         "useReturnTimer_": false
