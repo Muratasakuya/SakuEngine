@@ -306,6 +306,7 @@ void Camera3DEditorPanel::EditPlayback(CameraPathData& param, CameraPathControll
 	playbackCamera.selectedKeyIndex = std::clamp(playbackCamera.selectedKeyIndex,
 		0, static_cast<int>(param.keyframes.size()) - 1);
 	ImGui::DragFloat("fovY", &param.keyframes[playbackCamera.selectedKeyIndex].fovY, 0.01f);
+	ImGui::DragFloat("stayTime", &param.keyframes[playbackCamera.selectedKeyIndex].stayTime, 0.01f);
 
 	if (playbackCamera.mode == CameraPathController::PreviewMode::Manual) {
 

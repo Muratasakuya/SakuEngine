@@ -3,36 +3,38 @@
 //============================================================================
 //	include
 //============================================================================
-#include <Engine/Scene/Camera/BaseCamera.h>
-#include <Engine/Utility/Timer/StateTimer.h>
+#include <Engine/Utility/Animation/SimpleAnimation.h>
+
+// front
+class BossEnemy;
 
 //============================================================================
-//	BeginGameCamera class
-//	ゲーム開始時のカメラ
+//	BossEnemyStartAnimation class
+//	ボスの登場アニメーション
 //============================================================================
-class BeginGameCamera :
-	public BaseCamera {
+class BossEnemyStartAnimation {
 public:
 	//========================================================================
 	//	public Methods
 	//========================================================================
 
-	BeginGameCamera() = default;
-	~BeginGameCamera() = default;
+	BossEnemyStartAnimation() = default;
+	~BossEnemyStartAnimation() = default;
 
+	// 初期化
 	void Init();
 
-	void Update() override;
+	// 更新
+	void Update(BossEnemy& bossEnemy);
 
-	void ImGui() override;
+	// 開始呼び出し
+	void Start(BossEnemy& bossEnemy);
 
-	// アニメーション開始
-	void StartAnimation();
+	// エディター
+	void ImGui(BossEnemy& bossEnemy);
 
 	//--------- accessor -----------------------------------------------------
 
-	// アニメーション終了判定
-	bool IsFinished() const;
 private:
 	//========================================================================
 	//	private Methods
@@ -40,10 +42,11 @@ private:
 
 	//--------- variables ----------------------------------------------------
 
-	// 現在の状態
-	bool disableTransition_;
-	// アニメーションが始まったか
+	// 処理が開始されたか
 	bool isStarted_;
+
+	// 座標アニメーション
+	SimpleAnimation<Vector3> posAnimation_;
 
 	//--------- functions ----------------------------------------------------
 

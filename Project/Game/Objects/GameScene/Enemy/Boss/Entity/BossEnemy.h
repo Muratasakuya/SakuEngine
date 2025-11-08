@@ -15,8 +15,8 @@
 #include <Game/Objects/GameScene/Enemy/Boss/Collision/BossEnemyAttackCollision.h>
 // HUD
 #include <Game/Objects/GameScene/Enemy/Boss/HUD/BossEnemyHUD.h>
-// effect
-#include <Game/Objects/GameScene/Enemy/Boss/Effect/BossEnemyAnimationEffect.h>
+// animation
+#include <Game/Objects/GameScene/Enemy/Boss/Start/BossEnemyStartAnimation.h>
 
 // front
 class Player;
@@ -108,8 +108,8 @@ private:
 	// HUD
 	std::unique_ptr<BossEnemyHUD> hudSprites_;
 
-	// エフェクト、エンジン機能変更中...
-	//std::unique_ptr<BossEnemyAnimationEffect> animationEffect_;
+	// アニメーション
+	std::unique_ptr<BossEnemyStartAnimation> startAnimation_;
 
 	// parameters
 	Transform3D initTransform_; // 初期化時の値
@@ -133,6 +133,7 @@ private:
 	void InitCollision();
 	void InitState();
 	void InitHUD();
+	void InitAnimation();
 
 	// update
 	void UpdateBeginGame();

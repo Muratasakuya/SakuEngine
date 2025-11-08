@@ -26,6 +26,8 @@ public:
 
 	void ImGui() override;
 
+	// 遷移開始時
+	void Enter() override;
 	// 遷移終了時
 	void Exit() override;
 private:

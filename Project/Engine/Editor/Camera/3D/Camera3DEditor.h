@@ -39,13 +39,16 @@ public:
 	// アニメーション処理
 	// 開始
 	// canCutIn: 補間処理途中に他のアニメーションから開始できるか
-	void StartAnim(const std::string& actionName,bool canCutIn);
+	void StartAnim(const std::string& actionName, bool canCutIn, bool isAddFirstKey = true);
 	// 終了
 	void EndAnim(const std::string& actionName);
 	// ゲームカメラ更新
 	void UpdateGameAnimation();
 
 	//--------- accessor -----------------------------------------------------
+
+	// アニメーションが終了したか
+	bool IsAnimationFinished(const std::string& actionName) const;
 
 	// singleton
 	static Camera3DEditor* GetInstance();

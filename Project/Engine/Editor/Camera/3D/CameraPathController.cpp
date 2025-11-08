@@ -59,10 +59,10 @@ void CameraPathController::Update(const PlaybackState& state, CameraPathData& da
 	case PreviewMode::Play: {
 
 		// 時間の更新
-		data.timer.Update();
+		float easedT = data.UpdateAndGetEffectiveEasedT();
 
 		// 終了後タイマーをリセットするか固定する
-		if (data.timer.IsReached()) {
+		if (!data.staying && data.timer.IsReached()) {
 			if (state.isLoop) {
 
 				data.timer.Reset();
@@ -71,14 +71,8 @@ void CameraPathController::Update(const PlaybackState& state, CameraPathData& da
 				data.timer.current_ = data.timer.target_;
 			}
 		}
-		float t = 0.0f;
-		if (data.useAveraging && !data.averagedT.empty()) {
-
-			t = LerpKeyframe::GetReparameterizedT(data.timer.easedT_, data.averagedT);
-		} else {
-
-			t = data.timer.easedT_;
-		}
+		float t = (data.useAveraging && !data.averagedT.empty()) ?
+			LerpKeyframe::GetReparameterizedT(easedT, data.averagedT) : easedT;
 		Evaluate(data, t, translation, rotation, fovY);
 		break;
 	}

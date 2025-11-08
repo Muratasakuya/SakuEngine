@@ -119,7 +119,7 @@ void StartGameState::Update([[maybe_unused]] SceneManager* sceneManager) {
 	nextStateEvent_->UpdateAllBodies(transform);
 
 	// イベント範囲内に入ったら次の状態に遷移させる
-	if (nextStateEvent_->IsHit()) {
+	if (nextStateEvent_->IsHitTrigger()) {
 
 		requestNext_ = true;
 	}

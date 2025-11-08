@@ -1,0 +1,29 @@
+{
+    "PosAnimation": {
+        "Loop": {
+            "loop": {
+                "loopCount": 1,
+                "type": "Repeat"
+            }
+        },
+        "ReturnTimer": {
+            "easeingType_": "Linear",
+            "target_": 0.0
+        },
+        "Timer": {
+            "easeingType_": "Linear",
+            "target_": 0.6399999856948853
+        },
+        "move_.end": {
+            "x": 0.0,
+            "y": 0.800000011920929,
+            "z": 48.0
+        },
+        "move_.start": {
+            "x": 0.0,
+            "y": 64.0,
+            "z": 48.0
+        },
+        "useReturnTimer_": false
+    }
+}

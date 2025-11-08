@@ -92,6 +92,13 @@ void BossEnemy::InitHUD() {
 	hudSprites_->SetDisable();
 }
 
+void BossEnemy::InitAnimation() {
+
+	// 開始アニメーションの初期化
+	startAnimation_ = std::make_unique<BossEnemyStartAnimation>();
+	startAnimation_->Init();
+}
+
 void BossEnemy::SetInitTransform() {
 
 	transform_->scale = initTransform_.scale;
@@ -158,11 +165,6 @@ void BossEnemy::DerivedInit() {
 	// collision初期化、設定
 	InitCollision();
 
-	// 距離レベル仮初期化
-	stats_.distanceLevels.emplace(DistanceLevel::Near, 2.0f);
-	stats_.distanceLevels.emplace(DistanceLevel::Middle, 4.0f);
-	stats_.distanceLevels.emplace(DistanceLevel::Far, 6.0f);
-
 	// json適応
 	ApplyJson();
 
@@ -171,6 +173,9 @@ void BossEnemy::DerivedInit() {
 
 	// HUD初期化
 	InitHUD();
+
+	// アニメーション初期化
+	InitAnimation();
 
 	// 一度更新しておく
 	// HUDの更新
@@ -288,7 +293,8 @@ void BossEnemy::Update(GameSceneState sceneState) {
 
 void BossEnemy::UpdateBeginGame() {
 
-
+	// 登場アニメーションの更新
+	startAnimation_->Update(*this);
 }
 
 void BossEnemy::UpdatePlayGame() {
@@ -318,10 +324,6 @@ void BossEnemy::UpdatePlayGame() {
 	Collider::UpdateAllBodies(*transform_);
 	attackCollision_->Update(*transform_);
 
-	// エフェクトの更新
-	// エフェクト、エンジン機能変更中...
-	//animationEffect_->Update(*this);
-
 	// デバッグ用コマンド
 	DebugCommand();
 }
@@ -335,6 +337,9 @@ void BossEnemy::CheckSceneState(GameSceneState sceneState) {
 	if (preSceneState_ != sceneState) {
 		switch (preSceneState_) {
 		case GameSceneState::Start:
+
+			// 登場アニメーション開始
+			startAnimation_->Start(*this);
 
 			// HUDの表示を行う
 			hudSprites_->SetValid();
@@ -622,10 +627,10 @@ void BossEnemy::DerivedImGui() {
 			ImGui::EndTabItem();
 		}
 
-		if (ImGui::BeginTabItem("Effect")) {
+		if (ImGui::BeginTabItem("StartAnimation")) {
 
-			// エフェクト、エンジン機能変更中...
-			//animationEffect_->ImGui(*this);
+			// アニメーション
+			startAnimation_->ImGui(*this);
 			ImGui::EndTabItem();
 		}
 

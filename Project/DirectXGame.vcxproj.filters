@@ -2299,6 +2299,7 @@
     <ClCompile Include="Game\Objects\GameScene\Player\State\States\PlayerFalterState.cpp" />
     <ClCompile Include="Game\PostEffect\PlayerAfterImageUpdater.cpp" />
     <ClCompile Include="Game\Objects\GameScene\Player\Effect\PlayerAfterImageEffect.cpp" />
+    <ClCompile Include="Game\Objects\GameScene\Enemy\Boss\Start\BossEnemyStartAnimation.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\Camera\Follow\State\States\FollowCameraReturnDefaultRotate.h" />
@@ -2335,6 +2336,7 @@
     <ClInclude Include="Game\PostEffect\PlayerAfterImageUpdater.h" />
     <ClInclude Include="Game\PostEffect\ActiveObjectOutlineUpdater.h" />
     <ClInclude Include="Game\Objects\GameScene\Player\Effect\PlayerAfterImageEffect.h" />
+    <ClInclude Include="Game\Objects\GameScene\Enemy\Boss\Start\BossEnemyStartAnimation.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Engine\Shaders\PostProcess\PlayerAfterImage\PlayerAfterImage.CS.hlsl" />

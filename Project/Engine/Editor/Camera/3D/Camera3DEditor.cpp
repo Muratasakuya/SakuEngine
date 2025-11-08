@@ -202,7 +202,7 @@ void Camera3DEditor::LoadAnimFile(const std::string& fileName) {
 	params_.emplace(param.overallName, std::move(param));
 }
 
-void Camera3DEditor::StartAnim(const std::string& actionName, bool canCutIn) {
+void Camera3DEditor::StartAnim(const std::string& actionName, bool canCutIn, bool isAddFirstKey) {
 
 	// 無ければ処理できない
 	if (!Algorithm::Find(params_, actionName)) {
@@ -250,9 +250,14 @@ void Camera3DEditor::StartAnim(const std::string& actionName, bool canCutIn) {
 	keyframe.translation = localTranslation;
 	keyframe.rotation = localRataion;
 	keyframe.fovY = camera->GetFovY();
+
 	// 追加
 	const uint32_t injectedId = keyframe.demoObject->GetObjectID();
-	param.keyframes.insert(param.keyframes.begin(), std::move(keyframe));
+	// フラグが立っていれば最初に追加
+	if (isAddFirstKey) {
+
+		param.keyframes.insert(param.keyframes.begin(), std::move(keyframe));
+	}
 
 	// キーフレームの平均の再取得
 	if (param.useAveraging) {
@@ -279,6 +284,7 @@ void Camera3DEditor::EndAnim(const std::string& actionName) {
 
 		// IDが一致したオブジェクト
 		const auto headId = param.keyframes.front().demoObject->GetObjectID();
+		// 追加したオブジェクトなら削除
 		if (headId == runtime_->injectedHeadId) {
 
 			param.keyframes.erase(param.keyframes.begin());
@@ -306,10 +312,8 @@ void Camera3DEditor::UpdateGameAnimation() {
 	auto& param = params_[runtime_->action];
 
 	// 時間を進める
-	param.timer.Update();
-	float t = param.useAveraging ?
-		LerpKeyframe::GetReparameterizedT(param.timer.easedT_, param.averagedT) :
-		param.timer.easedT_;
+	float easedT = param.UpdateAndGetEffectiveEasedT();
+	float t = param.useAveraging ? LerpKeyframe::GetReparameterizedT(easedT, param.averagedT) : easedT;
 	// それぞれの値の補間
 	Vector3 translation;
 	Quaternion rotation;
@@ -322,11 +326,24 @@ void Camera3DEditor::UpdateGameAnimation() {
 	controller_->ApplyToCamera(*camera, translation, rotation, fovY, !param.isDrawLine3D);
 
 	// 補間が最後まで行けば終了
-	if (param.timer.IsReached()) {
+	if (!param.staying && param.timer.IsReached()) {
 
 		camera->SetRotation(param.keyframes.back().demoObject->GetRotation());
 		EndAnim(runtime_->action);
 	}
+}
+
+bool Camera3DEditor::IsAnimationFinished(const std::string& actionName) const {
+
+	// 存在しないキーの名前ならfalse
+	auto it = params_.find(actionName);
+	if (it == params_.end()) {
+
+		return false;
+	}
+
+	// タイマーが最後まで到達しているか
+	return !it->second.staying && it->second.timer.IsReached();
 }
 
 float Camera3DEditor::ComputeEffectiveCameraT(

@@ -23,7 +23,6 @@ void BeginGameState::Update([[maybe_unused]] SceneManager* sceneManager) {
 	//	object
 	//========================================================================
 
-	context_->player->Update();
 	context_->boss->Update(currentState);
 
 	//========================================================================
@@ -53,10 +52,19 @@ void BeginGameState::Update([[maybe_unused]] SceneManager* sceneManager) {
 void BeginGameState::NonActiveUpdate([[maybe_unused]] SceneManager* sceneManager) {
 }
 
-void BeginGameState::Exit() {
+void BeginGameState::Enter() {
 
 	// プレイヤーの座標をゲーム開始座標にする
 	context_->player->SetTranslation(startPlayerPos_);
+
+	// カメラのアニメーション開始
+	context_->camera->GetBeginGameCamera()->StartAnimation();
+}
+
+void BeginGameState::Exit() {
+
+	// エディターによる更新を止めさせる
+	context_->camera->GetFollowCamera()->SetIsUpdateEditor(false);
 }
 
 void BeginGameState::ImGui() {
