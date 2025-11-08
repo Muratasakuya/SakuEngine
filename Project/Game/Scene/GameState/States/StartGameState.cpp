@@ -26,7 +26,7 @@ void StartGameState::Init(SceneView* sceneView) {
 
 	//========================================================================
 	//	sceneObject
-	//========================================================================
+	//===================================================,.=====================
 
 	// カメラ
 	context_->camera->Init(sceneView);
@@ -36,7 +36,7 @@ void StartGameState::Init(SceneView* sceneView) {
 	context_->light->directional.direction.x = 0.558f;
 	context_->light->directional.direction.y = -0.476f;
 	context_->light->directional.direction.z = -0.68f;
-	context_->light->directional.color = Color::Convert(0x404040ff);
+	context_->light->directional.color = Color::White();
 	sceneView->SetLight(context_->light);
 
 	// 衝突
