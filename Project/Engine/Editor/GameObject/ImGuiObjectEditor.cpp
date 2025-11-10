@@ -56,6 +56,11 @@ void ImGuiObjectEditor::SelectById(uint32_t id) {
 
 		selected3D_ = id;
 		selected2D_.reset();
+
+		if (isAutoSelect_) {
+
+			displayed3D_ = selected3D_;
+		}
 	} else if (Is2D(id)) {
 
 		selected2D_ = id;
@@ -89,6 +94,7 @@ void ImGuiObjectEditor::DrawSelectable(uint32_t object, const std::string& name)
 		if (ImGui::Selectable(label.c_str(), selected)) {
 			selected3D_ = object;
 			selected2D_.reset();
+			displayed3D_ = selected3D_;
 		}
 	}
 
@@ -101,6 +107,17 @@ void ImGuiObjectEditor::DrawSelectable(uint32_t object, const std::string& name)
 			selected3D_.reset();
 		}
 	}
+}
+
+std::optional<uint32_t> ImGuiObjectEditor::CurrentInfo3D() const {
+
+	if (isAutoSelect_) {
+		return selected3D_;
+	}
+	if (displayed3D_) {
+		return displayed3D_;
+	}
+	return selected3D_;
 }
 
 void ImGuiObjectEditor::CreateGroup() {
@@ -137,6 +154,7 @@ void ImGuiObjectEditor::EditObject() {
 void ImGuiObjectEditor::Reset() {
 
 	selected3D_.reset();
+	displayed3D_.reset();
 	selected2D_.reset();
 }
 
@@ -293,15 +311,17 @@ void ImGuiObjectEditor::GizmoToolbar(const GizmoIcons& icons) {
 	drawButton("R", icons.rotate, ImGuizmo::OPERATION::ROTATE);
 	drawButton("S", icons.scale, ImGuizmo::OPERATION::SCALE);
 	ImGui::Separator();
-	ImGui::Checkbox("##", &isPickActive_);
+	ImGui::Checkbox("##isPickActive", &isPickActive_);
+	ImGui::Checkbox("##isAutoSelect", &isAutoSelect_);
 }
 
 void ImGuiObjectEditor::EditObjects() {
 
-	if (!selected3D_) {
+	auto infoId = CurrentInfo3D();
+	if (!infoId) {
 		return;
 	}
-	uint32_t id = selected3D_.value();
+	uint32_t id = *infoId;
 	if (!objectManager_->GetData<ObjectTag>(id)) {
 		return;
 	}
@@ -351,7 +371,11 @@ void ImGuiObjectEditor::EditObjects() {
 
 void ImGuiObjectEditor::ObjectsInformation() {
 
-	uint32_t id = *selected3D_;
+	auto infoId = CurrentInfo3D();
+	if (!infoId) {
+		return;
+	}
+	uint32_t id = *infoId;
 	const auto* tag = tagSystem_->Tags().at(id);
 
 	ImGui::Text("name: %s", tag->name.c_str());
@@ -360,19 +384,24 @@ void ImGuiObjectEditor::ObjectsInformation() {
 	if (ImGui::Button("Remove")) {
 
 		objectManager_->Destroy(id);
-		selected3D_.reset();
+		if (selected3D_ == id) {
+			selected3D_.reset();
+		}
+		if (displayed3D_ == id) {
+			displayed3D_.reset();
+		}
 	}
 }
 
 void ImGuiObjectEditor::ObjectsTransform() {
 
-	auto* transform = objectManager_->GetData<Transform3D>(*selected3D_);
+	auto* transform = objectManager_->GetData<Transform3D>(*CurrentInfo3D());
 	transform->ImGui(itemWidth_);
 }
 
 void ImGuiObjectEditor::ObjectsMaterial() {
 
-	auto* matsPtr = objectManager_->GetData<Material, true>(*selected3D_);
+	auto* matsPtr = objectManager_->GetData<Material, true>(*CurrentInfo3D());
 	auto& materials = *matsPtr;
 
 	ImGui::PushItemWidth(itemWidth_);
@@ -404,7 +433,7 @@ void ImGuiObjectEditor::ObjectsMaterial() {
 
 void ImGuiObjectEditor::EditSkybox() {
 
-	auto* skybox = objectManager_->GetData<Skybox>(*selected3D_);
+	auto* skybox = objectManager_->GetData<Skybox>(*CurrentInfo3D());
 	skybox->ImGui(itemWidth_);
 }
 
