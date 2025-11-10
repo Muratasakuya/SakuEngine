@@ -88,7 +88,6 @@ private:
 	// エディター
 	std::unique_ptr<Camera3DEditorPanel> panel_;       // UIの表示
 	std::unique_ptr<CameraPathGizmoSynch> gizmoSynch_; // ギズモ同期
-	std::unique_ptr<CameraPathRenderer> renderer_;     // デバッグ表示の線描画
 
 	std::string selectedObjectKey_;   // 選択中のオブジェクト
 	std::string selectedActionName_;  // オブジェクトが所持しているアクション

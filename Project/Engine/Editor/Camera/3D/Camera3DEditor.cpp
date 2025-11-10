@@ -44,7 +44,6 @@ void Camera3DEditor::Init(SceneView* sceneView) {
 	controller_ = std::make_unique<CameraPathController>(sceneView_);
 	panel_ = std::make_unique<Camera3DEditorPanel>();
 	gizmoSynch_ = std::make_unique<CameraPathGizmoSynch>();
-	renderer_ = std::make_unique<CameraPathRenderer>();
 
 	// リセット
 	selectedObjectKey_.clear();
@@ -105,12 +104,6 @@ void Camera3DEditor::Update() {
 
 		// 追従先オフセットを更新
 		gizmoSynch_->UpdateFollowTarget(param);
-
-		// デバッグ線表示
-		if (param.isDrawLine3D) {
-
-			renderer_->DrawLine3D(param);
-		}
 	}
 
 	// ランタイムのゲームカメラを更新

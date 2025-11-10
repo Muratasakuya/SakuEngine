@@ -18,5 +18,5 @@ public:
 	CameraPathRenderer() = default;
 	~CameraPathRenderer() = default;
 
-	void DrawLine3D(const CameraPathData& data) const;
+	static void DrawLine3D(const CameraPathData& data);
 };

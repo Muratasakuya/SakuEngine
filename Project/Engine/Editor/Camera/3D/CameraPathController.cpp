@@ -4,6 +4,7 @@
 //	include
 //============================================================================
 #include <Engine/Scene/SceneView.h>
+#include <Engine/Editor/Camera/3D/CameraPathRenderer.h>
 #include <Engine/Core/Graphics/Renderer/LineRenderer.h>
 
 //============================================================================
@@ -79,6 +80,7 @@ void CameraPathController::Update(const PlaybackState& state, CameraPathData& da
 	}
 	// カメラに適応
 	ApplyToCamera(*camera, translation, rotation, fovY, false);
+	CameraPathRenderer::DrawLine3D(data);
 }
 
 void CameraPathController::Evaluate(const CameraPathData& data, float t,
