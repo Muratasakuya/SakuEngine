@@ -225,22 +225,23 @@ void ImGuiObjectEditor::DrawManipulateGizmo(const GizmoContext& context) {
 
 			Transform3D* transform = objectManager_->GetData<Transform3D>(id);
 
+			// マニュピレーターで変更したワールドを取得
+			Matrix4x4 newWorldMatrix = Matrix4x4::MakeIdentity4x4();
+			Math::FromColumnMajor(model, newWorldMatrix);
+			newWorldMatrix = Matrix4x4::Transpose(newWorldMatrix);
+
 			// 親行列
 			Matrix4x4 parentWorld = Matrix4x4::MakeIdentity4x4();
 			if (transform->parent) {
 				parentWorld = transform->parent->matrix.world;
 			}
-			Matrix4x4 parentInverse = Matrix4x4::Inverse(parentWorld);
-			Matrix4x4 worldMatrix = Matrix4x4::MakeIdentity4x4();
-			Math::FromColumnMajor(model, worldMatrix);
-			Matrix4x4 localMatrix = worldMatrix * parentInverse;
+			Matrix4x4 inverseMatrix = Matrix4x4::Inverse(parentWorld);
+			Matrix4x4 localMatrix = newWorldMatrix * inverseMatrix;
 
-			// ローカルの各値を取得する
-			float localScale[3]{}, localRotate[3]{}, localTranslate[3]{};
 			float localModel[16]{};
-			Math::ToColumnMajor(localMatrix, localModel);
-			ImGuizmo::DecomposeMatrixToComponents(localModel,
-				localTranslate, localRotate, localScale);
+			Math::ToColumnMajor(Matrix4x4::Transpose(localMatrix), localModel);
+			float localScale[3]{}, localRotate[3]{}, localTranslate[3]{};
+			ImGuizmo::DecomposeMatrixToComponents(localModel, localTranslate, localRotate, localScale);
 
 			// オフセット分引いた座標を設定
 			Vector3 offset = transform->offsetTranslation;
@@ -248,7 +249,7 @@ void ImGuiObjectEditor::DrawManipulateGizmo(const GizmoContext& context) {
 				localTranslate[1] - offset.y, localTranslate[2] - offset.z);
 
 			// 回転を設定
-			Matrix4x4 R = localMatrix;
+			Matrix4x4 R = Matrix4x4::Transpose(localMatrix);
 			{
 				// 列ベクトルを取り出してスケールで正規化
 				Vector3 cx(R.m[0][0], R.m[1][0], R.m[2][0]);

@@ -191,6 +191,16 @@ void Math::FromColumnMajor(const float in[16], Matrix4x4& matrix) {
 	}
 }
 
+void Math::ToFloatMatrix(const Matrix4x4& matrix, float out[16]) {
+
+	for (int r = 0; r < 4; ++r) {
+		for (int c = 0; c < 4; ++c) {
+
+			out[r * 4 + c] = matrix.m[r][c];
+		}
+	}
+}
+
 Vector2 Math::ProjectToScreen(const Vector3& translation, const BaseCamera& camera) {
 
 	Matrix4x4 viewMatrix = camera.GetViewMatrix();
