@@ -229,4 +229,12 @@ namespace LerpKeyframe {
 		return averagedT;
 	}
 	float GetReparameterizedT(float t, const std::vector<float>& averagedT);
+
+	//============================================================================
+	//	描画
+	//============================================================================
+
+	// 線を描画
+	void DrawKeyframeLine(const std::vector<Vector3>& points,
+		LerpKeyframe::Type type, bool isConnectEnds);
 }

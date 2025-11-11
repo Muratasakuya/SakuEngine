@@ -223,7 +223,7 @@ out vertices MSOutput verts[MAX_VERTS], out indices uint3 tris[MAX_PRIMS]) {
 		float t01 = (nodeCount <= 1u) ? 0.0f : (float(i) * dt);
 
 		float3 centerWorld;
-		// 接線：ビルボードの横方向を作るのに使用
+		// 接線、ビルボードの横方向を作るのに使用
 		float3 tangent;
 		// ノイズ用基底
 		float3 span0, span1;

@@ -68,9 +68,10 @@ namespace Math {
 
 	// 行列を列メジャー配列へ書き出す
 	void ToColumnMajor(const Matrix4x4& matrix, float out[16]);
-
 	// 列メジャー配列から行列へ読み込む
 	void FromColumnMajor(const float in[16], Matrix4x4& matrix);
+	// 行列をfloat配列に書き出す
+	void ToFloatMatrix(const Matrix4x4& matrix, float out[16]);
 
 	// ワールド座標をスクリーン座標へ射影する
 	Vector2 ProjectToScreen(const Vector3& translation, const BaseCamera& camera);

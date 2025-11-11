@@ -6,7 +6,7 @@
             "name": "particle1",
             "phases": [
                 {
-                    "duration": 0.2199999988079071,
+                    "duration": 0.009999999776482582,
                     "notEmit": false,
                     "postProcessMask_": 16649,
                     "spawn": {
@@ -64,7 +64,7 @@
                             "translation": {
                                 "x": 0.0,
                                 "y": 6.599999904632568,
-                                "z": -30.149999618530273
+                                "z": 0.0
                             }
                         },
                         "type": "Cone"
@@ -105,6 +105,12 @@
                                     }
                                 },
                                 "lockAxisType": "None",
+                                "lockRotation": {
+                                    "w": 1.0,
+                                    "x": 0.0,
+                                    "y": 0.0,
+                                    "z": 0.0
+                                },
                                 "slerpExtraTurns_": 0,
                                 "slerpPreferLongArc_": false,
                                 "updateType": "Slerp"

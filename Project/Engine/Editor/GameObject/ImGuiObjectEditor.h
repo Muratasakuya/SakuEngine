@@ -107,6 +107,7 @@ private:
 	std::unordered_map<uint32_t, std::optional<IGameObject*>> objectsMap_;
 
 	std::optional<uint32_t> selected3D_;
+	std::optional<uint32_t> displayed3D_;
 	int selectedMaterialIndex_ = 0;
 
 	std::optional<uint32_t> selected2D_;
@@ -117,6 +118,7 @@ private:
 	ImGuizmo::MODE currentMode_ = ImGuizmo::WORLD;
 	bool isUsingGuizmo_ = false;
 	bool isPickActive_ = true;
+	bool isAutoSelect_ = true;
 
 	const float itemWidth_ = 192.0f;
 
@@ -132,6 +134,8 @@ private:
 	bool Is2D(uint32_t object) const;
 	// 選択可能なobjectの描画
 	void DrawSelectable(uint32_t object, const std::string& name);
+	// 表示に使うID
+	std::optional<uint32_t> CurrentInfo3D() const;
 
 	//----------- group ------------------------------------------------------
 

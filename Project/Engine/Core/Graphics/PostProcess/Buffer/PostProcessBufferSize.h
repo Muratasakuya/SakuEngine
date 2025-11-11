@@ -66,7 +66,7 @@ public:
 	//--------- properties ---------------------------------------------------
 
 	float threshold = 1.0f;
-	int radius = 2;
+	int radius = 8;
 	float sigma = 64.0f;
 };
 

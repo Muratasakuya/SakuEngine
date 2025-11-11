@@ -294,6 +294,21 @@ void GameObject3D::SetCastShadow(bool cast, std::optional<uint32_t> meshIndex) {
 	}
 }
 
+void GameObject3D::SetShadowRate(float rate, std::optional<uint32_t> meshIndex) {
+
+	// meshIndexが設定されている場合のみ指定して設定
+	if (meshIndex.has_value()) {
+
+		(*materials_)[meshIndex.value()].shadowRate = rate;
+	} else {
+
+		for (auto& material : *materials_) {
+
+			material.shadowRate = rate;
+		}
+	}
+}
+
 void GameObject3D::SetTextureName(const std::string& textureName, std::optional<uint32_t> meshIndex) {
 
 	// meshIndexが設定されている場合のみ指定して設定

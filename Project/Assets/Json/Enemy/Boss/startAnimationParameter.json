@@ -1,0 +1,33 @@
+{
+    "DelayTimer": {
+        "easeingType_": "Linear",
+        "target_": 1.3200000524520874
+    },
+    "PosAnimation": {
+        "Loop": {
+            "loop": {
+                "loopCount": 1,
+                "type": "Repeat"
+            }
+        },
+        "ReturnTimer": {
+            "easeingType_": "Linear",
+            "target_": 0.0
+        },
+        "Timer": {
+            "easeingType_": "EaseInExpo",
+            "target_": 0.7200000286102295
+        },
+        "move_.end": {
+            "x": 0.0,
+            "y": 0.800000011920929,
+            "z": 48.0
+        },
+        "move_.start": {
+            "x": 0.0,
+            "y": 128.0,
+            "z": 48.0
+        },
+        "useReturnTimer_": false
+    }
+}

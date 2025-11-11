@@ -207,6 +207,7 @@ uint32_t ObjectManager::BuildEmptyobject(const std::string& name, const std::str
 	uint32_t object = objectPoolManager_->Create();
 	// tag設定
 	auto* tag = objectPoolManager_->AddData<ObjectTag>(object);
+	tag->identifier = name;
 	tag->name = systemManager_->GetSystem<TagSystem>()->CheckName(name);
 	tag->groupName = groupName;
 

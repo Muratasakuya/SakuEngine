@@ -47,7 +47,7 @@
                                 },
                                 "samplerType_none": 0,
                                 "samplerType_trail": 0,
-                                "textureName": "centerEmissiveCircle",
+                                "textureName": "redCircle",
                                 "trailNoiseTextureName_": "noise",
                                 "trailTextureName_": "white",
                                 "useNoiseTexture_none": 0,
@@ -64,9 +64,9 @@
                                 "z": 5.599999904632568
                             },
                             "translation": {
-                                "x": -22.4309139251709,
+                                "x": -72.03166198730469,
                                 "y": 4.039999961853027,
-                                "z": 73.13706970214844
+                                "z": 65.7442626953125
                             }
                         },
                         "type": "Box"

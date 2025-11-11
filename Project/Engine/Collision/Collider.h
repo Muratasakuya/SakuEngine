@@ -58,7 +58,7 @@ public:
 	// 子として扱うかどうかの設定(ワールド行列を使った更新に切替)
 	void SetIsChild(bool isChild) { isChild_ = isChild; }
 	// 直近フレームでEnter状態かどうか
-	bool IsHit() const { return currentState_ == State::Enter; }
+	bool IsHitTrigger() const { return currentState_ == State::Enter; }
 protected:
 	//========================================================================
 	//	protected Methods

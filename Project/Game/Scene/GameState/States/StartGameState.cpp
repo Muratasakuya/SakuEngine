@@ -36,7 +36,7 @@ void StartGameState::Init(SceneView* sceneView) {
 	context_->light->directional.direction.x = 0.558f;
 	context_->light->directional.direction.y = -0.476f;
 	context_->light->directional.direction.z = -0.68f;
-	context_->light->directional.color = Color::Convert(0x404040ff);
+	context_->light->directional.color = Color::White();
 	sceneView->SetLight(context_->light);
 
 	// 衝突
@@ -46,11 +46,11 @@ void StartGameState::Init(SceneView* sceneView) {
 	//	frontObjects
 	//========================================================================
 
-	// プレイヤー
-	context_->player->Init("player", "player", "Player", "player_idle");
-
 	// ボス
 	context_->boss->Init("bossEnemy", "bossEnemy", "Enemy", "bossEnemy_idle");
+
+	// プレイヤー
+	context_->player->Init("player", "player", "Player", "player_idle");
 
 	// プレイヤー、カメラをセット
 	context_->boss->SetPlayer(context_->player);
@@ -119,7 +119,7 @@ void StartGameState::Update([[maybe_unused]] SceneManager* sceneManager) {
 	nextStateEvent_->UpdateAllBodies(transform);
 
 	// イベント範囲内に入ったら次の状態に遷移させる
-	if (nextStateEvent_->IsHit()) {
+	if (nextStateEvent_->IsHitTrigger()) {
 
 		requestNext_ = true;
 	}

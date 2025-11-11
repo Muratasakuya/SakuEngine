@@ -34,6 +34,9 @@ public:
 		std::unique_ptr<GameObject3D> demoObject;
 		Vector3 viewScale;
 
+		// 停止時間
+		float stayTime = 0.0f;
+
 		// init
 		void Init(bool isUseGame);
 
@@ -77,6 +80,12 @@ public:
 	bool useAveraging = false;    // 平均化を行うか
 	std::vector<float> averagedT; // 平均化されたt値
 
+	// 停止
+	bool staying = false;    // いま停止中か
+	int stayKeyIndex = -1;   // 停止しているキーのインデックス
+	float stayRemain = 0.0f; // 残り停止時間
+	float lastEasedT = 0.0f; // ひとつ前のeasedT
+
 	// エディター
 	bool isUseGame = false;
 	bool isDrawKeyframe = false;
@@ -89,6 +98,7 @@ public:
 
 	//キー座標の配列を取得
 	std::vector<Vector3> CollectTranslationPoints() const;
+	float UpdateAndGetEffectiveEasedT();
 
 	// コピー禁止
 	CameraPathData(const CameraPathData&) = delete;

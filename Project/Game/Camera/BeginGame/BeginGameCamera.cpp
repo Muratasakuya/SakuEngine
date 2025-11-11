@@ -3,6 +3,7 @@
 //============================================================================
 //	include
 //============================================================================
+#include <Engine/Editor/Camera/3D/Camera3DEditor.h>
 #include <Engine/Utility/Json/JsonAdapter.h>
 #include <Engine/Utility/Enum/EnumAdapter.h>
 
@@ -13,6 +14,10 @@
 void BeginGameCamera::Init() {
 
 	displayFrustum_ = true;
+	isStarted_ = false;
+
+	Camera3DEditor::GetInstance()->LoadAnimFile("beginGameCameraFirst.json");
+	Camera3DEditor::GetInstance()->LoadAnimFile("beginGameCameraSecond.json");
 
 	// json適応
 	ApplyJson();
@@ -24,38 +29,32 @@ bool BeginGameCamera::IsFinished() const {
 	if (disableTransition_) {
 		return false;
 	}
-	return currentState_ == State::Finished;
+
+	bool isFinished = Camera3DEditor::GetInstance()->IsAnimationFinished("beginGameCameraSecond"); 
+
+	// カメラアニメーションが終了したか
+	return isFinished;
+}
+
+void BeginGameCamera::StartAnimation() {
+
+	// 最初のアニメーション開始
+	Camera3DEditor::GetInstance()->StartAnim("beginGameCameraFirst", false, false);
+	isStarted_ = true;
 }
 
 void BeginGameCamera::Update() {
 
-	switch (currentState_) {
-	case BeginGameCamera::State::Update:
-
-		UpdateAnimation();
-		break;
-	case BeginGameCamera::State::Finished:
-		break;
+	if (!isStarted_) {
+		return;
 	}
 
-	// 行列更新
-	BaseCamera::UpdateView();
-}
+	// 最初のアニメーションが終了したら次のアニメーションを開始
+	if (Camera3DEditor::GetInstance()->IsAnimationFinished("beginGameCameraFirst")) {
 
-void BeginGameCamera::UpdateAnimation() {
-
-	// 時間を進める
-	animationTimer_.Update();
-	
-	// 座標を補間
-	transform_.translation = Vector3::Lerp(
-		startPos_, targetPos_, animationTimer_.easedT_);
-
-	// 補間が終了したら次に進める
-	if (animationTimer_.IsReached()) {
-
-		animationTimer_.Reset();
-		currentState_ = State::Finished;
+		Camera3DEditor::GetInstance()->StartAnim("beginGameCameraSecond", false, false);
+		// この時点でアニメーションの開始フラグをfalseにする
+		isStarted_ = false;
 	}
 }
 
@@ -68,12 +67,6 @@ void BeginGameCamera::ImGui() {
 
 	ImGui::Checkbox("updateDebugView", &updateDebugView_);
 	ImGui::Checkbox("disableTransition", &disableTransition_);
-	EnumAdapter<State>::Combo("state", &currentState_);
-
-	ImGui::DragFloat3("startPos", &startPos_.x, 0.1f);
-	ImGui::DragFloat3("targetPos", &targetPos_.x, 0.1f);
-
-	animationTimer_.ImGui("Animation");
 }
 
 void BeginGameCamera::ApplyJson() {
@@ -83,18 +76,11 @@ void BeginGameCamera::ApplyJson() {
 		return;
 	}
 
-	animationTimer_.FromJson(data["AnimationTimer"]);
-	startPos_ = Vector3::FromJson(data["startPos_"]);
-	targetPos_ = Vector3::FromJson(data["targetPos_"]);
 }
 
 void BeginGameCamera::SaveJson() {
 
 	Json data;
-
-	animationTimer_.ToJson(data["AnimationTimer"]);
-	data["startPos_"] = startPos_.ToJson();
-	data["targetPos_"] = targetPos_.ToJson();
 
 	JsonAdapter::Save("Camera/BeginGame/animationParam.json", data);
 }

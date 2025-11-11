@@ -17,7 +17,9 @@ RWTexture2D<float4> gOutputTexture : register(u0);
 //	fFunctions
 //============================================================================
 
-bool CheckPixelBitMask(int bit, uint2 pixelPos) {
+// 指定ピクセル座標のビットマスク値をチェックする
+bool CheckPixelBitMask(uint bit, uint2 pixelPos) {
 	
-	return (gMaskTexture[pixelPos].r & bit) != 0u;
+	// 0でないならビットが立っているためポストエフェクト処理を行う
+	return (gMaskTexture[pixelPos].r & bit) != 0;
 }

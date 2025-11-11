@@ -175,6 +175,16 @@ Vector3 BaseTransform::GetDown() const {
 	return Vector3(-GetUp().x, -GetUp().y, -GetUp().z);
 }
 
+void BaseTransform::SetIsDirty(bool isDirty) {
+
+	isDirty_ = isDirty;
+	if (isDirty_) {
+
+		// 値を強制的に変化させる
+		prevScale += 1.0f;
+	}
+}
+
 //============================================================================
 // Effect
 //============================================================================

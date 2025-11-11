@@ -9,11 +9,8 @@
 //	CameraPathRenderer classMethods
 //============================================================================
 
-void CameraPathRenderer::DrawLine3D(const CameraPathData& data) const {
+void CameraPathRenderer::DrawLine3D(const CameraPathData& data) {
 
-	if (!data.isDrawLine3D) {
-		return;
-	}
 	if (data.keyframes.size() < 2) {
 		return;
 	}
