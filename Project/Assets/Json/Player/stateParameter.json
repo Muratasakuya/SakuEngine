@@ -327,33 +327,36 @@
         "parryLerp_.time": 0.6000000238418579
     },
     "SkilAttack": {
-        "BackJump": {
-            "easeingType_": "EaseOutBack",
-            "moveValue": -32.0,
-            "nextAnim": 0.10000000149011612,
-            "target_": 0.3499999940395355
-        },
-        "LookEnemy": {
-            "easeingType_": "EaseInSine",
-            "target_": 0.11999999731779099
-        },
-        "MoveJump": {
-            "easeingType_": "EaseOutQuint",
-            "moveValue": -8.600000381469727,
-            "nextAnim": 0.0,
-            "target_": 0.30000001192092896
-        },
-        "ReturnMove": {
-            "easeingType_": "EaseOutQuad",
-            "moveValue": 60.0,
-            "nextAnim": 0.0,
-            "target_": 0.5
-        },
-        "RushMove": {
-            "easeingType_": "EaseOutExpo",
-            "moveValue": 26.0,
-            "nextAnim": 0.009999999776482582,
-            "target_": 0.3199999928474426
+        "MoveKey": {
+            "KeyPositions": [
+                {
+                    "x": -5.884679317474365,
+                    "y": 16.0,
+                    "z": -50.88883972167969
+                },
+                {
+                    "x": 2.0951104164123535,
+                    "y": 16.0,
+                    "z": -1.804183006286621
+                },
+                {
+                    "x": 52.31648254394531,
+                    "y": 16.0,
+                    "z": -3.8073081970214844
+                },
+                {
+                    "x": 50.51286697387695,
+                    "y": 16.0,
+                    "z": -53.077239990234375
+                }
+            ],
+            "Timer": {
+                "easeingType_": "Linear",
+                "target_": 1.600000023841858
+            },
+            "isConnectEnds_": false,
+            "lerpType_": "Linear",
+            "parentName_": ""
         },
         "attackLookAtCircleRange_": 108.0,
         "attackOffsetTranslation_": 8.0,
@@ -361,10 +364,6 @@
         "attackPosLerpCircleRange_": 95.4000015258789,
         "attackPosLerpTime_": 0.4399999976158142,
         "exitTime_": 0.029999999329447746,
-        "jumpMoveOutProgress_": 0.41999998688697815,
-        "jumpStrength_": 16.0,
-        "lookStartProgress_": 0.5,
-        "lookTimerRate_": 1.2000000476837158,
         "nextAnimDuration_": 0.029999999329447746,
         "rotationLerpRate_": 0.3199999928474426
     },
