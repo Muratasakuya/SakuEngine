@@ -62,6 +62,18 @@ Vector3 operator/(float scalar, const Vector3& v) {
 	return Vector3(v.x / scalar, v.y / scalar, v.z / scalar);
 }
 
+Vector3& Vector3::operator+=(float scalar) {
+	x += scalar;
+	y += scalar;
+	z += scalar;
+	return *this;
+}
+Vector3& Vector3::operator-=(float scalar) {
+	x -= scalar;
+	y -= scalar;
+	z -= scalar;
+	return *this;
+}
 Vector3& Vector3::operator*=(float scalar) {
 	x *= scalar;
 	y *= scalar;

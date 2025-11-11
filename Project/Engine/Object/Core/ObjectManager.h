@@ -68,6 +68,9 @@ public:
 	template<class T>
 	T* GetSystem() const;
 
+	// プールを取得
+	ObjectPoolManager* GetObjectPoolManager() const { return objectPoolManager_.get(); }
+
 	// singleton
 	static ObjectManager* GetInstance();
 	static void Finalize();

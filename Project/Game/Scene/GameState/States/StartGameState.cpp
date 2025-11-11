@@ -46,11 +46,11 @@ void StartGameState::Init(SceneView* sceneView) {
 	//	frontObjects
 	//========================================================================
 
-	// プレイヤー
-	context_->player->Init("player", "player", "Player", "player_idle");
-
 	// ボス
 	context_->boss->Init("bossEnemy", "bossEnemy", "Enemy", "bossEnemy_idle");
+
+	// プレイヤー
+	context_->player->Init("player", "player", "Player", "player_idle");
 
 	// プレイヤー、カメラをセット
 	context_->boss->SetPlayer(context_->player);

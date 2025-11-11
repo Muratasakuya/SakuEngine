@@ -58,6 +58,7 @@ public:
 	void SetEulerRotation(const Vector3& rotation) { transform_->eulerRotate = rotation; }
 	void SetTranslation(const Vector3& translation) { transform_->translation = translation; }
 	void SetOffsetTranslation(const Vector3& translation) { transform_->offsetTranslation = translation; }
+	void SetIsDirty(bool isDirty) { transform_->SetIsDirty(isDirty); }
 	// 親
 	void SetParent(const Transform3D& parent, bool isNull = false);
 	const Transform3D* GetJointTransform(const std::string& jointName) const;

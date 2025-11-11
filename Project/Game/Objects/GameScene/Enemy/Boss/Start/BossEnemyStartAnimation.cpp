@@ -57,7 +57,7 @@ void BossEnemyStartAnimation::Update(BossEnemy& bossEnemy) {
 	}
 }
 
-void BossEnemyStartAnimation::Start(BossEnemy& bossEnemy) {
+void BossEnemyStartAnimation::Start([[maybe_unused]] BossEnemy& bossEnemy) {
 
 	// 補間開始
 	isStarted_ = true;

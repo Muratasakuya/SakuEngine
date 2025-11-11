@@ -69,7 +69,7 @@ private:
 
 	// 親トランスフォーム、回転と座標
 	std::string parentName_;
-	const Transform3D* parent_ = nullptr;
+	Transform3D* parent_ = nullptr;
 
 	// キー位置
 	std::vector<Vector3> keyPositions_;
@@ -82,10 +82,11 @@ private:
 	bool isConnectEnds_; // 最初と最後のキーを結ぶかどうか
 
 	// エディター
-	bool isEditUpdate_;
+	bool isDrawKeyframe_; // キーフレーム表示
+	bool isEditUpdate_;   // ImGui関数内で更新するかどうか
 
 	//--------- functions ----------------------------------------------------
 
 	// キーオブジェクトの作成
-	std::unique_ptr<GameObject3D> CreateKeyObject(const Vector3 & pos);
+	std::unique_ptr<GameObject3D> CreateKeyObject(const Vector3& pos);
 };

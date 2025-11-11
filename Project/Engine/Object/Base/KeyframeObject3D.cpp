@@ -24,6 +24,7 @@ void KeyframeObject3D::Init(const std::string& name) {
 	isConnectEnds_ = false;
 	lerpType_ = LerpKeyframe::Type::Linear;
 	isEditUpdate_ = false;
+	isDrawKeyframe_ = false;
 }
 
 void KeyframeObject3D::StartLerp() {
@@ -74,7 +75,7 @@ std::unique_ptr<GameObject3D> KeyframeObject3D::CreateKeyObject(const Vector3& p
 	}
 
 	// 描画設定、シーンにしか表示しない
-	object->SetMeshRenderView(MeshRenderView::Scene);
+	object->SetMeshRenderView(isDrawKeyframe_ ? MeshRenderView::Scene : MeshRenderView::None);
 	object->SetBlendMode(BlendMode::kBlendModeAdd);
 	object->SetScale(Vector3::AnyInit(2.4f));
 	object->SetCastShadow(false);
@@ -92,6 +93,15 @@ void KeyframeObject3D::ImGui() {
 	}
 
 	ImGui::Checkbox("isEditUpdate", &isEditUpdate_);
+	if (ImGui::Checkbox("isDrawKeyframe", &isDrawKeyframe_)) {
+
+		// キーオブジェクトの描画設定を更新
+		for (const auto& keyObject : keyObjects_) {
+
+			keyObject->SetMeshRenderView(isDrawKeyframe_ ?
+				MeshRenderView::Scene : MeshRenderView::None);
+		}
+	}
 
 	// キーオブジェクトの追加
 	if (ImGui::Button("Add Keyframe")) {
@@ -138,6 +148,8 @@ void KeyframeObject3D::ImGui() {
 
 			// 親Transformと名前を更新
 			parent_ = objectManager->GetData<Transform3D>(currentId);
+			// 変更があったことにする
+			parent_->SetIsDirty(true);
 			parentName_ = selectName;
 
 			// キーオブジェクトの親を更新
@@ -180,6 +192,25 @@ void KeyframeObject3D::FromJson(const Json& data) {
 	lerpType_ = EnumAdapter<LerpKeyframe::Type>::FromString(data.value("lerpType_", "Linear")).value();
 	isConnectEnds_ = data.value("isConnectEnds_", false);
 	timer_.FromJson(data["Timer"]);
+
+	// 親Transformを設定
+	if (!parentName_.empty()) {
+
+		ObjectManager* objectManager = ObjectManager::GetInstance();
+		TagSystem* tagSystem = objectManager->GetSystem<TagSystem>();
+		// システムの更新をさせる
+		tagSystem->Update(*objectManager->GetObjectPoolManager());
+
+		for (const auto& [id, tagPtr] : tagSystem->Tags()) {
+
+			// 添え字の数字は考慮しない
+			if (tagPtr && tagPtr->identifier == parentName_) {
+
+				parent_ = objectManager->GetData<Transform3D>(id);
+				break;
+			}
+		}
+	}
 
 	// キーオブジェクトを生成
 	for (const auto& pos : keyPositions_) {

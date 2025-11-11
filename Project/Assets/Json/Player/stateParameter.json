@@ -345,9 +345,9 @@
                     "z": -3.8073081970214844
                 },
                 {
-                    "x": 50.51286697387695,
+                    "x": 42.03107833862305,
                     "y": 16.0,
-                    "z": -53.077239990234375
+                    "z": -62.91853332519531
                 }
             ],
             "Timer": {
@@ -356,7 +356,7 @@
             },
             "isConnectEnds_": false,
             "lerpType_": "Linear",
-            "parentName_": ""
+            "parentName_": "bossEnemy"
         },
         "attackLookAtCircleRange_": 108.0,
         "attackOffsetTranslation_": 8.0,

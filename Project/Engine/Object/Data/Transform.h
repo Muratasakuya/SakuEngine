@@ -58,7 +58,7 @@ public:
 
 	// 変更があったかどうか
 	bool IsDirty() const { return isDirty_; }
-	void SetIsDirty(bool isDirty) { isDirty_ = isDirty; }
+	void SetIsDirty(bool isDirty);
 
 	//--------- variables ----------------------------------------------------
 
