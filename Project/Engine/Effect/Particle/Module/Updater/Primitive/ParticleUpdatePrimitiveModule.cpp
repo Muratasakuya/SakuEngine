@@ -12,6 +12,7 @@
 #include <Engine/Effect/Particle/Module/Updater/Primitive/Derived/ParticleCylinderUpdater.h>
 #include <Engine/Effect/Particle/Module/Updater/Primitive/Derived/ParticleCrescentUpdater.h>
 #include <Engine/Effect/Particle/Module/Updater/Primitive/Derived/ParticleLightningUpdater.h>
+#include <Engine/Effect/Particle/Module/Updater/Primitive/Derived/ParticleTestMeshUpdater.h>
 
 //============================================================================
 //	ParticleUpdatePrimitiveModule classMethods
@@ -44,6 +45,9 @@ void ParticleUpdatePrimitiveModule::Init() {
 	// Lightning
 	updaters_[static_cast<uint32_t>(ParticlePrimitiveType::Lightning)] = std::make_unique<ParticleLightningUpdater>();
 	updaters_[static_cast<uint32_t>(ParticlePrimitiveType::Lightning)]->Init();
+	// TestMesh
+	updaters_[static_cast<uint32_t>(ParticlePrimitiveType::TestMesh)] = std::make_unique<ParticleTestMeshUpdater>();
+	updaters_[static_cast<uint32_t>(ParticlePrimitiveType::TestMesh)]->Init();
 }
 
 void ParticleUpdatePrimitiveModule::Execute(

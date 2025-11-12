@@ -95,6 +95,14 @@ void ICPUParticleSpawnModule::SetPrimitiveType(ParticlePrimitiveType type) {
 
 		primitive_.crescent.Init();
 		break;
+	case ParticlePrimitiveType::Lightning:
+
+		primitive_.lightning.Init();
+		break;
+	case ParticlePrimitiveType::TestMesh:
+
+		primitive_.testMesh.Init();
+		break;
 	}
 }
 

@@ -17,6 +17,7 @@ enum class ParticlePrimitiveType {
 	Cylinder,  // 円柱
 	Crescent,  // 三日月
 	Lightning, // 雷
+	TestMesh,  // テストメッシュ
 	Count
 };
 
@@ -163,5 +164,24 @@ struct LightningForGPU {
 		angle = 0.0f;
 
 		seed = 1337.0f;
+	}
+};
+
+// テスト
+struct TestMeshForGPU {
+
+	Vector2 size;
+	Vector2 pivot;
+
+	// 0: XY
+	// 1: XZ
+	uint32_t mode;
+
+	void Init() {
+
+		size = Vector2::AnyInit(1.0f);
+		pivot = Vector2::AnyInit(0.5f);
+
+		mode = 0;
 	}
 };
