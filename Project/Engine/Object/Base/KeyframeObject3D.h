@@ -100,4 +100,7 @@ private:
 	std::vector<Vector3> GetPositions() const;
 	// 各区間の補間t取得
 	float GetT(float currentT) const;
+
+	// キータイムラインの描画
+	void DrawKeyTimeline();
 };

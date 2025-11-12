@@ -10,6 +10,9 @@
 #include <Engine/Utility/Enum/EnumAdapter.h>
 #include <Engine/Utility/Helper/ImGuiHelper.h>
 
+// imgui
+#include <imgui_internal.h>
+
 //============================================================================
 //	KeyframeObject3D classMethods
 //============================================================================
@@ -138,6 +141,158 @@ float KeyframeObject3D::GetT(float currentT) const {
 	return resultT;
 }
 
+void KeyframeObject3D::DrawKeyTimeline() {
+
+	// 表示バーのサイズ
+	const float barWidth = 520.0f;
+	const float barHeight = 12.0f;
+
+	if (keys_.empty()) {
+		return;
+	}
+
+	const float total = (std::max)(keys_.back().time, std::numeric_limits<float>::epsilon());
+
+	// レイアウト領域を確保
+	ImGui::Dummy(ImVec2(barWidth, barHeight * 2.0f));
+	ImVec2 p0 = ImGui::GetItemRectMin();
+	ImVec2 p1 = ImGui::GetItemRectMax();
+	bool hoveredTimeline = ImGui::IsItemHovered();
+	ImDrawList* dl = ImGui::GetWindowDrawList();
+
+	// 背景
+	dl->AddRectFilled(p0, p1, IM_COL32(70, 70, 70, 255), barHeight * 0.5f);
+
+	// 進捗バー
+	float progT = 0.0f;
+	if (currentState_ != State::None) {
+
+		progT = std::clamp(timer_ / total, 0.0f, 1.0f);
+	}
+	ImVec2 pProg = ImVec2(std::lerp(p0.x, p1.x, progT), p1.y);
+	dl->AddRectFilled(p0, pProg, IM_COL32(240, 200, 0, 255), barHeight * 0.5f);
+
+	// 丸の描画とドラッグ
+	const float yCenter = (p0.y + p1.y) * 0.5f;
+	const float radius = barHeight * 0.7f;
+
+	// 状態保持
+	static int s_dragIndex = -1;
+	static bool s_dragging = false;
+	static int s_easeSeg = -1;
+
+	// 先に丸のヒット＆ドラッグ処理
+	ImVec2 mouse = ImGui::GetIO().MousePos;
+	bool anyHovered = false;
+
+	for (int i = 0; i < (int)keys_.size(); ++i) {
+
+		float t = (total > 0.0f) ? (keys_[i].time / total) : 0.0f;
+		t = std::clamp(t, 0.0f, 1.0f);
+		float x = std::lerp(p0.x, p1.x, t);
+		ImVec2 center(x, yCenter);
+
+		// 通過済み → 緑 / 未来 → 灰
+		ImU32 col = (timer_ >= keys_[i].time) ? IM_COL32(50, 220, 70, 255) : IM_COL32(180, 180, 180, 255);
+
+		// ヒット判定
+		bool hovered = ImLengthSqr(mouse - center) <= (radius * radius);
+		if (hovered) {
+
+			anyHovered = true;
+			ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+			dl->AddCircleFilled(center, radius, IM_COL32(255, 255, 255, 255));
+		}
+
+		// ドラッグ開始
+		if (!s_dragging && hovered && ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
+			s_dragging = true;
+			s_dragIndex = i;
+		}
+
+		// 描画
+		dl->AddCircleFilled(center, radius * 0.8f, col);
+
+		// ドラッグ中の更新
+		if (s_dragging && s_dragIndex == i) {
+			if (ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
+
+				// マウスx → 時間（絶対秒）に写像
+				float u = 0.0f;
+				if (p1.x > p0.x) u = (mouse.x - p0.x) / (p1.x - p0.x);
+				u = std::clamp(u, 0.0f, 1.0f);
+				float newTime = u * (std::max)(total, 1e-6f);
+
+				// 単調性を維持
+				const float minGap = 1e-4f;
+				float lo = (i == 0) ? 0.0f : (keys_[i - 1].time + minGap);
+				float hi = (i + 1 < (int)keys_.size()) ? (keys_[i + 1].time - minGap) : (std::max)(newTime, lo);
+				newTime = std::clamp(newTime, lo, hi);
+
+				// 更新
+				keys_[i].time = newTime;
+
+				// ラベル
+				char buf[64];
+				snprintf(buf, sizeof(buf), "%.3f s", keys_[i].time);
+				ImVec2 labelPos(center.x - ImGui::CalcTextSize(buf).x * 0.5f, yCenter + radius + 4.0f);
+				dl->AddText(labelPos, IM_COL32(255, 255, 255, 255), buf);
+			} else {
+
+				// マウスを離したら終了
+				s_dragging = false;
+				s_dragIndex = -1;
+			}
+		}
+	}
+
+	// 最後の時間はdragFloatで更新
+	ImGui::DragFloat("End Time", &keys_.back().time, 0.01f);
+
+	// 丸以外クリックで区間を選択 → イージング選択ポップアップを開く
+	if (!s_dragging && hoveredTimeline && ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !anyHovered) {
+
+		// クリック位置 → t → どの区間か
+		float u = (p1.x > p0.x) ? (mouse.x - p0.x) / (p1.x - p0.x) : 0.0f;
+		u = std::clamp(u, 0.0f, 1.0f);
+
+		// キーの正規化時刻配列を作る
+		int seg = -1;
+		if (keys_.size() >= 2) {
+			for (int i = 0; i + 1 < (int)keys_.size(); ++i) {
+
+				float a = std::clamp(keys_[i].time / total, 0.0f, 1.0f);
+				float b = std::clamp(keys_[i + 1].time / total, 0.0f, 1.0f);
+				if (a <= u && u <= b) {
+					seg = i;
+					break;
+				}
+			}
+			if (seg < 0) {
+
+				seg = (int)keys_.size() - 2;
+			}
+		}
+		s_easeSeg = seg;
+		ImGui::OpenPopup("EasePopup");
+	}
+
+	// ポップアップでイージング選択
+	if (ImGui::BeginPopup("EasePopup")) {
+		if (0 <= s_easeSeg && s_easeSeg + 1 < (int)keys_.size()) {
+
+			ImGui::Text("Segment: %d -> %d", s_easeSeg, s_easeSeg + 1);
+			Easing::SelectEasingType(keys_[s_easeSeg].easeType);
+			ImGui::Separator();
+		}
+		if (ImGui::Button("Close")) {
+
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::EndPopup();
+	}
+}
+
 void KeyframeObject3D::ImGui() {
 
 	ImGui::PushItemWidth(200.0f);
@@ -148,7 +303,7 @@ void KeyframeObject3D::ImGui() {
 		Update();
 	}
 
-	ImGui::SeparatorText("Config");
+	ImGui::SeparatorText("Key Timer");
 
 	if (!keys_.empty()) {
 
@@ -157,7 +312,12 @@ void KeyframeObject3D::ImGui() {
 		float total = (std::max)(keys_.back().time, std::numeric_limits<float>::epsilon());
 		float progress = timer_ / total;
 		ImGui::Text("progress: %.2f", progress);
+
+		// キータイムラインの描画
+		DrawKeyTimeline();
 	}
+
+	ImGui::SeparatorText("Config");
 
 	ImGui::Checkbox("isEditUpdate", &isEditUpdate_);
 	if (ImGui::Checkbox("isDrawKeyframe", &isDrawKeyframe_)) {
@@ -194,26 +354,6 @@ void KeyframeObject3D::ImGui() {
 
 		ImGui::Checkbox("isConnectEnds", &isConnectEnds_);
 		EnumAdapter<LerpKeyframe::Type>::Combo("LerpType", &lerpType_);
-
-		ImGui::SeparatorText("Keys");
-
-		for (uint32_t i = 0; i < keys_.size(); ++i) {
-
-			ImGui::PushID(i);
-
-			ImGui::DragFloat("Time", &keys_[i].time, 0.01f, 0.0f);
-			Easing::SelectEasingType(keys_[i].easeType);
-
-			if (ImGui::Button("Remove Keyframe")) {
-
-				// キーオブジェクトを削除
-				keyObjects_.erase(keyObjects_.begin() + i);
-				keys_.erase(keys_.begin() + i);
-				ImGui::PopID();
-				break;
-			}
-			ImGui::PopID();
-		}
 	}
 
 	if (ImGui::CollapsingHeader("Set Parent")) {
