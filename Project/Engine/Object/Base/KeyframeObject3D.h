@@ -36,8 +36,6 @@ public:
 
 	//--------- accessor -----------------------------------------------------
 
-	// キー位置を返す
-	const std::vector<Vector3>& GetKeyPositions() const { return keyPositions_; }
 	// 現在の位置を返す
 	const Vector3& GetCurrentPos() const { return currentPos_; }
 private:
@@ -52,6 +50,14 @@ private:
 
 		None,     // 何もしない状態
 		Updating, // 補間開始
+	};
+
+	// キー情報
+	struct Key {
+
+		Vector3 pos; // 位置
+		float time;  // 時間
+		EasingType easeType; // イージング
 	};
 
 	//--------- variables ----------------------------------------------------
@@ -71,14 +77,14 @@ private:
 	std::string parentName_;
 	Transform3D* parent_ = nullptr;
 
-	// キー位置
-	std::vector<Vector3> keyPositions_;
+	// キー情報
+	std::vector<Key> keys_;
 	// 現在の位置
 	Vector3 currentPos_;
 
 	// 補間
 	LerpKeyframe::Type lerpType_; // 補間タイプ
-	StateTimer timer_;   // 補間時間
+	float timer_;        // 現在の経過時間
 	bool isConnectEnds_; // 最初と最後のキーを結ぶかどうか
 
 	// エディター
@@ -89,4 +95,9 @@ private:
 
 	// キーオブジェクトの作成
 	std::unique_ptr<GameObject3D> CreateKeyObject(const Vector3& pos);
+
+	// キー位置の取得
+	std::vector<Vector3> GetPositions() const;
+	// 各区間の補間t取得
+	float GetT(float currentT) const;
 };

@@ -31,7 +31,7 @@ void KeyframeObject3D::StartLerp() {
 
 	// 補間開始
 	currentState_ = State::Updating;
-	timer_.Reset();
+	timer_ = 0.0f;
 }
 
 void KeyframeObject3D::Update() {
@@ -42,20 +42,24 @@ void KeyframeObject3D::Update() {
 	}
 
 	// 時間を更新
-	timer_.Update();
+	float total = (std::max)(keys_.back().time, std::numeric_limits<float>::epsilon());
+	timer_ += GameTimer::GetScaledDeltaTime();
+	timer_ = std::clamp(timer_, 0.0f, total);
+	// 進捗率
+	float progress = timer_ / total;
 
-	// 現在の補間位置を更新
-	currentPos_ = LerpKeyframe::GetValue<Vector3>(keyPositions_, timer_.easedT_, lerpType_);
+	// 現在の補間位置を更新、現在の区間の補間tを取得して補間
+	currentPos_ = LerpKeyframe::GetValue<Vector3>(GetPositions(), GetT(progress), lerpType_);
 
 	// 時間経過で終了
-	if (timer_.IsReached()) {
+	if (1.0f <= progress) {
 
 		// 最終位置を設定
-		currentPos_ = keyPositions_.back();
+		currentPos_ = keys_.empty() ? Vector3::AnyInit(0.0f) : keys_.back().pos;
 
 		// リセット
 		currentState_ = State::None;
-		timer_.Reset();
+		timer_ = 0.0f;
 	}
 }
 
@@ -84,12 +88,75 @@ std::unique_ptr<GameObject3D> KeyframeObject3D::CreateKeyObject(const Vector3& p
 	return object;
 }
 
+std::vector<Vector3> KeyframeObject3D::GetPositions() const {
+
+	std::vector<Vector3> positions{};
+	positions.reserve(keys_.size());
+	for (const auto& key : keys_) {
+
+		positions.emplace_back(key.pos);
+	}
+	return positions;
+}
+
+float KeyframeObject3D::GetT(float currentT) const {
+
+	// 2つ未満のキーなら0.0fを返す
+	if (keys_.size() < 2) {
+		return 0.0f;
+	}
+
+	// ノット列
+	// 最後のキーの時間が合計
+	float total = keys_.back().time;
+	std::vector<float> knot;
+	knot.reserve(keys_.size());
+	for (const auto& key : keys_) {
+
+		// ノット値を計算して追加
+		knot.emplace_back(std::clamp(key.time / total, 0.0f, 1.0f));
+	}
+
+	// 属する区間を探す
+	size_t i = 0;
+	while (i + 1 < knot.size() && !(knot[i] <= currentT && currentT <= knot[i + 1])) {
+
+		++i;
+	}
+	// iが範囲外ならサイズで調整する
+	if (knot.size() <= i + 1) {
+
+		i = knot.size() - 2;
+	}
+
+	// 区間内tをキーのイージングで補間
+	float localT = (currentT - knot[i]) / (std::max)(std::numeric_limits<float>::epsilon(), knot[i + 1] - knot[i]);
+	float easedLocalT = EasedValue(keys_[i].easeType, std::clamp(localT, 0.0f, 1.0f));
+
+	// 全体tを計算して返す
+	float resultT = (i + easedLocalT) / static_cast<float>(keys_.size() - 1);
+	return resultT;
+}
+
 void KeyframeObject3D::ImGui() {
+
+	ImGui::PushItemWidth(200.0f);
 
 	// エディター内で更新を呼びだす
 	if (isEditUpdate_) {
 
 		Update();
+	}
+
+	ImGui::SeparatorText("Config");
+
+	if (!keys_.empty()) {
+
+		ImGui::Text("timer: %.2f / %.2f", timer_, keys_.back().time);
+
+		float total = (std::max)(keys_.back().time, std::numeric_limits<float>::epsilon());
+		float progress = timer_ / total;
+		ImGui::Text("progress: %.2f", progress);
 	}
 
 	ImGui::Checkbox("isEditUpdate", &isEditUpdate_);
@@ -108,13 +175,14 @@ void KeyframeObject3D::ImGui() {
 
 		// キーオブジェクトを生成
 		keyObjects_.emplace_back(std::move(CreateKeyObject(
-			keyPositions_.empty() ? Vector3(0.0f, 16.0f, 0.0f) : keyPositions_.back())));
+			keys_.empty() ? Vector3(0.0f, 16.0f, 0.0f) : keys_.back().pos)));
 
 		// キー位置を追加
 		// 最後のキー位置をコピー
-		Vector3 newPos = keyObjects_.back()->GetTransform().GetWorldPos();
-		newPos.y += 4.0f;
-		keyPositions_.emplace_back(newPos);
+		Key key{};
+		key.pos = keyObjects_.back()->GetTransform().GetWorldPos();
+		key.pos.y += 4.0f;
+		keys_.emplace_back(key);
 	}
 	// 開始
 	if (ImGui::Button("Start")) {
@@ -127,7 +195,25 @@ void KeyframeObject3D::ImGui() {
 		ImGui::Checkbox("isConnectEnds", &isConnectEnds_);
 		EnumAdapter<LerpKeyframe::Type>::Combo("LerpType", &lerpType_);
 
-		timer_.ImGui("LerpTime");
+		ImGui::SeparatorText("Keys");
+
+		for (uint32_t i = 0; i < keys_.size(); ++i) {
+
+			ImGui::PushID(i);
+
+			ImGui::DragFloat("Time", &keys_[i].time, 0.01f, 0.0f);
+			Easing::SelectEasingType(keys_[i].easeType);
+
+			if (ImGui::Button("Remove Keyframe")) {
+
+				// キーオブジェクトを削除
+				keyObjects_.erase(keyObjects_.begin() + i);
+				keys_.erase(keys_.begin() + i);
+				ImGui::PopID();
+				break;
+			}
+			ImGui::PopID();
+		}
 	}
 
 	if (ImGui::CollapsingHeader("Set Parent")) {
@@ -165,16 +251,18 @@ void KeyframeObject3D::ImGui() {
 
 		// 座標を比較して変更があれば更新
 		Vector3 worldPos = keyObjects_[i]->GetTransform().GetWorldPos();
-		if (worldPos != keyPositions_[i]) {
+		if (worldPos != keys_[i].pos) {
 
 			// 座標を更新
-			keyPositions_[i] = worldPos;
+			keys_[i].pos = worldPos;
 		}
 	}
 	// 線描画
-	LerpKeyframe::DrawKeyframeLine(keyPositions_, lerpType_, isConnectEnds_);
+	LerpKeyframe::DrawKeyframeLine(GetPositions(), lerpType_, isConnectEnds_);
 	// 現在の時間の点の位置
 	LineRenderer::GetInstance()->DrawSphere(6, 4.0f, currentPos_, Color::Yellow());
+
+	ImGui::PopItemWidth();
 }
 
 void KeyframeObject3D::FromJson(const Json& data) {
@@ -184,14 +272,20 @@ void KeyframeObject3D::FromJson(const Json& data) {
 	}
 
 	// キー位置を取得
-	for (const auto& keyPos : data["KeyPositions"]) {
+	for (const auto& keyJson : data["Keys"]) {
 
-		keyPositions_.emplace_back(Vector3::FromJson(keyPos));
+		Key key{};
+
+		key.pos = Vector3::FromJson(keyJson.value("pos", Json()));
+		key.time = keyJson.value("time", 0.0f);
+		key.easeType = EnumAdapter<EasingType>::FromString(keyJson.value("ease", "Linear")).value();
+
+		keys_.emplace_back(key);
 	}
+
 	parentName_ = data.value("parentName_", "");
 	lerpType_ = EnumAdapter<LerpKeyframe::Type>::FromString(data.value("lerpType_", "Linear")).value();
 	isConnectEnds_ = data.value("isConnectEnds_", false);
-	timer_.FromJson(data["Timer"]);
 
 	// 親Transformを設定
 	if (!parentName_.empty()) {
@@ -213,20 +307,26 @@ void KeyframeObject3D::FromJson(const Json& data) {
 	}
 
 	// キーオブジェクトを生成
-	for (const auto& pos : keyPositions_) {
+	for (const auto& key : keys_) {
 
-		keyObjects_.emplace_back(std::move(CreateKeyObject(pos)));
+		keyObjects_.emplace_back(std::move(CreateKeyObject(key.pos)));
 	}
 }
 
 void KeyframeObject3D::ToJson(Json& data) {
 
-	for (const auto& keyObject : keyObjects_) {
+	for (const auto& key : keys_) {
 
-		data["KeyPositions"].emplace_back(keyObject->GetTranslation().ToJson());
+		Json keyJson;
+
+		keyJson["pos"] = key.pos.ToJson();
+		keyJson["time"] = key.time;
+		keyJson["ease"] = EnumAdapter<EasingType>::ToString(key.easeType);
+
+		data["Keys"].emplace_back(keyJson);
 	}
+
 	data["parentName_"] = parentName_;
 	data["lerpType_"] = EnumAdapter<LerpKeyframe::Type>::ToString(lerpType_);
 	data["isConnectEnds_"] = isConnectEnds_;
-	timer_.ToJson(data["Timer"]);
 }
