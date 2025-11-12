@@ -6,6 +6,8 @@
 #include <Engine/Core/Graphics/Renderer/LineRenderer.h>
 #include <Engine/Object/Core/ObjectManager.h>
 #include <Engine/Object/System/Systems/TagSystem.h>
+#include <Engine/Editor/GameObject/ImGuiObjectEditor.h>
+#include <Engine/Input/Input.h>
 #include <Engine/Utility/Json/JsonAdapter.h>
 #include <Engine/Utility/Enum/EnumAdapter.h>
 #include <Engine/Utility/Helper/ImGuiHelper.h>
@@ -139,6 +141,135 @@ float KeyframeObject3D::GetT(float currentT) const {
 	// 全体tを計算して返す
 	float resultT = (i + easedLocalT) / static_cast<float>(keys_.size() - 1);
 	return resultT;
+}
+
+void KeyframeObject3D::ImGui() {
+
+	ImGui::PushItemWidth(200.0f);
+
+	// エディター内で更新を呼びだす
+	if (isEditUpdate_) {
+
+		Update();
+	}
+
+	ImGui::SeparatorText("Key Timer");
+
+	if (!keys_.empty()) {
+
+		ImGui::Text("timer: %.2f / %.2f", timer_, keys_.back().time);
+
+		float total = (std::max)(keys_.back().time, std::numeric_limits<float>::epsilon());
+		float progress = timer_ / total;
+		ImGui::Text("progress: %.2f", progress);
+
+		// キータイムラインの描画
+		DrawKeyTimeline();
+	}
+
+	ImGui::SeparatorText("Config");
+
+	ImGui::Checkbox("isEditUpdate", &isEditUpdate_);
+	if (ImGui::Checkbox("isDrawKeyframe", &isDrawKeyframe_)) {
+
+		// キーオブジェクトの描画設定を更新
+		for (const auto& keyObject : keyObjects_) {
+
+			keyObject->SetMeshRenderView(isDrawKeyframe_ ?
+				MeshRenderView::Scene : MeshRenderView::None);
+		}
+	}
+
+	// キーオブジェクトの追加
+	if (ImGui::Button("Add Keyframe")) {
+
+		// キー位置を追加
+		// 最後のキー位置をコピー
+		Key key{};
+		key.pos = keyObjects_.back()->GetTransform().GetWorldPos();
+		key.pos.y += 4.0f;
+		keys_.emplace_back(key);
+
+		// キーオブジェクトを生成
+		keyObjects_.emplace_back(std::move(CreateKeyObject(
+			keys_.empty() ? Vector3(0.0f, 16.0f, 0.0f) : keys_.back().pos)));
+	}
+	// 開始
+	if (ImGui::Button("Start")) {
+
+		StartLerp();
+	}
+
+	if (ImGui::CollapsingHeader("Parameter")) {
+
+		ImGui::Checkbox("isConnectEnds", &isConnectEnds_);
+		EnumAdapter<LerpKeyframe::Type>::Combo("LerpType", &lerpType_);
+	}
+
+	if (ImGui::CollapsingHeader("Set Parent")) {
+
+		uint32_t currentId = 0;
+		ObjectManager* objectManager = ObjectManager::GetInstance();
+		// 現在選択されているオブジェクトIDを設定
+		for (const auto& [id, tagPtr] : objectManager->GetSystem<TagSystem>()->Tags()) {
+			if (objectManager->GetData<Transform3D>(id) == parent_) {
+
+				currentId = id;
+				break;
+			}
+		}
+
+		std::string selectName = parentName_;
+		if (ImGuiHelper::SelectTagTarget("Select Follow Target", &currentId, &selectName)) {
+
+			// 親Transformと名前を更新
+			parent_ = objectManager->GetData<Transform3D>(currentId);
+			// 変更があったことにする
+			parent_->SetIsDirty(true);
+			parentName_ = selectName;
+
+			// キーオブジェクトの親を更新
+			for (const auto& keyObject : keyObjects_) {
+
+				keyObject->SetParent(*parent_);
+			}
+		}
+	}
+
+	// 座標に変更があれば更新
+	for (size_t i = 0; i < keyObjects_.size(); ++i) {
+
+		// 座標を比較して変更があれば更新
+		Vector3 worldPos = keyObjects_[i]->GetTransform().GetWorldPos();
+		if (worldPos != keys_[i].pos) {
+
+			// 座標を更新
+			keys_[i].pos = worldPos;
+		}
+	}
+	// 線描画
+	LerpKeyframe::DrawKeyframeLine(GetPositions(), lerpType_, isConnectEnds_);
+	// 現在の時間の点の位置
+	LineRenderer::GetInstance()->DrawSphere(6, 4.0f, currentPos_, Color::Yellow());
+
+	ImGui::PopItemWidth();
+
+	// Deleteキー入力でエディターで操作中のキーを削除する
+	const std::optional<uint32_t> editObjectId = ImGuiObjectEditor::GetInstance()->GetSelected3D();
+	if (editObjectId.has_value() && Input::GetInstance()->TriggerKey(DIK_DELETE)) {
+
+		// 選択IDをチェックする
+		for (uint32_t i = 0; i < keyObjects_.size(); ++i) {
+			if (keyObjects_[i]->GetObjectID() == editObjectId.value()) {
+
+				// キーオブジェクトを削除
+				keyObjects_.erase(keyObjects_.begin() + i);
+				// キー情報を削除
+				keys_.erase(keys_.begin() + i);
+				break;
+			}
+		}
+	}
 }
 
 void KeyframeObject3D::DrawKeyTimeline() {
@@ -291,118 +422,6 @@ void KeyframeObject3D::DrawKeyTimeline() {
 		}
 		ImGui::EndPopup();
 	}
-}
-
-void KeyframeObject3D::ImGui() {
-
-	ImGui::PushItemWidth(200.0f);
-
-	// エディター内で更新を呼びだす
-	if (isEditUpdate_) {
-
-		Update();
-	}
-
-	ImGui::SeparatorText("Key Timer");
-
-	if (!keys_.empty()) {
-
-		ImGui::Text("timer: %.2f / %.2f", timer_, keys_.back().time);
-
-		float total = (std::max)(keys_.back().time, std::numeric_limits<float>::epsilon());
-		float progress = timer_ / total;
-		ImGui::Text("progress: %.2f", progress);
-
-		// キータイムラインの描画
-		DrawKeyTimeline();
-	}
-
-	ImGui::SeparatorText("Config");
-
-	ImGui::Checkbox("isEditUpdate", &isEditUpdate_);
-	if (ImGui::Checkbox("isDrawKeyframe", &isDrawKeyframe_)) {
-
-		// キーオブジェクトの描画設定を更新
-		for (const auto& keyObject : keyObjects_) {
-
-			keyObject->SetMeshRenderView(isDrawKeyframe_ ?
-				MeshRenderView::Scene : MeshRenderView::None);
-		}
-	}
-
-	// キーオブジェクトの追加
-	if (ImGui::Button("Add Keyframe")) {
-
-		// キーオブジェクトを生成
-		keyObjects_.emplace_back(std::move(CreateKeyObject(
-			keys_.empty() ? Vector3(0.0f, 16.0f, 0.0f) : keys_.back().pos)));
-
-		// キー位置を追加
-		// 最後のキー位置をコピー
-		Key key{};
-		key.pos = keyObjects_.back()->GetTransform().GetWorldPos();
-		key.pos.y += 4.0f;
-		keys_.emplace_back(key);
-	}
-	// 開始
-	if (ImGui::Button("Start")) {
-
-		StartLerp();
-	}
-
-	if (ImGui::CollapsingHeader("Parameter")) {
-
-		ImGui::Checkbox("isConnectEnds", &isConnectEnds_);
-		EnumAdapter<LerpKeyframe::Type>::Combo("LerpType", &lerpType_);
-	}
-
-	if (ImGui::CollapsingHeader("Set Parent")) {
-
-		uint32_t currentId = 0;
-		ObjectManager* objectManager = ObjectManager::GetInstance();
-		// 現在選択されているオブジェクトIDを設定
-		for (const auto& [id, tagPtr] : objectManager->GetSystem<TagSystem>()->Tags()) {
-			if (objectManager->GetData<Transform3D>(id) == parent_) {
-
-				currentId = id;
-				break;
-			}
-		}
-
-		std::string selectName = parentName_;
-		if (ImGuiHelper::SelectTagTarget("Select Follow Target", &currentId, &selectName)) {
-
-			// 親Transformと名前を更新
-			parent_ = objectManager->GetData<Transform3D>(currentId);
-			// 変更があったことにする
-			parent_->SetIsDirty(true);
-			parentName_ = selectName;
-
-			// キーオブジェクトの親を更新
-			for (const auto& keyObject : keyObjects_) {
-
-				keyObject->SetParent(*parent_);
-			}
-		}
-	}
-
-	// 座標に変更があれば更新
-	for (size_t i = 0; i < keyObjects_.size(); ++i) {
-
-		// 座標を比較して変更があれば更新
-		Vector3 worldPos = keyObjects_[i]->GetTransform().GetWorldPos();
-		if (worldPos != keys_[i].pos) {
-
-			// 座標を更新
-			keys_[i].pos = worldPos;
-		}
-	}
-	// 線描画
-	LerpKeyframe::DrawKeyframeLine(GetPositions(), lerpType_, isConnectEnds_);
-	// 現在の時間の点の位置
-	LineRenderer::GetInstance()->DrawSphere(6, 4.0f, currentPos_, Color::Yellow());
-
-	ImGui::PopItemWidth();
 }
 
 void KeyframeObject3D::FromJson(const Json& data) {
