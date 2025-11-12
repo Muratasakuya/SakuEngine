@@ -327,7 +327,7 @@ void SkinnedAnimation::BlendAnimation(Skeleton& skeleton, const AnimationData& o
 
 		// old の transform
 		Vector3 posOld = Vector3(0.0f, 0.0f, 0.0f);
-		Quaternion rotOld = Quaternion::IdentityQuaternion();
+		Quaternion rotOld = Quaternion::Identity();
 		Vector3 sclOld = Vector3(1.0f, 1.0f, 1.0f);
 		if (auto itOld = oldAnimationData.nodeAnimations.find(nodeName); itOld != oldAnimationData.nodeAnimations.end()) {
 
@@ -348,7 +348,7 @@ void SkinnedAnimation::BlendAnimation(Skeleton& skeleton, const AnimationData& o
 
 		// next の transform
 		Vector3 posNext = Vector3(0.0f, 0.0f, 0.0f);
-		Quaternion rotNext = Quaternion::IdentityQuaternion();
+		Quaternion rotNext = Quaternion::Identity();
 		Vector3 sclNext = Vector3(1.0f, 1.0f, 1.0f);
 		if (auto itNext = nextAnimationData.nodeAnimations.find(nodeName); itNext != nextAnimationData.nodeAnimations.end()) {
 			const auto& rootNodeAnimation = itNext->second;

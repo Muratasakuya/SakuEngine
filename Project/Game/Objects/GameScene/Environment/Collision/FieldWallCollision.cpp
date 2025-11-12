@@ -53,7 +53,7 @@ void FieldWallCollision::Update() {
 	// 衝突ボディを更新
 	Transform3D transform{};
 	transform.scale = Vector3::AnyInit(1.0f);
-	transform.rotation = Quaternion::IdentityQuaternion();
+	transform.rotation = Quaternion::Identity();
 	transform.translation = Vector3::AnyInit(0.0f);
 	UpdateAllBodies(transform);
 }

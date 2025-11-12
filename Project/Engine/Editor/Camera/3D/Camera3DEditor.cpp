@@ -6,7 +6,6 @@
 #include <Engine/Asset/Asset.h>
 #include <Engine/Scene/SceneView.h>
 #include <Engine/Editor/GameObject/ImGuiObjectEditor.h>
-#include <Engine/Editor/ActionProgress/ActionProgressMonitor.h>
 #include <Engine/Core/Graphics/Renderer/LineRenderer.h>
 #include <Engine/Object/Core/ObjectManager.h>
 #include <Engine/Object/System/Systems/TagSystem.h>
@@ -46,35 +45,17 @@ void Camera3DEditor::Init(SceneView* sceneView) {
 	gizmoSynch_ = std::make_unique<CameraPathGizmoSynch>();
 
 	// リセット
-	selectedObjectKey_.clear();
-	selectedActionName_.clear();
 	selectedParamKey_.clear();
 }
 
 void Camera3DEditor::AddActionObject(const std::string& name) {
 
 	// 追加済みの場合は処理しない
-	if (Algorithm::Find(actionBinds_, name)) {
+	if (Algorithm::Find(names_, name)) {
 		return;
 	}
 	// 初期値で追加
-	CameraPathController::ActionSynchBind bind{};
-	bind.objectName = name;
-	actionBinds_.emplace(name, std::move(bind));
-}
-
-void Camera3DEditor::SetActionBinding(const std::string& objectName,
-	const std::string& spanName, bool driveStateFromCamera) {
-
-	// 追加されていなければ追加して値を設定
-	if (!Algorithm::Find(actionBinds_, objectName)) {
-
-		AddActionObject(objectName);
-	}
-	auto& bind = actionBinds_[objectName];
-	bind.objectName = objectName;
-	bind.spanName = spanName;
-	bind.driveStateFromCamera = driveStateFromCamera;
+	names_.emplace_back(name);
 }
 
 void Camera3DEditor::Update() {
@@ -89,8 +70,7 @@ void Camera3DEditor::Update() {
 
 	for (auto& param : std::views::values(params_)) {
 
-		const bool isPlaying = (runtime_ && runtime_->playing &&
-			param.overallName == runtime_->action);
+		bool isPlaying = (runtime_ && runtime_->playing && param.name == runtime_->action);
 		// ゲームで開始したときの処理
 		if (isPlaying || param.isUseGame) {
 
@@ -115,47 +95,6 @@ void Camera3DEditor::Update() {
 		auto& param = params_[selectedParamKey_];
 		controller_->Update(playbackCamera_, param);
 	}
-
-	// アクションとカメラの同期
-	if (!selectedParamKey_.empty() && playbackCamera_.isSynch) {
-
-		auto& data = params_[selectedParamKey_];
-		const float synchT = ComputeEffectiveCameraT(playbackCamera_, data);
-		ActionProgressMonitor* monitor = ActionProgressMonitor::GetInstance();
-		for (auto& [name, bind] : actionBinds_) {
-
-			// オブジェクト未設定ならスキップ
-			if (bind.objectName.empty() || bind.spanName.empty()) {
-				continue;
-			}
-
-			const int objectId = monitor->FindObjectID(bind.objectName);
-
-			// 同期するか進捗に通知
-			const bool external = playbackCamera_.isSynch && bind.driveStateFromCamera;
-			monitor->NotifySynchState(objectId, external);
-			if (bind.driveStateFromCamera) {
-
-				// オブジェクトが所持しているローカルの進捗を更新
-				const auto spanNames = monitor->GetSpanNames(objectId);
-				for (const auto& span : spanNames) {
-
-					monitor->DriveSpanByGlobalT(objectId, span, synchT);
-				}
-				monitor->NotifyOverallDrive(objectId, synchT);
-			} else {
-
-				// アクション全体進捗でカメラを更新する
-				float overallT = 0.0f;
-				if (monitor->GetOverallValue(objectId, bind.spanName, &overallT)) {
-
-					// マニュアルにして自動更新されるようにする
-					playbackCamera_.mode = CameraPathController::PreviewMode::Manual;
-					playbackCamera_.time = std::clamp(overallT, 0.0f, 1.0f);
-				}
-			}
-		}
-	}
 }
 
 void Camera3DEditor::ImGui() {
@@ -163,8 +102,7 @@ void Camera3DEditor::ImGui() {
 	ImGui::PushItemWidth(itemWidth_);
 
 	// エディター、UIの更新
-	panel_->Edit(params_, actionBinds_,
-		selectedObjectKey_, selectedActionName_, selectedParamKey_,
+	panel_->Edit(params_, names_, selectedParamKey_,
 		selectedKeyIndex_, paramSaveState_, lastLoaded_, playbackCamera_);
 
 	ImGui::PopItemWidth();
@@ -181,18 +119,17 @@ void Camera3DEditor::LoadAnimFile(const std::string& fileName) {
 
 	CameraPathData param{};
 	// 名前を取得
-	param.objectName = data["objectName"];
-	param.overallName = data["overallName"];
+	param.name = data["name"];
 
 	// 追加済みの場合処理しない
-	if (Algorithm::Find(params_, param.overallName)) {
+	if (Algorithm::Find(params_, param.name)) {
 		return;
 	}
 
 	// データから値を設定
 	param.ApplyJson(filePath, true);
 	// 追加
-	params_.emplace(param.overallName, std::move(param));
+	params_.emplace(param.name, std::move(param));
 }
 
 void Camera3DEditor::StartAnim(const std::string& actionName, bool canCutIn, bool isAddFirstKey) {
@@ -221,7 +158,7 @@ void Camera3DEditor::StartAnim(const std::string& actionName, bool canCutIn, boo
 	const Vector3 targetTranslation = hasTarget ? param.target->GetWorldPos() : Vector3::AnyInit(0.0f);
 	const Quaternion targetRotation = hasTarget ?
 		Quaternion::Normalize(param.target->rotation) :
-		Quaternion::IdentityQuaternion();
+		Quaternion::Identity();
 	const Quaternion inverseTargetRotation = Quaternion::Conjugate(targetRotation);
 	// カメラ位置、回転
 	const Vector3 cameraTranslation = camera->GetTransform().translation;

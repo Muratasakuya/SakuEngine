@@ -42,7 +42,7 @@ void ParticleSpawnCircleModule::Init() {
 
 	radius_ = 2.0f;
 	translation_ = Vector3(0.0f, 6.0f, 0.0f);
-	rotation_ = Quaternion::IdentityQuaternion();
+	rotation_ = Quaternion::Identity();
 
 	// デフォでランダム
 	mode_ = SpawnMode::Random;

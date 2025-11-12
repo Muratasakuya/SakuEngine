@@ -58,7 +58,7 @@ void ParticleLightningUpdater::Init() {
 	isLookAtEnd_ = false;
 	isDrawDebugPoint_ = false;
 	isRefSpawnPos_ = false;
-	parentRotation_ = Quaternion::IdentityQuaternion();
+	parentRotation_ = Quaternion::Identity();
 	parentTranslation_ = Vector3::AnyInit(0.0f);
 }
 

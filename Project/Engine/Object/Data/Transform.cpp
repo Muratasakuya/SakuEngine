@@ -136,6 +136,10 @@ void BaseTransform::ToJson(Json& data) {
 
 void BaseTransform::FromJson(const Json& data) {
 
+	if (data.empty()) {
+		return;
+	}
+
 	scale = JsonAdapter::ToObject<Vector3>(data["scale"]);
 	rotation = JsonAdapter::ToObject<Quaternion>(data["rotation"]);
 	translation = JsonAdapter::ToObject<Vector3>(data["translation"]);

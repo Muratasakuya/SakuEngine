@@ -19,10 +19,11 @@
 //	KeyframeObject3D classMethods
 //============================================================================
 
-void KeyframeObject3D::Init(const std::string& name) {
+void KeyframeObject3D::Init(const std::string& name, const std::string& modelName) {
 
 	// キーオブジェクト名を設定
 	keyObjectName_ = name;
+	keyModelName_ = modelName;
 
 	// デフォルト設定
 	currentState_ = State::None;
@@ -53,14 +54,22 @@ void KeyframeObject3D::Update() {
 	// 進捗率
 	float progress = timer_ / total;
 
-	// 現在の補間位置を更新、現在の区間の補間tを取得して補間
-	currentPos_ = LerpKeyframe::GetValue<Vector3>(GetPositions(), GetT(progress), lerpType_);
+	// 現在のトランスフォームを更新、現在の区間の補間tを取得して補間
+	float currentT = GetT(progress);
+	// スケール
+	currentTransform_.scale = LerpKeyframe::GetValue<Vector3>(GetScales(), currentT, lerpType_);
+	// 回転
+	currentTransform_.rotation = LerpKeyframe::GetValue<Quaternion>(GetRotations(), currentT, lerpType_);
+	// 座標
+	currentTransform_.translation = LerpKeyframe::GetValue<Vector3>(GetPositions(), currentT, lerpType_);
 
 	// 時間経過で終了
 	if (1.0f <= progress) {
 
 		// 最終位置を設定
-		currentPos_ = keys_.empty() ? Vector3::AnyInit(0.0f) : keys_.back().pos;
+		currentTransform_.scale = keys_.empty() ? Vector3::AnyInit(1.0f) : keys_.back().transform.scale;
+		currentTransform_.rotation = keys_.empty() ? Quaternion::Identity() : keys_.back().transform.rotation;
+		currentTransform_.translation = keys_.empty() ? Vector3::AnyInit(0.0f) : keys_.back().transform.translation;
 
 		// リセット
 		currentState_ = State::None;
@@ -68,14 +77,16 @@ void KeyframeObject3D::Update() {
 	}
 }
 
-std::unique_ptr<GameObject3D> KeyframeObject3D::CreateKeyObject(const Vector3& pos) {
+std::unique_ptr<GameObject3D> KeyframeObject3D::CreateKeyObject(const Transform3D& transform) {
 
 	// 生成
 	std::unique_ptr<GameObject3D> object = std::make_unique<GameObject3D>();
 	object->Init(keyModelName_, keyObjectName_, keyGroupName_);
 
 	// 座標を設定
-	object->SetTranslation(pos);
+	object->SetScale(transform.scale);
+	object->SetRotation(transform.rotation);
+	object->SetTranslation(transform.translation);
 
 	// 親がいれば親を設定
 	if (!parentName_.empty()) {
@@ -93,13 +104,38 @@ std::unique_ptr<GameObject3D> KeyframeObject3D::CreateKeyObject(const Vector3& p
 	return object;
 }
 
+std::vector<Vector3> KeyframeObject3D::GetScales() const {
+
+	// スケールリストを取得
+	std::vector<Vector3> scales;
+	scales.reserve(keys_.size());
+	for (const auto& key : keys_) {
+
+		scales.emplace_back(key.transform.scale);
+	}
+	return scales;
+}
+
+std::vector<Quaternion> KeyframeObject3D::GetRotations() const {
+
+	// 回転リストを取得
+	std::vector<Quaternion> rotations;
+	rotations.reserve(keys_.size());
+	for (const auto& key : keys_) {
+
+		rotations.emplace_back(key.transform.rotation);
+	}
+	return rotations;
+}
+
 std::vector<Vector3> KeyframeObject3D::GetPositions() const {
 
-	std::vector<Vector3> positions{};
+	// 座標リストを取得
+	std::vector<Vector3> positions;
 	positions.reserve(keys_.size());
 	for (const auto& key : keys_) {
 
-		positions.emplace_back(key.pos);
+		positions.emplace_back(key.transform.translation);
 	}
 	return positions;
 }
@@ -183,16 +219,25 @@ void KeyframeObject3D::ImGui() {
 	// キーオブジェクトの追加
 	if (ImGui::Button("Add Keyframe")) {
 
-		// キー位置を追加
-		// 最後のキー位置をコピー
+		// キーを追加
 		Key key{};
-		key.pos = keyObjects_.back()->GetTransform().GetWorldPos();
-		key.pos.y += 4.0f;
+		// 座標
+		key.transform.translation = keyObjects_.empty() ?
+			Vector3::AnyInit(0.0f) : keyObjects_.back()->GetTransform().GetWorldPos();
+		key.transform.translation.y += 4.0f;
+		// スケール
+		key.transform.scale = keyObjects_.empty() ?
+			Vector3::AnyInit(1.0f) : keyObjects_.back()->GetTransform().scale;
+		// 回転
+		key.transform.rotation = keyObjects_.empty() ?
+			Quaternion::Identity() : keyObjects_.back()->GetTransform().rotation;
 		keys_.emplace_back(key);
 
 		// キーオブジェクトを生成
+		Transform3D initTransform;
+		initTransform.Init();
 		keyObjects_.emplace_back(std::move(CreateKeyObject(
-			keys_.empty() ? Vector3(0.0f, 16.0f, 0.0f) : keys_.back().pos)));
+			keys_.empty() ? initTransform : keys_.back().transform)));
 	}
 	// 開始
 	if (ImGui::Button("Start")) {
@@ -236,21 +281,26 @@ void KeyframeObject3D::ImGui() {
 		}
 	}
 
-	// 座標に変更があれば更新
+	// トランスフォームに変更があれば更新
 	for (size_t i = 0; i < keyObjects_.size(); ++i) {
 
 		// 座標を比較して変更があれば更新
-		Vector3 worldPos = keyObjects_[i]->GetTransform().GetWorldPos();
-		if (worldPos != keys_[i].pos) {
+		const Transform3D& transform = keyObjects_[i]->GetTransform();
+		if (transform.scale != keys_[i].transform.scale ||
+			transform.rotation != keys_[i].transform.rotation ||
+			transform.translation != keys_[i].transform.translation) {
 
-			// 座標を更新
-			keys_[i].pos = worldPos;
+			// トランスフォームを更新
+			keys_[i].transform.scale = transform.scale;
+			keys_[i].transform.rotation = transform.rotation;
+			keys_[i].transform.translation = transform.translation;
 		}
 	}
 	// 線描画
 	LerpKeyframe::DrawKeyframeLine(GetPositions(), lerpType_, isConnectEnds_);
 	// 現在の時間の点の位置
-	LineRenderer::GetInstance()->DrawSphere(6, 4.0f, currentPos_, Color::Yellow());
+	LineRenderer::GetInstance()->DrawOBB(currentTransform_.translation,
+		currentTransform_.scale, currentTransform_.rotation, Color::Yellow());
 
 	ImGui::PopItemWidth();
 
@@ -435,7 +485,16 @@ void KeyframeObject3D::FromJson(const Json& data) {
 
 		Key key{};
 
-		key.pos = Vector3::FromJson(keyJson.value("pos", Json()));
+		// transformキーがなければ初期化させる
+		if (keyJson.contains("transform")) {
+
+			key.transform.FromJson(keyJson["transform"]);
+		} else {
+
+			key.transform.Init();
+		}
+
+		key.transform.FromJson(keyJson.value("transform", Json()));
 		key.time = keyJson.value("time", 0.0f);
 		key.easeType = EnumAdapter<EasingType>::FromString(keyJson.value("ease", "Linear")).value();
 
@@ -468,17 +527,17 @@ void KeyframeObject3D::FromJson(const Json& data) {
 	// キーオブジェクトを生成
 	for (const auto& key : keys_) {
 
-		keyObjects_.emplace_back(std::move(CreateKeyObject(key.pos)));
+		keyObjects_.emplace_back(std::move(CreateKeyObject(key.transform)));
 	}
 }
 
 void KeyframeObject3D::ToJson(Json& data) {
 
-	for (const auto& key : keys_) {
+	for (auto& key : keys_) {
 
 		Json keyJson;
 
-		keyJson["pos"] = key.pos.ToJson();
+		key.transform.ToJson(keyJson["transform"]);
 		keyJson["time"] = key.time;
 		keyJson["ease"] = EnumAdapter<EasingType>::ToString(key.easeType);
 

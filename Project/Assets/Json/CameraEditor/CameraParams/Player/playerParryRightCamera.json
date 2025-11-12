@@ -3,13 +3,13 @@
         "0": {
             "fovY": 0.8799999952316284,
             "rotation": {
-                "w": 0.9598174144536405,
-                "x": -0.04494979255676332,
-                "y": 0.2745928778471063,
-                "z": 0.036452688464316776
+                "w": -0.9598174095153809,
+                "x": 0.044949792325496674,
+                "y": 0.27459287643432617,
+                "z": 0.03645268827676773
             },
             "translation": {
-                "x": -8.807588577270508,
+                "x": 8.807588577270508,
                 "y": 3.2970685958862305,
                 "z": -7.613008499145508
             }
@@ -23,8 +23,7 @@
     "followRotation": true,
     "followTarget": true,
     "lerpType": "Spline",
-    "objectName": "ParryState",
-    "overallName": "ParryLeftView",
+    "name": "playerParryRightView",
     "targetName": "player",
     "useAveraging": true
 }

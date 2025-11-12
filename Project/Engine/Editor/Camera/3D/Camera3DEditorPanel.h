@@ -24,9 +24,7 @@ public:
 
 	// 全てのエディターUIの呼び出し
 	void Edit(std::unordered_map<std::string, CameraPathData>& params,
-		std::unordered_map<std::string, CameraPathController::ActionSynchBind>& actionBinds,
-		std::string& selectedObjectKey, std::string& selectedActionName,
-		std::string& selectedParamKey, int& selectedKeyIndex,
+		std::vector<std::string>& names, std::string& selectedParamKey, int& selectedKeyIndex,
 		JsonSaveState& paramSaveState, char lastLoaded[128],
 		CameraPathController::PlaybackState& playbackCamera);
 private:
@@ -36,12 +34,10 @@ private:
 
 	//--------- functions ----------------------------------------------------
 
-	// オブジェクト選択
-	void SelectActionSubject(std::unordered_map<std::string, CameraPathController::ActionSynchBind>& actionBinds,
-		std::string& selectedObjectKey, std::string& selectedActionName);
-	// 値調整データ追加
-	void AddCameraParam(std::unordered_map<std::string, CameraPathData>& params,
-		std::string& selectedObjectKey, std::string& selectedActionName);
+	// アニメーションキー追加
+	void AddAnimationKey(std::vector<std::string>& names,
+		std::unordered_map<std::string, CameraPathData>& params,
+		std::string& selectedName);
 	// 値調整データの選択
 	void SelectCameraParam(std::unordered_map<std::string, CameraPathData>& params,
 		std::string& selectedParamKey);
@@ -49,17 +45,14 @@ private:
 	void SaveAndLoad(CameraPathData& param, JsonSaveState& paramSaveState, char lastLoaded[128]);
 
 	// 値調整
-	void EditCameraParam(CameraPathData& param,
-		std::unordered_map<std::string, CameraPathController::ActionSynchBind>& actionBinds,
-		std::string& selectedObjectKey, std::string& selectedParamKey, int& selectedKeyIndex,
+	void EditCameraParam(CameraPathData& param, std::vector<std::string>& names,
+		std::string& selectedParamKey, int& selectedKeyIndex,
 		JsonSaveState& paramSaveState, char lastLoaded[128],
 		CameraPathController::PlaybackState& playbackCamera);
 
 	// エディターのタブ値調整
-	// 再生、同期処理
-	void EditPlayback(CameraPathData& param, CameraPathController::PlaybackState& playbackCamera,
-		std::unordered_map<std::string, CameraPathController::ActionSynchBind>& actionBinds,
-		std::string& selectedObjectKey);
+	// 再生
+	void EditPlayback(CameraPathData& param, CameraPathController::PlaybackState& playbackCamera);
 	// 補間の仕方設定
 	void EditLerp(CameraPathData& param);
 	// キーフレームの追加、削除、入れ替え

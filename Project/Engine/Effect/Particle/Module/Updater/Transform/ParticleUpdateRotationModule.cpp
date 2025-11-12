@@ -12,10 +12,10 @@
 void ParticleUpdateRotationModule::Init() {
 
 	// 初期化値
-	lockRotation_ = Quaternion::IdentityQuaternion();
-	parentRotation_ = Quaternion::IdentityQuaternion();
-	lerpRotation_.start = Quaternion::IdentityQuaternion();
-	lerpRotation_.target = Quaternion::IdentityQuaternion();
+	lockRotation_ = Quaternion::Identity();
+	parentRotation_ = Quaternion::Identity();
+	lerpRotation_.start = Quaternion::Identity();
+	lerpRotation_.target = Quaternion::Identity();
 }
 
 void ParticleUpdateRotationModule::SetCommand(const ParticleCommand& command) {

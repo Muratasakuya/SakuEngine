@@ -51,8 +51,7 @@
     "followRotation": true,
     "followTarget": true,
     "lerpType": "Spline",
-    "objectName": "PlayerSkilAttackState",
-    "overallName": "SkillProgress",
+    "name": "playerSkillAttack",
     "targetName": "player",
     "useAveraging": true
 }

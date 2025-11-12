@@ -22,12 +22,12 @@ void FollowCamera::LoadAnim() {
 
 	Camera3DEditor* editor = Camera3DEditor::GetInstance();
 	// プレイヤーの攻撃
-	editor->LoadAnimFile("2ndAttackCamera.json");
-	editor->LoadAnimFile("3rdAttackCamera.json");
-	editor->LoadAnimFile("4thAttackCamera.json");
-	editor->LoadAnimFile("skillAttackCamera.json");
-	editor->LoadAnimFile("parryRightCamera.json");
-	editor->LoadAnimFile("parryLeftCamera.json");
+	editor->LoadAnimFile("Player/player2ndAttackCamera.json");
+	editor->LoadAnimFile("Player/player3rdAttackCamera.json");
+	editor->LoadAnimFile("Player/player4thAttackCamera.json");
+	editor->LoadAnimFile("Player/playerSkillAttackCamera.json");
+	editor->LoadAnimFile("Player/playerParryRightCamera.json");
+	editor->LoadAnimFile("Player/playerParryLeftCamera.json");
 
 	// 読み込み済み
 	isLoadedAnim_ = true;
@@ -40,10 +40,10 @@ void FollowCamera::StartPlayerActionAnim(PlayerState state) {
 	// 状態毎に名前を取得
 	std::string name{};
 	switch (state) {
-	case PlayerState::Attack_2nd: name = "AttackProgress_2nd"; break;
-	case PlayerState::Attack_3rd: name = "AttackProgress_3rd"; break;
-	case PlayerState::Attack_4th: name = "AttackProgress_4th"; break;
-	case PlayerState::SkilAttack: name = "SkillProgress";      break;
+	case PlayerState::Attack_2nd: name = "playerAttack2nd"; break;
+	case PlayerState::Attack_3rd: name = "playerAttack3rd"; break;
+	case PlayerState::Attack_4th: name = "playerAttack4th"; break;
+	case PlayerState::SkilAttack: name = "playerSkillAttack"; break;
 	case PlayerState::Parry:
 
 		// 目標回転
@@ -52,7 +52,7 @@ void FollowCamera::StartPlayerActionAnim(PlayerState state) {
 		int direction = Math::YawShortestDirection(transform_.rotation, baseTarget);
 
 		// 0か-1なら左、+1は右からの視点のパリィアニメーションを行わせる
-		name = (0 <= direction) ? "ParryRightView" : "ParryLeftView";
+		name = (0 <= direction) ? "playerParryRightView" : "playerParryLeftView";
 		lastActionAnimName_ = name;
 		break;
 	}
@@ -71,10 +71,10 @@ void FollowCamera::EndPlayerActionAnim(PlayerState state, bool isWarmStart) {
 	// 状態毎に名前を取得
 	std::string name{};
 	switch (state) {
-	case PlayerState::Attack_2nd: name = "AttackProgress_2nd"; break;
-	case PlayerState::Attack_3rd: name = "AttackProgress_3rd"; break;
-	case PlayerState::Attack_4th: name = "AttackProgress_4th"; break;
-	case PlayerState::SkilAttack: name = "SkillProgress";      break;
+	case PlayerState::Attack_2nd: name = "playerAttack2nd"; break;
+	case PlayerState::Attack_3rd: name = "playerAttack3rd"; break;
+	case PlayerState::Attack_4th: name = "playerAttack4th"; break;
+	case PlayerState::SkilAttack: name = "playerSkillAttack"; break;
 	case PlayerState::Parry:
 
 		name = lastActionAnimName_;

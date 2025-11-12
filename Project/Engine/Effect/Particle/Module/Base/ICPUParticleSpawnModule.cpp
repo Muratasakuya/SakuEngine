@@ -41,7 +41,7 @@ void ICPUParticleSpawnModule::InitCommonData() {
 void ICPUParticleSpawnModule::SetCommonData(CPUParticle::ParticleData& particle) {
 
 	// デフォルトの回転
-	particle.rotation = Quaternion::IdentityQuaternion();
+	particle.rotation = Quaternion::Identity();
 
 	// 生存時間
 	particle.lifeTime = lifeTime_.GetValue();

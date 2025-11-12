@@ -79,8 +79,7 @@
     "followRotation": true,
     "followTarget": true,
     "lerpType": "Spline",
-    "objectName": "bossEnemy",
-    "overallName": "followMove",
+    "name": "bossEnemyFollowMove",
     "targetName": "bossEnemy",
     "useAveraging": true
 }

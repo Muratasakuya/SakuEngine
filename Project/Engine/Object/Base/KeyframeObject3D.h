@@ -19,7 +19,7 @@ public:
 	~KeyframeObject3D() = default;
 
 	// 初期化
-	void Init(const std::string& name);
+	void Init(const std::string& name, const std::string& modelName = "defaultCube");
 
 	// 更新
 	void Update();
@@ -36,8 +36,8 @@ public:
 
 	//--------- accessor -----------------------------------------------------
 
-	// 現在の位置を返す
-	const Vector3& GetCurrentPos() const { return currentPos_; }
+	// 現在のトランスフォームを返す
+	const Transform3D& GetCurrentPos() const { return currentTransform_; }
 private:
 	//========================================================================
 	//	private Methods
@@ -55,9 +55,9 @@ private:
 	// キー情報
 	struct Key {
 
-		Vector3 pos; // 位置
-		float time;  // 時間
-		EasingType easeType; // イージング
+		Transform3D transform; // トランスフォーム
+		float time;            // 時間
+		EasingType easeType;   // イージング
 	};
 
 	//--------- variables ----------------------------------------------------
@@ -67,7 +67,7 @@ private:
 
 	// キーフレーム表示用オブジェクトの名前
 	std::string keyObjectName_;
-	const std::string keyModelName_ = "debugSphere";
+	std::string keyModelName_;
 	const std::string keyGroupName_ = "KeyObject";
 
 	// 表示オブジェクト、シーンにしか表示しない
@@ -79,8 +79,8 @@ private:
 
 	// キー情報
 	std::vector<Key> keys_;
-	// 現在の位置
-	Vector3 currentPos_;
+	// 現在のトランスフォーム
+	Transform3D currentTransform_;
 
 	// 補間
 	LerpKeyframe::Type lerpType_; // 補間タイプ
@@ -94,9 +94,11 @@ private:
 	//--------- functions ----------------------------------------------------
 
 	// キーオブジェクトの作成
-	std::unique_ptr<GameObject3D> CreateKeyObject(const Vector3& pos);
+	std::unique_ptr<GameObject3D> CreateKeyObject(const Transform3D& transform);
 
-	// キー位置の取得
+	// キートランスフォームの取得
+	std::vector<Vector3> GetScales() const;
+	std::vector<Quaternion> GetRotations() const;
 	std::vector<Vector3> GetPositions() const;
 	// 各区間の補間t取得
 	float GetT(float currentT) const;
