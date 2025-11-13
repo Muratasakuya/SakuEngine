@@ -16,6 +16,7 @@
 #include <Game/PostEffect/CRTDisplayUpdater.h>
 #include <Game/PostEffect/GrayscaleUpdater.h>
 #include <Game/PostEffect/PlayerAfterImageUpdater.h>
+#include <Game/PostEffect/DefaultDistortionUpdater.h>
 
 //============================================================================
 //	TitleScene classMethods
@@ -41,7 +42,6 @@ void TitleScene::Init() {
 		PostProcessType::DefaultDistortion });
 	// グリッチに使用するテクスチャを設定
 	postProcess->InputProcessTexture("noise", PostProcessType::Glitch);
-	postProcess->InputProcessTexture("distortion_1", PostProcessType::DefaultDistortion);
 
 	// 更新クラスを登録
 	postProcess->RegisterUpdater(std::make_unique<DepthOutlineUpdater>());
@@ -50,6 +50,7 @@ void TitleScene::Init() {
 	postProcess->RegisterUpdater(std::make_unique<CRTDisplayUpdater>());
 	postProcess->RegisterUpdater(std::make_unique<GrayscaleUpdater>());
 	postProcess->RegisterUpdater(std::make_unique<PlayerAfterImageUpdater>());
+	postProcess->RegisterUpdater(std::make_unique<DefaultDistortionUpdater>());
 
 	// タイトルで使用するポストエフェクトを追加
 	postProcess->AddProcess(PostProcessType::CRTDisplay);

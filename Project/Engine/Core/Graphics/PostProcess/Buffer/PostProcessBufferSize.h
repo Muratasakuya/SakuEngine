@@ -360,12 +360,11 @@ public:
 	//--------- properties ---------------------------------------------------
 
 	// バイアス
-	float bias = 1.0f;
+	float bias = 0.01f;
 	// 強さ
-	float strength = 1.0f;
+	float strength = 0.1f;
 
 	float pad[2];
 
-	Color color = Color::White();
 	Matrix4x4 uvTransform = Matrix4x4::MakeIdentity4x4();
 };

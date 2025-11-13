@@ -16,7 +16,6 @@ struct Material {
 	// ‹­‚³
 	float strength;
 
-	float4 color;
 	float4x4 uvTransform;
 };
 ConstantBuffer<Material> gMaterial : register(b0);

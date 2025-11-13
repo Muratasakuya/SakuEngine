@@ -1,0 +1,14 @@
+{
+    "bias": 0.25999999046325684,
+    "distortionTextureName": "distortion_1",
+    "rotationZ": 0.0,
+    "scale": {
+        "x": 0.800000011920929,
+        "y": 0.800000011920929
+    },
+    "strength": 0.1599999964237213,
+    "translation": {
+        "x": 0.0,
+        "y": 0.0
+    }
+}
