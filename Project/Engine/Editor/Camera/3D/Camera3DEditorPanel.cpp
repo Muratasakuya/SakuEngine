@@ -7,16 +7,13 @@
 #include <Engine/Utility/Enum/EnumAdapter.h>
 #include <Engine/Object/Core/ObjectManager.h>
 #include <Engine/Object/System/Systems/TagSystem.h>
-#include <Engine/Editor/ActionProgress/ActionProgressMonitor.h>
 
 //============================================================================
 //	Camera3DEditorPanel classMethods
 //============================================================================
 
 void Camera3DEditorPanel::Edit(std::unordered_map<std::string, CameraPathData>& params,
-	std::unordered_map<std::string, CameraPathController::ActionSynchBind>& actionBinds,
-	std::string& selectedObjectKey, std::string& selectedActionName,
-	std::string& selectedParamKey, int& selectedKeyIndex,
+	std::vector<std::string>& names, std::string& selectedParamKey, int& selectedKeyIndex,
 	JsonSaveState& paramSaveState, char lastLoaded[128],
 	CameraPathController::PlaybackState& playbackCamera) {
 
@@ -29,11 +26,8 @@ void Camera3DEditorPanel::Edit(std::unordered_map<std::string, CameraPathData>& 
 	// アクションの選択、追加
 	if (ImGuiHelper::BeginFramedChild("##SelectAdd", nullptr, ImVec2(leftChild, 128.0f))) {
 
-		// 作成対象のアクション種類を選択
-		SelectActionSubject(actionBinds, selectedObjectKey, selectedActionName);
-		ImGui::Spacing();
-		// カメラ調整項目の追加
-		AddCameraParam(params, selectedObjectKey, selectedActionName);
+		// アニメーションキーの追加
+		AddAnimationKey(names, params, selectedParamKey);
 	}
 	ImGuiHelper::EndFramedChild();
 	ImGui::SameLine();
@@ -51,99 +45,54 @@ void Camera3DEditorPanel::Edit(std::unordered_map<std::string, CameraPathData>& 
 		ImVec2(leftChild + rightChild, ImGui::GetContentRegionAvail().y))) {
 
 		// 調整項目の値操作
-		if (!params.empty() && !selectedParamKey.empty()) {
+		if (!selectedParamKey.empty()) {
 
-			EditCameraParam(params.at(selectedParamKey), actionBinds, selectedObjectKey, selectedParamKey,
-				selectedKeyIndex, paramSaveState, lastLoaded, playbackCamera);
+			auto it = params.find(selectedParamKey);
+			if (it != params.end()) {
+
+				EditCameraParam(it->second, selectedParamKey,
+					selectedKeyIndex, paramSaveState, lastLoaded, playbackCamera);
+			}
 		}
 	}
 	ImGuiHelper::EndFramedChild();
 }
 
-void Camera3DEditorPanel::SelectActionSubject(
-	std::unordered_map<std::string, CameraPathController::ActionSynchBind>& actionBinds,
-	std::string& selectedObjectKey, std::string& selectedActionName) {
+void Camera3DEditorPanel::AddAnimationKey(std::vector<std::string>& names,
+	std::unordered_map<std::string, CameraPathData>& params, std::string& selectedName) {
 
-	// オブジェクトの選択
-	std::vector<std::string> objectNames;
-	objectNames.reserve(actionBinds.size());
-	for (const auto& bind : actionBinds) {
+	ImGui::TextUnformatted("Animation Key");
 
-		objectNames.emplace_back(bind.first);
-	}
-	int currentObjectIndex = -1;
-	for (int i = 0; i < (int)objectNames.size(); ++i) {
-		if (objectNames[i] == selectedObjectKey) {
+	static std::string inputName;
+	char buf[128] = {};
+	strncpy_s(buf, sizeof(buf), inputName.c_str(), _TRUNCATE);
+	if (ImGui::InputText("Name", buf, IM_ARRAYSIZE(buf))) {
 
-			currentObjectIndex = i;
-			break;
-		}
-	}
-	// オブジェクトリストをコンボ表示
-	if (ImGuiHelper::ComboFromStrings("Object", &currentObjectIndex, objectNames)) {
-		if (0 <= currentObjectIndex && currentObjectIndex < static_cast<int>(objectNames.size())) {
-
-			selectedObjectKey = objectNames[currentObjectIndex];
-			selectedActionName.clear();
-		}
+		inputName = buf;
 	}
 
-	// 進捗リストをIDから取得
-	std::vector<std::string> overallNames;
-	if (!selectedObjectKey.empty()) {
+	ImGui::Separator();
 
-		ActionProgressMonitor* monitor = ActionProgressMonitor::GetInstance();
-		overallNames = monitor->GetOverallNames(monitor->FindObjectID(selectedObjectKey));
-	}
+	if (ImGui::Button("Add Key")) {
 
-	int currentOverall = -1;
-	const int overallCount = static_cast<int>(overallNames.size());
-	for (int i = 0; i < overallCount; ++i) {
-		if (overallNames[i] == selectedActionName) {
-			currentOverall = i;
-			break;
-		}
-	}
-	// 進捗リストの中から選択
-	if (ImGuiHelper::ComboFromStrings("Overall", &currentOverall, overallNames)) {
-		if (0 <= currentOverall && currentOverall < overallCount) {
-
-			selectedActionName = overallNames[currentOverall];
-			auto it = actionBinds.find(selectedObjectKey);
-			if (it != actionBinds.end()) {
-
-				it->second.spanName = selectedActionName;
-			}
-		}
-	}
-}
-
-void Camera3DEditorPanel::AddCameraParam(std::unordered_map<std::string, CameraPathData>& params,
-	std::string& selectedObjectKey, std::string& selectedAnimName) {
-
-	// 何も設定されていなければ追加できない
-	if (selectedAnimName.empty()) {
-		return;
-	}
-
-	if (ImGui::Button("Add EditData")) {
-
-		// 同じアニメーションは追加できないようにする
-		if (Algorithm::Find(params, selectedAnimName)) {
+		if (inputName.empty() || Algorithm::Find(params, inputName)) {
 			return;
 		}
 
 		CameraPathData param{};
-		// 名前を設定
-		param.objectName = selectedObjectKey;
-		param.overallName = selectedAnimName;
+		param.name = inputName;
+
 		CameraPathData::KeyframeParam keyframe{};
 		keyframe.Init(false);
-		// キーフレームをデフォルトで1個追加
 		param.keyframes.emplace_back(std::move(keyframe));
 
-		// 調整項目追加
-		params.emplace(selectedAnimName, std::move(param));
+		params.emplace(inputName, std::move(param));
+		if (!Algorithm::Find(names, inputName)) {
+
+			names.emplace_back(inputName);
+		}
+		// 選択を更新
+		selectedName = inputName;
 	}
 }
 
@@ -177,7 +126,7 @@ void Camera3DEditorPanel::SelectCameraParam(std::unordered_map<std::string, Came
 	}
 
 	// リスト選択
-	if (ImGuiHelper::SelectableListFromStrings("CameraParam List", &currentIndex, keys, 8)) {
+	if (ImGuiHelper::SelectableListFromStrings("CameraParam List", &currentIndex, keys, 32)) {
 		if (currentIndex >= 0 && currentIndex < static_cast<int>(keys.size())) {
 
 			selectedParamKey = keys[currentIndex];
@@ -185,11 +134,8 @@ void Camera3DEditorPanel::SelectCameraParam(std::unordered_map<std::string, Came
 	}
 }
 
-void Camera3DEditorPanel::EditCameraParam(CameraPathData& param,
-	std::unordered_map<std::string, CameraPathController::ActionSynchBind>& actionBinds,
-	std::string& selectedObjectKey, std::string& selectedParamKey, int& selectedKeyIndex,
-	JsonSaveState& paramSaveState, char lastLoaded[128],
-	CameraPathController::PlaybackState& playbackCamera) {
+void Camera3DEditorPanel::EditCameraParam(CameraPathData& param, std::string& selectedParamKey, int& selectedKeyIndex,
+	JsonSaveState& paramSaveState, char lastLoaded[128], CameraPathController::PlaybackState& playbackCamera) {
 
 	if (selectedParamKey.empty()) {
 		ImGui::TextDisabled("not selected param");
@@ -207,7 +153,7 @@ void Camera3DEditorPanel::EditCameraParam(CameraPathData& param,
 	if (ImGui::BeginTabBar("EditCameraParam")) {
 		if (ImGui::BeginTabItem("Playback")) {
 
-			EditPlayback(param, playbackCamera, actionBinds, selectedObjectKey);
+			EditPlayback(param, playbackCamera);
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem("Lerp")) {
@@ -264,9 +210,7 @@ void Camera3DEditorPanel::SaveAndLoad(CameraPathData& param, JsonSaveState& para
 	ImGui::Separator();
 }
 
-void Camera3DEditorPanel::EditPlayback(CameraPathData& param, CameraPathController::PlaybackState& playbackCamera,
-	std::unordered_map<std::string, CameraPathController::ActionSynchBind>& actionBinds,
-	std::string& selectedObjectKey) {
+void Camera3DEditorPanel::EditPlayback(CameraPathData& param, CameraPathController::PlaybackState& playbackCamera) {
 
 	ImGui::PushItemWidth(192.0f);
 
@@ -284,15 +228,6 @@ void Camera3DEditorPanel::EditPlayback(CameraPathData& param, CameraPathControll
 	}
 	ImGui::Checkbox("isDrawLine3D", &param.isDrawLine3D);
 	ImGui::Checkbox("isUseGame", &param.isUseGame);
-
-	ImGui::SeparatorText("Synch");
-
-	// 同期方向の設定
-	if (!selectedObjectKey.empty()) {
-
-		ImGui::Checkbox("isSynch", &playbackCamera.isSynch);
-		ImGui::Checkbox("driveStateFromCamera", &actionBinds[selectedObjectKey].driveStateFromCamera);
-	}
 
 	ImGui::Separator();
 	ImGui::Spacing();

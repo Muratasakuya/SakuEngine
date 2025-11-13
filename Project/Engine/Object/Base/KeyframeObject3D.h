@@ -19,7 +19,7 @@ public:
 	~KeyframeObject3D() = default;
 
 	// 初期化
-	void Init(const std::string& name);
+	void Init(const std::string& name, const std::string& modelName = "defaultCube");
 
 	// 更新
 	void Update();
@@ -36,10 +36,8 @@ public:
 
 	//--------- accessor -----------------------------------------------------
 
-	// キー位置を返す
-	const std::vector<Vector3>& GetKeyPositions() const { return keyPositions_; }
-	// 現在の位置を返す
-	const Vector3& GetCurrentPos() const { return currentPos_; }
+	// 現在のトランスフォームを返す
+	const Transform3D& GetCurrentPos() const { return currentTransform_; }
 private:
 	//========================================================================
 	//	private Methods
@@ -54,6 +52,14 @@ private:
 		Updating, // 補間開始
 	};
 
+	// キー情報
+	struct Key {
+
+		Transform3D transform; // トランスフォーム
+		float time;            // 時間
+		EasingType easeType;   // イージング
+	};
+
 	//--------- variables ----------------------------------------------------
 
 	// 現在の状態
@@ -61,7 +67,7 @@ private:
 
 	// キーフレーム表示用オブジェクトの名前
 	std::string keyObjectName_;
-	const std::string keyModelName_ = "debugSphere";
+	std::string keyModelName_;
 	const std::string keyGroupName_ = "KeyObject";
 
 	// 表示オブジェクト、シーンにしか表示しない
@@ -71,14 +77,14 @@ private:
 	std::string parentName_;
 	Transform3D* parent_ = nullptr;
 
-	// キー位置
-	std::vector<Vector3> keyPositions_;
-	// 現在の位置
-	Vector3 currentPos_;
+	// キー情報
+	std::vector<Key> keys_;
+	// 現在のトランスフォーム
+	Transform3D currentTransform_;
 
 	// 補間
 	LerpKeyframe::Type lerpType_; // 補間タイプ
-	StateTimer timer_;   // 補間時間
+	float timer_;        // 現在の経過時間
 	bool isConnectEnds_; // 最初と最後のキーを結ぶかどうか
 
 	// エディター
@@ -88,5 +94,15 @@ private:
 	//--------- functions ----------------------------------------------------
 
 	// キーオブジェクトの作成
-	std::unique_ptr<GameObject3D> CreateKeyObject(const Vector3& pos);
+	std::unique_ptr<GameObject3D> CreateKeyObject(const Transform3D& transform);
+
+	// キートランスフォームの取得
+	std::vector<Vector3> GetScales() const;
+	std::vector<Quaternion> GetRotations() const;
+	std::vector<Vector3> GetPositions() const;
+	// 各区間の補間t取得
+	float GetT(float currentT) const;
+
+	// キータイムラインの描画
+	void DrawKeyTimeline();
 };

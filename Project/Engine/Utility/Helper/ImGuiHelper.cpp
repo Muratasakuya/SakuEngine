@@ -42,6 +42,7 @@ namespace {
 		case PostProcessType::Glitch:                return static_cast<uint32_t>(Bit_Glitch);
 		case PostProcessType::CRTDisplay:            return static_cast<uint32_t>(Bit_CRTDisplay);
 		case PostProcessType::PlayerAfterImage:      return static_cast<uint32_t>(Bit_PlayerAfterImage);
+		case PostProcessType::DefaultDistortion:     return static_cast<uint32_t>(Bit_DefaultDistortion);
 			// マスク対象外
 		case PostProcessType::CopyTexture:
 		case PostProcessType::Count:

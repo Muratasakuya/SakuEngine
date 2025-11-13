@@ -32,6 +32,8 @@ public:
 
 	//--------- accessor -----------------------------------------------------
 
+	void SetSpriteLayer(SpriteLayer layer);
+
 	void SetTranslation(const Vector2& translation);
 
 	void SetOffset(const Vector2& offset);

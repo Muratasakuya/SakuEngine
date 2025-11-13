@@ -47,6 +47,7 @@ void PostProcessCommandContext::Execute(PostProcessType type,
 	case PostProcessType::DepthBasedOutline:
 	case PostProcessType::Lut:
 	case PostProcessType::Glitch:
+	case PostProcessType::DefaultDistortion:
 
 		commandList->SetComputeRootDescriptorTable(3, processor->GetProcessTextureGPUHandle());
 		commandList->Dispatch(threadGroupCountX, threadGroupCountY, 1);

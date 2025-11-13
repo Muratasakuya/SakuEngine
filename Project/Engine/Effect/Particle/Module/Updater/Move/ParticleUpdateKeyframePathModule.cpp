@@ -45,7 +45,7 @@ void ParticleUpdateKeyframePathModule::Init() {
 
 	// 初期化値
 	parentTranslation_ = Vector3::AnyInit(0.0f);
-	parentRotation_ = Quaternion::IdentityQuaternion();
+	parentRotation_ = Quaternion::Identity();
 
 	isDrawKeyframe_ = true;
 	swirlRadius_.start = 0.0f;

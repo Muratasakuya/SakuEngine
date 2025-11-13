@@ -80,8 +80,9 @@ void PostProcessSystem::RegisterUpdater(std::unique_ptr<PostProcessUpdaterBase> 
 	updaters_[type] = std::move(updater);
 	updaters_[type]->Init();
 
-	// シーンクラスをセット
+	// 必要なクラスをセット
 	updaters_[type]->SetSceneView(sceneView_);
+	updaters_[type]->SetAsset(asset_);
 }
 
 void PostProcessSystem::RemoveUpdater(PostProcessType type) {
@@ -193,6 +194,13 @@ void PostProcessSystem::ApplyUpdatersToBuffers() {
 		// GPUバッファに値を渡す
 		auto [ptr, size] = updater->GetBufferData();
 		buffers_[type]->SetParameter(ptr, size);
+
+		// 存在する場合のみプロセスにテクスチャを設定する
+		const auto& texture = updater->GetProcessTextureName();
+		if (!texture.empty()) {
+
+			processors_[type]->SetProcessTexureGPUHandle(asset_->GetGPUHandle(texture));
+		}
 	}
 }
 
@@ -554,6 +562,14 @@ void PostProcessSystem::CreateCBuffer(PostProcessType type) {
 
 		auto buffer = std::make_unique<PostProcessBuffer<PlayerAfterImageForGPU>>();
 		buffer->Init(device_, 3);
+
+		buffers_[type] = std::move(buffer);
+		break;
+	}
+	case PostProcessType::DefaultDistortion: {
+
+		auto buffer = std::make_unique<PostProcessBuffer<DefaultDistortionForGPU>>();
+		buffer->Init(device_, 4);
 
 		buffers_[type] = std::move(buffer);
 		break;

@@ -346,14 +346,12 @@ void PlayerHUD::InputStateSprite::Init(uint32_t spriteIndex, const std::string& 
 	// 変化しないspriteの初期化
 	staticSprite = std::make_unique<GameObject2D>();
 	staticSprite->Init(staticSpriteTextureName, staticSpriteTextureName, groupName);
-	staticSprite->SetPostProcessMask(0);
 
 	// 変化するspriteをタイプごとに初期化
 	for (auto& [type, texture] : dynamicSpritesTextureName) {
 
 		dynamicSprites[type] = std::make_unique<GameObject2D>();
 		dynamicSprites[type]->Init(texture, texture, groupName);
-		dynamicSprites[type]->SetPostProcessMask(0);
 	}
 }
 

@@ -41,7 +41,7 @@ void ICPUParticleSpawnModule::InitCommonData() {
 void ICPUParticleSpawnModule::SetCommonData(CPUParticle::ParticleData& particle) {
 
 	// デフォルトの回転
-	particle.rotation = Quaternion::IdentityQuaternion();
+	particle.rotation = Quaternion::Identity();
 
 	// 生存時間
 	particle.lifeTime = lifeTime_.GetValue();
@@ -94,6 +94,14 @@ void ICPUParticleSpawnModule::SetPrimitiveType(ParticlePrimitiveType type) {
 	case ParticlePrimitiveType::Crescent:
 
 		primitive_.crescent.Init();
+		break;
+	case ParticlePrimitiveType::Lightning:
+
+		primitive_.lightning.Init();
+		break;
+	case ParticlePrimitiveType::TestMesh:
+
+		primitive_.testMesh.Init();
 		break;
 	}
 }

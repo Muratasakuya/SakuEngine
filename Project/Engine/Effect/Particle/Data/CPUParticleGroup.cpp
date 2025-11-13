@@ -318,6 +318,11 @@ void CPUParticleGroup::UpdateTransferData(uint32_t particleIndex,
 		transferPrimitives_.lightning[particleIndex] = particle.primitive.lightning;
 		break;
 	}
+	case ParticlePrimitiveType::TestMesh: {
+
+		transferPrimitives_.testMesh[particleIndex] = particle.primitive.testMesh;
+		break;
+	}
 	}
 
 	// トレイルの処理を行っている場合のみ
@@ -369,6 +374,11 @@ void CPUParticleGroup::TransferBuffer() {
 		primitiveBuffer_.lightning.TransferData(transferPrimitives_.lightning);
 		break;
 	}
+	case ParticlePrimitiveType::TestMesh: {
+
+		primitiveBuffer_.testMesh.TransferData(transferPrimitives_.testMesh);
+		break;
+	}
 	}
 
 	// トレイルの処理を行っている場合のみ
@@ -413,6 +423,11 @@ void CPUParticleGroup::ResizeTransferData(uint32_t size) {
 	case ParticlePrimitiveType::Lightning: {
 
 		transferPrimitives_.lightning.resize(size);
+		break;
+	}
+	case ParticlePrimitiveType::TestMesh: {
+
+		transferPrimitives_.testMesh.resize(size);
 		break;
 	}
 	}

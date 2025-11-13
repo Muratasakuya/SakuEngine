@@ -72,8 +72,7 @@ void CameraPathData::ApplyJson(const std::string& fileName, bool _isUseGame) {
 		this->isUseGame = _isUseGame;
 	}
 
-	objectName = data.value("objectName", "objectName");
-	overallName = data.value("overallName", "overallName");
+	name = data.value("name", "name");
 
 	followTarget = data.value("followTarget", false);
 	followRotation = data.value("followRotation", true);
@@ -140,8 +139,7 @@ void CameraPathData::SaveJson(const std::string& fileName) {
 
 	Json data;
 
-	data["objectName"] = objectName;
-	data["overallName"] = overallName;
+	data["name"] = name;
 
 	data["followTarget"] = followTarget;
 	data["followRotation"] = followRotation;

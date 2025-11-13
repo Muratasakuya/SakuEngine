@@ -6,18 +6,24 @@
 #include <Engine/Core/Graphics/Renderer/LineRenderer.h>
 #include <Engine/Object/Core/ObjectManager.h>
 #include <Engine/Object/System/Systems/TagSystem.h>
+#include <Engine/Editor/GameObject/ImGuiObjectEditor.h>
+#include <Engine/Input/Input.h>
 #include <Engine/Utility/Json/JsonAdapter.h>
 #include <Engine/Utility/Enum/EnumAdapter.h>
 #include <Engine/Utility/Helper/ImGuiHelper.h>
+
+// imgui
+#include <imgui_internal.h>
 
 //============================================================================
 //	KeyframeObject3D classMethods
 //============================================================================
 
-void KeyframeObject3D::Init(const std::string& name) {
+void KeyframeObject3D::Init(const std::string& name, const std::string& modelName) {
 
 	// キーオブジェクト名を設定
 	keyObjectName_ = name;
+	keyModelName_ = modelName;
 
 	// デフォルト設定
 	currentState_ = State::None;
@@ -31,7 +37,7 @@ void KeyframeObject3D::StartLerp() {
 
 	// 補間開始
 	currentState_ = State::Updating;
-	timer_.Reset();
+	timer_ = 0.0f;
 }
 
 void KeyframeObject3D::Update() {
@@ -42,31 +48,45 @@ void KeyframeObject3D::Update() {
 	}
 
 	// 時間を更新
-	timer_.Update();
+	float total = (std::max)(keys_.back().time, std::numeric_limits<float>::epsilon());
+	timer_ += GameTimer::GetScaledDeltaTime();
+	timer_ = std::clamp(timer_, 0.0f, total);
+	// 進捗率
+	float progress = timer_ / total;
 
-	// 現在の補間位置を更新
-	currentPos_ = LerpKeyframe::GetValue<Vector3>(keyPositions_, timer_.easedT_, lerpType_);
+	// 現在のトランスフォームを更新、現在の区間の補間tを取得して補間
+	float currentT = GetT(progress);
+	// スケール
+	currentTransform_.scale = LerpKeyframe::GetValue<Vector3>(GetScales(), currentT, lerpType_);
+	// 回転
+	currentTransform_.rotation = LerpKeyframe::GetValue<Quaternion>(GetRotations(), currentT, lerpType_);
+	// 座標
+	currentTransform_.translation = LerpKeyframe::GetValue<Vector3>(GetPositions(), currentT, lerpType_);
 
 	// 時間経過で終了
-	if (timer_.IsReached()) {
+	if (1.0f <= progress) {
 
 		// 最終位置を設定
-		currentPos_ = keyPositions_.back();
+		currentTransform_.scale = keys_.empty() ? Vector3::AnyInit(1.0f) : keys_.back().transform.scale;
+		currentTransform_.rotation = keys_.empty() ? Quaternion::Identity() : keys_.back().transform.rotation;
+		currentTransform_.translation = keys_.empty() ? Vector3::AnyInit(0.0f) : keys_.back().transform.translation;
 
 		// リセット
 		currentState_ = State::None;
-		timer_.Reset();
+		timer_ = 0.0f;
 	}
 }
 
-std::unique_ptr<GameObject3D> KeyframeObject3D::CreateKeyObject(const Vector3& pos) {
+std::unique_ptr<GameObject3D> KeyframeObject3D::CreateKeyObject(const Transform3D& transform) {
 
 	// 生成
 	std::unique_ptr<GameObject3D> object = std::make_unique<GameObject3D>();
 	object->Init(keyModelName_, keyObjectName_, keyGroupName_);
 
 	// 座標を設定
-	object->SetTranslation(pos);
+	object->SetScale(transform.scale);
+	object->SetRotation(transform.rotation);
+	object->SetTranslation(transform.translation);
 
 	// 親がいれば親を設定
 	if (!parentName_.empty()) {
@@ -84,13 +104,106 @@ std::unique_ptr<GameObject3D> KeyframeObject3D::CreateKeyObject(const Vector3& p
 	return object;
 }
 
+std::vector<Vector3> KeyframeObject3D::GetScales() const {
+
+	// スケールリストを取得
+	std::vector<Vector3> scales;
+	scales.reserve(keys_.size());
+	for (const auto& key : keys_) {
+
+		scales.emplace_back(key.transform.scale);
+	}
+	return scales;
+}
+
+std::vector<Quaternion> KeyframeObject3D::GetRotations() const {
+
+	// 回転リストを取得
+	std::vector<Quaternion> rotations;
+	rotations.reserve(keys_.size());
+	for (const auto& key : keys_) {
+
+		rotations.emplace_back(key.transform.rotation);
+	}
+	return rotations;
+}
+
+std::vector<Vector3> KeyframeObject3D::GetPositions() const {
+
+	// 座標リストを取得
+	std::vector<Vector3> positions;
+	positions.reserve(keys_.size());
+	for (const auto& key : keys_) {
+
+		positions.emplace_back(key.transform.translation);
+	}
+	return positions;
+}
+
+float KeyframeObject3D::GetT(float currentT) const {
+
+	// 2つ未満のキーなら0.0fを返す
+	if (keys_.size() < 2) {
+		return 0.0f;
+	}
+
+	// ノット列
+	// 最後のキーの時間が合計
+	float total = keys_.back().time;
+	std::vector<float> knot;
+	knot.reserve(keys_.size());
+	for (const auto& key : keys_) {
+
+		// ノット値を計算して追加
+		knot.emplace_back(std::clamp(key.time / total, 0.0f, 1.0f));
+	}
+
+	// 属する区間を探す
+	size_t i = 0;
+	while (i + 1 < knot.size() && !(knot[i] <= currentT && currentT <= knot[i + 1])) {
+
+		++i;
+	}
+	// iが範囲外ならサイズで調整する
+	if (knot.size() <= i + 1) {
+
+		i = knot.size() - 2;
+	}
+
+	// 区間内tをキーのイージングで補間
+	float localT = (currentT - knot[i]) / (std::max)(std::numeric_limits<float>::epsilon(), knot[i + 1] - knot[i]);
+	float easedLocalT = EasedValue(keys_[i].easeType, std::clamp(localT, 0.0f, 1.0f));
+
+	// 全体tを計算して返す
+	float resultT = (i + easedLocalT) / static_cast<float>(keys_.size() - 1);
+	return resultT;
+}
+
 void KeyframeObject3D::ImGui() {
+
+	ImGui::PushItemWidth(200.0f);
 
 	// エディター内で更新を呼びだす
 	if (isEditUpdate_) {
 
 		Update();
 	}
+
+	ImGui::SeparatorText("Key Timer");
+
+	if (!keys_.empty()) {
+
+		ImGui::Text("timer: %.2f / %.2f", timer_, keys_.back().time);
+
+		float total = (std::max)(keys_.back().time, std::numeric_limits<float>::epsilon());
+		float progress = timer_ / total;
+		ImGui::Text("progress: %.2f", progress);
+
+		// キータイムラインの描画
+		DrawKeyTimeline();
+	}
+
+	ImGui::SeparatorText("Config");
 
 	ImGui::Checkbox("isEditUpdate", &isEditUpdate_);
 	if (ImGui::Checkbox("isDrawKeyframe", &isDrawKeyframe_)) {
@@ -106,15 +219,25 @@ void KeyframeObject3D::ImGui() {
 	// キーオブジェクトの追加
 	if (ImGui::Button("Add Keyframe")) {
 
-		// キーオブジェクトを生成
-		keyObjects_.emplace_back(std::move(CreateKeyObject(
-			keyPositions_.empty() ? Vector3(0.0f, 16.0f, 0.0f) : keyPositions_.back())));
+		// キーを追加
+		Key key{};
+		// 座標
+		key.transform.translation = keyObjects_.empty() ?
+			Vector3::AnyInit(0.0f) : keyObjects_.back()->GetTransform().GetWorldPos();
+		key.transform.translation.y += 4.0f;
+		// スケール
+		key.transform.scale = keyObjects_.empty() ?
+			Vector3::AnyInit(1.0f) : keyObjects_.back()->GetTransform().scale;
+		// 回転
+		key.transform.rotation = keyObjects_.empty() ?
+			Quaternion::Identity() : keyObjects_.back()->GetTransform().rotation;
+		keys_.emplace_back(key);
 
-		// キー位置を追加
-		// 最後のキー位置をコピー
-		Vector3 newPos = keyObjects_.back()->GetTransform().GetWorldPos();
-		newPos.y += 4.0f;
-		keyPositions_.emplace_back(newPos);
+		// キーオブジェクトを生成
+		Transform3D initTransform;
+		initTransform.Init();
+		keyObjects_.emplace_back(std::move(CreateKeyObject(
+			keys_.empty() ? initTransform : keys_.back().transform)));
 	}
 	// 開始
 	if (ImGui::Button("Start")) {
@@ -126,8 +249,6 @@ void KeyframeObject3D::ImGui() {
 
 		ImGui::Checkbox("isConnectEnds", &isConnectEnds_);
 		EnumAdapter<LerpKeyframe::Type>::Combo("LerpType", &lerpType_);
-
-		timer_.ImGui("LerpTime");
 	}
 
 	if (ImGui::CollapsingHeader("Set Parent")) {
@@ -160,21 +281,197 @@ void KeyframeObject3D::ImGui() {
 		}
 	}
 
-	// 座標に変更があれば更新
+	// トランスフォームに変更があれば更新
 	for (size_t i = 0; i < keyObjects_.size(); ++i) {
 
 		// 座標を比較して変更があれば更新
-		Vector3 worldPos = keyObjects_[i]->GetTransform().GetWorldPos();
-		if (worldPos != keyPositions_[i]) {
+		const Transform3D& transform = keyObjects_[i]->GetTransform();
+		if (transform.scale != keys_[i].transform.scale ||
+			transform.rotation != keys_[i].transform.rotation ||
+			transform.translation != keys_[i].transform.translation) {
 
-			// 座標を更新
-			keyPositions_[i] = worldPos;
+			// トランスフォームを更新
+			keys_[i].transform.scale = transform.scale;
+			keys_[i].transform.rotation = transform.rotation;
+			keys_[i].transform.translation = transform.translation;
 		}
 	}
 	// 線描画
-	LerpKeyframe::DrawKeyframeLine(keyPositions_, lerpType_, isConnectEnds_);
+	LerpKeyframe::DrawKeyframeLine(GetPositions(), lerpType_, isConnectEnds_);
 	// 現在の時間の点の位置
-	LineRenderer::GetInstance()->DrawSphere(6, 4.0f, currentPos_, Color::Yellow());
+	LineRenderer::GetInstance()->DrawOBB(currentTransform_.translation,
+		currentTransform_.scale, currentTransform_.rotation, Color::Yellow());
+
+	ImGui::PopItemWidth();
+
+	// Deleteキー入力でエディターで操作中のキーを削除する
+	const std::optional<uint32_t> editObjectId = ImGuiObjectEditor::GetInstance()->GetSelected3D();
+	if (editObjectId.has_value() && Input::GetInstance()->TriggerKey(DIK_DELETE)) {
+
+		// 選択IDをチェックする
+		for (uint32_t i = 0; i < keyObjects_.size(); ++i) {
+			if (keyObjects_[i]->GetObjectID() == editObjectId.value()) {
+
+				// キーオブジェクトを削除
+				keyObjects_.erase(keyObjects_.begin() + i);
+				// キー情報を削除
+				keys_.erase(keys_.begin() + i);
+				break;
+			}
+		}
+	}
+}
+
+void KeyframeObject3D::DrawKeyTimeline() {
+
+	// 表示バーのサイズ
+	const float barWidth = 520.0f;
+	const float barHeight = 12.0f;
+
+	if (keys_.empty()) {
+		return;
+	}
+
+	const float total = (std::max)(keys_.back().time, std::numeric_limits<float>::epsilon());
+
+	// レイアウト領域を確保
+	ImGui::Dummy(ImVec2(barWidth, barHeight * 2.0f));
+	ImVec2 p0 = ImGui::GetItemRectMin();
+	ImVec2 p1 = ImGui::GetItemRectMax();
+	bool hoveredTimeline = ImGui::IsItemHovered();
+	ImDrawList* dl = ImGui::GetWindowDrawList();
+
+	// 背景
+	dl->AddRectFilled(p0, p1, IM_COL32(70, 70, 70, 255), barHeight * 0.5f);
+
+	// 進捗バー
+	float progT = 0.0f;
+	if (currentState_ != State::None) {
+
+		progT = std::clamp(timer_ / total, 0.0f, 1.0f);
+	}
+	ImVec2 pProg = ImVec2(std::lerp(p0.x, p1.x, progT), p1.y);
+	dl->AddRectFilled(p0, pProg, IM_COL32(240, 200, 0, 255), barHeight * 0.5f);
+
+	// 丸の描画とドラッグ
+	const float yCenter = (p0.y + p1.y) * 0.5f;
+	const float radius = barHeight * 0.7f;
+
+	// 状態保持
+	static int s_dragIndex = -1;
+	static bool s_dragging = false;
+	static int s_easeSeg = -1;
+
+	// 先に丸のヒット＆ドラッグ処理
+	ImVec2 mouse = ImGui::GetIO().MousePos;
+	bool anyHovered = false;
+
+	for (int i = 0; i < (int)keys_.size(); ++i) {
+
+		float t = (total > 0.0f) ? (keys_[i].time / total) : 0.0f;
+		t = std::clamp(t, 0.0f, 1.0f);
+		float x = std::lerp(p0.x, p1.x, t);
+		ImVec2 center(x, yCenter);
+
+		// 通過済み → 緑 / 未来 → 灰
+		ImU32 col = (timer_ >= keys_[i].time) ? IM_COL32(50, 220, 70, 255) : IM_COL32(180, 180, 180, 255);
+
+		// ヒット判定
+		bool hovered = ImLengthSqr(mouse - center) <= (radius * radius);
+		if (hovered) {
+
+			anyHovered = true;
+			ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+			dl->AddCircleFilled(center, radius, IM_COL32(255, 255, 255, 255));
+		}
+
+		// ドラッグ開始
+		if (!s_dragging && hovered && ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
+			s_dragging = true;
+			s_dragIndex = i;
+		}
+
+		// 描画
+		dl->AddCircleFilled(center, radius * 0.8f, col);
+
+		// ドラッグ中の更新
+		if (s_dragging && s_dragIndex == i) {
+			if (ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
+
+				// マウスx → 時間（絶対秒）に写像
+				float u = 0.0f;
+				if (p1.x > p0.x) u = (mouse.x - p0.x) / (p1.x - p0.x);
+				u = std::clamp(u, 0.0f, 1.0f);
+				float newTime = u * (std::max)(total, 1e-6f);
+
+				// 単調性を維持
+				const float minGap = 1e-4f;
+				float lo = (i == 0) ? 0.0f : (keys_[i - 1].time + minGap);
+				float hi = (i + 1 < (int)keys_.size()) ? (keys_[i + 1].time - minGap) : (std::max)(newTime, lo);
+				newTime = std::clamp(newTime, lo, hi);
+
+				// 更新
+				keys_[i].time = newTime;
+
+				// ラベル
+				char buf[64];
+				snprintf(buf, sizeof(buf), "%.3f s", keys_[i].time);
+				ImVec2 labelPos(center.x - ImGui::CalcTextSize(buf).x * 0.5f, yCenter + radius + 4.0f);
+				dl->AddText(labelPos, IM_COL32(255, 255, 255, 255), buf);
+			} else {
+
+				// マウスを離したら終了
+				s_dragging = false;
+				s_dragIndex = -1;
+			}
+		}
+	}
+
+	// 最後の時間はdragFloatで更新
+	ImGui::DragFloat("End Time", &keys_.back().time, 0.01f);
+
+	// 丸以外クリックで区間を選択 → イージング選択ポップアップを開く
+	if (!s_dragging && hoveredTimeline && ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !anyHovered) {
+
+		// クリック位置 → t → どの区間か
+		float u = (p1.x > p0.x) ? (mouse.x - p0.x) / (p1.x - p0.x) : 0.0f;
+		u = std::clamp(u, 0.0f, 1.0f);
+
+		// キーの正規化時刻配列を作る
+		int seg = -1;
+		if (keys_.size() >= 2) {
+			for (int i = 0; i + 1 < (int)keys_.size(); ++i) {
+
+				float a = std::clamp(keys_[i].time / total, 0.0f, 1.0f);
+				float b = std::clamp(keys_[i + 1].time / total, 0.0f, 1.0f);
+				if (a <= u && u <= b) {
+					seg = i;
+					break;
+				}
+			}
+			if (seg < 0) {
+
+				seg = (int)keys_.size() - 2;
+			}
+		}
+		s_easeSeg = seg;
+		ImGui::OpenPopup("EasePopup");
+	}
+
+	// ポップアップでイージング選択
+	if (ImGui::BeginPopup("EasePopup")) {
+		if (0 <= s_easeSeg && s_easeSeg + 1 < (int)keys_.size()) {
+
+			ImGui::Text("Segment: %d -> %d", s_easeSeg, s_easeSeg + 1);
+			Easing::SelectEasingType(keys_[s_easeSeg].easeType);
+			ImGui::Separator();
+		}
+		if (ImGui::Button("Close")) {
+
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::EndPopup();
+	}
 }
 
 void KeyframeObject3D::FromJson(const Json& data) {
@@ -184,14 +481,29 @@ void KeyframeObject3D::FromJson(const Json& data) {
 	}
 
 	// キー位置を取得
-	for (const auto& keyPos : data["KeyPositions"]) {
+	for (const auto& keyJson : data["Keys"]) {
 
-		keyPositions_.emplace_back(Vector3::FromJson(keyPos));
+		Key key{};
+
+		// transformキーがなければ初期化させる
+		if (keyJson.contains("transform")) {
+
+			key.transform.FromJson(keyJson["transform"]);
+		} else {
+
+			key.transform.Init();
+		}
+
+		key.transform.FromJson(keyJson.value("transform", Json()));
+		key.time = keyJson.value("time", 0.0f);
+		key.easeType = EnumAdapter<EasingType>::FromString(keyJson.value("ease", "Linear")).value();
+
+		keys_.emplace_back(key);
 	}
+
 	parentName_ = data.value("parentName_", "");
 	lerpType_ = EnumAdapter<LerpKeyframe::Type>::FromString(data.value("lerpType_", "Linear")).value();
 	isConnectEnds_ = data.value("isConnectEnds_", false);
-	timer_.FromJson(data["Timer"]);
 
 	// 親Transformを設定
 	if (!parentName_.empty()) {
@@ -213,20 +525,26 @@ void KeyframeObject3D::FromJson(const Json& data) {
 	}
 
 	// キーオブジェクトを生成
-	for (const auto& pos : keyPositions_) {
+	for (const auto& key : keys_) {
 
-		keyObjects_.emplace_back(std::move(CreateKeyObject(pos)));
+		keyObjects_.emplace_back(std::move(CreateKeyObject(key.transform)));
 	}
 }
 
 void KeyframeObject3D::ToJson(Json& data) {
 
-	for (const auto& keyObject : keyObjects_) {
+	for (auto& key : keys_) {
 
-		data["KeyPositions"].emplace_back(keyObject->GetTranslation().ToJson());
+		Json keyJson;
+
+		key.transform.ToJson(keyJson["transform"]);
+		keyJson["time"] = key.time;
+		keyJson["ease"] = EnumAdapter<EasingType>::ToString(key.easeType);
+
+		data["Keys"].emplace_back(keyJson);
 	}
+
 	data["parentName_"] = parentName_;
 	data["lerpType_"] = EnumAdapter<LerpKeyframe::Type>::ToString(lerpType_);
 	data["isConnectEnds_"] = isConnectEnds_;
-	timer_.ToJson(data["Timer"]);
 }

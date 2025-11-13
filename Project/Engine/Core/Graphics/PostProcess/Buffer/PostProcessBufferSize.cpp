@@ -241,3 +241,15 @@ void PlayerAfterImageForGPU::ImGui() {
 
 	ImGui::PopItemWidth();
 }
+
+void DefaultDistortionForGPU::ImGui() {
+
+	ImGui::SeparatorText("DefaultDistortion");
+
+	ImGui::PushItemWidth(itemWidth_);
+
+	ImGui::DragFloat("bias##DefaultDistortionForGPU", &bias, 0.01f);
+	ImGui::DragFloat("strength##DefaultDistortionForGPU", &strength, 0.01f);
+
+	ImGui::PopItemWidth();
+}

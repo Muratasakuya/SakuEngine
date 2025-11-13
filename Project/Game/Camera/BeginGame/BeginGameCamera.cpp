@@ -16,8 +16,8 @@ void BeginGameCamera::Init() {
 	displayFrustum_ = true;
 	isStarted_ = false;
 
-	Camera3DEditor::GetInstance()->LoadAnimFile("beginGameCameraFirst.json");
-	Camera3DEditor::GetInstance()->LoadAnimFile("beginGameCameraSecond.json");
+	Camera3DEditor::GetInstance()->LoadAnimFile("Scene/beginGameCameraFirst.json");
+	Camera3DEditor::GetInstance()->LoadAnimFile("Scene/beginGameCameraSecond.json");
 
 	// json適応
 	ApplyJson();

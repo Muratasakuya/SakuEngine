@@ -31,6 +31,7 @@ public:
 	//--------- operators ----------------------------------------------------
 
 	Quaternion operator+(const Quaternion& other) const;
+	Quaternion operator-(const Quaternion& other) const;
 	Quaternion operator*(const Quaternion& other) const;
 	Quaternion operator-() const;
 
@@ -58,7 +59,7 @@ public:
 
 	static Quaternion Multiply(const Quaternion& lhs, const Quaternion& rhs);
 
-	static Quaternion IdentityQuaternion();
+	static Quaternion Identity();
 
 	static Quaternion Conjugate(const Quaternion& quaternion);
 

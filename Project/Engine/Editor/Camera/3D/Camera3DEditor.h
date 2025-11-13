@@ -26,9 +26,6 @@ public:
 
 	// 調整を行えるアクションの追加
 	void AddActionObject(const std::string& name);
-	// アクション同期の設定
-	void SetActionBinding(const std::string& objectName,
-		const std::string& spanName, bool driveStateFromCamera);
 
 	void ImGui() override;
 
@@ -77,8 +74,8 @@ private:
 
 	// カメラ調整項目データ
 	std::unordered_map<std::string, CameraPathData> params_;
-	// 対象アクション
-	std::unordered_map<std::string, CameraPathController::ActionSynchBind> actionBinds_;
+	// エディターで作成したキーの名前
+	std::vector<std::string> names_;
 	// ランタイム状態
 	std::optional<RuntimePlayState> runtime_;
 
@@ -89,8 +86,6 @@ private:
 	std::unique_ptr<Camera3DEditorPanel> panel_;       // UIの表示
 	std::unique_ptr<CameraPathGizmoSynch> gizmoSynch_; // ギズモ同期
 
-	std::string selectedObjectKey_;   // 選択中のオブジェクト
-	std::string selectedActionName_;  // オブジェクトが所持しているアクション
 	std::string selectedParamKey_;  // 操作対象のカメラ
 	int selectedKeyIndex_ = 0;      // 選択中のキーフレーム
 	CameraPathController::PlaybackState playbackCamera_;

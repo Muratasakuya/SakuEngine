@@ -35,6 +35,14 @@ void GameDigitDisplay::Init(uint32_t maxDigit, const std::string& textureName,
 	}
 }
 
+void GameDigitDisplay::SetSpriteLayer(SpriteLayer layer) {
+
+	for (uint32_t index = 0; index < digitSprites_.size(); ++index) {
+
+		digitSprites_[index]->SetSpriteLayer(layer);
+	}
+}
+
 void GameDigitDisplay::SetTranslation(const Vector2& translation, const Vector2& offset) {
 
 	for (uint32_t index = 0; index < digitSprites_.size(); ++index) {

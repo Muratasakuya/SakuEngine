@@ -27,6 +27,8 @@ public:
 
 	//--------- accessor -----------------------------------------------------
 
+	void SetSpriteLayer(SpriteLayer layer);
+
 	void SetTranslation(const Vector2& translation, const Vector2& offset);
 	Vector2 ProjectToScreen(const Vector3& translation, const BaseCamera& camera);
 

@@ -50,6 +50,10 @@ D3D12_GPU_VIRTUAL_ADDRESS BaseParticleGroup::GetPrimitiveBufferAdress() const {
 
 		return primitiveBuffer_.lightning.GetResource()->GetGPUVirtualAddress();
 	}
+	case ParticlePrimitiveType::TestMesh: {
+
+		return primitiveBuffer_.testMesh.GetResource()->GetGPUVirtualAddress();
+	}
 	case ParticlePrimitiveType::Count: {
 
 		ASSERT(false, "ParticlePrimitiveType::Count is not buffer");
@@ -117,6 +121,16 @@ void BaseParticleGroup::CreatePrimitiveBuffer(ID3D12Device* device,
 		std::vector<LightningForGPU> lightnings(maxParticle, lightning);
 		primitiveBuffer_.lightning.CreateSRVBuffer(device, maxParticle);
 		primitiveBuffer_.lightning.TransferData(lightnings);
+		break;
+	}
+	case ParticlePrimitiveType::TestMesh: {
+
+		TestMeshForGPU testMesh{};
+		testMesh.Init();
+
+		std::vector<TestMeshForGPU> testMeshes(maxParticle, testMesh);
+		primitiveBuffer_.testMesh.CreateSRVBuffer(device, maxParticle);
+		primitiveBuffer_.testMesh.TransferData(testMeshes);
 		break;
 	}
 	}

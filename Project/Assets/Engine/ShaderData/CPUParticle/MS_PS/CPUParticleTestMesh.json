@@ -1,0 +1,44 @@
+{
+    "Type": "MS",
+    "ShaderPass":[
+        {
+            "Type": "Graphics",
+            "MeshShader": "TestMeshParticle.MS.hlsl",
+            "PixelShader": "CPUParticle.PS.hlsl"
+        }
+    ],
+    "RootParameter": [
+        { "RootIndex": 0, "Type": "SRV", "Visibility": "MESH", "ShaderRegister": 0 },
+        { "RootIndex": 1, "Type": "SRV", "Visibility": "MESH", "ShaderRegister": 1 },
+        { "RootIndex": 2, "Type": "CBV", "Visibility": "MESH", "ShaderRegister": 0 },
+        { "RootIndex": 3, "Type": "SRV", "Visibility": "PIXEL", "ShaderRegister": 0 },
+        { "RootIndex": 4, "Type": "SRV", "Visibility": "PIXEL", "ShaderRegister": 1 },
+        { "RootIndex": 5, "Type": "TABLE", "Visibility": "PIXEL","DescriptorRange": { "Type": "SRV", "BaseShaderRegister": 2, "NumDescriptors": "srvCount","RegisterSpace": 0 } }
+    ],
+    "StaticSampler": [
+        { "SamplerIndex": 0, "Filter": "LINEAR", "AddressMode": "WRAP","ComparisonFunc": "NEVER", "ShaderRegister": 0 },
+        { "SamplerIndex": 1, "Filter": "LINEAR", "AddressMode": "CLAMP","ComparisonFunc": "NEVER", "ShaderRegister": 1 }
+    ],
+    "Rasterizer":[
+        {
+            "CullMode": "NONE",
+            "FillMode": "SOLID",
+            "DepthClipEnable": "FALSE",
+            "AntialiasedLineEnable": "FALSE"
+        }
+    ],
+    "DepthStencil":[
+        {
+            "DepthEnable": "TRUE",
+            "DepthWriteMask": "ZERO",
+            "DepthFunc": "LESS_EQUAL"
+        }
+    ],
+    "PipelineState":[
+        {
+            "DSVFormat": "D24_UNORM_S8_UINT",
+            "RTVFormats": ["R32G32B32A32_FLOAT","R32_UINT"],
+            "BlendMode": "ALL"
+        }
+    ]
+}

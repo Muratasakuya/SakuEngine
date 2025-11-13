@@ -58,8 +58,7 @@ public:
 	static inline const std::string cameraParamJsonPath = "CameraEditor/CameraParams/";
 
 	// 対象名
-	std::string objectName;  // オブジェクト名
-	std::string overallName; // アクション名
+	std::string name; // 名前
 
 	// 追従先の設定
 	bool followTarget = false;

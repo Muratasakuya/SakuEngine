@@ -39,8 +39,7 @@
     "followRotation": true,
     "followTarget": true,
     "lerpType": "Linear",
-    "objectName": "BeginGame",
-    "overallName": "beginGameCameraSecond",
+    "name": "beginGameCameraSecond",
     "targetName": "platformRound",
     "useAveraging": true
 }

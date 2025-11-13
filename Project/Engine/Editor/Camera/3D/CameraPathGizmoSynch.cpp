@@ -78,7 +78,7 @@ void CameraPathGizmoSynch::ApplyLocalToWorldByTarget(CameraPathData& data) const
 		: Vector3::AnyInit(0.0f);
 	const Quaternion targetRotation = hasTarget ?
 		Quaternion::Normalize(data.target->rotation)
-		: Quaternion::IdentityQuaternion();
+		: Quaternion::Identity();
 	for (const auto& keyframe : data.keyframes) {
 
 		// 0回転時のローカルをワールドに変換

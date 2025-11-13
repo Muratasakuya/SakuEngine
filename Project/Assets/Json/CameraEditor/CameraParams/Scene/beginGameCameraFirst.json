@@ -84,8 +84,7 @@
     "followRotation": true,
     "followTarget": true,
     "lerpType": "Spline",
-    "objectName": "BeginGame",
-    "overallName": "beginGameCameraFirst",
+    "name": "beginGameCameraFirst",
     "targetName": "platformRound",
     "useAveraging": true
 }

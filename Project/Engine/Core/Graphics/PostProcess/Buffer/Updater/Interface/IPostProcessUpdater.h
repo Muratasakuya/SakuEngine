@@ -45,8 +45,10 @@ public:
 
 	//--------- accessor -----------------------------------------------------
 
-		// GPU転送用の生ポインタとサイズを返す
+	// GPU転送用の生ポインタとサイズを返す
 	std::pair<const void*, size_t> GetBufferData() const override;
+	// ポストエフェクトに使用する任意のテクスチャ
+	const std::string& GetProcessTextureName() const override { return processTextureName_; }
 protected:
 	//========================================================================
 	//	protected Methods
@@ -59,6 +61,9 @@ protected:
 
 	// bufferに渡す値
 	T bufferData_;
+
+	// ポストエフェクトに使用する任意のテクスチャ
+	std::string processTextureName_;
 
 	//--------- functions ----------------------------------------------------
 

@@ -2301,6 +2301,8 @@
     <ClCompile Include="Game\Objects\GameScene\Player\Effect\PlayerAfterImageEffect.cpp" />
     <ClCompile Include="Game\Objects\GameScene\Enemy\Boss\Start\BossEnemyStartAnimation.cpp" />
     <ClCompile Include="Engine\Object\Base\KeyframeObject3D.cpp" />
+    <ClCompile Include="Engine\Effect\Particle\Module\Updater\Primitive\Derived\ParticleTestMeshUpdater.cpp" />
+    <ClCompile Include="Game\PostEffect\DefaultDistortionUpdater.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\Camera\Follow\State\States\FollowCameraReturnDefaultRotate.h" />
@@ -2339,8 +2341,11 @@
     <ClInclude Include="Game\Objects\GameScene\Player\Effect\PlayerAfterImageEffect.h" />
     <ClInclude Include="Game\Objects\GameScene\Enemy\Boss\Start\BossEnemyStartAnimation.h" />
     <ClInclude Include="Engine\Object\Base\KeyframeObject3D.h" />
+    <ClInclude Include="Engine\Effect\Particle\Module\Updater\Primitive\Derived\ParticleTestMeshUpdater.h" />
+    <ClInclude Include="Game\PostEffect\DefaultDistortionUpdater.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Engine\Shaders\PostProcess\PlayerAfterImage\PlayerAfterImage.CS.hlsl" />
+    <FxCompile Include="Assets\Engine\Shaders\PostProcess\Distortion\DefaultDistortion.CS.hlsl" />
   </ItemGroup>
 </Project>

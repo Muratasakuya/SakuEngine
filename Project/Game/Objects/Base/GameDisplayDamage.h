@@ -37,6 +37,8 @@ public:
 
 	//--------- accessor -----------------------------------------------------
 
+	void SetSpriteLayer(SpriteLayer layer);
+
 	void SetDamage(int damage);
 	void SetAlpha(float alpha);
 private:

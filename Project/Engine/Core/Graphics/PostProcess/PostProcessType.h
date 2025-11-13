@@ -32,6 +32,7 @@ enum class PostProcessType {
 	Glitch,
 	CRTDisplay,
 	PlayerAfterImage,
+	DefaultDistortion,
 
 	Count
 };
