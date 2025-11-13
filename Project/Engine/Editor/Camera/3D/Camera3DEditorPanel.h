@@ -45,8 +45,7 @@ private:
 	void SaveAndLoad(CameraPathData& param, JsonSaveState& paramSaveState, char lastLoaded[128]);
 
 	// 値調整
-	void EditCameraParam(CameraPathData& param, std::vector<std::string>& names,
-		std::string& selectedParamKey, int& selectedKeyIndex,
+	void EditCameraParam(CameraPathData& param, std::string& selectedParamKey, int& selectedKeyIndex,
 		JsonSaveState& paramSaveState, char lastLoaded[128],
 		CameraPathController::PlaybackState& playbackCamera);
 

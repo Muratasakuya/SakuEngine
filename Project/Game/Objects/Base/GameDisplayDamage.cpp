@@ -32,6 +32,14 @@ void GameDisplayDamage::Init(const std::string& textureName, const std::string& 
 	}
 }
 
+void GameDisplayDamage::SetSpriteLayer(SpriteLayer layer) {
+
+	for (uint32_t index = 0; index < damageDisplayMaxNum_; ++index) {
+
+		damagePopups_[index].digits->SetSpriteLayer(layer);
+	}
+}
+
 void GameDisplayDamage::SetDamage(int damage) {
 
 	receivedDamages_.push_back(std::clamp(damage, 0, 9999));

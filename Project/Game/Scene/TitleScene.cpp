@@ -37,9 +37,11 @@ void TitleScene::Init() {
 		PostProcessType::Glitch,
 		PostProcessType::DepthBasedOutline,
 		PostProcessType::Grayscale,
-		PostProcessType::PlayerAfterImage });
+		PostProcessType::PlayerAfterImage,
+		PostProcessType::DefaultDistortion });
 	// グリッチに使用するテクスチャを設定
 	postProcess->InputProcessTexture("noise", PostProcessType::Glitch);
+	postProcess->InputProcessTexture("distortion_1", PostProcessType::DefaultDistortion);
 
 	// 更新クラスを登録
 	postProcess->RegisterUpdater(std::make_unique<DepthOutlineUpdater>());

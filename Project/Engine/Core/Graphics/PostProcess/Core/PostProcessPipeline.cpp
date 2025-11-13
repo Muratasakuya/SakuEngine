@@ -39,6 +39,7 @@ void PostProcessPipeline::Init(ID3D12Device8* device, SRVDescriptor* srvDescript
 		"Glitch.json",
 		"CRTDisplay.json",
 		"PlayerAfterImage.json",
+		"DefaultDistortion.json",
 	};
 
 	for (const uint32_t& type : Algorithm::GetEnumArray(PostProcessType::Count)) {

@@ -23,3 +23,4 @@ static const int Bit_Lut = 1 << 13;
 static const int Bit_Glitch = 1 << 14;
 static const int Bit_CRTDisplay = 1 << 15;
 static const int Bit_PlayerAfterImage = 1 << 16;
+static const int Bit_DefaultDistortion = 1 << 17;

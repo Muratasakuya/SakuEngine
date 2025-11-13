@@ -345,3 +345,27 @@ public:
 	Vector3 emissionColor = Vector3::AnyInit(1.0f);
 	float emissionIntensity = 0.0f;
 };
+
+class DefaultDistortionForGPU {
+public:
+	//========================================================================
+	//	public Methods
+	//========================================================================
+
+	DefaultDistortionForGPU() = default;
+	~DefaultDistortionForGPU() = default;
+
+	void ImGui();
+
+	//--------- properties ---------------------------------------------------
+
+	// バイアス
+	float bias = 1.0f;
+	// 強さ
+	float strength = 1.0f;
+
+	float pad[2];
+
+	Color color = Color::White();
+	Matrix4x4 uvTransform = Matrix4x4::MakeIdentity4x4();
+};

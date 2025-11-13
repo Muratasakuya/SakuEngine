@@ -15,23 +15,28 @@ void PlayerStunHUD::Init() {
 	progressBarBackground_ = std::make_unique<GameObject2D>();
 	progressBarBackground_->Init("stunProgressBarBackground",
 		"stunProgressBarBackground", "PlayerStunHUD");
+	progressBarBackground_->SetSpriteLayer(SpriteLayer::PreModel);
 
 	// 経過率
 	progressBar_ = std::make_unique<GameObject2D>();
 	progressBar_->Init("stunProgressBar", "stunProgressBar", "PlayerStunHUD");
+	progressBar_->SetSpriteLayer(SpriteLayer::PreModel);
 
 	// 経過率文字
 	chainAttackText_ = std::make_unique<GameObject2D>();
 	chainAttackText_->Init("CHAINATTACK", "CHAINATTACK", "PlayerStunHUD");
+	chainAttackText_->SetSpriteLayer(SpriteLayer::PreModel);
 
 	// アイコン
 	for (uint32_t index = 0; index < iconCount_; ++index) {
 
 		stunChainIcon_[index] = std::make_unique<GameObject2D>();
 		stunChainIcon_[index]->Init("chainPlayerIcon", "chainPlayerIcon", "PlayerStunHUD");
+		stunChainIcon_[index]->SetSpriteLayer(SpriteLayer::PreModel);
 
 		stunChainIconRing_[index] = std::make_unique<GameObject2D>();
 		stunChainIconRing_[index]->Init("chainPlayerIconRing", "chainPlayerIconRing", "PlayerStunHUD");
+		stunChainIconRing_[index]->SetSpriteLayer(SpriteLayer::PreModel);
 	}
 
 	// 入力
@@ -41,6 +46,7 @@ void PlayerStunHUD::Init() {
 	// タイマー
 	restTimerDisplay_ = std::make_unique<GameTimerDisplay>();
 	restTimerDisplay_->Init("dd:dd:dd", "timeNumber", "timeSymbol", "restTimer", "PlayerStunHUD");
+	restTimerDisplay_->SetSpriteLayer(SpriteLayer::PreModel);
 
 	isVaild_ = false;
 	isCountFinished_ = false;
@@ -510,12 +516,15 @@ void PlayerStunHUD::ChainInput::Init(const std::string& rightTex, const std::str
 
 	rightChain = std::make_unique<GameObject2D>();
 	rightChain->Init(rightTex, rightTex, "PlayerStunHUD");
+	rightChain->SetSpriteLayer(SpriteLayer::PreModel);
 
 	leftChain = std::make_unique<GameObject2D>();
 	leftChain->Init(leftTex, leftTex, "PlayerStunHUD");
+	leftChain->SetSpriteLayer(SpriteLayer::PreModel);
 
 	cancel = std::make_unique<GameObject2D>();
 	cancel->Init(cancelTex, cancelTex, "PlayerStunHUD");
+	cancel->SetSpriteLayer(SpriteLayer::PreModel);
 }
 
 void PlayerStunHUD::ChainInput::SetSize(const Vector2& size) {

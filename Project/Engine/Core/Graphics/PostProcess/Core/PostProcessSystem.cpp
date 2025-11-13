@@ -558,6 +558,14 @@ void PostProcessSystem::CreateCBuffer(PostProcessType type) {
 		buffers_[type] = std::move(buffer);
 		break;
 	}
+	case PostProcessType::DefaultDistortion: {
+
+		auto buffer = std::make_unique<PostProcessBuffer<DefaultDistortionForGPU>>();
+		buffer->Init(device_, 4);
+
+		buffers_[type] = std::move(buffer);
+		break;
+	}
 	}
 }
 

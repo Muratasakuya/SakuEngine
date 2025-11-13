@@ -46,12 +46,17 @@ namespace LerpKeyframe {
 	template <Lerpable T>
 	inline T Lerp(const T& a, const T& b, float t) {
 
+		T value{};
+
 		// Quaternionの場合はSlerpを使う
 		if constexpr (std::is_same_v<T, Quaternion>) {
 
-			return Quaternion::Slerp(a, b, t);
+			value = Quaternion::Slerp(a, b, t);
+		} else {
+
+			value = a + LerpKeyframe::Multiply((b - a), t);
 		}
-		return a + LerpKeyframe::Multiply((b - a), t);
+		return value;
 	}
 
 	//============================================================================

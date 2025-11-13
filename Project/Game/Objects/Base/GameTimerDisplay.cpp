@@ -95,6 +95,14 @@ void GameTimerDisplay::Update(float second) {
 	}
 }
 
+void GameTimerDisplay::SetSpriteLayer(SpriteLayer layer) {
+
+	for (size_t i = 0; i < elements_.size(); ++i) {
+
+		elements_[i].sprite->SetSpriteLayer(layer);
+	}
+}
+
 void GameTimerDisplay::SetTranslation(const Vector2& translation) {
 
 	for (size_t i = 0; i < elements_.size(); ++i) {

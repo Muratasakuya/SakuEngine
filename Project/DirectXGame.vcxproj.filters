@@ -2344,5 +2344,6 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Engine\Shaders\PostProcess\PlayerAfterImage\PlayerAfterImage.CS.hlsl" />
+    <FxCompile Include="Assets\Engine\Shaders\PostProcess\Distortion\DefaultDistortion.CS.hlsl" />
   </ItemGroup>
 </Project>

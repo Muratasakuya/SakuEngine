@@ -50,7 +50,7 @@ void Camera3DEditorPanel::Edit(std::unordered_map<std::string, CameraPathData>& 
 			auto it = params.find(selectedParamKey);
 			if (it != params.end()) {
 
-				EditCameraParam(it->second, names, selectedParamKey,
+				EditCameraParam(it->second, selectedParamKey,
 					selectedKeyIndex, paramSaveState, lastLoaded, playbackCamera);
 			}
 		}
@@ -134,8 +134,7 @@ void Camera3DEditorPanel::SelectCameraParam(std::unordered_map<std::string, Came
 	}
 }
 
-void Camera3DEditorPanel::EditCameraParam(CameraPathData& param, std::vector<std::string>& names,
-	std::string& selectedParamKey, int& selectedKeyIndex,
+void Camera3DEditorPanel::EditCameraParam(CameraPathData& param, std::string& selectedParamKey, int& selectedKeyIndex,
 	JsonSaveState& paramSaveState, char lastLoaded[128], CameraPathController::PlaybackState& playbackCamera) {
 
 	if (selectedParamKey.empty()) {

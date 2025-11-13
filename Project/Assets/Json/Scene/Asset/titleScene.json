@@ -9,7 +9,9 @@
     "gameStartText",
     "gameFinishText",
     "bariera_2m",
-    "overcast_soil_puresky_4k"
+    "overcast_soil_puresky_4k",
+    "distortion_0",
+    "distortion_1"
   ],
   "Models": [
     "demoCamera",
