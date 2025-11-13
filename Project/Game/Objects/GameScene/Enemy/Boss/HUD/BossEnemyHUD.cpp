@@ -18,32 +18,26 @@ void BossEnemyHUD::InitSprite() {
 	// HP背景
 	hpBackground_ = std::make_unique<GameObject2D>();
 	hpBackground_->Init("enemyHPBackground", "hpBackground", "BossEnemyHUD");
-	hpBackground_->SetSpriteLayer(SpriteLayer::PreModel);
 
 	// HP残量
 	hpBar_ = std::make_unique<GameHPBar>();
 	hpBar_->Init("enemyHPBar", "whiteAlphaGradation_0", "hpBar", "BossEnemyHUD");
-	hpBar_->SetSpriteLayer(SpriteLayer::PreModel);
 
 	// 撃破靭性値
 	destroyBar_ = std::make_unique<GameHPBar>();
 	destroyBar_->Init("enemyDestroyBar", "whiteAlphaGradation_0", "destroyBar", "BossEnemyHUD");
-	destroyBar_->SetSpriteLayer(SpriteLayer::PreModel);
 
 	// 撃破靭性値の数字表示
 	destroyNumDisplay_ = std::make_unique<GameDigitDisplay>();
 	destroyNumDisplay_->Init(2, "toughnessNumber", "destroyNum", "BossEnemyHUD");
-	destroyNumDisplay_->SetSpriteLayer(SpriteLayer::PreModel);
 
 	// 名前文字表示
 	nameText_ = std::make_unique<GameObject2D>();
 	nameText_->Init("bossName", "bossName", "BossEnemyHUD");
-	nameText_->SetSpriteLayer(SpriteLayer::PreModel);
 
 	// ダメージ表示
 	damageDisplay_ = std::make_unique<GameDisplayDamage>();
 	damageDisplay_->Init("enemyDamageNumber", "BossEnemyHUD", 8, 4);
-	damageDisplay_->SetSpriteLayer(SpriteLayer::PreModel);
 }
 
 void BossEnemyHUD::Init() {

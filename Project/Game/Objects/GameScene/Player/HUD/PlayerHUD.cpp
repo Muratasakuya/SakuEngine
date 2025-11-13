@@ -17,22 +17,18 @@ void PlayerHUD::InitSprite() {
 	// HP背景
 	hpBackground_ = std::make_unique<GameObject2D>();
 	hpBackground_->Init("playerHPBackground", "hpBackground", "PlayerHUD");
-	hpBackground_->SetSpriteLayer(SpriteLayer::PreModel);
 
 	// HP残量
 	hpBar_ = std::make_unique<GameHPBar>();
 	hpBar_->Init("playerHPBar", "whiteAlphaGradation_1", "hpBar", "PlayerHUD");
-	hpBar_->SetSpriteLayer(SpriteLayer::PreModel);
 
 	// スキル値
 	skilBar_ = std::make_unique<GameHPBar>();
 	skilBar_->Init("playerSkilBar", "whiteAlphaGradation_1", "destroyBar", "PlayerHUD");
-	skilBar_->SetSpriteLayer(SpriteLayer::PreModel);
 
 	// 名前文字表示
 	nameText_ = std::make_unique<GameObject2D>();
 	nameText_->Init("playerName", "playerName", "PlayerHUD");
-	nameText_->SetSpriteLayer(SpriteLayer::PreModel);
 
 	// キーボード操作とパッド操作のtextureの名前を格納する
 	std::unordered_map<InputType, std::string> dynamicTextures{};
@@ -60,7 +56,6 @@ void PlayerHUD::InitSprite() {
 	// ダメージ表示
 	damageDisplay_ = std::make_unique<GameDisplayDamage>();
 	damageDisplay_->Init("playerDamageNumber", "BossEnemyHUD", 4, 3);
-	damageDisplay_->SetSpriteLayer(SpriteLayer::PreModel);
 
 	// input状態を取得
 	inputType_ = Input::GetInstance()->GetType();
@@ -351,14 +346,12 @@ void PlayerHUD::InputStateSprite::Init(uint32_t spriteIndex, const std::string& 
 	// 変化しないspriteの初期化
 	staticSprite = std::make_unique<GameObject2D>();
 	staticSprite->Init(staticSpriteTextureName, staticSpriteTextureName, groupName);
-	staticSprite->SetSpriteLayer(SpriteLayer::PreModel);
 
 	// 変化するspriteをタイプごとに初期化
 	for (auto& [type, texture] : dynamicSpritesTextureName) {
 
 		dynamicSprites[type] = std::make_unique<GameObject2D>();
 		dynamicSprites[type]->Init(texture, texture, groupName);
-		dynamicSprites[type]->SetSpriteLayer(SpriteLayer::PreModel);
 	}
 }
 
