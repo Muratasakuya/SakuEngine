@@ -324,6 +324,8 @@ void KeyframeObject3D::ImGui() {
 
 void KeyframeObject3D::DrawKeyTimeline() {
 
+#if defined(_DEBUG) || defined(_DEVELOPBUILD)
+
 	// 表示バーのサイズ
 	const float barWidth = 520.0f;
 	const float barHeight = 12.0f;
@@ -472,6 +474,7 @@ void KeyframeObject3D::DrawKeyTimeline() {
 		}
 		ImGui::EndPopup();
 	}
+#endif
 }
 
 void KeyframeObject3D::FromJson(const Json& data) {
