@@ -26,6 +26,7 @@ void KeyframeObject3D::Init(const std::string& name, const std::string& modelNam
 	keyModelName_ = modelName;
 
 	// デフォルト設定
+	addKeyTimeStep_ = 0.8f;
 	currentState_ = State::None;
 	isConnectEnds_ = false;
 	lerpType_ = LerpKeyframe::Type::Linear;
@@ -67,6 +68,12 @@ void KeyframeObject3D::AddKeyValue(AnyMold mold, const std::string& keyName) {
 }
 
 void KeyframeObject3D::Update() {
+
+	// 行列の更新は常に行う
+	for (auto& key : keys_) {
+
+		key.transform.UpdateMatrix();
+	}
 
 	// None状態なら何もしない
 	if (currentState_ == State::None) {
@@ -163,7 +170,7 @@ std::vector<Vector3> KeyframeObject3D::GetPositions() const {
 	positions.reserve(keys_.size());
 	for (const auto& key : keys_) {
 
-		positions.emplace_back(key.transform.translation);
+		positions.emplace_back(key.transform.GetWorldPos());
 	}
 	return positions;
 }
@@ -329,10 +336,22 @@ void KeyframeObject3D::ImGui() {
 	}
 
 	// キーオブジェクトの追加
+	ImGui::DragFloat("addKeyTimeStep", &addKeyTimeStep_, 0.001f);
 	if (ImGui::Button("Add Keyframe")) {
 
 		// キーを追加
 		Key key{};
+
+		// 時間の初期化設定
+		if (keys_.empty()) {
+
+			key.time = 0.0f;
+		} else {
+
+			// 一番最後の時間から+設定値
+			key.time = keys_.back().time + addKeyTimeStep_;
+		}
+
 		// 座標
 		key.transform.translation = keyObjects_.empty() ?
 			Vector3::AnyInit(0.0f) : keyObjects_.back()->GetTransform().GetWorldPos();
@@ -343,6 +362,25 @@ void KeyframeObject3D::ImGui() {
 		// 回転
 		key.transform.rotation = keyObjects_.empty() ?
 			Quaternion::Identity() : keyObjects_.back()->GetTransform().rotation;
+
+		// 任意の型の値があれば
+		if (!anyTracks_.empty()) {
+			if (keys_.empty()) {
+
+				// 最初のキーなら、各任意値ごとにデフォルト値を入れる
+				key.anyValues.reserve(anyTracks_.size());
+				for (const auto& track : anyTracks_) {
+
+					key.anyValues.emplace_back(MakeDefaultAnyValue(track.type));
+				}
+			} else {
+
+				// 2個目以降のキーは直前のキーからコピーした値
+				key.anyValues = keys_.back().anyValues;
+			}
+		}
+
+		// キーを追加
 		keys_.emplace_back(key);
 
 		// キーオブジェクトを生成
@@ -379,24 +417,28 @@ void KeyframeObject3D::ImGui() {
 
 							ImGuiHelper::DragFloat<float>(label.c_str(), *value);
 						}
+						break;
 					}
 					case AnyMold::Vector2: {
 						if (auto* value = std::get_if<Vector2>(&keys_[k].anyValues[track])) {
 
 							ImGuiHelper::DragFloat<Vector2>(label.c_str(), *value);
 						}
+						break;
 					}
 					case AnyMold::Vector3: {
 						if (auto* value = std::get_if<Vector3>(&keys_[k].anyValues[track])) {
 
 							ImGuiHelper::DragFloat<Vector3>(label.c_str(), *value);
 						}
+						break;
 					}
 					case AnyMold::Color: {
 						if (auto* value = std::get_if<Color>(&keys_[k].anyValues[track])) {
 
 							ImGuiHelper::DragFloat<Color>(label.c_str(), *value);
 						}
+						break;
 					}
 					}
 					ImGui::PopID();
@@ -759,6 +801,8 @@ void KeyframeObject3D::FromJson(const Json& data) {
 
 		keyObjects_.emplace_back(std::move(CreateKeyObject(key.transform)));
 	}
+
+	addKeyTimeStep_ = data.value("addKeyTimeStep_", 0.8f);
 }
 
 void KeyframeObject3D::ToJson(Json& data) {
@@ -842,4 +886,6 @@ void KeyframeObject3D::ToJson(Json& data) {
 	data["parentName_"] = parentName_;
 	data["lerpType_"] = EnumAdapter<LerpKeyframe::Type>::ToString(lerpType_);
 	data["isConnectEnds_"] = isConnectEnds_;
+
+	data["addKeyTimeStep_"] = addKeyTimeStep_;
 }

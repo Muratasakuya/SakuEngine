@@ -110,8 +110,9 @@ private:
 	bool isConnectEnds_; // 最初と最後のキーを結ぶかどうか
 
 	// エディター
-	bool isDrawKeyframe_; // キーフレーム表示
-	bool isEditUpdate_;   // ImGui関数内で更新するかどうか
+	float addKeyTimeStep_; // キーを追加するときの時間差分
+	bool isDrawKeyframe_;  // キーフレーム表示
+	bool isEditUpdate_;    // ImGui関数内で更新するかどうか
 
 	//--------- functions ----------------------------------------------------
 

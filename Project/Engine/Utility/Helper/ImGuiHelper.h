@@ -134,6 +134,10 @@ public:
 
 	// 入力
 	static bool InputText(const char* label, InputImGui& ioInput);
+
+	// ウィンドウエリアのサイズを割合に応じて取得する(0 ~ 1、0.5:0.5で半分で分割)
+	// x = 左側、y = 右側
+	static ImVec2 GetWindowAreaSizeRatio(float leftRatio, float rightRatio);
 };
 
 //============================================================================

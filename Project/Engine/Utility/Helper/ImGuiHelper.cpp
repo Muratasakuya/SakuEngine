@@ -390,3 +390,17 @@ bool ImGuiHelper::InputText(const char* label, InputImGui& ioInput) {
 	}
 	return changed;
 }
+
+ImVec2 ImGuiHelper::GetWindowAreaSizeRatio(float leftRatio, float rightRatio) {
+
+	ImVec2 result{};
+
+	float avail = ImGui::GetContentRegionAvail().x;
+	float spacing = ImGui::GetStyle().ItemSpacing.x;
+	float totalRatio = leftRatio + rightRatio;
+
+	result.x = (avail - spacing) * (leftRatio / totalRatio);
+	result.y = (avail - spacing) * (rightRatio / totalRatio);
+
+	return result;
+}

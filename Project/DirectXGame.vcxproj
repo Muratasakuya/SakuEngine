@@ -199,6 +199,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Core\Graphics\GPUObject\IndexBuffer.cpp">
       <SubType />
     </ClCompile>
+    <ClCompile Include="Engine\Editor\Camera\CameraEditor.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="Engine\Effect\Particle\Module\Updater\Primitive\Derived\ParticleTestMeshUpdater.cpp">
       <SubType>
       </SubType>
@@ -976,6 +980,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </ClInclude>
     <ClInclude Include="Engine\Core\Graphics\GPUObject\VertexBuffer.h">
       <SubType />
+    </ClInclude>
+    <ClInclude Include="Engine\Editor\Camera\CameraEditor.h">
+      <SubType>
+      </SubType>
     </ClInclude>
     <ClInclude Include="Engine\Effect\Particle\Module\Updater\Primitive\Derived\ParticleTestMeshUpdater.h">
       <SubType>

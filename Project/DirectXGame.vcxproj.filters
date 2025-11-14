@@ -2303,6 +2303,7 @@
     <ClCompile Include="Engine\Object\Base\KeyframeObject3D.cpp" />
     <ClCompile Include="Engine\Effect\Particle\Module\Updater\Primitive\Derived\ParticleTestMeshUpdater.cpp" />
     <ClCompile Include="Game\PostEffect\DefaultDistortionUpdater.cpp" />
+    <ClCompile Include="Engine\Editor\Camera\CameraEditor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\Camera\Follow\State\States\FollowCameraReturnDefaultRotate.h" />
@@ -2344,6 +2345,7 @@
     <ClInclude Include="Engine\Effect\Particle\Module\Updater\Primitive\Derived\ParticleTestMeshUpdater.h" />
     <ClInclude Include="Game\PostEffect\DefaultDistortionUpdater.h" />
     <ClInclude Include="Engine\Utility\Enum\AnyMoldEnum.h" />
+    <ClInclude Include="Engine\Editor\Camera\CameraEditor.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Engine\Shaders\PostProcess\PlayerAfterImage\PlayerAfterImage.CS.hlsl" />

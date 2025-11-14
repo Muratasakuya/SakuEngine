@@ -90,9 +90,7 @@ out vertices MSOutput verts[CYL_MAX_VERTS], out indices uint3 polys[CYL_MAX_TRIS
 
 		vertex.position = mul(float4(pBot, 1), wvp);
 		vertex.texcoord = float2(-u, 1.0f);
-		verts[divide + 1 + i] = vertex;
-		
-		vertex.instanceID = instanceIndex;
+		verts[divide + 1 + i] = vertex;		vertex.instanceID = instanceIndex;
 		vertex.vertexColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 
