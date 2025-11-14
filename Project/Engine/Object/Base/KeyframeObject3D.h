@@ -17,14 +17,25 @@ public:
 	//	public Methods
 	//========================================================================
 
+	//--------- structure ----------------------------------------------------
+
+	// 任意の型、追加できるのはこれだけ
+	using AnyValue = std::variant<float, Vector2, Vector3, Color>;
+public:
+	//========================================================================
+	//	public Methods
+	//========================================================================
+
 	KeyframeObject3D() = default;
 	~KeyframeObject3D() = default;
 
 	// 初期化
 	void Init(const std::string& name, const std::string& modelName = "defaultCube");
 
-	// 更新
-	void Update();
+	// KeyframeObject3Dの時間で更新
+	void SelfUpdate();
+	// 外部からの値入力による更新
+	void ExternalInputTUpdate(float inputT);
 
 	// エディター
 	void ImGui();
@@ -37,12 +48,27 @@ public:
 	void StartLerp();
 
 	// 補間処理するキーの値を追加
-	void AddKeyValue(AnyMold mold, const std::string& keyName);
+	void AddKeyValue(AnyMold mold, const std::string& name);
 
 	//--------- accessor -----------------------------------------------------
 
+	// 再生中かどうか
+	bool IsUpdating() const { return currentState_ == State::Updating; }
+
+	// 指定インデックス番目のトランスフォームを返す
+	const Transform3D& GetIndexTransform(uint32_t index) const;
+	// 指定インデックス番目の任意の型の現在の値を返す
+	AnyValue GetIndexAnyValue(uint32_t index, const std::string& name) const;
+
 	// 現在のトランスフォームを返す
-	const Transform3D& GetCurrentPos() const { return currentTransform_; }
+	const Transform3D& GetCurrentTransform() const { return currentTransform_; }
+	// 追加されている任意の型の現在の値を返す
+	AnyValue GetCurrentAnyValue(const std::string& name) const;
+
+	// キーオブジェクトの全てのIDを返す、これはエンジン内のオブジェクトID
+	std::vector<uint32_t> GetKeyObjectIDs() const;
+	// エンジン内のオブジェクトIDから何番目のキーか取得
+	uint32_t GetKeyIndexFromObjectID(uint32_t index);
 private:
 	//========================================================================
 	//	private Methods
@@ -57,8 +83,6 @@ private:
 		Updating, // 補間開始
 	};
 
-	// 任意の型、追加できるのはこれだけ
-	using AnyValue = std::variant<float, Vector2, Vector3, Color>;
 	// 任意値トラック情報
 	struct AnyTrack {
 
@@ -138,6 +162,9 @@ private:
 
 	// キータイムラインの描画
 	void DrawKeyTimeline();
+
+	// キー位置、線の描画
+	void DrawKeyLine();
 };
 
 //============================================================================

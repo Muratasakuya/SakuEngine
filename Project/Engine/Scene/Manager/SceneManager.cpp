@@ -60,6 +60,7 @@ void SceneManager::Update() {
 
 	// cameraEditor更新
 	Camera3DEditor::GetInstance()->Update();
+	CameraEditor::GetInstance()->Update();
 }
 
 void SceneManager::BeginFrame() {

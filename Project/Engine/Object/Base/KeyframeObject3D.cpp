@@ -41,12 +41,12 @@ void KeyframeObject3D::StartLerp() {
 	timer_ = 0.0f;
 }
 
-void KeyframeObject3D::AddKeyValue(AnyMold mold, const std::string& keyName) {
+void KeyframeObject3D::AddKeyValue(AnyMold mold, const std::string& name) {
 
 	// 同じ名前の値は追加できないようにする
 	for (const auto& track : anyTracks_) {
 		// 名前が同じなかどうか
-		if (track.name == keyName) {
+		if (track.name == name) {
 			return;
 		}
 	}
@@ -54,7 +54,7 @@ void KeyframeObject3D::AddKeyValue(AnyMold mold, const std::string& keyName) {
 	// 値を追加
 	AnyTrack track{};
 	track.type = mold;
-	track.name = keyName;
+	track.name = name;
 	anyTracks_.emplace_back(track);
 	// 初期値
 	AnyValue defaultValue = MakeDefaultAnyValue(mold);
@@ -67,7 +67,63 @@ void KeyframeObject3D::AddKeyValue(AnyMold mold, const std::string& keyName) {
 	currentAnyValues_.emplace_back(defaultValue);
 }
 
-void KeyframeObject3D::Update() {
+const Transform3D& KeyframeObject3D::GetIndexTransform(uint32_t index) const {
+
+	return keyObjects_[index]->GetTransform();
+}
+
+KeyframeObject3D::AnyValue KeyframeObject3D::GetIndexAnyValue(uint32_t index, const std::string& name) const {
+
+	// 名前を探してnameIndex番目の値を返す
+	for (size_t nameIndex = 0; nameIndex < anyTracks_.size(); ++nameIndex) {
+
+		// 名前をチェック
+		if (anyTracks_[nameIndex].name == name) {
+
+			// index番目のnameIndex番目を返す
+			return keys_[index].anyValues[nameIndex];
+		}
+	}
+	return AnyValue{};
+}
+
+KeyframeObject3D::AnyValue KeyframeObject3D::GetCurrentAnyValue(const std::string& name) const {
+
+	// 名前を探してindex番目の値を返す
+	for (size_t nameIndex = 0; nameIndex < anyTracks_.size(); ++nameIndex) {
+
+		// 名前をチェック
+		if (anyTracks_[nameIndex].name == name) {
+
+			// nameIndex番目を返す
+			return currentAnyValues_[nameIndex];
+		}
+	}
+	return AnyValue{};
+}
+
+std::vector<uint32_t> KeyframeObject3D::GetKeyObjectIDs() const {
+
+	std::vector<uint32_t> ids{};
+	for (const auto& keyObject : keyObjects_) {
+
+		ids.emplace_back(keyObject->GetObjectID());
+	}
+	return ids;
+}
+
+uint32_t KeyframeObject3D::GetKeyIndexFromObjectID(uint32_t index) {
+
+	uint32_t keyIndex = 0;
+	for (const auto& keyObject : keyObjects_) {
+		if (keyObject->GetObjectID() == index) {
+			break;
+		}
+	}
+	return keyIndex;
+}
+
+void KeyframeObject3D::SelfUpdate() {
 
 	// 行列の更新は常に行う
 	for (auto& key : keys_) {
@@ -77,6 +133,9 @@ void KeyframeObject3D::Update() {
 
 	// None状態なら何もしない
 	if (currentState_ == State::None) {
+
+		// 線の描画はする
+		DrawKeyLine();
 		return;
 	}
 
@@ -111,6 +170,28 @@ void KeyframeObject3D::Update() {
 		currentState_ = State::None;
 		timer_ = 0.0f;
 	}
+
+	// 線の描画
+	DrawKeyLine();
+}
+
+void KeyframeObject3D::ExternalInputTUpdate(float inputT) {
+
+	// 必ず0.0f~1.0fの間
+	float t = std::clamp(inputT, 0.0f, 1.0f);
+
+	// スケール
+	currentTransform_.scale = LerpKeyframe::GetValue<Vector3>(GetScales(), t, lerpType_);
+	// 回転
+	currentTransform_.rotation = LerpKeyframe::GetValue<Quaternion>(GetRotations(), t, lerpType_);
+	// 座標
+	currentTransform_.translation = LerpKeyframe::GetValue<Vector3>(GetPositions(), t, lerpType_);
+
+	// 任意値の更新
+	UpdateAnyValues(t);
+
+	// 線の描画
+	DrawKeyLine();
 }
 
 std::unique_ptr<GameObject3D> KeyframeObject3D::CreateKeyObject(const Transform3D& transform) {
@@ -273,7 +354,7 @@ void KeyframeObject3D::ImGui() {
 	// エディター内で更新を呼びだす
 	if (isEditUpdate_) {
 
-		Update();
+		SelfUpdate();
 	}
 
 	ImGui::SeparatorText("Key Timer");
@@ -492,31 +573,6 @@ void KeyframeObject3D::ImGui() {
 			keys_[i].transform.translation = transform.translation;
 		}
 	}
-	// 線描画
-	LerpKeyframe::DrawKeyframeLine(GetPositions(), lerpType_, isConnectEnds_);
-
-	Color obbColor = Color::Yellow();
-	// 色が任意で設定されていればその色にする
-	for (const auto& anyValue : currentAnyValues_) {
-		if (auto* color = std::get_if<Color>(&anyValue)) {
-
-			obbColor = *color;
-			break;
-		}
-	}
-	// 表示オブジェクトも対応する色にする
-	for (uint32_t index = 0; index < keys_.size(); ++index) {
-		for (const auto& anyValue : keys_[index].anyValues) {
-			if (auto* color = std::get_if<Color>(&anyValue)) {
-
-				keyObjects_[index]->SetColor(*color);
-			}
-		}
-	}
-
-	// 現在の時間の点の位置
-	LineRenderer::GetInstance()->DrawOBB(currentTransform_.translation,
-		currentTransform_.scale, currentTransform_.rotation, obbColor, LineType::DepthIgnore);
 
 	ImGui::PopItemWidth();
 
@@ -690,6 +746,38 @@ void KeyframeObject3D::DrawKeyTimeline() {
 		}
 		ImGui::EndPopup();
 	}
+#endif
+}
+
+void KeyframeObject3D::DrawKeyLine() {
+#if defined(_DEBUG) || defined(_DEVELOPBUILD)
+
+	// 線描画
+	LerpKeyframe::DrawKeyframeLine(GetPositions(), lerpType_, isConnectEnds_);
+
+	Color obbColor = Color::Yellow();
+	// 色が任意で設定されていればその色にする
+	for (const auto& anyValue : currentAnyValues_) {
+		if (auto* color = std::get_if<Color>(&anyValue)) {
+
+			obbColor = *color;
+			break;
+		}
+	}
+	// 表示オブジェクトも対応する色にする
+	for (uint32_t index = 0; index < keys_.size(); ++index) {
+		for (const auto& anyValue : keys_[index].anyValues) {
+			if (auto* color = std::get_if<Color>(&anyValue)) {
+
+				keyObjects_[index]->SetColor(*color);
+			}
+		}
+	}
+
+	// 現在の時間の点の位置
+	LineRenderer::GetInstance()->DrawOBB(currentTransform_.translation,
+		currentTransform_.scale, currentTransform_.rotation, obbColor, LineType::DepthIgnore);
+
 #endif
 }
 
