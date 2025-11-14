@@ -125,7 +125,6 @@ std::unique_ptr<GameObject3D> KeyframeObject3D::CreateKeyObject(const Transform3
 
 	// 描画設定、シーンにしか表示しない
 	object->SetMeshRenderView(isDrawKeyframe_ ? MeshRenderView::Scene : MeshRenderView::None);
-	object->SetBlendMode(BlendMode::kBlendModeAdd);
 	object->SetScale(Vector3::AnyInit(2.4f));
 	object->SetCastShadow(false);
 	object->SetShadowRate(1.0f);
@@ -475,7 +474,7 @@ void KeyframeObject3D::ImGui() {
 
 	// 現在の時間の点の位置
 	LineRenderer::GetInstance()->DrawOBB(currentTransform_.translation,
-		currentTransform_.scale, currentTransform_.rotation, obbColor);
+		currentTransform_.scale, currentTransform_.rotation, obbColor, LineType::DepthIgnore);
 
 	ImGui::PopItemWidth();
 
