@@ -40,6 +40,32 @@ void KeyframeObject3D::StartLerp() {
 	timer_ = 0.0f;
 }
 
+void KeyframeObject3D::AddKeyValue(AnyMold mold, const std::string& keyName) {
+
+	// 同じ名前の値は追加できないようにする
+	for (const auto& track : anyTracks_) {
+		// 名前が同じなかどうか
+		if (track.name == keyName) {
+			return;
+		}
+	}
+
+	// 値を追加
+	AnyTrack track{};
+	track.type = mold;
+	track.name = keyName;
+	anyTracks_.emplace_back(track);
+	// 初期値
+	AnyValue defaultValue = MakeDefaultAnyValue(mold);
+
+	// 補間する値を追加する
+	for (auto& key : keys_) {
+
+		key.anyValues.emplace_back(defaultValue);
+	}
+	currentAnyValues_.emplace_back(defaultValue);
+}
+
 void KeyframeObject3D::Update() {
 
 	// None状態なら何もしない
@@ -62,6 +88,9 @@ void KeyframeObject3D::Update() {
 	currentTransform_.rotation = LerpKeyframe::GetValue<Quaternion>(GetRotations(), currentT, lerpType_);
 	// 座標
 	currentTransform_.translation = LerpKeyframe::GetValue<Vector3>(GetPositions(), currentT, lerpType_);
+
+	// 任意値の更新
+	UpdateAnyValues(currentT);
 
 	// 時間経過で終了
 	if (1.0f <= progress) {
@@ -179,6 +208,58 @@ float KeyframeObject3D::GetT(float currentT) const {
 	return resultT;
 }
 
+void KeyframeObject3D::UpdateAnyValues(float currentT) {
+
+	// 何も値がなければ何もしない
+	if (anyTracks_.empty() || keys_.empty()) {
+		currentAnyValues_.clear();
+		return;
+	}
+
+	// 任意の型の値の数分全て補間
+	const uint32_t trackCount = static_cast<uint32_t>(anyTracks_.size());
+	currentAnyValues_.resize(trackCount);
+	// 型の数だけループ
+	for (uint32_t trackIndex = 0; trackIndex < trackCount; ++trackIndex) {
+
+		// 型ごとに分岐して補間
+		AnyMold type = anyTracks_[trackIndex].type;
+		switch (type) {
+		case AnyMold::Float: {
+
+			currentAnyValues_[trackIndex] = GetLerpedAnyValue<float>(trackIndex, currentT);
+			break;
+		}
+		case AnyMold::Vector2: {
+
+			currentAnyValues_[trackIndex] = GetLerpedAnyValue<Vector2>(trackIndex, currentT);
+			break;
+		}
+		case AnyMold::Vector3: {
+
+			currentAnyValues_[trackIndex] = GetLerpedAnyValue<Vector3>(trackIndex, currentT);
+			break;
+		}
+		case AnyMold::Color: {
+
+			currentAnyValues_[trackIndex] = GetLerpedAnyValue<Color>(trackIndex, currentT);
+			break;
+		}
+		}
+	}
+}
+
+KeyframeObject3D::AnyValue KeyframeObject3D::MakeDefaultAnyValue(AnyMold mold) {
+
+	switch (mold) {
+	case AnyMold::Float: return 0.0f;
+	case AnyMold::Vector2: return Vector2::AnyInit(0.0f);
+	case AnyMold::Vector3: return Vector3::AnyInit(0.0f);
+	case AnyMold::Color: return Color::White();
+	}
+	return AnyValue{};
+}
+
 void KeyframeObject3D::ImGui() {
 
 	ImGui::PushItemWidth(200.0f);
@@ -201,6 +282,38 @@ void KeyframeObject3D::ImGui() {
 
 		// キータイムラインの描画
 		DrawKeyTimeline();
+
+		// 任意の型の現在値
+		for (const auto& track : anyTracks_) {
+
+			ImGui::SeparatorText(track.name.c_str());
+			switch (track.type) {
+			case AnyMold::Float:
+				if (auto* value = std::get_if<float>(&currentAnyValues_[&track - &anyTracks_[0]])) {
+
+					ImGui::Text("Current Value: %.3f", *value);
+				}
+				break;
+			case AnyMold::Vector2:
+				if (auto* value = std::get_if<Vector2>(&currentAnyValues_[&track - &anyTracks_[0]])) {
+
+					ImGui::Text("Current Value: (%.3f, %.3f)", value->x, value->y);
+				}
+				break;
+			case AnyMold::Vector3:
+				if (auto* value = std::get_if<Vector3>(&currentAnyValues_[&track - &anyTracks_[0]])) {
+
+					ImGui::Text("Current Value: (%.3f, %.3f, %.3f)", value->x, value->y, value->z);
+				}
+				break;
+			case AnyMold::Color:
+				if (auto* value = std::get_if<Color>(&currentAnyValues_[&track - &anyTracks_[0]])) {
+
+					ImGui::Text("Current Value: (R: %.3f, G: %.3f, B: %.3f, A: %.3f)", value->r, value->g, value->b, value->a);
+				}
+				break;
+			}
+		}
 	}
 
 	ImGui::SeparatorText("Config");
@@ -249,6 +362,48 @@ void KeyframeObject3D::ImGui() {
 
 		ImGui::Checkbox("isConnectEnds", &isConnectEnds_);
 		EnumAdapter<LerpKeyframe::Type>::Combo("LerpType", &lerpType_);
+
+		if (!keys_.empty() && !anyTracks_.empty()) {
+			// 任意値編集
+			for (size_t track = 0; track < anyTracks_.size(); ++track) {
+
+				ImGui::SeparatorText(anyTracks_[track].name.c_str());
+				for (size_t k = 0; k < keys_.size(); ++k) {
+
+					ImGui::PushID(static_cast<int>(k));
+					std::string label = "Key " + std::to_string(k);
+
+					// 型ごとに分岐して表示
+					switch (anyTracks_[track].type) {
+					case AnyMold::Float: {
+						if (auto* value = std::get_if<float>(&keys_[k].anyValues[track])) {
+
+							ImGuiHelper::DragFloat<float>(label.c_str(), *value);
+						}
+					}
+					case AnyMold::Vector2: {
+						if (auto* value = std::get_if<Vector2>(&keys_[k].anyValues[track])) {
+
+							ImGuiHelper::DragFloat<Vector2>(label.c_str(), *value);
+						}
+					}
+					case AnyMold::Vector3: {
+						if (auto* value = std::get_if<Vector3>(&keys_[k].anyValues[track])) {
+
+							ImGuiHelper::DragFloat<Vector3>(label.c_str(), *value);
+						}
+					}
+					case AnyMold::Color: {
+						if (auto* value = std::get_if<Color>(&keys_[k].anyValues[track])) {
+
+							ImGuiHelper::DragFloat<Color>(label.c_str(), *value);
+						}
+					}
+					}
+					ImGui::PopID();
+				}
+			}
+		}
 	}
 
 	if (ImGui::CollapsingHeader("Set Parent")) {
@@ -298,9 +453,29 @@ void KeyframeObject3D::ImGui() {
 	}
 	// 線描画
 	LerpKeyframe::DrawKeyframeLine(GetPositions(), lerpType_, isConnectEnds_);
+
+	Color obbColor = Color::Yellow();
+	// 色が任意で設定されていればその色にする
+	for (const auto& anyValue : currentAnyValues_) {
+		if (auto* color = std::get_if<Color>(&anyValue)) {
+
+			obbColor = *color;
+			break;
+		}
+	}
+	// 表示オブジェクトも対応する色にする
+	for (uint32_t index = 0; index < keys_.size(); ++index) {
+		for (const auto& anyValue : keys_[index].anyValues) {
+			if (auto* color = std::get_if<Color>(&anyValue)) {
+
+				keyObjects_[index]->SetColor(*color);
+			}
+		}
+	}
+
 	// 現在の時間の点の位置
 	LineRenderer::GetInstance()->DrawOBB(currentTransform_.translation,
-		currentTransform_.scale, currentTransform_.rotation, Color::Yellow());
+		currentTransform_.scale, currentTransform_.rotation, obbColor);
 
 	ImGui::PopItemWidth();
 
@@ -501,6 +676,59 @@ void KeyframeObject3D::FromJson(const Json& data) {
 		key.time = keyJson.value("time", 0.0f);
 		key.easeType = EnumAdapter<EasingType>::FromString(keyJson.value("ease", "Linear")).value();
 
+		key.anyValues.clear();
+		// anyTracks_はFromJson前にAddKeyValueで追加されている前提
+		if (!anyTracks_.empty()) {
+
+			Json anyJson = Json::object();
+			if (keyJson.contains("anyValues")) {
+
+				anyJson = keyJson["anyValues"];
+			}
+			for (const auto& track : anyTracks_) {
+
+				const std::string& name = track.name;
+				AnyValue value;
+				// JSON にキーがあればその値を無ければデフォルトを入れる
+				if (anyJson.contains(name)) {
+
+					const Json& vJson = anyJson[name];
+					switch (track.type) {
+					case AnyMold::Float: {
+
+						float v = 0.0f;
+						if (vJson.is_number_float() || vJson.is_number_integer()) {
+
+							v = vJson.get<float>();
+						} else {
+
+							v = std::get<float>(MakeDefaultAnyValue(AnyMold::Float));
+						}
+						value = v;
+						break;
+					}
+					case AnyMold::Vector2: {
+						value = Vector2::FromJson(vJson);
+						break;
+					}
+					case AnyMold::Vector3: {
+						value = Vector3::FromJson(vJson);
+						break;
+					}
+					case AnyMold::Color: {
+						value = Color::FromJson(vJson);
+						break;
+					}
+					}
+				} else {
+					value = MakeDefaultAnyValue(track.type);
+				}
+
+				key.anyValues.emplace_back(value);
+			}
+		}
+
+
 		keys_.emplace_back(key);
 	}
 
@@ -543,6 +771,71 @@ void KeyframeObject3D::ToJson(Json& data) {
 		key.transform.ToJson(keyJson["transform"]);
 		keyJson["time"] = key.time;
 		keyJson["ease"] = EnumAdapter<EasingType>::ToString(key.easeType);
+
+		if (!anyTracks_.empty()) {
+
+			Json anyJson = Json::object();
+			// anyTracks_と key.anyValuesのindexを対応させる
+			for (size_t trackIndex = 0; trackIndex < anyTracks_.size(); ++trackIndex) {
+
+				const AnyTrack& track = anyTracks_[trackIndex];
+				const std::string& name = track.name;
+				AnyValue value;
+				if (trackIndex < key.anyValues.size()) {
+
+					value = key.anyValues[trackIndex];
+				} else {
+
+					value = MakeDefaultAnyValue(track.type);
+				}
+				// 型ごとにJsonに変換
+				switch (track.type) {
+				case AnyMold::Float:
+					if (auto* v = std::get_if<float>(&value)) {
+
+						anyJson[name] = *v;
+					} else {
+
+						anyJson[name] = 0.0f;
+					}
+					break;
+
+				case AnyMold::Vector2:
+					if (auto* v = std::get_if<Vector2>(&value)) {
+
+						anyJson[name] = v->ToJson();;
+					} else {
+
+						anyJson[name] = Vector2::AnyInit(0.0f).ToJson();
+					}
+					break;
+
+				case AnyMold::Vector3:
+					if (auto* v = std::get_if<Vector3>(&value)) {
+
+						anyJson[name] = v->ToJson();
+					} else {
+
+						anyJson[name] = Vector3::AnyInit(0.0f).ToJson();
+					}
+					break;
+
+				case AnyMold::Color:
+					if (auto* v = std::get_if<Color>(&value)) {
+
+						anyJson[name] = v->ToJson();
+					} else {
+
+						anyJson[name] = Color::White().ToJson();
+					}
+					break;
+				}
+			}
+			// 何か入っていればキーに追加
+			if (!anyJson.empty()) {
+				keyJson["anyValues"] = anyJson;
+			}
+		}
 
 		data["Keys"].emplace_back(keyJson);
 	}

@@ -76,6 +76,36 @@ void Vector4::Init() {
 //	Color classMethods
 //============================================================================*/
 
+Color Color::operator+(const Color& other) const {
+	return Color(r + other.r, g + other.g, b + other.b, a + other.a);
+}
+Color Color::operator-(const Color& other) const {
+	return Color(r - other.r, g - other.g, b - other.b, a - other.a);
+}
+Color Color::operator*(const Color& other) const {
+	return Color(r * other.r, g * other.g, b * other.b, a * other.a);
+}
+Color Color::operator/(const Color& other) const {
+	return Color(r / other.r, g / other.g, b / other.b, a / other.a);
+}
+
+Color Color::operator-(float scalar) const {
+	return Color(r - scalar, g - scalar, b - scalar, a - scalar);
+}
+Color operator-(float scalar, const Color& v) {
+	return Color(v.r - scalar, v.g - scalar, v.b - scalar, v.a - scalar);
+}
+Color Color::operator*(float scalar) const {
+	return Color(r * scalar, g * scalar, b * scalar, a * scalar);
+}
+Color operator*(float scalar, const Color& v) {
+	return v * scalar;
+}
+
+Color Color::operator-() const {
+	return Color(-r, -g, -b, -a);
+}
+
 Color Color::Convert(int color) {
 
 	int r = (color >> 24) & 0xFF;

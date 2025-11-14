@@ -5,9 +5,11 @@
 //============================================================================
 #include <Engine/Object/Base/GameObject3D.h>
 #include <Engine/Utility/Animation/LerpKeyframe.h>
+#include <Engine/Utility/Enum/AnyMoldEnum.h>
 
 //============================================================================
 //	KeyframeObject3D class
+//	キーフレーム補間オブジェクト
 //============================================================================
 class KeyframeObject3D {
 public:
@@ -34,6 +36,9 @@ public:
 	// 補間開始
 	void StartLerp();
 
+	// 補間処理するキーの値を追加
+	void AddKeyValue(AnyMold mold, const std::string& keyName);
+
 	//--------- accessor -----------------------------------------------------
 
 	// 現在のトランスフォームを返す
@@ -52,12 +57,24 @@ private:
 		Updating, // 補間開始
 	};
 
+	// 任意の型、追加できるのはこれだけ
+	using AnyValue = std::variant<float, Vector2, Vector3, Color>;
+	// 任意値トラック情報
+	struct AnyTrack {
+
+		AnyMold type;     // 型のEnum
+		std::string name; // ImGuiに出す名前
+	};
+
 	// キー情報
 	struct Key {
 
 		Transform3D transform; // トランスフォーム
 		float time;            // 時間
 		EasingType easeType;   // イージング
+
+		// 任意な型の値
+		std::vector<AnyValue> anyValues;
 	};
 
 	//--------- variables ----------------------------------------------------
@@ -79,8 +96,13 @@ private:
 
 	// キー情報
 	std::vector<Key> keys_;
+	// 任意値トラック情報のリスト
+	std::vector<AnyTrack> anyTracks_;
+
 	// 現在のトランスフォーム
 	Transform3D currentTransform_;
+	// 現在の任意な型の値
+	std::vector<AnyValue> currentAnyValues_;
 
 	// 補間
 	LerpKeyframe::Type lerpType_; // 補間タイプ
@@ -103,6 +125,37 @@ private:
 	// 各区間の補間t取得
 	float GetT(float currentT) const;
 
+	// 任意値の更新
+	void UpdateAnyValues(float currentT);
+
+	// 任意値のデフォルト値
+	AnyValue MakeDefaultAnyValue(AnyMold mold);
+
+	// 任意の型の補間後の値取得
+	template<typename T>
+	T GetLerpedAnyValue(uint32_t trackIndex, float currentT) const;
+
 	// キータイムラインの描画
 	void DrawKeyTimeline();
 };
+
+//============================================================================
+//	KeyframeObject3D templateMethods
+//============================================================================
+
+template<typename T>
+inline T KeyframeObject3D::GetLerpedAnyValue(uint32_t trackIndex, float currentT) const {
+
+	std::vector<T> values;
+	values.reserve(keys_.size());
+	for (const auto& key : keys_) {
+		if (trackIndex < key.anyValues.size()) {
+			if (auto* anyValues = std::get_if<T>(&key.anyValues[trackIndex])) {
+
+				values.emplace_back(*anyValues);
+			}
+		}
+	}
+	T result = LerpKeyframe::GetValue<T>(values, currentT, lerpType_);
+	return result;
+}

@@ -22,6 +22,9 @@ PlayerSkilAttackState::PlayerSkilAttackState([[maybe_unused]] Player* player) {
 
 	// キーフレームオブジェクトの生成
 	moveKeyframeObject_ = std::make_unique<KeyframeObject3D>();
+	// キーの追加
+	moveKeyframeObject_->AddKeyValue(AnyMold::Float, "TestFloat");
+	moveKeyframeObject_->AddKeyValue(AnyMold::Color, "TestColor");
 	moveKeyframeObject_->Init("playerSkilMoveKey");
 }
 

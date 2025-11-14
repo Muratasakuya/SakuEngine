@@ -128,6 +128,10 @@ public:
 	// uint32_tのDrag編集
 	static bool DragUint32(const char* label, uint32_t& value, int maxValue = 0xffff);
 
+	// 型ごとのDragFloat編集
+	template <typename T>
+	static bool DragFloat(const char* label, T& value, float speed = 0.01f, float minValue = -10000.0f, float maxValue = 10000.0f);
+
 	// 入力
 	static bool InputText(const char* label, InputImGui& ioInput);
 };
@@ -188,4 +192,42 @@ inline void ImGuiHelper::ValueText(const char* label, const T& value, int precis
 	using detail::format_value;
 	const std::string stringValue = format_value(value, precision);
 	ImGui::TextUnformatted(std::format("{}: {}", label, stringValue).c_str());
+}
+
+template<typename T>
+inline bool ImGuiHelper::DragFloat(const char* label, T& value, float speed, float minValue, float maxValue) {
+
+	bool edited = false;
+	if constexpr (detail::Arithmetic<T>) {
+
+		float v = static_cast<float>(value);
+		edited = ImGui::DragFloat(label, &v, speed, minValue, maxValue);
+		if (edited) {
+
+			value = static_cast<T>(v);
+		}
+	} else if constexpr (detail::HasXY<T>) {
+
+		float v[3] = { static_cast<float>(value.x), static_cast<float>(value.y), 0.0f };
+		edited = ImGui::DragFloat2(label, v, speed, minValue, maxValue);
+		if (edited) {
+
+			value.x = static_cast<typename std::remove_reference<decltype(value.x)>::type>(v[0]);
+			value.y = static_cast<typename std::remove_reference<decltype(value.y)>::type>(v[1]);
+		}
+	} else if constexpr (detail::HasXYZ<T>) {
+
+		float v[3] = { static_cast<float>(value.x), static_cast<float>(value.y), static_cast<float>(value.z) };
+		edited = ImGui::DragFloat3(label, v, speed, minValue, maxValue);
+		if (edited) {
+
+			value.x = static_cast<typename std::remove_reference<decltype(value.x)>::type>(v[0]);
+			value.y = static_cast<typename std::remove_reference<decltype(value.y)>::type>(v[1]);
+			value.z = static_cast<typename std::remove_reference<decltype(value.z)>::type>(v[2]);
+		}
+	} else if constexpr (std::is_same_v<T, Color>) {
+
+		edited = ImGui::ColorEdit4(label, &value.r);
+	}
+	return edited;
 }

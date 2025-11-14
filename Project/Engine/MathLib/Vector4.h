@@ -60,6 +60,20 @@ public:
 	Color() : r(0.0f), g(0.0f), b(0.0f), a(1.0f) {}
 	Color(float r, float g, float b, float a) : r(r), g(g), b(b), a(a) {}
 
+	//--------- operators ----------------------------------------------------
+
+	Color operator+(const Color& other) const;
+	Color operator-(const Color& other) const;
+	Color operator*(const Color& other) const;
+	Color operator/(const Color& other) const;
+
+	Color operator-(float scalar) const;
+	friend Color operator-(float scalar, const Color& v);
+	Color operator*(float scalar) const;
+	friend Color operator*(float scalar, const Color& v);
+
+	Color operator-() const;
+
 	//----------- json -------------------------------------------------------
 
 	Json ToJson() const;
