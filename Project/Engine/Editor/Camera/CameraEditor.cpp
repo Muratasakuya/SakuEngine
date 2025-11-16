@@ -40,11 +40,15 @@ void CameraEditor::Init(SceneView* sceneView) {
 
 void CameraEditor::Update() {
 
+	ImGui::SetWindowFontScale(0.8f);
+
 	// キーオブジェクトの更新
 	UpdateKeyObjects();
 
 	// エディターの更新
 	UpdateEditor();
+
+	ImGui::SetWindowFontScale(1.0f);
 }
 
 void CameraEditor::UpdateKeyObjects() {
@@ -67,6 +71,8 @@ void CameraEditor::UpdateKeyObjects() {
 			keyObject->SelfUpdate();
 			break;
 		}
+		//常に行う
+		keyObject->UpdateKey();
 	}
 }
 

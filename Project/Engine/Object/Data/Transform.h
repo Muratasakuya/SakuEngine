@@ -41,8 +41,9 @@ public:
 	//--------- accessor -----------------------------------------------------
 
 	// matrixからワールド座標、向きを取得
-
-	Vector3 GetWorldPos() const;
+	Vector3 GetWorldScale() const;       // ワールドスケール
+	Quaternion GetWorldRotation() const; // ワールド回転
+	Vector3 GetWorldPos() const;         // ワールド座標
 
 	Vector3 GetForward() const;
 

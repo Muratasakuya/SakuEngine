@@ -145,6 +145,30 @@ void BaseTransform::FromJson(const Json& data) {
 	translation = JsonAdapter::ToObject<Vector3>(data["translation"]);
 }
 
+Vector3 BaseTransform::GetWorldScale() const {
+
+	Vector3 right(matrix.world.m[0][0], matrix.world.m[0][1], matrix.world.m[0][2]);
+	Vector3 up(matrix.world.m[1][0], matrix.world.m[1][1], matrix.world.m[1][2]);
+	Vector3 forward(matrix.world.m[2][0], matrix.world.m[2][1], matrix.world.m[2][2]);
+
+	Vector3 worldScale{};
+	worldScale.x = right.Length();
+	worldScale.y = up.Length();
+	worldScale.z = forward.Length();
+	return worldScale;
+}
+
+Quaternion BaseTransform::GetWorldRotation() const {
+
+	// 親も含めたForward、Upベクトルを取得
+	Vector3 forward = GetForward();
+	Vector3 up = GetUp();
+
+	// 回転を作成
+	Quaternion worldRotation = Quaternion::LookRotation(forward, up);
+	return Quaternion::Normalize(worldRotation);
+}
+
 Vector3 BaseTransform::GetWorldPos() const {
 
 	Vector3 worldPos{};

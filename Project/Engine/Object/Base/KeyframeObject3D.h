@@ -32,6 +32,9 @@ public:
 	// 初期化
 	void Init(const std::string& name, const std::string& modelName = "defaultCube");
 
+	// 常に行う更新、キーの位置更新
+	void UpdateKey();
+
 	// KeyframeObject3Dの時間で更新
 	void SelfUpdate();
 	// 外部からの値入力による更新
@@ -44,8 +47,9 @@ public:
 	void FromJson(const Json& data);
 	void ToJson(Json& data);
 
-	// 補間開始
-	void StartLerp();
+	// 補間開始、初期値が入っていれば最初のキーにする
+	void StartLerp(const std::optional<Transform3D>& transform = std::nullopt,
+		const std::optional<std::vector<AnyValue>>& anyValues = std::nullopt);
 
 	// 補間処理するキーの値を追加
 	void AddKeyValue(AnyMold mold, const std::string& name);
@@ -101,10 +105,19 @@ private:
 		std::vector<AnyValue> anyValues;
 	};
 
+	// 更新中の情報
+	struct Runtime {
+
+		bool hasStartKey = false;              // スタート値を使うかどうか
+		Transform3D startTransform;            // スタート時のTransform
+		std::vector<AnyValue> startAnyValues;  // スタート時の任意値
+	};
+
 	//--------- variables ----------------------------------------------------
 
 	// 現在の状態
 	State currentState_;
+	Runtime runtime_;
 
 	// キーフレーム表示用オブジェクトの名前
 	std::string keyObjectName_;
@@ -133,6 +146,10 @@ private:
 	float timer_;        // 現在の経過時間
 	bool isConnectEnds_; // 最初と最後のキーを結ぶかどうか
 
+	// 最初の区間を追加したときの補間用
+	float startDuration_;      // スタート値からキー0までの時間
+	EasingType startEaseType_; // イージング
+
 	// エディター
 	float addKeyTimeStep_; // キーを追加するときの時間差分
 	bool isDrawKeyframe_;  // キーフレーム表示
@@ -142,6 +159,8 @@ private:
 
 	// キーオブジェクトの作成
 	std::unique_ptr<GameObject3D> CreateKeyObject(const Transform3D& transform);
+	// 補間終了後のリセット
+	void Reset();
 
 	// キートランスフォームの取得
 	std::vector<Vector3> GetScales() const;
@@ -152,6 +171,7 @@ private:
 
 	// 任意値の更新
 	void UpdateAnyValues(float currentT);
+	void UpdateStartAnyValues(float easedT);
 
 	// 任意値のデフォルト値
 	AnyValue MakeDefaultAnyValue(AnyMold mold);
