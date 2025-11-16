@@ -56,7 +56,7 @@ public:
 	// 補間処理するキーの値を追加
 	void AddKeyValue(AnyMold mold, const std::string& name);
 
-	//--------- accessor -----------------------------------------------------
+	//--------- accessor ----------------------------------------------------
 
 	// 再生中かどうか
 	bool IsUpdating() const { return currentState_ == State::Updating; }

@@ -276,7 +276,7 @@ void KeyframeObject3D::ExternalInputTUpdate(float inputT) {
 void KeyframeObject3D::UpdateKey() {
 
 	// 補間中でキーの更新を許可していなければ何もしない
-	if (!isUpdateKeyDuringLerp_&& currentState_ == State::Updating) {
+	if (!isUpdateKeyDuringLerp_ && currentState_ == State::Updating) {
 
 		// 線の描画はする
 		DrawKeyLine();
@@ -321,8 +321,8 @@ std::unique_ptr<GameObject3D> KeyframeObject3D::CreateKeyObject(const Transform3
 	}
 
 	// 描画設定、シーンにしか表示しない
-	object->SetMeshRenderView(isDrawKeyframe_ ? MeshRenderView::Scene : MeshRenderView::None);
-	object->SetScale(Vector3::AnyInit(2.4f));
+	object->SetMeshRenderView(MeshRenderView::Scene);
+	object->SetScale(isDrawKeyframe_ ? Vector3::AnyInit(1.0f) : Vector3::AnyInit(0.01f));
 	object->SetCastShadow(false);
 	object->SetShadowRate(1.0f);
 
@@ -567,8 +567,7 @@ void KeyframeObject3D::ImGui() {
 		// キーオブジェクトの描画設定を更新
 		for (const auto& keyObject : keyObjects_) {
 
-			keyObject->SetMeshRenderView(isDrawKeyframe_ ?
-				MeshRenderView::Scene : MeshRenderView::None);
+			keyObject->SetScale(isDrawKeyframe_ ? Vector3::AnyInit(1.0f) : Vector3::AnyInit(0.01f));
 		}
 	}
 
