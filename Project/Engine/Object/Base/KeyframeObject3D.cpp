@@ -30,10 +30,71 @@ void KeyframeObject3D::Init(const std::string& name, const std::string& modelNam
 	currentState_ = State::None;
 	isConnectEnds_ = false;
 	lerpType_ = LerpKeyframe::Type::Linear;
-	isEditUpdate_ = false;
-	isDrawKeyframe_ = false;
+
 	startDuration_ = 0.0f;
 	startEaseType_ = EasingType::Linear;
+
+	isUpdateKeyDuringLerp_ = true;
+
+	isEditUpdate_ = false;
+	isDrawKeyframe_ = false;
+}
+
+const Transform3D& KeyframeObject3D::GetIndexTransform(uint32_t index) const {
+
+	return keyObjects_[index]->GetTransform();
+}
+
+KeyframeObject3D::AnyValue KeyframeObject3D::GetIndexAnyValue(uint32_t index, const std::string& name) const {
+
+	// 名前を探してnameIndex番目の値を返す
+	for (size_t nameIndex = 0; nameIndex < anyTracks_.size(); ++nameIndex) {
+
+		// 名前をチェック
+		if (anyTracks_[nameIndex].name == name) {
+
+			// index番目のnameIndex番目を返す
+			return keys_[index].anyValues[nameIndex];
+		}
+	}
+	return AnyValue{};
+}
+
+KeyframeObject3D::AnyValue KeyframeObject3D::GetCurrentAnyValue(const std::string& name) const {
+
+	// 名前を探してindex番目の値を返す
+	for (size_t nameIndex = 0; nameIndex < anyTracks_.size(); ++nameIndex) {
+
+		// 名前をチェック
+		if (anyTracks_[nameIndex].name == name) {
+
+			// nameIndex番目を返す
+			return currentAnyValues_[nameIndex];
+		}
+	}
+	return AnyValue{};
+}
+
+std::vector<uint32_t> KeyframeObject3D::GetKeyObjectIDs() const {
+
+	std::vector<uint32_t> ids{};
+	for (const auto& keyObject : keyObjects_) {
+
+		ids.emplace_back(keyObject->GetObjectID());
+	}
+	return ids;
+}
+
+uint32_t KeyframeObject3D::GetKeyIndexFromObjectID(uint32_t index) {
+
+	uint32_t keyIndex = 0;
+	for (const auto& keyObject : keyObjects_) {
+		if (keyObject->GetObjectID() == index) {
+			break;
+		}
+		++keyIndex;
+	}
+	return keyIndex;
 }
 
 void KeyframeObject3D::StartLerp(const std::optional<Transform3D>& transform,
@@ -111,62 +172,6 @@ void KeyframeObject3D::AddKeyValue(AnyMold mold, const std::string& name) {
 		key.anyValues.emplace_back(defaultValue);
 	}
 	currentAnyValues_.emplace_back(defaultValue);
-}
-
-const Transform3D& KeyframeObject3D::GetIndexTransform(uint32_t index) const {
-
-	return keyObjects_[index]->GetTransform();
-}
-
-KeyframeObject3D::AnyValue KeyframeObject3D::GetIndexAnyValue(uint32_t index, const std::string& name) const {
-
-	// 名前を探してnameIndex番目の値を返す
-	for (size_t nameIndex = 0; nameIndex < anyTracks_.size(); ++nameIndex) {
-
-		// 名前をチェック
-		if (anyTracks_[nameIndex].name == name) {
-
-			// index番目のnameIndex番目を返す
-			return keys_[index].anyValues[nameIndex];
-		}
-	}
-	return AnyValue{};
-}
-
-KeyframeObject3D::AnyValue KeyframeObject3D::GetCurrentAnyValue(const std::string& name) const {
-
-	// 名前を探してindex番目の値を返す
-	for (size_t nameIndex = 0; nameIndex < anyTracks_.size(); ++nameIndex) {
-
-		// 名前をチェック
-		if (anyTracks_[nameIndex].name == name) {
-
-			// nameIndex番目を返す
-			return currentAnyValues_[nameIndex];
-		}
-	}
-	return AnyValue{};
-}
-
-std::vector<uint32_t> KeyframeObject3D::GetKeyObjectIDs() const {
-
-	std::vector<uint32_t> ids{};
-	for (const auto& keyObject : keyObjects_) {
-
-		ids.emplace_back(keyObject->GetObjectID());
-	}
-	return ids;
-}
-
-uint32_t KeyframeObject3D::GetKeyIndexFromObjectID(uint32_t index) {
-
-	uint32_t keyIndex = 0;
-	for (const auto& keyObject : keyObjects_) {
-		if (keyObject->GetObjectID() == index) {
-			break;
-		}
-	}
-	return keyIndex;
 }
 
 void KeyframeObject3D::SelfUpdate() {
@@ -269,6 +274,14 @@ void KeyframeObject3D::ExternalInputTUpdate(float inputT) {
 }
 
 void KeyframeObject3D::UpdateKey() {
+
+	// 補間中でキーの更新を許可していなければ何もしない
+	if (!isUpdateKeyDuringLerp_&& currentState_ == State::Updating) {
+
+		// 線の描画はする
+		DrawKeyLine();
+		return;
+	}
 
 	// トランスフォームに変更があれば更新
 	for (size_t i = 0; i < keyObjects_.size(); ++i) {
@@ -626,7 +639,7 @@ void KeyframeObject3D::ImGui() {
 
 		ImGui::SeparatorText("Keys");
 
-		ImGui::Checkbox("isConnectEnds", &isConnectEnds_);
+		ImGui::Checkbox("isUpdateKeyDuringLerp", &isUpdateKeyDuringLerp_);
 		EnumAdapter<LerpKeyframe::Type>::Combo("LerpType", &lerpType_);
 
 		if (!keys_.empty() && !anyTracks_.empty()) {
@@ -937,6 +950,10 @@ void KeyframeObject3D::FromJson(const Json& data) {
 		return;
 	}
 
+	// キーをクリア
+	keys_.clear();
+	keyObjects_.clear();
+
 	// キー位置を取得
 	for (const auto& keyJson : data["Keys"]) {
 
@@ -950,8 +967,6 @@ void KeyframeObject3D::FromJson(const Json& data) {
 
 			key.transform.Init();
 		}
-
-		key.transform.FromJson(keyJson.value("transform", Json()));
 		key.time = keyJson.value("time", 0.0f);
 		key.easeType = EnumAdapter<EasingType>::FromString(keyJson.value("ease", "Linear")).value();
 
@@ -1006,14 +1021,13 @@ void KeyframeObject3D::FromJson(const Json& data) {
 				key.anyValues.emplace_back(value);
 			}
 		}
-
-
 		keys_.emplace_back(key);
 	}
 
 	parentName_ = data.value("parentName_", "");
 	lerpType_ = EnumAdapter<LerpKeyframe::Type>::FromString(data.value("lerpType_", "Linear")).value();
 	isConnectEnds_ = data.value("isConnectEnds_", false);
+	isUpdateKeyDuringLerp_ = data.value("isUpdateKeyDuringLerp_", true);
 	startDuration_ = data.value("startDuration_", 0.0f);
 	startEaseType_ = EnumAdapter<EasingType>::FromString(data.value("startEaseType_", "Linear")).value();
 
@@ -1126,6 +1140,7 @@ void KeyframeObject3D::ToJson(Json& data) {
 	data["parentName_"] = parentName_;
 	data["lerpType_"] = EnumAdapter<LerpKeyframe::Type>::ToString(lerpType_);
 	data["isConnectEnds_"] = isConnectEnds_;
+	data["isUpdateKeyDuringLerp_"] = isUpdateKeyDuringLerp_;
 	data["startDuration_"] = startDuration_;
 	data["startEaseType_"] = EnumAdapter<EasingType>::ToString(startEaseType_);
 

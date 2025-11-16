@@ -40,15 +40,11 @@ void CameraEditor::Init(SceneView* sceneView) {
 
 void CameraEditor::Update() {
 
-	ImGui::SetWindowFontScale(0.8f);
-
 	// キーオブジェクトの更新
 	UpdateKeyObjects();
 
 	// エディターの更新
 	UpdateEditor();
-
-	ImGui::SetWindowFontScale(1.0f);
 }
 
 void CameraEditor::UpdateKeyObjects() {
@@ -336,7 +332,13 @@ void CameraEditor::EditSelectedKeyObject() {
 			case CameraEditor::PreviewMode::Keyframe: {
 
 				// 選択中のキーのインデックスを取得してその位置のキー表示する
+				if (previewKeyIndex_ < 0) {
 
+					ImGui::TextDisabled("No Key Selected");
+				} else {
+
+					ImGui::Text("currentKeyIndex: %d", previewKeyIndex_);
+				}
 				break;
 			}
 			case CameraEditor::PreviewMode::Manual: {

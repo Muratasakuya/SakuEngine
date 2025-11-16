@@ -150,6 +150,9 @@ private:
 	float startDuration_;      // スタート値からキー0までの時間
 	EasingType startEaseType_; // イージング
 
+	// 補間処理中もキーのトランスフォームを更新するかどうか
+	bool isUpdateKeyDuringLerp_;
+
 	// エディター
 	float addKeyTimeStep_; // キーを追加するときの時間差分
 	bool isDrawKeyframe_;  // キーフレーム表示
