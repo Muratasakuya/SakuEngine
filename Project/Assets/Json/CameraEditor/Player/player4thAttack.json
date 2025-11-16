@@ -1,0 +1,66 @@
+{
+    "CameraKeyObject": {
+        "Keys": [
+            {
+                "Transform": {
+                    "rotation": {
+                        "w": 0.9914452433586121,
+                        "x": 0.10591904073953629,
+                        "y": 0.07582875341176987,
+                        "z": -0.008217645809054375
+                    },
+                    "scale": {
+                        "x": 2.400075912475586,
+                        "y": 2.4000141620635986,
+                        "z": 2.4000039100646973
+                    },
+                    "translation": {
+                        "x": -7.409387588500977,
+                        "y": 14.827052116394043,
+                        "z": -30.376953125
+                    }
+                },
+                "anyValues": {
+                    "FovY": 0.7200000286102295
+                },
+                "ease": "Linear",
+                "time": 0.0
+            },
+            {
+                "Transform": {
+                    "rotation": {
+                        "w": 0.9966216087341309,
+                        "x": 0.05377136170864105,
+                        "y": 0.06171355023980141,
+                        "z": -0.006742718163877726
+                    },
+                    "scale": {
+                        "x": 2.4000320434570313,
+                        "y": 2.4000041484832764,
+                        "z": 2.4000236988067627
+                    },
+                    "translation": {
+                        "x": -7.611114501953125,
+                        "y": 13.273248672485352,
+                        "z": -32.412628173828125
+                    }
+                },
+                "anyValues": {
+                    "FovY": 0.6399999856948853
+                },
+                "ease": "Linear",
+                "time": 0.5
+            }
+        ],
+        "addKeyTimeStep_": 0.800000011920929,
+        "isConnectEnds_": false,
+        "isUpdateKeyDuringLerp_": true,
+        "lerpType_": "Linear",
+        "parentName_": "player",
+        "startDuration_": 0.07999999821186066,
+        "startEaseType_": "EaseOutSine"
+    },
+    "keyName": "player4thAttack",
+    "previewLoopSpacing_": 1.0,
+    "previewMode_": "Play"
+}

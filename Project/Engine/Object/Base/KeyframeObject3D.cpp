@@ -348,7 +348,8 @@ std::vector<Quaternion> KeyframeObject3D::GetRotations() const {
 	rotations.reserve(keys_.size());
 	for (const auto& key : keys_) {
 
-		rotations.emplace_back(key.transform.rotation);
+		Quaternion rotation = key.transform.rotation;
+		rotations.emplace_back(rotation);
 	}
 	return rotations;
 }
@@ -360,7 +361,8 @@ std::vector<Vector3> KeyframeObject3D::GetPositions() const {
 	positions.reserve(keys_.size());
 	for (const auto& key : keys_) {
 
-		positions.emplace_back(key.transform.translation);
+		Vector3 pos = key.transform.translation;
+		positions.emplace_back(pos);
 	}
 	return positions;
 }

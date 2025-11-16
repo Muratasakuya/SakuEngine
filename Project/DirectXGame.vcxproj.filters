@@ -540,21 +540,6 @@
     <ClCompile Include="Engine\Editor\ActionProgress\ActionProgressMonitor.cpp">
       <Filter>Engine\Editor\ActionProgress</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Editor\Camera\3D\Camera3DEditorPanel.cpp">
-      <Filter>Engine\Editor\Camera\3D</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Editor\Camera\3D\CameraPathController.cpp">
-      <Filter>Engine\Editor\Camera\3D</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Editor\Camera\3D\CameraPathData.cpp">
-      <Filter>Engine\Editor\Camera\3D</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Editor\Camera\3D\CameraPathGizmoSynch.cpp">
-      <Filter>Engine\Editor\Camera\3D</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Editor\Camera\3D\CameraPathRenderer.cpp">
-      <Filter>Engine\Editor\Camera\3D</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Editor\Curve\CurveValueEditor.cpp">
       <Filter>Engine\Editor\Curve</Filter>
     </ClCompile>
@@ -981,9 +966,6 @@
     <ClCompile Include="Game\Camera\ResultCamera\ClearResultCamera.cpp">
       <Filter>Game\Camera\ResultCamera</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Editor\Camera\3D\Camera3DEditor.cpp">
-      <Filter>Engine\Editor\Camera\3D</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Editor\GameObject\GameObjectEditor.cpp">
       <Filter>Engine\Editor\GameObject</Filter>
     </ClCompile>
@@ -1337,21 +1319,6 @@
     </ClInclude>
     <ClInclude Include="Engine\Editor\ActionProgress\ActionProgressMonitor.h">
       <Filter>Engine\Editor\ActionProgress</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Editor\Camera\3D\Camera3DEditorPanel.h">
-      <Filter>Engine\Editor\Camera\3D</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Editor\Camera\3D\CameraPathController.h">
-      <Filter>Engine\Editor\Camera\3D</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Editor\Camera\3D\CameraPathData.h">
-      <Filter>Engine\Editor\Camera\3D</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Editor\Camera\3D\CameraPathGizmoSynch.h">
-      <Filter>Engine\Editor\Camera\3D</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Editor\Camera\3D\CameraPathRenderer.h">
-      <Filter>Engine\Editor\Camera\3D</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Editor\Curve\CurveValueEditor.h">
       <Filter>Engine\Editor\Curve</Filter>
@@ -1866,9 +1833,6 @@
     <ClInclude Include="Game\Camera\ResultCamera\ClearResultCamera.h">
       <Filter>Game\Camera\ResultCamera</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Editor\Camera\3D\Camera3DEditor.h">
-      <Filter>Engine\Editor\Camera\3D</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\Editor\GameObject\GameObjectEditor.h">
       <Filter>Engine\Editor\GameObject</Filter>
     </ClInclude>
@@ -2304,6 +2268,12 @@
     <ClCompile Include="Engine\Effect\Particle\Module\Updater\Primitive\Derived\ParticleTestMeshUpdater.cpp" />
     <ClCompile Include="Game\PostEffect\DefaultDistortionUpdater.cpp" />
     <ClCompile Include="Engine\Editor\Camera\CameraEditor.cpp" />
+    <ClCompile Include="Engine\Editor\Camera\3D\Camera3DEditor.cpp" />
+    <ClCompile Include="Engine\Editor\Camera\3D\Camera3DEditorPanel.cpp" />
+    <ClCompile Include="Engine\Editor\Camera\3D\CameraPathController.cpp" />
+    <ClCompile Include="Engine\Editor\Camera\3D\CameraPathData.cpp" />
+    <ClCompile Include="Engine\Editor\Camera\3D\CameraPathGizmoSynch.cpp" />
+    <ClCompile Include="Engine\Editor\Camera\3D\CameraPathRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\Camera\Follow\State\States\FollowCameraReturnDefaultRotate.h" />
@@ -2346,6 +2316,12 @@
     <ClInclude Include="Game\PostEffect\DefaultDistortionUpdater.h" />
     <ClInclude Include="Engine\Utility\Enum\AnyMoldEnum.h" />
     <ClInclude Include="Engine\Editor\Camera\CameraEditor.h" />
+    <ClInclude Include="Engine\Editor\Camera\3D\Camera3DEditor.h" />
+    <ClInclude Include="Engine\Editor\Camera\3D\Camera3DEditorPanel.h" />
+    <ClInclude Include="Engine\Editor\Camera\3D\CameraPathController.h" />
+    <ClInclude Include="Engine\Editor\Camera\3D\CameraPathData.h" />
+    <ClInclude Include="Engine\Editor\Camera\3D\CameraPathGizmoSynch.h" />
+    <ClInclude Include="Engine\Editor\Camera\3D\CameraPathRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Engine\Shaders\PostProcess\PlayerAfterImage\PlayerAfterImage.CS.hlsl" />

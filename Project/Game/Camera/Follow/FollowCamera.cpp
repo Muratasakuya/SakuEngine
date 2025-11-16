@@ -4,7 +4,7 @@
 //	include
 //============================================================================
 #include <Engine/Input/Input.h>
-#include <Engine/Editor/Camera/3D/Camera3DEditor.h>
+#include <Engine/Editor/Camera/CameraEditor.h>
 #include <Engine/Utility/Timer/GameTimer.h>
 #include <Engine/Utility/Json/JsonAdapter.h>
 #include <Engine/Utility/Random/RandomGenerator.h>
@@ -20,14 +20,12 @@ void FollowCamera::LoadAnim() {
 		return;
 	}
 
-	Camera3DEditor* editor = Camera3DEditor::GetInstance();
+	CameraEditor* editor = CameraEditor::GetInstance();
 	// プレイヤーの攻撃
-	editor->LoadAnimFile("Player/player2ndAttackCamera.json");
-	editor->LoadAnimFile("Player/player3rdAttackCamera.json");
-	editor->LoadAnimFile("Player/player4thAttackCamera.json");
-	editor->LoadAnimFile("Player/playerSkillAttackCamera.json");
-	editor->LoadAnimFile("Player/playerParryRightCamera.json");
-	editor->LoadAnimFile("Player/playerParryLeftCamera.json");
+	editor->LoadJson("Player/player3rdAttack.json");
+	editor->LoadJson("Player/player4thAttack.json");
+	editor->LoadJson("Player/playerParryRight.json");
+	editor->LoadJson("Player/playerParryLeft.json");
 
 	// 読み込み済み
 	isLoadedAnim_ = true;
@@ -35,15 +33,13 @@ void FollowCamera::LoadAnim() {
 
 void FollowCamera::StartPlayerActionAnim(PlayerState state) {
 
-	Camera3DEditor* editor = Camera3DEditor::GetInstance();
+	CameraEditor* editor = CameraEditor::GetInstance();
 
 	// 状態毎に名前を取得
 	std::string name{};
 	switch (state) {
-	case PlayerState::Attack_2nd: name = "playerAttack2nd"; break;
-	case PlayerState::Attack_3rd: name = "playerAttack3rd"; break;
-	case PlayerState::Attack_4th: name = "playerAttack4th"; break;
-	case PlayerState::SkilAttack: name = "playerSkillAttack"; break;
+	case PlayerState::Attack_3rd: name = "player3rdAttack"; break;
+	case PlayerState::Attack_4th: name = "player4thAttack"; break;
 	case PlayerState::Parry:
 
 		// 目標回転
@@ -52,8 +48,7 @@ void FollowCamera::StartPlayerActionAnim(PlayerState state) {
 		int direction = Math::YawShortestDirection(transform_.rotation, baseTarget);
 
 		// 0か-1なら左、+1は右からの視点のパリィアニメーションを行わせる
-		name = (0 <= direction) ? "playerParryRightView" : "playerParryLeftView";
-		lastActionAnimName_ = name;
+		name = (0 <= direction) ? "playerParryRight" : "playerParryLeft";
 		break;
 	}
 
@@ -66,30 +61,13 @@ void FollowCamera::StartPlayerActionAnim(PlayerState state) {
 
 void FollowCamera::EndPlayerActionAnim(PlayerState state, bool isWarmStart) {
 
-	Camera3DEditor* editor = Camera3DEditor::GetInstance();
-
-	// 状態毎に名前を取得
-	std::string name{};
-	switch (state) {
-	case PlayerState::Attack_2nd: name = "playerAttack2nd"; break;
-	case PlayerState::Attack_3rd: name = "playerAttack3rd"; break;
-	case PlayerState::Attack_4th: name = "playerAttack4th"; break;
-	case PlayerState::SkilAttack: name = "playerSkillAttack"; break;
-	case PlayerState::Parry:
-
-		name = lastActionAnimName_;
-		break;
-	}
+	CameraEditor* editor = CameraEditor::GetInstance();
 
 	// アニメーションを終了させる
-	editor->EndAnim(name);
+	editor->EndAnim();
 	if (isWarmStart) {
 
 		stateController_->WarmStartFollow(*this);
-	}
-	if (state == PlayerState::Parry) {
-
-		lastActionAnimName_.clear();
 	}
 }
 

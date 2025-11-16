@@ -50,6 +50,8 @@ public:
 	// 補間開始、初期値が入っていれば最初のキーにする
 	void StartLerp(const std::optional<Transform3D>& transform = std::nullopt,
 		const std::optional<std::vector<AnyValue>>& anyValues = std::nullopt);
+	// 補間のリセット、終了
+	void Reset();
 
 	// 補間処理するキーの値を追加
 	void AddKeyValue(AnyMold mold, const std::string& name);
@@ -162,8 +164,6 @@ private:
 
 	// キーオブジェクトの作成
 	std::unique_ptr<GameObject3D> CreateKeyObject(const Transform3D& transform);
-	// 補間終了後のリセット
-	void Reset();
 
 	// キートランスフォームの取得
 	std::vector<Vector3> GetScales() const;

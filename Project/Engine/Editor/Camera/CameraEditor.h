@@ -34,6 +34,15 @@ public:
 	// isInEditorはエディター内での読み込みかどうか
 	void LoadJson(const std::string& fileName, bool isInEditor = false);
 
+	// アニメーション処理
+	// 開始呼び出し
+	void StartAnim(const std::string& keyName, bool isAddFirstKey = true);
+	// 現在アクティブなアニメーションの終了呼び出し
+	void EndAnim();
+
+	// 現在アクティブなアニメーションが終了したか
+	bool IsAnimFinished() const;
+
 	//--------- accessor -----------------------------------------------------
 
 	// singleton
@@ -72,6 +81,9 @@ private:
 	// std::stringがキーの名前
 	std::unordered_map<std::string, std::unique_ptr<KeyframeObject3D>> keyObjects_;
 
+	// ゲームで開始呼びだししたアクティブなキーオブジェクト
+	KeyframeObject3D* activeKeyObject_ = nullptr;
+
 	// エディター
 	std::string selectedKeyObjectName_; // 選択されているキーオブジェクトの名前
 	JsonSaveState jsonSaveState_;       // json保存状態
@@ -107,7 +119,7 @@ private:
 	void EditSelectedKeyObject();
 
 	// カメラへの適応
-	void ApplyToCamera(BaseCamera& camera, const std::string& keyName);
+	void ApplyToCamera(BaseCamera& camera, const KeyframeObject3D& keyObject);
 	// 値操作中のキーインデックスの同期
 	void SynchSelectedKeyIndex();
 

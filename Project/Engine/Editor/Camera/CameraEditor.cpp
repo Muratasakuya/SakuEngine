@@ -99,6 +99,74 @@ void CameraEditor::LoadJson(const std::string& fileName, bool isInEditor) {
 	LOG_INFO("loaded CameraKeyData: fileName: [{}]", jsonFileName);
 }
 
+void CameraEditor::StartAnim(const std::string& keyName, bool isAddFirstKey) {
+
+	// 無ければ処理できない
+	auto it = keyObjects_.find(keyName);
+	if (it == keyObjects_.end()) {
+		return;
+	}
+
+	// 再生中のカメラアニメーションがあれば終了させる
+	for (auto& keyObject : std::views::values(keyObjects_)) {
+		if (keyObject->IsUpdating()) {
+
+			keyObject->Reset();
+		}
+	}
+
+	// アクティブなキーオブジェクトに設定
+	activeKeyObject_ = it->second.get();
+
+	// 最初のキーを追加するかどうか
+	// 追加する場合
+	if (isAddFirstKey) {
+
+		// シーンから現在のカメラ情報を取得
+		BaseCamera* camera = sceneView_->GetCamera();
+
+		// トランスフォームとfovY
+		const Transform3D& cameraTransform = camera->GetTransform();
+		float fovY = camera->GetFovY();
+		std::vector<KeyframeObject3D::AnyValue> anyValues;
+		anyValues.emplace_back(fovY);
+
+		// 補間開始
+		activeKeyObject_->StartLerp(cameraTransform, anyValues);
+	}
+	// 追加しない場合
+	else {
+
+		// 補間開始
+		activeKeyObject_->StartLerp();
+	}
+}
+
+void CameraEditor::EndAnim() {
+
+	// 無ければ処理できない
+	if (!activeKeyObject_) {
+		return;
+	}
+	// リセットして非アクティブ状態にする
+	activeKeyObject_->Reset();
+	activeKeyObject_ = nullptr;
+
+	// 更新を戻す
+	BaseCamera* camera = sceneView_->GetCamera();
+	camera->SetIsUpdateEditor(false);
+}
+
+bool CameraEditor::IsAnimFinished() const {
+
+	// 無ければ終了しているとみなす
+	if (!activeKeyObject_) {
+		return true;
+	}
+	// 更新中でなければ終了しているのでtrueを返す
+	return !activeKeyObject_->IsUpdating();
+}
+
 void CameraEditor::Update() {
 
 	// キーオブジェクトの更新
@@ -113,23 +181,30 @@ void CameraEditor::UpdateKeyObjects() {
 	// キーオブジェクトの更新
 	for (auto& keyObject : std::views::values(keyObjects_)) {
 
-		switch (previewMode_) {
-		case CameraEditor::PreviewMode::Keyframe:
-
-			break;
-		case CameraEditor::PreviewMode::Manual:
-
-			// 時間を渡して更新
-			keyObject->ExternalInputTUpdate(previewTimer_);
-			break;
-		case CameraEditor::PreviewMode::Play:
-
-			// KeyframeObject内で自己完結で更新
-			keyObject->SelfUpdate();
-			break;
-		}
 		//常に行う
 		keyObject->UpdateKey();
+	}
+
+	// アクティブなキーオブジェクトの更新
+	if (!activeKeyObject_) {
+		return;
+	}
+
+	// 現在のゲームカメラ
+	// カメラをエディターで更新中にする
+	BaseCamera* camera = sceneView_->GetCamera();
+	camera->SetIsUpdateEditor(true);
+
+	// 時間を進めてキー更新
+	activeKeyObject_->SelfUpdate();
+	// カメラに適応
+	ApplyToCamera(*sceneView_->GetCamera(), *activeKeyObject_);
+
+	// 補間が終了したらアクティブ状態を解除
+	if (!activeKeyObject_->IsUpdating()) {
+
+		// 終了処理
+		EndAnim();
 	}
 }
 
@@ -182,14 +257,20 @@ void CameraEditor::UpdateEditor() {
 	}
 	case CameraEditor::PreviewMode::Manual: {
 
+		// 時間を渡して更新
+		keyObjects_[selectedKeyObjectName_]->ExternalInputTUpdate(previewTimer_);
+
 		// カメラへ適応
-		ApplyToCamera(*camera, selectedKeyObjectName_);
+		ApplyToCamera(*camera, *keyObjects_[selectedKeyObjectName_].get());
 		break;
 	}
 	case CameraEditor::PreviewMode::Play: {
 
+		// 状態に応じた更新処理
+		keyObjects_[selectedKeyObjectName_]->SelfUpdate();
+
 		// カメラへ適応
-		ApplyToCamera(*camera, selectedKeyObjectName_);
+		ApplyToCamera(*camera, *keyObjects_[selectedKeyObjectName_].get());
 
 		// 再生中は時間を更新しない
 		if (keyObjects_[selectedKeyObjectName_]->IsUpdating()) {
@@ -212,13 +293,13 @@ void CameraEditor::UpdateEditor() {
 #endif
 }
 
-void CameraEditor::ApplyToCamera(BaseCamera& camera, const std::string& keyName) {
+void CameraEditor::ApplyToCamera(BaseCamera& camera, const KeyframeObject3D& keyObject) {
 
 	// 現在のキー位置のカメラ情報
-	Transform3D transform = keyObjects_[keyName]->GetCurrentTransform();
+	Transform3D transform = keyObject.GetCurrentTransform();
 
 	float fovY = 0.0f;
-	KeyframeObject3D::AnyValue fovValue = keyObjects_[keyName]->GetCurrentAnyValue(addKeyValueFov_);
+	KeyframeObject3D::AnyValue fovValue = keyObject.GetCurrentAnyValue(addKeyValueFov_);
 	if (const auto& keyFovY = std::get_if<float>(&fovValue)) {
 
 		fovY = *keyFovY;
