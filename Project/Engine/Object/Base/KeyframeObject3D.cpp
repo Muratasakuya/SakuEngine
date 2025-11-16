@@ -960,9 +960,9 @@ void KeyframeObject3D::FromJson(const Json& data) {
 		Key key{};
 
 		// transformキーがなければ初期化させる
-		if (keyJson.contains("transform")) {
+		if (keyJson.contains("Transform")) {
 
-			key.transform.FromJson(keyJson["transform"]);
+			key.transform.FromJson(keyJson["Transform"]);
 		} else {
 
 			key.transform.Init();
@@ -1061,11 +1061,14 @@ void KeyframeObject3D::FromJson(const Json& data) {
 
 void KeyframeObject3D::ToJson(Json& data) {
 
+	uint32_t index = 0;
 	for (auto& key : keys_) {
 
 		Json keyJson;
 
-		key.transform.ToJson(keyJson["transform"]);
+		// トランスフォームはキーオブジェクトのローカルトランスフォームで保存
+		keyObjects_[index]->SaveTransform(keyJson);
+
 		keyJson["time"] = key.time;
 		keyJson["ease"] = EnumAdapter<EasingType>::ToString(key.easeType);
 
@@ -1135,6 +1138,8 @@ void KeyframeObject3D::ToJson(Json& data) {
 		}
 
 		data["Keys"].emplace_back(keyJson);
+
+		++index;
 	}
 
 	data["parentName_"] = parentName_;
