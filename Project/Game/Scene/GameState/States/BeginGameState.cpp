@@ -4,12 +4,16 @@
 //	include
 //============================================================================
 #include <Engine/Core/Graphics/Renderer/LineRenderer.h>
+#include <Engine/Editor/Camera/CameraEditor.h>
 
 //============================================================================
 //	BeginGameState classMethods
 //============================================================================
 
 void BeginGameState::Init([[maybe_unused]] SceneView* sceneView) {
+
+	// ゲーム開始時のカメラアニメーションデータを読み込み
+	CameraEditor::GetInstance()->LoadJson("Scene/startGameCamera.json");
 
 	// json適応
 	ApplyJson();
@@ -36,7 +40,7 @@ void BeginGameState::Update([[maybe_unused]] SceneManager* sceneManager) {
 	//========================================================================
 
 	// ボスの登場演出が終了したらゲーム開始
-	if (context_->camera->GetBeginGameCamera()->IsFinished()) {
+	if (CameraEditor::GetInstance()->IsAnimFinished()) {
 
 		context_->fadeSprite->Start();
 		// 遷移処理
@@ -58,7 +62,7 @@ void BeginGameState::Enter() {
 	context_->player->SetTranslation(startPlayerPos_);
 
 	// カメラのアニメーション開始
-	context_->camera->GetBeginGameCamera()->StartAnimation();
+	CameraEditor::GetInstance()->StartAnim("startGameCamera", false);
 }
 
 void BeginGameState::Exit() {

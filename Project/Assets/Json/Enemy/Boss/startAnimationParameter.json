@@ -1,7 +1,7 @@
 {
     "DelayTimer": {
         "easeingType_": "Linear",
-        "target_": 1.3200000524520874
+        "target_": 0.6000000238418579
     },
     "PosAnimation": {
         "Loop": {

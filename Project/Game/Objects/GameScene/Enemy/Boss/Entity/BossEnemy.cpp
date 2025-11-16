@@ -4,7 +4,6 @@
 //	include
 //============================================================================
 #include <Engine/Core/Graphics/Renderer/LineRenderer.h>
-#include <Engine/Editor/ActionProgress/ActionProgressMonitor.h>
 #include <Engine/Utility/Json/JsonAdapter.h>
 #include <Engine/Utility/Enum/EnumAdapter.h>
 #include <Engine/Input/Input.h>
@@ -55,11 +54,6 @@ void BossEnemy::InitAnimations() {
 	// keyEventを設定
 	animation_->SetKeyframeEvent("Enemy/Boss/animationEffectKey.json");
 	animation_->Update(transform_->matrix.world);
-
-	// 追加
-	int id = ActionProgressMonitor::GetInstance()->AddObject("bossEnemy");
-	ActionProgressMonitor::GetInstance()->AddOverall(id, "followMove", [this]() -> float {return 0.0f; });
-	ActionProgressMonitor::GetInstance()->AddOverall(id, "charge", [this]() -> float {return 0.0f; });
 }
 
 void BossEnemy::InitCollision() {

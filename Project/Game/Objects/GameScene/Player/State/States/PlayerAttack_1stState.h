@@ -56,9 +56,4 @@ private:
 	// 剣エフェクト
 	std::unique_ptr<EffectGroup> slashEffect_;
 	Vector3 slashEffectOffset_; // 発生位置のオフセット
-
-	//--------- functions ----------------------------------------------------
-
-	void SetActionProgress();
-	void SetSpanUpdate(int objectID);
 };

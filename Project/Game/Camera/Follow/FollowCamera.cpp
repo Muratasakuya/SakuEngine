@@ -59,7 +59,7 @@ void FollowCamera::StartPlayerActionAnim(PlayerState state) {
 	}
 }
 
-void FollowCamera::EndPlayerActionAnim(PlayerState state, bool isWarmStart) {
+void FollowCamera::EndPlayerActionAnim(bool isWarmStart) {
 
 	CameraEditor* editor = CameraEditor::GetInstance();
 

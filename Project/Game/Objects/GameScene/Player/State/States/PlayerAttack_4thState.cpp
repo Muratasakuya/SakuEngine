@@ -3,7 +3,6 @@
 //============================================================================
 //	include
 //============================================================================
-#include <Engine/Editor/ActionProgress/ActionProgressMonitor.h>
 #include <Engine/Core/Graphics/Renderer/LineRenderer.h>
 #include <Engine/Utility/Timer/GameTimer.h>
 #include <Game/Camera/Follow/FollowCamera.h>
@@ -101,7 +100,7 @@ void PlayerAttack_4thState::Update(Player& player) {
 		}
 
 		// シェイク前にアニメーションを終了させる
-		followCamera_->EndPlayerActionAnim(PlayerState::Attack_4th, false);
+		followCamera_->EndPlayerActionAnim(false);
 
 		exitTimer_ += GameTimer::GetScaledDeltaTime();
 		// 画面シェイクを行わせる
@@ -133,7 +132,7 @@ void PlayerAttack_4thState::Exit([[maybe_unused]] Player& player) {
 	groundCrackEmitted_ = false;
 
 	// カメラアニメーションを終了させる
-	followCamera_->EndPlayerActionAnim(PlayerState::Attack_4th, false);
+	followCamera_->EndPlayerActionAnim(false);
 }
 
 void PlayerAttack_4thState::ImGui(const Player& player) {
@@ -164,8 +163,6 @@ void PlayerAttack_4thState::ApplyJson(const Json& data) {
 
 	moveTimer_.FromJson(data.value("MoveTimer", Json()));
 	moveValue_ = data.value("moveValue_", 1.0f);
-
-	SetActionProgress();
 }
 
 void PlayerAttack_4thState::SaveJson(Json& data) {
@@ -188,71 +185,4 @@ bool PlayerAttack_4thState::GetCanExit() const {
 	// 経過時間が過ぎたら
 	bool canExit = exitTimer_ > exitTime_;
 	return canExit;
-}
-
-void PlayerAttack_4thState::SetActionProgress() {
-
-	ActionProgressMonitor* monitor = ActionProgressMonitor::GetInstance();
-	int objectID = PlayerBaseAttackState::AddActionObject("PlayerAttack_4thState");
-
-	// 全体進捗
-	monitor->AddOverall(objectID, "AttackProgress_4th", [this]() -> float {
-		float progress = 0.0f;
-		if (player_->GetCurrentAnimationName() == "player_attack_4th") {
-			progress = player_->GetAnimationProgress();
-		}
-		return progress; });
-
-	// 骨アニメーション
-	monitor->AddSpan(objectID, "Skinned Animation",
-		[]() { return 0.0f; },
-		[]() { return 1.0f; },
-		[this]() {
-			float progress = 0.0f;
-			if (player_->GetCurrentAnimationName() == "player_attack_4th") {
-
-				progress = player_->GetAnimationProgress();
-			}
-			return progress; });
-
-	// 移動アニメーション
-	monitor->AddSpan(objectID, "Move Animation",
-		[]() { return 0.0f; },
-		[this]() {
-			float duration = player_->GetAnimationDuration("player_attack_4th");
-			return moveTimer_.target_ / duration;
-		},
-		[this]() { return moveTimer_.t_; });
-
-	// 進捗率の同期設定
-	SetSpanUpdate(objectID);
-}
-
-void PlayerAttack_4thState::SetSpanUpdate(int objectID) {
-
-	ActionProgressMonitor* monitor = ActionProgressMonitor::GetInstance();
-
-	// 同期設定
-	PlayerBaseAttackState::SetSynchObject(objectID);
-
-	// 攻撃骨アニメーション
-	monitor->SetSpanSetter(objectID, "Skinned Animation", [this](float t) {
-
-		// アニメーションを切り替え
-		if (player_->GetCurrentAnimationName() != "player_attack_4th") {
-
-			player_->SetNextAnimation("player_attack_4th", false, 0.0f);
-		}
-
-		const float duration = player_->GetAnimationDuration("player_attack_4th");
-		// アニメーションの時間を設定
-		player_->SetCurrentAnimTime(duration * t);
-		});
-
-	// 移動アニメーション
-	monitor->SetSpanSetter(objectID, "Move Animation", [this](float t) {
-
-		// 補間値を設定
-		moveTimer_.t_ = std::clamp(t, 0.0f, 1.0f);
-		moveTimer_.easedT_ = EasedValue(moveTimer_.easeingType_, moveTimer_.t_); });
 }

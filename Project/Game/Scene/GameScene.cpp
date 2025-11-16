@@ -209,4 +209,18 @@ void GameScene::ImGui() {
 
 	uint32_t stateIndex = static_cast<uint32_t>(currentState_);
 	states_[stateIndex]->ImGui();
+
+	ImGui::SeparatorText("Edit State");
+
+	GameSceneState nextState = currentState_;
+
+	// コンボでnextStateを変更
+	if (EnumAdapter<GameSceneState>::Combo("SceneState", &nextState)) {
+
+		// 実際に状態が変わったときだけ遷移する
+		if (nextState != currentState_) {
+
+			RequestNextState(nextState);
+		}
+	}
 }

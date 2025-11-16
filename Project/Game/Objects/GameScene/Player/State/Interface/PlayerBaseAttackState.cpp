@@ -3,8 +3,6 @@
 //============================================================================
 //	include
 //============================================================================
-#include <Engine/Editor/Camera/3D/Camera3DEditor.h>
-#include <Engine/Editor/ActionProgress/ActionProgressMonitor.h>
 #include <Engine/Core/Graphics/Renderer/LineRenderer.h>
 #include <Game/Objects/GameScene/Enemy/Boss/Entity/BossEnemy.h>
 #include <Game/Objects/GameScene/Player/Entity/Player.h>
@@ -160,28 +158,4 @@ void PlayerBaseAttackState::SaveJson(Json& data) {
 	data["attackOffsetTranslation_"] = attackOffsetTranslation_;
 	data["attackPosLerpTime_"] = attackPosLerpTime_;
 	data["attackPosEaseType_"] = static_cast<int>(attackPosEaseType_);
-}
-
-int PlayerBaseAttackState::AddActionObject(const std::string& name) {
-
-	Camera3DEditor::GetInstance()->AddActionObject(name);
-	return ActionProgressMonitor::GetInstance()->AddObject(name);
-}
-
-void PlayerBaseAttackState::SetSynchObject(int objectID) {
-
-	// IDを設定
-	editObjectID_ = objectID;
-
-	// エディターの同期設定の共有
-	ActionProgressMonitor::GetInstance()->SetSynchToggleHandler(
-		objectID, [this](bool external) {
-
-			externalActive_ = external;
-			if (external) {
-				player_->SetUpdateMode(ObjectUpdateMode::External);
-			} else {
-				player_->SetUpdateMode(ObjectUpdateMode::None);
-			}
-		});
 }

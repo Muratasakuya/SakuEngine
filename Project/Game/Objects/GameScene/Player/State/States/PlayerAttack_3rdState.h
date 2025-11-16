@@ -97,9 +97,6 @@ private:
 
 	// debug
 	std::unordered_map<PlayerWeaponType, Vector3> debugForward_;
-	// 進捗度
-	StateTimer totalTimer_; // 更新合計時間
-	bool endAttached_ = false;
 
 	// 剣を取りに行くダッシュエフェクト
 	std::unique_ptr<EffectGroup> catchDashEffect_;
@@ -118,11 +115,4 @@ private:
 	// helper
 	void StartMoveWeapon(Player& player, PlayerWeaponType type);
 	Vector3 RotateYOffset(const Vector3& direction, float offsetRotationY);
-	void DriveOverall(float overall);
-	void EnsureWeaponStarted(PlayerWeaponType type);
-	void EnsureWeaponReset(PlayerWeaponType type);
-	void EnsureWeaponHoldAtTargetDetached(PlayerWeaponType type);
-
-	void SetActionProgress();
-	void SetSpanUpdate(int objectID);
 };
