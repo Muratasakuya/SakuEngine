@@ -130,6 +130,9 @@ void BaseTransform::ImGui(float itemSize) {
 void BaseTransform::ToJson(Json& data) {
 
 	data["scale"] = scale.ToJson();
+
+	// 正規化してから保存
+	rotation = Quaternion::Normalize(rotation);
 	data["rotation"] = rotation.ToJson();
 	data["translation"] = translation.ToJson();
 }

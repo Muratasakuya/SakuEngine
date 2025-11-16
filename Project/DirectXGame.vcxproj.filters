@@ -537,24 +537,6 @@
     <ClCompile Include="Engine\Core\Graphics\PostProcess\Texture\MultiRenderTexture.cpp">
       <Filter>Engine\Core\Graphics\PostProcess\Texture</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Editor\ActionProgress\ActionProgressMonitor.cpp">
-      <Filter>Engine\Editor\ActionProgress</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Editor\Camera\3D\Camera3DEditorPanel.cpp">
-      <Filter>Engine\Editor\Camera\3D</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Editor\Camera\3D\CameraPathController.cpp">
-      <Filter>Engine\Editor\Camera\3D</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Editor\Camera\3D\CameraPathData.cpp">
-      <Filter>Engine\Editor\Camera\3D</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Editor\Camera\3D\CameraPathGizmoSynch.cpp">
-      <Filter>Engine\Editor\Camera\3D</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Editor\Camera\3D\CameraPathRenderer.cpp">
-      <Filter>Engine\Editor\Camera\3D</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Editor\Curve\CurveValueEditor.cpp">
       <Filter>Engine\Editor\Curve</Filter>
     </ClCompile>
@@ -936,9 +918,6 @@
     <ClCompile Include="Engine\Utility\Timer\StateTimer.cpp">
       <Filter>Engine\Utility\Timer</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Camera\BeginGame\BeginGameCamera.cpp">
-      <Filter>Game\Camera\BeginGame</Filter>
-    </ClCompile>
     <ClCompile Include="Game\Camera\EndGame\EndGameCamera.cpp">
       <Filter>Game\Camera\EndGame</Filter>
     </ClCompile>
@@ -980,9 +959,6 @@
     </ClCompile>
     <ClCompile Include="Game\Camera\ResultCamera\ClearResultCamera.cpp">
       <Filter>Game\Camera\ResultCamera</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Editor\Camera\3D\Camera3DEditor.cpp">
-      <Filter>Engine\Editor\Camera\3D</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Editor\GameObject\GameObjectEditor.cpp">
       <Filter>Engine\Editor\GameObject</Filter>
@@ -1334,24 +1310,6 @@
     </ClInclude>
     <ClInclude Include="Engine\Core\Graphics\PostProcess\Texture\MultiRenderTexture.h">
       <Filter>Engine\Core\Graphics\PostProcess\Texture</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Editor\ActionProgress\ActionProgressMonitor.h">
-      <Filter>Engine\Editor\ActionProgress</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Editor\Camera\3D\Camera3DEditorPanel.h">
-      <Filter>Engine\Editor\Camera\3D</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Editor\Camera\3D\CameraPathController.h">
-      <Filter>Engine\Editor\Camera\3D</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Editor\Camera\3D\CameraPathData.h">
-      <Filter>Engine\Editor\Camera\3D</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Editor\Camera\3D\CameraPathGizmoSynch.h">
-      <Filter>Engine\Editor\Camera\3D</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Editor\Camera\3D\CameraPathRenderer.h">
-      <Filter>Engine\Editor\Camera\3D</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Editor\Curve\CurveValueEditor.h">
       <Filter>Engine\Editor\Curve</Filter>
@@ -1812,9 +1770,6 @@
     <ClInclude Include="Engine\Utility\Timer\StateTimer.h">
       <Filter>Engine\Utility\Timer</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Camera\BeginGame\BeginGameCamera.h">
-      <Filter>Game\Camera\BeginGame</Filter>
-    </ClInclude>
     <ClInclude Include="Game\Camera\EndGame\EndGameCamera.h">
       <Filter>Game\Camera\EndGame</Filter>
     </ClInclude>
@@ -1865,9 +1820,6 @@
     </ClInclude>
     <ClInclude Include="Game\Camera\ResultCamera\ClearResultCamera.h">
       <Filter>Game\Camera\ResultCamera</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Editor\Camera\3D\Camera3DEditor.h">
-      <Filter>Engine\Editor\Camera\3D</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Editor\GameObject\GameObjectEditor.h">
       <Filter>Engine\Editor\GameObject</Filter>

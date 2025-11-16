@@ -1,0 +1,41 @@
+{
+    "CameraKeyObject": {
+        "Keys": [
+            {
+                "Transform": {
+                    "rotation": {
+                        "w": 0.9797224998474121,
+                        "x": -0.045965004712343216,
+                        "y": -0.19224539399147034,
+                        "z": 0.032753292471170425
+                    },
+                    "scale": {
+                        "x": 2.4000110626220703,
+                        "y": 2.4000091552734375,
+                        "z": 2.400009870529175
+                    },
+                    "translation": {
+                        "x": 11.781816482543945,
+                        "y": 3.562396287918091,
+                        "z": -11.69793701171875
+                    }
+                },
+                "anyValues": {
+                    "FovY": 0.8799999952316284
+                },
+                "ease": "Linear",
+                "time": 0.0
+            }
+        ],
+        "addKeyTimeStep_": 0.800000011920929,
+        "isConnectEnds_": false,
+        "isUpdateKeyDuringLerp_": true,
+        "lerpType_": "Linear",
+        "parentName_": "player",
+        "startDuration_": 0.699999988079071,
+        "startEaseType_": "EaseOutQuint"
+    },
+    "keyName": "playerParryRight",
+    "previewLoopSpacing_": 1.0,
+    "previewMode_": "Manual"
+}

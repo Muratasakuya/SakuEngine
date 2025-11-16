@@ -4,9 +4,9 @@
 //	include
 //============================================================================
 #include <Engine/Editor/GameObject/ImGuiObjectEditor.h>
+#include <Engine/Core/Debug/SpdLogger.h>
 #include <Engine/Scene/SceneView.h>
 #include <Engine/Utility/Enum/EnumAdapter.h>
-#include <Engine/Utility/Helper/ImGuiHelper.h>
 #include <Engine/Utility/Helper/Algorithm.h>
 
 //============================================================================
@@ -38,6 +38,135 @@ void CameraEditor::Init(SceneView* sceneView) {
 	sceneView_ = sceneView;
 }
 
+void CameraEditor::LoadJson(const std::string& fileName, bool isInEditor) {
+
+	LOG_SCOPE_MS_LABEL("CameraEditorLoadJson");
+
+	// エディタからの呼び出しならfileNameに"CameraEditor/xxx.json"が入っているのでそのまま、
+	// ゲーム側からなら sonBasePath_ 前にくっつける
+	std::string jsonFileName = fileName;
+	if (!isInEditor) {
+		jsonFileName = jsonBasePath_ + fileName;
+	}
+
+	// Json読み込み
+	Json data;
+	if (!JsonAdapter::LoadCheck(jsonFileName, data)) {
+		// 読み込めなければエラーにする
+		ASSERT(FALSE, "failed to open file:" + jsonFileName);
+		return;
+	}
+
+	// keyName、CameraKeyObjectを探索して見つからなければ早期リターン
+	if (!data.contains("keyName") || !data.contains("CameraKeyObject")) {
+		LOG_INFO("this file is not CameraKeyDataFile: [{}]", jsonFileName);
+		return;
+	}
+
+	// キーの名前
+	std::string keyName = data["keyName"];
+	// 同じキーの場合
+	if (Algorithm::Find(keyObjects_, keyName)) {
+
+		// エディター読み込みの場合は名前に連番をつける
+		if (isInEditor) {
+
+			keyName = CheckName(keyName);
+		}
+		// ゲーム読み込みの場合は読み込まない
+		else {
+			return;
+		}
+	}
+
+	// キーオブジェクト
+	std::unique_ptr<KeyframeObject3D> keyObject = std::make_unique<KeyframeObject3D>();
+
+	// 初期化
+	keyObject->Init(keyObjectName_, keyModelName_);
+	// 追加するキー情報
+	keyObject->AddKeyValue(AnyMold::Float, addKeyValueFov_);
+	// Jsonから復元
+	keyObject->FromJson(data["CameraKeyObject"]);
+
+	// 名前で追加
+	keyObjects_.emplace(keyName, std::move(keyObject));
+
+	// エディター
+	previewMode_ = EnumAdapter<PreviewMode>::FromString(data["previewMode_"]).value();
+	previewLoopSpacing_ = data.value("previewLoopSpacing_", 1.0f);
+
+	LOG_INFO("loaded CameraKeyData: fileName: [{}]", jsonFileName);
+}
+
+void CameraEditor::StartAnim(const std::string& keyName, bool isAddFirstKey) {
+
+	// 無ければ処理できない
+	auto it = keyObjects_.find(keyName);
+	if (it == keyObjects_.end()) {
+		return;
+	}
+
+	// 再生中のカメラアニメーションがあれば終了させる
+	for (auto& keyObject : std::views::values(keyObjects_)) {
+		if (keyObject->IsUpdating()) {
+
+			keyObject->Reset();
+		}
+	}
+
+	// アクティブなキーオブジェクトに設定
+	activeKeyObject_ = it->second.get();
+
+	// 最初のキーを追加するかどうか
+	// 追加する場合
+	if (isAddFirstKey) {
+
+		// シーンから現在のカメラ情報を取得
+		BaseCamera* camera = sceneView_->GetCamera();
+
+		// トランスフォームとfovY
+		const Transform3D& cameraTransform = camera->GetTransform();
+		float fovY = camera->GetFovY();
+		std::vector<KeyframeObject3D::AnyValue> anyValues;
+		anyValues.emplace_back(fovY);
+
+		// 補間開始
+		activeKeyObject_->StartLerp(cameraTransform, anyValues);
+	}
+	// 追加しない場合
+	else {
+
+		// 補間開始
+		activeKeyObject_->StartLerp();
+	}
+}
+
+void CameraEditor::EndAnim() {
+
+	// 無ければ処理できない
+	if (!activeKeyObject_) {
+		return;
+	}
+	// リセットして非アクティブ状態にする
+	activeKeyObject_->Reset();
+	activeKeyObject_ = nullptr;
+
+	// 更新を戻す
+	BaseCamera* camera = sceneView_->GetCamera();
+	camera->SetIsUpdateEditor(false);
+}
+
+bool CameraEditor::IsAnimFinished() const {
+
+	// 無ければ終了しているとみなす
+	if (!activeKeyObject_) {
+		return true;
+	}
+	// 更新中でなければ終了しているのでtrueを返す
+	return !activeKeyObject_->IsUpdating();
+}
+
 void CameraEditor::Update() {
 
 	// キーオブジェクトの更新
@@ -52,23 +181,30 @@ void CameraEditor::UpdateKeyObjects() {
 	// キーオブジェクトの更新
 	for (auto& keyObject : std::views::values(keyObjects_)) {
 
-		switch (previewMode_) {
-		case CameraEditor::PreviewMode::Keyframe:
-
-			break;
-		case CameraEditor::PreviewMode::Manual:
-
-			// 時間を渡して更新
-			keyObject->ExternalInputTUpdate(previewTimer_);
-			break;
-		case CameraEditor::PreviewMode::Play:
-
-			// KeyframeObject内で自己完結で更新
-			keyObject->SelfUpdate();
-			break;
-		}
 		//常に行う
 		keyObject->UpdateKey();
+	}
+
+	// アクティブなキーオブジェクトの更新
+	if (!activeKeyObject_) {
+		return;
+	}
+
+	// 現在のゲームカメラ
+	// カメラをエディターで更新中にする
+	BaseCamera* camera = sceneView_->GetCamera();
+	camera->SetIsUpdateEditor(true);
+
+	// 時間を進めてキー更新
+	activeKeyObject_->SelfUpdate();
+	// カメラに適応
+	ApplyToCamera(*sceneView_->GetCamera(), *activeKeyObject_);
+
+	// 補間が終了したらアクティブ状態を解除
+	if (!activeKeyObject_->IsUpdating()) {
+
+		// 終了処理
+		EndAnim();
 	}
 }
 
@@ -121,14 +257,20 @@ void CameraEditor::UpdateEditor() {
 	}
 	case CameraEditor::PreviewMode::Manual: {
 
+		// 時間を渡して更新
+		keyObjects_[selectedKeyObjectName_]->ExternalInputTUpdate(previewTimer_);
+
 		// カメラへ適応
-		ApplyToCamera(*camera, selectedKeyObjectName_);
+		ApplyToCamera(*camera, *keyObjects_[selectedKeyObjectName_].get());
 		break;
 	}
 	case CameraEditor::PreviewMode::Play: {
 
+		// 状態に応じた更新処理
+		keyObjects_[selectedKeyObjectName_]->SelfUpdate();
+
 		// カメラへ適応
-		ApplyToCamera(*camera, selectedKeyObjectName_);
+		ApplyToCamera(*camera, *keyObjects_[selectedKeyObjectName_].get());
 
 		// 再生中は時間を更新しない
 		if (keyObjects_[selectedKeyObjectName_]->IsUpdating()) {
@@ -151,13 +293,13 @@ void CameraEditor::UpdateEditor() {
 #endif
 }
 
-void CameraEditor::ApplyToCamera(BaseCamera& camera, const std::string& keyName) {
+void CameraEditor::ApplyToCamera(BaseCamera& camera, const KeyframeObject3D& keyObject) {
 
 	// 現在のキー位置のカメラ情報
-	Transform3D transform = keyObjects_[keyName]->GetCurrentTransform();
+	Transform3D transform = keyObject.GetCurrentTransform();
 
 	float fovY = 0.0f;
-	KeyframeObject3D::AnyValue fovValue = keyObjects_[keyName]->GetCurrentAnyValue(addKeyValueFov_);
+	KeyframeObject3D::AnyValue fovValue = keyObject.GetCurrentAnyValue(addKeyValueFov_);
 	if (const auto& keyFovY = std::get_if<float>(&fovValue)) {
 
 		fovY = *keyFovY;
@@ -190,6 +332,53 @@ void CameraEditor::SynchSelectedKeyIndex() {
 			previewKeyIndex_ = keyObjects_[selectedKeyObjectName_]->GetKeyIndexFromObjectID(id);
 		}
 	}
+}
+
+std::string CameraEditor::CheckName(const std::string& name) {
+
+	int trailingNumber = 0;
+	// ベースネームと末尾の数字に分離
+	std::string base = SplitBaseNameAndNumber(name, trailingNumber);
+
+	int& count = nameCounts_[base];
+
+	if (trailingNumber > count) {
+		count = trailingNumber;
+	}
+
+	std::string uniqueName;
+	if (count == 0) {
+
+		uniqueName = base;
+	} else {
+
+		uniqueName = base + std::to_string(count);
+	}
+	// 次回用に名前カウントを増やす
+	count++;
+
+	return uniqueName;
+}
+
+std::string CameraEditor::SplitBaseNameAndNumber(const std::string& name, int& number) {
+
+	int idx = static_cast<int>(name.size()) - 1;
+	while (idx >= 0 && std::isdigit(name[idx])) {
+		idx--;
+	}
+
+	int startOfDigits = idx + 1;
+	if (startOfDigits < static_cast<int>(name.size())) {
+
+		// 末尾に数字がある場合
+		number = std::stoi(name.substr(startOfDigits));
+	} else {
+
+		// 末尾に数字が無い場合
+		number = 0;
+	}
+
+	return name.substr(0, startOfDigits);
 }
 
 void CameraEditor::ImGui() {
@@ -240,6 +429,17 @@ void CameraEditor::AddAndSelectKeyObjectMap() {
 				// 選択を更新
 				selectedKeyObjectName_ = inputName;
 				inputName.clear();
+			}
+		}
+
+		ImGui::SameLine();
+
+		// 読み込み処理
+		if (ImGui::Button("Load CameraKey")) {
+			std::string outRelPath;
+			if (ImGuiHelper::OpenJsonDialog(outRelPath)) {
+
+				LoadJson(outRelPath, true);
 			}
 		}
 	}
@@ -312,6 +512,26 @@ void CameraEditor::EditSelectedKeyObject() {
 	ImGui::PushItemWidth(200.0f);
 
 	//================================================================================================================
+	//	保存
+	//================================================================================================================
+
+	// 保存ボタン
+	if (ImGui::Button("Save CameraKey")) {
+
+		jsonSaveState_.showPopup = true;
+	}
+	// 保存処理
+	{
+		std::string outRelPath;
+		if (ImGuiHelper::SaveJsonModal("Save CameraKey", jsonBasePath_.c_str(),
+			jsonBasePath_.c_str(), jsonSaveState_, outRelPath)) {
+
+			SaveJson(outRelPath);
+		}
+	}
+	ImGui::Separator();
+
+	//================================================================================================================
 	//	キーオブジェクトの編集
 	//================================================================================================================
 
@@ -367,4 +587,24 @@ void CameraEditor::EditSelectedKeyObject() {
 		ImGui::EndTabBar();
 	}
 	ImGui::PopItemWidth();
+}
+
+void CameraEditor::SaveJson(const std::string& fileName) {
+
+	LOG_SCOPE_MS_LABEL("CameraEditorSaveJson");
+
+	Json data;
+
+	// キーオブジェクト
+	keyObjects_[selectedKeyObjectName_]->ToJson(data["CameraKeyObject"]);
+	// 名前
+	data["keyName"] = selectedKeyObjectName_;
+
+	// エディター
+	data["previewMode_"] = EnumAdapter<PreviewMode>::ToString(previewMode_);
+	data["previewLoopSpacing_"] = previewLoopSpacing_;
+
+	JsonAdapter::Save(fileName, data);
+
+	LOG_INFO("saved CameraKeyData: fileName: [{}]", fileName);
 }

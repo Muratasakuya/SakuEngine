@@ -5,6 +5,7 @@
 //============================================================================
 #include <Engine/Editor/Base/IGameEditor.h>
 #include <Engine/Object/Base/KeyframeObject3D.h>
+#include <Engine/Utility/Helper/ImGuiHelper.h>
 
 // front
 class SceneView;
@@ -28,6 +29,19 @@ public:
 
 	// エディター
 	void ImGui() override;
+
+	// 読み込んでデータを作成、jsonBasePath_ + (...ここ)
+	// isInEditorはエディター内での読み込みかどうか
+	void LoadJson(const std::string& fileName, bool isInEditor = false);
+
+	// アニメーション処理
+	// 開始呼び出し
+	void StartAnim(const std::string& keyName, bool isAddFirstKey = true);
+	// 現在アクティブなアニメーションの終了呼び出し
+	void EndAnim();
+
+	// 現在アクティブなアニメーションが終了したか
+	bool IsAnimFinished() const;
 
 	//--------- accessor -----------------------------------------------------
 
@@ -54,6 +68,9 @@ private:
 	static CameraEditor* instance_;
 	SceneView* sceneView_;
 
+	// 保存するファイルパス
+	const std::string jsonBasePath_ = "CameraEditor/";
+
 	// 表示するキーオブジェクトのモデル
 	const std::string keyObjectName_ = "cameraEditKey";
 	const std::string keyModelName_ = "demoCamera";
@@ -64,8 +81,14 @@ private:
 	// std::stringがキーの名前
 	std::unordered_map<std::string, std::unique_ptr<KeyframeObject3D>> keyObjects_;
 
+	// ゲームで開始呼びだししたアクティブなキーオブジェクト
+	KeyframeObject3D* activeKeyObject_ = nullptr;
+
 	// エディター
 	std::string selectedKeyObjectName_; // 選択されているキーオブジェクトの名前
+	JsonSaveState jsonSaveState_;       // json保存状態
+	// 名前の累計カウント、重複しないようにするため
+	std::unordered_map<std::string, int32_t> nameCounts_;
 
 	// ゲームカメラとの連携
 	bool isPreViewGameCamera_ = false;                // ゲームカメラへ調整結果を反映させるか
@@ -81,6 +104,9 @@ private:
 
 	//--------- functions ----------------------------------------------------
 
+	// 保存
+	void SaveJson(const std::string& fileName);
+
 	// キーオブジェクトの更新
 	void UpdateKeyObjects();
 	// エディター内の更新
@@ -93,9 +119,14 @@ private:
 	void EditSelectedKeyObject();
 
 	// カメラへの適応
-	void ApplyToCamera(BaseCamera& camera, const std::string& keyName);
+	void ApplyToCamera(BaseCamera& camera, const KeyframeObject3D& keyObject);
 	// 値操作中のキーインデックスの同期
 	void SynchSelectedKeyIndex();
+
+	// 名前の重複チェックと修正
+	std::string CheckName(const std::string& name);
+	// 名前からベースネームと番号を分離する
+	std::string SplitBaseNameAndNumber(const std::string& name, int& number);
 
 	CameraEditor() :IGameEditor("CameraEditor") {}
 	~CameraEditor() = default;

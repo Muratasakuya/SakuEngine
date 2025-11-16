@@ -229,24 +229,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Core\Graphics\PostProcess\Texture\MultiRenderTexture.cpp">
       <SubType />
     </ClCompile>
-    <ClCompile Include="Engine\Editor\ActionProgress\ActionProgressMonitor.cpp">
-      <SubType />
-    </ClCompile>
-    <ClCompile Include="Engine\Editor\Camera\3D\Camera3DEditorPanel.cpp">
-      <SubType />
-    </ClCompile>
-    <ClCompile Include="Engine\Editor\Camera\3D\CameraPathController.cpp">
-      <SubType />
-    </ClCompile>
-    <ClCompile Include="Engine\Editor\Camera\3D\CameraPathData.cpp">
-      <SubType />
-    </ClCompile>
-    <ClCompile Include="Engine\Editor\Camera\3D\CameraPathGizmoSynch.cpp">
-      <SubType />
-    </ClCompile>
-    <ClCompile Include="Engine\Editor\Camera\3D\CameraPathRenderer.cpp">
-      <SubType />
-    </ClCompile>
     <ClCompile Include="Engine\Editor\Curve\CurveValueEditor.cpp">
       <SubType />
     </ClCompile>
@@ -628,9 +610,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Utility\Timer\StateTimer.cpp">
       <SubType />
     </ClCompile>
-    <ClCompile Include="Game\Camera\BeginGame\BeginGameCamera.cpp">
-      <SubType />
-    </ClCompile>
     <ClCompile Include="Game\Camera\EndGame\EndGameCamera.cpp">
       <SubType />
     </ClCompile>
@@ -673,9 +652,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <SubType />
     </ClCompile>
     <ClCompile Include="Game\Camera\ResultCamera\ClearResultCamera.cpp">
-      <SubType />
-    </ClCompile>
-    <ClCompile Include="Engine\Editor\Camera\3D\Camera3DEditor.cpp">
       <SubType />
     </ClCompile>
     <ClCompile Include="Engine\Editor\GameObject\GameObjectEditor.cpp">
@@ -1025,24 +1001,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <SubType />
     </ClInclude>
     <ClInclude Include="Engine\Core\Graphics\PostProcess\Texture\MultiRenderTexture.h">
-      <SubType />
-    </ClInclude>
-    <ClInclude Include="Engine\Editor\ActionProgress\ActionProgressMonitor.h">
-      <SubType />
-    </ClInclude>
-    <ClInclude Include="Engine\Editor\Camera\3D\Camera3DEditorPanel.h">
-      <SubType />
-    </ClInclude>
-    <ClInclude Include="Engine\Editor\Camera\3D\CameraPathController.h">
-      <SubType />
-    </ClInclude>
-    <ClInclude Include="Engine\Editor\Camera\3D\CameraPathData.h">
-      <SubType />
-    </ClInclude>
-    <ClInclude Include="Engine\Editor\Camera\3D\CameraPathGizmoSynch.h">
-      <SubType />
-    </ClInclude>
-    <ClInclude Include="Engine\Editor\Camera\3D\CameraPathRenderer.h">
       <SubType />
     </ClInclude>
     <ClInclude Include="Engine\Editor\Curve\CurveValueEditor.h">
@@ -1516,9 +1474,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Utility\Timer\StateTimer.h">
       <SubType />
     </ClInclude>
-    <ClInclude Include="Game\Camera\BeginGame\BeginGameCamera.h">
-      <SubType />
-    </ClInclude>
     <ClInclude Include="Game\Camera\EndGame\EndGameCamera.h">
       <SubType />
     </ClInclude>
@@ -1568,9 +1523,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <SubType />
     </ClInclude>
     <ClInclude Include="Game\Camera\ResultCamera\ClearResultCamera.h">
-      <SubType />
-    </ClInclude>
-    <ClInclude Include="Engine\Editor\Camera\3D\Camera3DEditor.h">
       <SubType />
     </ClInclude>
     <ClInclude Include="Engine\Editor\GameObject\GameObjectEditor.h">

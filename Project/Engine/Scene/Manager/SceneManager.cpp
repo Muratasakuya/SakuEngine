@@ -5,7 +5,6 @@
 //============================================================================
 #include <Engine/Asset/Asset.h>
 #include <Engine/Editor/GameObject/ImGuiObjectEditor.h>
-#include <Engine/Editor/Camera/3D/Camera3DEditor.h>
 #include <Engine/Editor/Camera/CameraEditor.h>
 #include <Engine/Object/Core/ObjectManager.h>
 #include <Engine/Object/System/Systems/InstancedMeshSystem.h>
@@ -59,7 +58,6 @@ void SceneManager::Update() {
 	sceneTransition_->Update();
 
 	// cameraEditor更新
-	Camera3DEditor::GetInstance()->Update();
 	CameraEditor::GetInstance()->Update();
 }
 

@@ -1,0 +1,66 @@
+{
+    "CameraKeyObject": {
+        "Keys": [
+            {
+                "Transform": {
+                    "rotation": {
+                        "w": 0.9976032972335815,
+                        "x": 0.059379324316978455,
+                        "y": 0.0354599766433239,
+                        "z": -0.002110553439706564
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translation": {
+                        "x": -4.72178840637207,
+                        "y": 13.253992080688477,
+                        "z": -34.60748291015625
+                    }
+                },
+                "anyValues": {
+                    "FovY": 0.6800000071525574
+                },
+                "ease": "EaseOutCubic",
+                "time": 0.0
+            },
+            {
+                "Transform": {
+                    "rotation": {
+                        "w": 0.9999788999557495,
+                        "x": -0.006499954499304295,
+                        "y": 1.1218092055287343e-07,
+                        "z": 6.61639845134232e-08
+                    },
+                    "scale": {
+                        "x": 1.0000070333480835,
+                        "y": 1.0000032186508179,
+                        "z": 1.0000032186508179
+                    },
+                    "translation": {
+                        "x": 9.059906005859375e-06,
+                        "y": 10.316279411315918,
+                        "z": -33.112972259521484
+                    }
+                },
+                "anyValues": {
+                    "FovY": 0.7599999904632568
+                },
+                "ease": "Linear",
+                "time": 0.5400000214576721
+            }
+        ],
+        "addKeyTimeStep_": 0.800000011920929,
+        "isConnectEnds_": false,
+        "isUpdateKeyDuringLerp_": true,
+        "lerpType_": "Linear",
+        "parentName_": "player",
+        "startDuration_": 0.10000000149011612,
+        "startEaseType_": "EaseInCubic"
+    },
+    "keyName": "player3rdAttack",
+    "previewLoopSpacing_": 1.0,
+    "previewMode_": "Manual"
+}

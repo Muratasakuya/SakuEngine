@@ -12,7 +12,6 @@
 #include <Engine/Core/Graphics/Renderer/LineRenderer.h>
 #include <Engine/Utility/Timer/GameTimer.h>
 #include <Engine/Config.h>
-#include <Engine/Editor/Camera/3D/Camera3DEditor.h>
 #include <Engine/Editor/Camera/CameraEditor.h>
 
 //============================================================================
@@ -132,8 +131,6 @@ Framework::Framework() {
 	LineRenderer::GetInstance()->Init(device, dxCommand->GetCommandList(),
 		srvDescriptor, shaderCompiler, sceneView_.get());
 	AssetEditor::GetInstance()->Init(asset_.get());
-	Camera3DEditor::GetInstance()->Init(sceneView_.get());
-
 	CameraEditor::GetInstance()->Init(sceneView_.get());
 
 	//------------------------------------------------------------------------

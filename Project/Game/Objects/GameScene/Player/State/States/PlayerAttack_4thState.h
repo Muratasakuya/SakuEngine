@@ -60,9 +60,4 @@ private:
 	std::unique_ptr<EffectGroup> rotationEffect_;
 	Vector3 rotateEffectOffset_;
 	Vector3 rotateEffectOffsetRotation_;
-
-	//--------- functions ----------------------------------------------------
-
-	void SetActionProgress();
-	void SetSpanUpdate(int objectID);
 };

@@ -41,7 +41,7 @@ public:
 
 	// エディターによるカメラアニメーション
 	void StartPlayerActionAnim(PlayerState state);
-	void EndPlayerActionAnim(PlayerState  state, bool isWarmStart);
+	void EndPlayerActionAnim(bool isWarmStart);
 
 	// 視点を注視点に向ける
 	void StartLookToTarget(FollowCameraTargetType from, FollowCameraTargetType to,
@@ -79,8 +79,6 @@ private:
 
 	// アニメーションを読み込んだか
 	bool isLoadedAnim_;
-	// 最後にエディターで再生したアニメーションの名前
-	std::string lastActionAnimName_;
 
 	//--------- functions ----------------------------------------------------
 

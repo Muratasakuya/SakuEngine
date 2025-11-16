@@ -9,7 +9,6 @@
 #include <Game/Scene/GameState/GameSceneState.h>
 // cameras
 #include <Game/Camera/Follow/FollowCamera.h>
-#include <Game/Camera/BeginGame/BeginGameCamera.h>
 #include <Game/Camera/EndGame/EndGameCamera.h>
 #include <Game/Camera/ResultCamera/ClearResultCamera.h>
 // front
@@ -45,7 +44,6 @@ public:
 	void SetTarget(const Player* player, const BossEnemy* bossEnemy);
 
 	FollowCamera* GetFollowCamera() const { return followCamera_.get(); }
-	BeginGameCamera* GetBeginGameCamera() const { return beginGameCamera_.get(); }
 	EndGameCamera* GetEndGameCamera() const { return endGameCamera_.get(); }
 private:
 	//========================================================================
@@ -60,8 +58,6 @@ private:
 
 	// 追従カメラ
 	std::unique_ptr<FollowCamera> followCamera_;
-	// ゲーム開始時のカメラ
-	std::unique_ptr<BeginGameCamera> beginGameCamera_;
 	// ゲーム終了時のカメラ
 	std::unique_ptr<EndGameCamera> endGameCamera_;
 	// リザルト画面のカメラ
