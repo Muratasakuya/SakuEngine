@@ -109,9 +109,6 @@ void PlayerStunAttackState::UpdateAllyRushAttack(Player& player) {
 		// この瞬間に次のanimationに切り替える
 		player.SetNextAnimation("player_stunAttack", false, nextAnimDuration_);
 
-		// 一瞬スローモーションにするためにdeltaTimeをスケーリングさせる
-		GameTimer::SetTimeScale(0.0f);
-
 		// カメラの状態をプレイヤー攻撃に切り替える
 		followCamera_->SetState(FollowCameraState::StunAttack);
 	}

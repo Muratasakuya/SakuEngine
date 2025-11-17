@@ -29,9 +29,6 @@ void PlayerSwitchAllyState::Enter(Player& player) {
 	// Noneで初期化
 	selectState_ = PlayerState::None;
 
-	// deltaTimeをスケーリングしても元の値に戻らないようにする
-	GameTimer::SetReturnScaleEnable(false);
-
 	// カメラの状態を切り替え待ち状態にする
 	followCamera_->SetState(FollowCameraState::SwitchAlly);
 	// 画面シェイクを止める
@@ -49,8 +46,6 @@ void PlayerSwitchAllyState::Update(Player& player) {
 	float lerpT = deltaTimeScaleTimer_ / deltaTimeScaleTime_;
 	lerpT = EasedValue(deltaTimeScaleEasingType_, lerpT);
 	float deltaScale = std::lerp(1.0f, deltaTimeScale_, lerpT);
-	// スケーリング値を設定
-	GameTimer::SetTimeScale(std::clamp(deltaScale, 0.0f, 1.0f));
 
 	// 入力受付待ち
 	switchAllyTimer_ += GameTimer::GetDeltaTime();
@@ -100,9 +95,6 @@ void PlayerSwitchAllyState::CheckInput(float t) {
 }
 
 void PlayerSwitchAllyState::Exit([[maybe_unused]] Player& player) {
-
-	// deltaTimeを元の値に戻るようにする
-	GameTimer::SetReturnScaleEnable(true);
 
 	// リセット
 	deltaTimeScaleTimer_ = 0.0f;

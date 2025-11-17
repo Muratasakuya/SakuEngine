@@ -31,9 +31,7 @@ void PlayerFalterState::Enter(Player& player) {
 	// 敵の方向を向かせる
 	player.SetRotation(Quaternion::LookRotation(direction, Vector3(0.0f, 1.0f, 0.0f)));
 
-	// デルタタイムを一時停止
-	GameTimer::SetReturnScaleEnable(false);
-	GameTimer::SetTimeScale(0.0f);
+	GameTimer::StartHitStop(hitStopTime_, 0.0f);
 
 	// カメラの向きを補正させる
 	followCamera_->StartLookToTarget(FollowCameraTargetType::Player,
@@ -43,14 +41,6 @@ void PlayerFalterState::Enter(Player& player) {
 }
 
 void PlayerFalterState::Update(Player& player) {
-
-	// デルタタイム停止解除まで待機
-	deltaWaitTimer_.Update(std::nullopt, false);
-	if (deltaWaitTimer_.IsReached()) {
-
-		// 元に戻させる
-		GameTimer::SetReturnScaleEnable(true);
-	}
 
 	// 時間を更新
 	falterTimer_.Update();
@@ -68,7 +58,6 @@ void PlayerFalterState::Exit([[maybe_unused]] Player& player) {
 
 	// リセット
 	falterTimer_.Reset();
-	deltaWaitTimer_.Reset();
 }
 
 void PlayerFalterState::ImGui([[maybe_unused]] const Player& player) {
@@ -76,9 +65,9 @@ void PlayerFalterState::ImGui([[maybe_unused]] const Player& player) {
 	ImGui::DragFloat("nextAnimDuration", &nextAnimDuration_, 0.01f);
 	ImGui::DragFloat("moveDistance", &moveDistance_, 0.1f);
 	ImGui::DragFloat("targetCameraRotateX", &targetCameraRotateX_, 0.01f);
+	ImGui::DragFloat("hitStopTime", &hitStopTime_, 0.01f);
 
 	falterTimer_.ImGui("FalterTimer");
-	deltaWaitTimer_.ImGui("DeltaWait");
 }
 
 void PlayerFalterState::ApplyJson(const Json& data) {
@@ -90,9 +79,9 @@ void PlayerFalterState::ApplyJson(const Json& data) {
 	nextAnimDuration_ = data.value("nextAnimDuration_", 0.1f);
 	moveDistance_ = data.value("moveDistance_", 0.5f);
 	targetCameraRotateX_ = data.value("targetCameraRotateX_", 0.5f);
+	hitStopTime_ = data.value("hitStopTime_", 0.05f);
 
 	falterTimer_.FromJson(data.value("FalterTimer", Json()));
-	deltaWaitTimer_.FromJson(data.value("DeltaWait", Json()));
 }
 
 void PlayerFalterState::SaveJson(Json& data) {
@@ -100,7 +89,7 @@ void PlayerFalterState::SaveJson(Json& data) {
 	data["nextAnimDuration_"] = nextAnimDuration_;
 	data["moveDistance_"] = moveDistance_;
 	data["targetCameraRotateX_"] = targetCameraRotateX_;
+	data["hitStopTime_"] = hitStopTime_;
 
 	falterTimer_.ToJson(data["FalterTimer"]);
-	deltaWaitTimer_.ToJson(data["DeltaWait"]);
 }

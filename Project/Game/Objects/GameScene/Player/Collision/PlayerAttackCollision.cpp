@@ -26,13 +26,6 @@ void PlayerAttackCollision::Init() {
 	// 最初は無効状態
 	weaponBody_->SetType(ColliderType::Type_None);
 	weaponBody_->SetTargetType(ColliderType::Type_BossEnemy);
-
-	hitStopActive_ = false;
-
-	// effect作成
-	// エフェクト、エンジン機能変更中...
-	/*hitEffect_ = std::make_unique<GameEffect>();
-	hitEffect_->CreateParticleSystem("Particle/playerHitEffect.json");*/
 }
 
 void PlayerAttackCollision::Update(const Transform3D& transform) {
@@ -49,19 +42,6 @@ void PlayerAttackCollision::Update(const Transform3D& transform) {
 		[t = currentTimer_](const TimeWindow& window) {
 			return window.on <= t && t < window.off; });
 	reHitTimer_ = (std::max)(0.0f, reHitTimer_ - GameTimer::GetDeltaTime());
-
-	// ヒットストップ中
-	if (hitStopActive_) {
-
-		hitStopTimer_ -= GameTimer::GetDeltaTime();
-		// 時間経過後元に戻す
-		if (hitStopTimer_ <= 0.0f) {
-
-			GameTimer::SetWaitTime(0.0f, true);
-			GameTimer::SetReturnScaleEnable(true);
-			hitStopActive_ = false;
-		}
-	}
 
 	// 遷移可能な状態の時のみ武器状態にする
 	if (isAttack && reHitTimer_ <= 0.0f) {
@@ -115,34 +95,13 @@ void PlayerAttackCollision::OnCollisionEnter(const CollisionBody* collisionBody)
 		return;
 	}
 
-	if (collisionBody->GetType() == ColliderType::Type_BossEnemy) {
+	if ((collisionBody->GetType() & ColliderType::Type_BossEnemy) != ColliderType::Type_None) {
 
 		// 多段ヒットクールタイム設定
 		reHitTimer_ = currentParameter_->hitInterval;
 
-		// タイムスケールを設定する
-		GameTimer::SetReturnScaleEnable(false);
-		GameTimer::SetLerpSpeed(currentParameter_->lerpSpeed);
-		GameTimer::SetTimeScale(currentParameter_->timeScale, currentParameter_->timeScaleEasing);
-
-		// ヒットストップ開始
-		hitStopTimer_ = (std::max)(hitStopTimer_, currentParameter_->waitTime);
-		hitStopActive_ = true;
-
-		// 座標を設定してparticleを発生
-		// 状態別で形状の値を設定
-		//const auto& offset = std::get<CollisionShape::OBB>(bodyOffsets_.front());
-
-		// コマンドに設定
-		// エフェクト、エンジン機能変更中...
-		//ParticleCommand command{};
-		//command.target = ParticleCommandTarget::Spawner;
-		//command.id = ParticleCommandID::SetTranslation;
-		//command.value = transform_->translation + offset.center;
-
-		//// 発生させる
-		//hitEffect_->SendCommand(command);
-		//hitEffect_->Emit();
+		// ヒットストップを発生させる
+		GameTimer::StartHitStop(currentParameter_->waitTime, currentParameter_->timeScale);
 	}
 }
 
