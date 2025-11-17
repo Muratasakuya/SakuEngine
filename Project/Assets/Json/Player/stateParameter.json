@@ -300,11 +300,11 @@
     "Falter": {
         "FalterTimer": {
             "easeingType_": "EaseOutCubic",
-            "target_": 0.18000000715255737
+            "target_": 0.09000000357627869
         },
         "hitStopTime_": 0.07999999821186066,
-        "moveDistance_": -20.0,
-        "nextAnimDuration_": 0.03999999910593033,
+        "moveDistance_": -12.0,
+        "nextAnimDuration_": 0.0,
         "targetCameraRotateX_": 0.10000000149011612
     },
     "Idle": {
@@ -316,12 +316,12 @@
         "attackLerp_.time": 0.07999999821186066,
         "cameraLookRate_": 4.800000190734863,
         "deltaLerpSpeed_": 12.59000015258789,
-        "deltaWaitTime_": 0.1940000057220459,
+        "deltaWaitTime_": 0.2240000069141388,
         "nextAnimDuration_": 0.019999999552965164,
         "parryEffectPosY_": 4.0,
         "parryLerp_.easingType": 11,
-        "parryLerp_.moveDistance": -69.5999984741211,
-        "parryLerp_.time": 0.6000000238418579
+        "parryLerp_.moveDistance": -50.0,
+        "parryLerp_.time": 0.47999998927116394
     },
     "SkilAttack": {
         "MoveKey": {
@@ -478,9 +478,6 @@
         "targetTranslationY_": 4.0
     },
     "SwitchAlly": {
-        "deltaTimeScaleEasingType_": 0,
-        "deltaTimeScaleTime_": 0.20000000298023224,
-        "deltaTimeScale_": 0.23999999463558197,
         "switchAllyTime_": 3.0
     },
     "Walk": {
