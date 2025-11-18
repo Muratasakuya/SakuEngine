@@ -58,6 +58,9 @@ public:
 
 	//--------- accessor ----------------------------------------------------
 
+	// 親の設定
+	void SetParent(const std::string& name, const Transform3D& parent);
+
 	// 再生中かどうか
 	bool IsUpdating() const { return currentState_ == State::Updating; }
 
@@ -131,7 +134,7 @@ private:
 
 	// 親トランスフォーム、回転と座標
 	std::string parentName_;
-	Transform3D* parent_ = nullptr;
+	const Transform3D* parent_ = nullptr;
 
 	// キー情報
 	std::vector<Key> keys_;

@@ -39,10 +39,23 @@ void BaseTransform::UpdateMatrix() {
 			offsetTranslation == prevOffsetTranslation);
 
 	// 親と自分の値が変わっていなければ更新しない
-	if (selfUnchanged && (!parent || !parent->IsDirty())) {
+	if (selfUnchanged && !isCompulsion_) {
 
-		isDirty_ = false;
-		return;
+		// 親の変更をチェック
+		if (parent) {
+			// 親も変更がなければ更新しない
+			if (!parent->isDirty_) {
+
+				isDirty_ = false;
+				return;
+			}
+		}
+		// 親がいなければ更新しない
+		else {
+
+			isDirty_ = false;
+			return;
+		}
 	}
 	// どちらかに変更があれば更新
 	isDirty_ = true;
@@ -71,6 +84,7 @@ void BaseTransform::ImGui(float itemSize) {
 	ImGui::Separator();
 
 	ImGui::Text(std::format("isDirty: {}", isDirty_).c_str());
+	ImGui::Checkbox("isCompulsion", &isCompulsion_);
 
 	ImGui::DragFloat3("translation", &translation.x, 0.01f);
 	if (ImGui::DragFloat3("rotation", &eulerRotate.x, 0.01f)) {
@@ -107,6 +121,8 @@ void BaseTransform::ImGui(float itemSize) {
 		ImGui::SeparatorText("Parent World Matrix");
 
 		ImGui::Text(std::format("isDirty {}", parent->isDirty_).c_str());
+		ImGui::Text(std::format("isCompulsion {}", parent->isCompulsion_).c_str());
+		ImGui::Text("name: %s", static_cast<const Transform3D*>(parent)->GetInstancingName().c_str());
 		if (ImGui::BeginTable("Parent WorldMatrix", 4,
 			ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit)) {
 
@@ -129,6 +145,7 @@ void BaseTransform::ImGui(float itemSize) {
 
 void BaseTransform::ToJson(Json& data) {
 
+	data["isCompulsion_"] = isCompulsion_;
 	data["scale"] = scale.ToJson();
 
 	// 正規化してから保存
@@ -143,6 +160,7 @@ void BaseTransform::FromJson(const Json& data) {
 		return;
 	}
 
+	isCompulsion_ = data.value("isCompulsion_", false);
 	scale = JsonAdapter::ToObject<Vector3>(data["scale"]);
 	rotation = JsonAdapter::ToObject<Quaternion>(data["rotation"]);
 	translation = JsonAdapter::ToObject<Vector3>(data["translation"]);

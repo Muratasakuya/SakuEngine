@@ -180,6 +180,19 @@ uint32_t ObjectManager::CreateObject2D(const std::string& textureName,
 	return object;
 }
 
+uint32_t ObjectManager::BuildEmptyobject(const std::string& name, const std::string& groupName) {
+
+	// object作成
+	uint32_t object = objectPoolManager_->Create();
+	// tag設定
+	auto* tag = objectPoolManager_->AddData<ObjectTag>(object);
+	tag->identifier = name;
+	tag->name = systemManager_->GetSystem<TagSystem>()->CheckName(name);
+	tag->groupName = groupName;
+
+	return object;
+}
+
 void ObjectManager::Destroy(uint32_t object) {
 
 	objectPoolManager_->Destroy(object);
@@ -199,17 +212,4 @@ void ObjectManager::DestroyAll() {
 		}
 		objectPoolManager_->Destroy(id);
 	}
-}
-
-uint32_t ObjectManager::BuildEmptyobject(const std::string& name, const std::string& groupName) {
-
-	// object作成
-	uint32_t object = objectPoolManager_->Create();
-	// tag設定
-	auto* tag = objectPoolManager_->AddData<ObjectTag>(object);
-	tag->identifier = name;
-	tag->name = systemManager_->GetSystem<TagSystem>()->CheckName(name);
-	tag->groupName = groupName;
-
-	return object;
 }

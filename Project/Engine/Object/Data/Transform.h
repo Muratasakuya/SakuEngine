@@ -76,6 +76,9 @@ public:
 
 	TransformationMatrix matrix;
 	const BaseTransform* parent = nullptr;
+
+	// 行列強制更新フラグ
+	bool isCompulsion_ = false;
 private:
 	//========================================================================
 	//	private Methods

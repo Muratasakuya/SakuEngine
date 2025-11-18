@@ -174,6 +174,19 @@ void KeyframeObject3D::AddKeyValue(AnyMold mold, const std::string& name) {
 	currentAnyValues_.emplace_back(defaultValue);
 }
 
+void KeyframeObject3D::SetParent(const std::string& name, const Transform3D& parent) {
+
+	// 親を設定
+	parentName_ = name;
+	parent_ = &parent;
+
+	// キーオブジェクトの親も設定
+	for (auto& keyObject : keyObjects_) {
+
+		keyObject->SetParent(*parent_);
+	}
+}
+
 void KeyframeObject3D::SelfUpdate() {
 
 	// 行列の更新は常に行う
@@ -590,14 +603,14 @@ void KeyframeObject3D::ImGui() {
 
 		// 座標
 		key.transform.translation = keyObjects_.empty() ?
-			Vector3::AnyInit(0.0f) : keyObjects_.back()->GetTransform().GetWorldPos();
+			Vector3::AnyInit(0.0f) : keyObjects_.back()->GetTranslation();
 		key.transform.translation.y += 4.0f;
 		// スケール
 		key.transform.scale = keyObjects_.empty() ?
-			Vector3::AnyInit(1.0f) : keyObjects_.back()->GetTransform().scale;
+			Vector3::AnyInit(1.0f) : keyObjects_.back()->GetScale();
 		// 回転
 		key.transform.rotation = keyObjects_.empty() ?
-			Quaternion::Identity() : keyObjects_.back()->GetTransform().rotation;
+			Quaternion::Identity() : keyObjects_.back()->GetRotation();
 
 		// 任意の型の値があれば
 		if (!anyTracks_.empty()) {
@@ -722,14 +735,13 @@ void KeyframeObject3D::ImGui() {
 
 			// 親Transformと名前を更新
 			parent_ = objectManager->GetData<Transform3D>(currentId);
-			// 変更があったことにする
-			parent_->SetIsDirty(true);
 			parentName_ = selectName;
 
 			// キーオブジェクトの親を更新
 			for (const auto& keyObject : keyObjects_) {
 
 				keyObject->SetParent(*parent_);
+				keyObject->SetIsDirty(true);
 			}
 		}
 	}

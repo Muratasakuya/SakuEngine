@@ -23,6 +23,7 @@ public:
 	void Enter(Player& player) override;
 
 	void Update(Player& player) override;
+	void UpdateAlways(Player& player) override;
 
 	void Exit(Player& player) override;
 
@@ -35,6 +36,7 @@ public:
 
 	//--------- accessor -----------------------------------------------------
 
+	// 次の状態に遷移可能かどうか
 	bool GetCanExit() const override;
 private:
 	//========================================================================
@@ -45,6 +47,10 @@ private:
 
 	// 座標移動のキーフレーム
 	std::unique_ptr<KeyframeObject3D> moveKeyframeObject_;
+	// 空の親トランスフォーム、敵が範囲内にいないときに参照する親
+	Transform3D* moveFrontTransform_;
+	// タグ
+	ObjectTag* moveFrontTag_;
 
 	//--------- functions ----------------------------------------------------
 

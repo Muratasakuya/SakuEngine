@@ -403,6 +403,9 @@ void ImGuiObjectEditor::ObjectsTransform() {
 void ImGuiObjectEditor::ObjectsMaterial() {
 
 	auto* matsPtr = objectManager_->GetData<Material, true>(*CurrentInfo3D());
+	if (!matsPtr) {
+		return;
+	}
 	auto& materials = *matsPtr;
 
 	ImGui::PushItemWidth(itemWidth_);

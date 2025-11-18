@@ -53,6 +53,9 @@ public:
 	uint32_t CreateObject2D(const std::string& textureName, const std::string& name,
 		const std::string& groupName);
 
+	// 空のオブジェクトを作成する
+	uint32_t BuildEmptyobject(const std::string& name, const std::string& groupName);
+
 	// 指定オブジェクトを破棄する
 	void Destroy(uint32_t object);
 	// 破棄対象フラグの立つオブジェクトを一括破棄する
@@ -89,11 +92,6 @@ private:
 	std::unique_ptr<ObjectPoolManager> objectPoolManager_;
 
 	std::unique_ptr<SystemManager> systemManager_;
-
-	//--------- functions ----------------------------------------------------
-
-	// 空のオブジェクトを作成する
-	uint32_t BuildEmptyobject(const std::string& name, const std::string& groupName);
 };
 
 //============================================================================
