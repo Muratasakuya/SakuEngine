@@ -55,6 +55,9 @@ void PlayerSkilAttackState::Enter([[maybe_unused]] Player& player) {
 
 	// キーフレーム補間開始
 	moveKeyframeObject_->StartLerp();
+
+	// 移動前座標を初期化
+	preMovePos_ = player.GetTranslation();
 }
 
 void PlayerSkilAttackState::Update([[maybe_unused]] Player& player) {
@@ -62,15 +65,24 @@ void PlayerSkilAttackState::Update([[maybe_unused]] Player& player) {
 	// トランスフォーム補間更新
 	moveKeyframeObject_->SelfUpdate();
 
-	// 補間された回転、座標をプレイヤーに適用
-	player.SetRotation(moveKeyframeObject_->GetCurrentTransform().rotation);
-	player.SetTranslation(moveKeyframeObject_->GetCurrentTransform().translation);
-
 	// 補間処理終了後状態を終了
 	if (!moveKeyframeObject_->IsUpdating()) {
 
 		// 経過時間を加算、時間経過で勝手に遷移可能になる
 		exitTimer_ += GameTimer::GetDeltaTime();
+	} else {
+
+		// 補間された回転、座標をプレイヤーに適用
+		Vector3 currentTranslation = moveKeyframeObject_->GetCurrentTransform().translation;
+		player.SetTranslation(currentTranslation);
+		// 回転は次の移動位置の方向を向くようにする
+		// 方向
+		Vector3 direction = Vector3(currentTranslation - preMovePos_).Normalize();
+		Quaternion rotation = Quaternion::LookRotation(direction, Vector3(0.0f, 1.0f, 0.0f));
+		player.SetRotation(Quaternion::Normalize(rotation));
+
+		// 移動座標を更新する
+		preMovePos_ = currentTranslation;
 	}
 }
 

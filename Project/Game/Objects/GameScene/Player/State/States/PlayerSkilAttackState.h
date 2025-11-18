@@ -52,6 +52,9 @@ private:
 	// タグ
 	ObjectTag* moveFrontTag_;
 
+	// 移動の前座標
+	Vector3 preMovePos_;
+
 	//--------- functions ----------------------------------------------------
 
 };
