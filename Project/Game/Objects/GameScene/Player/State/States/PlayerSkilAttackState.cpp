@@ -34,6 +34,10 @@ PlayerSkilAttackState::PlayerSkilAttackState(Player* player) {
 	moveFrontTransform_->SetInstancingName(moveFrontTag_->name);
 	// プレイヤーを親に設定
 	moveFrontTransform_->parent = &player_->GetTransform();
+
+	// 残像表現エフェクト作成
+	afterImageEffect_ = std::make_unique<PlayerAfterImageEffect>();
+	afterImageEffect_->Init("playerAttackSkilMove");
 }
 
 void PlayerSkilAttackState::Enter(Player& player) {
@@ -41,6 +45,8 @@ void PlayerSkilAttackState::Enter(Player& player) {
 	// 最初のアニメーションに設定
 	player.SetNextAnimation("player_skilAttack_1st", false, nextAnimDuration_);
 
+	// 状態設定
+	currentState_ = State::MoveAttack;
 	canExit_ = false;
 	exitTimer_ = 0.0f;
 
@@ -61,31 +67,74 @@ void PlayerSkilAttackState::Enter(Player& player) {
 
 	// 移動前座標を初期化
 	preMovePos_ = player.GetTranslation();
+
+	// 残像表現エフェクト開始
+	std::vector<GameObject3D*> objects = {
+		&player,
+		player.GetWeapon(PlayerWeaponType::Left),
+		player.GetWeapon(PlayerWeaponType::Right)
+	};
+	afterImageEffect_->Start(objects);
 }
 
 void PlayerSkilAttackState::Update([[maybe_unused]] Player& player) {
 
+	// 状態ごとの更新
+	switch (currentState_) {
+	case PlayerSkilAttackState::State::MoveAttack:
+
+		// 移動攻撃更新
+		UpdateMoveAttack(player);
+		break;
+	case PlayerSkilAttackState::State::JumpAttack:
+
+		// ジャンプ攻撃更新
+		UpdateJumpAttack(player);
+		break;
+	}
+}
+
+void PlayerSkilAttackState::UpdateMoveAttack(Player& player) {
+
 	// トランスフォーム補間更新
 	moveKeyframeObject_->SelfUpdate();
+
+	// 補間された回転、座標をプレイヤーに適用
+	Vector3 currentTranslation = moveKeyframeObject_->GetCurrentTransform().translation;
+	player.SetTranslation(currentTranslation);
+	// 回転は次の移動位置の方向を向くようにする
+	// 方向
+	Vector3 direction = Vector3(currentTranslation - preMovePos_).Normalize();
+	Quaternion rotation = Quaternion::LookRotation(direction, rotationAxis_);
+	player.SetRotation(Quaternion::Normalize(rotation));
+
+	// 移動座標を更新する
+	preMovePos_ = currentTranslation;
 
 	// 補間処理終了後状態を終了
 	if (!moveKeyframeObject_->IsUpdating()) {
 
-		// 経過時間を加算、時間経過で勝手に遷移可能になる
-		exitTimer_ += GameTimer::GetDeltaTime();
-	} else {
+		// 状態を進める
+		currentState_ = State::JumpAttack;
 
-		// 補間された回転、座標をプレイヤーに適用
-		Vector3 currentTranslation = moveKeyframeObject_->GetCurrentTransform().translation;
-		player.SetTranslation(currentTranslation);
-		// 回転は次の移動位置の方向を向くようにする
-		// 方向
-		Vector3 direction = Vector3(currentTranslation - preMovePos_).Normalize();
-		Quaternion rotation = Quaternion::LookRotation(direction, rotationAxis_);
-		player.SetRotation(Quaternion::Normalize(rotation));
+		// 残像表現エフェクト終了
+		std::vector<GameObject3D*> objects = {
+			&player,
+			player.GetWeapon(PlayerWeaponType::Left),
+			player.GetWeapon(PlayerWeaponType::Right)
+		};
+		afterImageEffect_->End(objects);
+	}
+}
 
-		// 移動座標を更新する
-		preMovePos_ = currentTranslation;
+void PlayerSkilAttackState::UpdateJumpAttack([[maybe_unused]] Player& player) {
+
+	// 今は時間を進めるだけ
+	exitTimer_ += GameTimer::GetDeltaTime();
+	// 時間経過で状態終了可能にする
+	if (exitTime_ <= exitTimer_) {
+
+		canExit_ = true;
 	}
 }
 
@@ -117,6 +166,10 @@ void PlayerSkilAttackState::ImGui([[maybe_unused]] const Player& player) {
 
 	ImGui::DragFloat3("rotationAxis", &rotationAxis_.x, 0.01f);
 	PlayerBaseAttackState::ImGui(player);
+
+	ImGui::SeparatorText("MoveFront Effect");
+
+	afterImageEffect_->ImGui();
 
 	ImGui::SeparatorText("MoveFront Transform");
 
@@ -156,11 +209,4 @@ void PlayerSkilAttackState::SaveJson(Json& data) {
 
 	moveFrontTransform_->ToJson(data["MoveFrontTransform"]);
 	moveKeyframeObject_->ToJson(data["MoveKey"]);
-}
-
-bool PlayerSkilAttackState::GetCanExit() const {
-
-	// 経過時間が過ぎたら
-	bool canExit = exitTimer_ > exitTime_;
-	return canExit;
 }

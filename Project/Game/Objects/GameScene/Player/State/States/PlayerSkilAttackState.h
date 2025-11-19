@@ -4,6 +4,7 @@
 //	include
 //============================================================================
 #include <Engine/Object/Base/KeyframeObject3D.h>
+#include <Game/Objects/GameScene/Player/Effect/PlayerAfterImageEffect.h>
 #include <Game/Objects/GameScene/Player/State/Interface/PlayerBaseAttackState.h>
 
 //============================================================================
@@ -33,17 +34,23 @@ public:
 	// json
 	void ApplyJson(const Json& data) override;
 	void SaveJson(Json& data) override;
-
-	//--------- accessor -----------------------------------------------------
-
-	// 次の状態に遷移可能かどうか
-	bool GetCanExit() const override;
 private:
 	//========================================================================
 	//	private Methods
 	//========================================================================
 
+	//--------- structure ----------------------------------------------------
+
+	enum class State {
+
+		MoveAttack, // 移動攻撃
+		JumpAttack, // ジャンプ攻撃
+	};
+
 	//--------- variables ----------------------------------------------------
+
+	// 現在の状態
+	State currentState_;
 
 	// 座標移動のキーフレーム
 	std::unique_ptr<KeyframeObject3D> moveKeyframeObject_;
@@ -57,6 +64,12 @@ private:
 	// 移動の前座標
 	Vector3 preMovePos_;
 
+	// 残像表現エフェクト
+	std::unique_ptr<PlayerAfterImageEffect> afterImageEffect_;
+
 	//--------- functions ----------------------------------------------------
 
+	// 状態毎の更新
+	void UpdateMoveAttack(Player& player);
+	void UpdateJumpAttack(Player& player);
 };
