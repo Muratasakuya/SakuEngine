@@ -36,7 +36,10 @@ PlayerSkilAttackState::PlayerSkilAttackState(Player* player) {
 	moveFrontTransform_->parent = &player_->GetTransform();
 }
 
-void PlayerSkilAttackState::Enter([[maybe_unused]] Player& player) {
+void PlayerSkilAttackState::Enter(Player& player) {
+
+	// 最初のアニメーションに設定
+	player.SetNextAnimation("player_skilAttack_1st", false, nextAnimDuration_);
 
 	canExit_ = false;
 	exitTimer_ = 0.0f;
@@ -78,7 +81,7 @@ void PlayerSkilAttackState::Update([[maybe_unused]] Player& player) {
 		// 回転は次の移動位置の方向を向くようにする
 		// 方向
 		Vector3 direction = Vector3(currentTranslation - preMovePos_).Normalize();
-		Quaternion rotation = Quaternion::LookRotation(direction, Vector3(0.0f, 1.0f, 0.0f));
+		Quaternion rotation = Quaternion::LookRotation(direction, rotationAxis_);
 		player.SetRotation(Quaternion::Normalize(rotation));
 
 		// 移動座標を更新する
@@ -109,8 +112,10 @@ void PlayerSkilAttackState::ImGui([[maybe_unused]] const Player& player) {
 	ImGui::Separator();
 
 	ImGui::DragFloat("rotationLerpRate", &rotationLerpRate_, 0.001f);
+	ImGui::DragFloat("nextAnimDuration", &nextAnimDuration_, 0.001f);
 	ImGui::DragFloat("exitTime", &exitTime_, 0.01f);
 
+	ImGui::DragFloat3("rotationAxis", &rotationAxis_.x, 0.01f);
 	PlayerBaseAttackState::ImGui(player);
 
 	ImGui::SeparatorText("MoveFront Transform");
@@ -133,6 +138,8 @@ void PlayerSkilAttackState::ApplyJson(const Json& data) {
 
 	PlayerBaseAttackState::ApplyJson(data);
 
+	rotationAxis_ = Vector3::FromJson(data.value("rotationAxis_", Json()));
+
 	moveFrontTransform_->FromJson(data.value("MoveFrontTransform", Json()));
 	moveKeyframeObject_->FromJson(data.value("MoveKey", Json()));
 }
@@ -144,6 +151,8 @@ void PlayerSkilAttackState::SaveJson(Json& data) {
 	data["exitTime_"] = exitTime_;
 
 	PlayerBaseAttackState::SaveJson(data);
+
+	data["rotationAxis_"] = rotationAxis_.ToJson();
 
 	moveFrontTransform_->ToJson(data["MoveFrontTransform"]);
 	moveKeyframeObject_->ToJson(data["MoveKey"]);

@@ -52,6 +52,8 @@ private:
 	// タグ
 	ObjectTag* moveFrontTag_;
 
+	// 回転の軸
+	Vector3 rotationAxis_;
 	// 移動の前座標
 	Vector3 preMovePos_;
 
