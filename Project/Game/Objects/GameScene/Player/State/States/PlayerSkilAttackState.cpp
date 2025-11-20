@@ -56,10 +56,12 @@ void PlayerSkilAttackState::Enter(Player& player) {
 
 		// 範囲内なので敵を親の位置として設定する
 		moveKeyframeObject_->SetParent(bossEnemy_->GetTag().name, bossEnemy_->GetTransform());
+		followCamera_->SetEditorParentTransform("playerSkilMove", *moveFrontTransform_);
 	} else {
 
 		// 範囲外なので空の親トランスフォームを親の位置として設定する
 		moveKeyframeObject_->SetParent(moveFrontTag_->name, *moveFrontTransform_);
+		followCamera_->SetEditorParentTransform("playerSkilMove", *moveFrontTransform_);
 	}
 
 	// キーフレーム補間開始
@@ -75,6 +77,9 @@ void PlayerSkilAttackState::Enter(Player& player) {
 		player.GetWeapon(PlayerWeaponType::Right)
 	};
 	afterImageEffect_->Start(objects);
+
+	// カメラアニメーション開始
+	followCamera_->StartPlayerActionAnim("playerSkilMove");
 }
 
 void PlayerSkilAttackState::Update([[maybe_unused]] Player& player) {

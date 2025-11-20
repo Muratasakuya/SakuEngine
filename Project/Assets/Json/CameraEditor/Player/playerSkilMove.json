@@ -1,0 +1,68 @@
+{
+    "CameraKeyObject": {
+        "Keys": [
+            {
+                "Transform": {
+                    "isCompulsion_": false,
+                    "rotation": {
+                        "w": 0.9707498550415039,
+                        "x": -0.09353552758693695,
+                        "y": 0.21679463982582092,
+                        "z": 0.04354240372776985
+                    },
+                    "scale": {
+                        "x": 0.9999991059303284,
+                        "y": 0.9999998211860657,
+                        "z": 1.0000003576278687
+                    },
+                    "translation": {
+                        "x": -8.180294036865234,
+                        "y": 0.9456926584243774,
+                        "z": -18.092742919921875
+                    }
+                },
+                "anyValues": {
+                    "FovY": 0.7200000286102295
+                },
+                "ease": "EaseOutQuad",
+                "time": 0.0
+            },
+            {
+                "Transform": {
+                    "isCompulsion_": false,
+                    "rotation": {
+                        "w": 0.9640087485313416,
+                        "x": -0.09222470968961716,
+                        "y": 0.24503543972969055,
+                        "z": 0.04625387862324715
+                    },
+                    "scale": {
+                        "x": 0.9999969005584717,
+                        "y": 1.0000003576278687,
+                        "z": 0.999998927116394
+                    },
+                    "translation": {
+                        "x": -11.326725959777832,
+                        "y": 1.4595882892608643,
+                        "z": -25.168975830078125
+                    }
+                },
+                "anyValues": {
+                    "FovY": 0.7200000286102295
+                },
+                "ease": "Linear",
+                "time": 1.600000023841858
+            }
+        ],
+        "addKeyTimeStep_": 0.800000011920929,
+        "isConnectEnds_": false,
+        "isUpdateKeyDuringLerp_": false,
+        "lerpType_": "Linear",
+        "parentName_": "playerSkilMove",
+        "startDuration_": 0.07999999821186066,
+        "startEaseType_": "Linear"
+    },
+    "keyName": "playerSkilMove",
+    "previewLoopSpacing_": 1.0,
+    "previewMode_": "Play"
+}

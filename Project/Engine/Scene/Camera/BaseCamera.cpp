@@ -5,6 +5,7 @@
 //============================================================================
 #include <Engine/Config.h>
 #include <Engine/Core/Graphics/Renderer/LineRenderer.h>
+#include <Engine/Editor/Camera/CameraEditor.h>
 #include <Engine/Utility/Enum/Direction.h>
 #include <Engine/MathLib/MathUtils.h>
 
@@ -47,6 +48,11 @@ void BaseCamera::StartAutoFocus(bool isFocus, const Vector3& target) {
 	targetFocusTranslation_ = target + direction * targetOffset;
 	targetFocusRotation_ = Quaternion::LookRotation(Vector3(target - startFocusTranslation_).Normalize(),
 		Direction::Get(Direction3D::Up));
+}
+
+void BaseCamera::SetEditorParentTransform(const std::string& keyName, const Transform3D& parent) {
+
+	CameraEditor::GetInstance()->SetParentTransform(keyName, parent);
 }
 
 void BaseCamera::UpdateView(UpdateMode updateMode) {

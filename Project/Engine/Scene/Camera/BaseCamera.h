@@ -52,6 +52,9 @@ public:
 
 	//--------- accessor -----------------------------------------------------
 
+	// 親の設定、特定のキーにのみ設定
+	void SetEditorParentTransform(const std::string& keyName, const Transform3D& parent);
+
 	void SetParent(const Transform3D* parent) { transform_.parent = parent; };
 	void SetTranslation(const Vector3& translation) { transform_.translation = translation; }
 	void SetRotation(const Quaternion& rotation) { transform_.rotation = rotation; }
