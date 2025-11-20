@@ -66,6 +66,9 @@ private:
 	// 移動の前座標
 	Vector3 preMovePos_;
 
+	// Enterした瞬間の目標への回転
+	Quaternion enterTargetRotation_;
+
 	// ジャンプ攻撃アニメーションへの遷移時間
 	float nextJumpAnimDuration_;
 

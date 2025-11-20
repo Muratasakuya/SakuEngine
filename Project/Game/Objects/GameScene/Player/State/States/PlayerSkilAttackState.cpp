@@ -55,6 +55,14 @@ void PlayerSkilAttackState::Enter(Player& player) {
 	// 敵が攻撃可能範囲にいるかチェックして目標を設定
 	SetTargetByRange(*moveKeyframeObject_, "playerSkilMove");
 
+	// 目標に対して回転を設定する
+	Vector3 target = isInRange_ ? GetBossEnemyFixedYPos() : moveFrontTransform_->GetWorldPos();
+	target.y = 0.0f;
+	// target方向
+	Vector3 lookDirection = Vector3::Normalize(target - GetPlayerFixedYPos());
+	Quaternion rotation = Quaternion::LookRotation(lookDirection, Vector3(0.0f, 1.0f, 0.0f));
+	enterTargetRotation_ = Quaternion::Normalize(rotation);
+
 	// キーフレーム補間開始
 	moveKeyframeObject_->StartLerp();
 
@@ -128,16 +136,13 @@ void PlayerSkilAttackState::UpdateMoveAttack(Player& player) {
 		// 敵が攻撃可能範囲にいるかチェックして目標を設定
 		SetTargetByRange(*jumpKeyframeObject_, "cameraPlayerSkilJump");
 
-		// 目標に対して回転を設定する
-		Vector3 target = isInRange_ ? GetBossEnemyFixedYPos() : moveFrontTransform_->GetWorldPos();
-		target.y = 0.0f;
-		// target方向
-		Vector3 lookDirection = Vector3::Normalize(target - GetPlayerFixedYPos());
-		Quaternion targetRotation = Quaternion::LookRotation(lookDirection, Vector3(0.0f, 1.0f, 0.0f));
-		// 最後の向きが反対なので逆回転にする
-		player.SetRotation(Quaternion::Normalize(Quaternion::Conjugate(targetRotation)));
-
+		// Enterした瞬間の回転を設定
+		player.SetRotation(enterTargetRotation_);
+		// 行列を更新
+		player.UpdateMatrix();
+		moveFrontTransform_->UpdateMatrix();
 		// ジャンプキーフレーム補間開始
+		jumpKeyframeObject_->UpdateKey(true);
 		jumpKeyframeObject_->StartLerp();
 	}
 }
