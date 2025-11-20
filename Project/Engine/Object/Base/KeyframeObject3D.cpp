@@ -185,9 +185,11 @@ void KeyframeObject3D::SetParent(const std::string& name, const Transform3D& par
 
 		keyObject->SetParent(*parent_);
 	}
+	// 1度更新させる
+	UpdateKey(true);
 }
 
-void KeyframeObject3D::SelfUpdate() {
+void KeyframeObject3D::SelfUpdate() { 
 
 	// 行列の更新は常に行う
 	for (auto& key : keys_) {
@@ -286,7 +288,7 @@ void KeyframeObject3D::ExternalInputTUpdate(float inputT) {
 	UpdateAnyValues(t);
 }
 
-void KeyframeObject3D::UpdateKey() {
+void KeyframeObject3D::UpdateKey(bool isForcedUpdateMatrix) {
 
 	// 補間中でキーの更新を許可していなければ何もしない
 	if (!isUpdateKeyDuringLerp_ && currentState_ == State::Updating) {
@@ -298,6 +300,11 @@ void KeyframeObject3D::UpdateKey() {
 
 	// トランスフォームに変更があれば更新
 	for (size_t i = 0; i < keyObjects_.size(); ++i) {
+
+		if (isForcedUpdateMatrix) {
+
+			keyObjects_[i]->UpdateMatrix();
+		}
 
 		// 座標を比較して変更があれば更新
 		const Transform3D& transform = keyObjects_[i]->GetTransform();

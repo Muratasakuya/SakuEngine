@@ -324,6 +324,155 @@
         "parryLerp_.time": 0.47999998927116394
     },
     "SkilAttack": {
+        "JumpKey": {
+            "Keys": [
+                {
+                    "Transform": {
+                        "isCompulsion_": false,
+                        "rotation": {
+                            "w": 1.0,
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 0.009999999776482582,
+                            "y": 0.009999999776482582,
+                            "z": 0.009999999776482582
+                        },
+                        "translation": {
+                            "x": 0.0,
+                            "y": 2.4423601627349854,
+                            "z": -36.11090087890625
+                        }
+                    },
+                    "ease": "Linear",
+                    "time": 0.0
+                },
+                {
+                    "Transform": {
+                        "isCompulsion_": false,
+                        "rotation": {
+                            "w": 1.0,
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 0.009999999776482582,
+                            "y": 0.009999999776482582,
+                            "z": 0.009999999776482582
+                        },
+                        "translation": {
+                            "x": 0.0,
+                            "y": 10.1108980178833,
+                            "z": -43.2225341796875
+                        }
+                    },
+                    "ease": "Linear",
+                    "time": 0.06276922672986984
+                },
+                {
+                    "Transform": {
+                        "isCompulsion_": false,
+                        "rotation": {
+                            "w": 1.0,
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 0.009999999776482582,
+                            "y": 0.009999999776482582,
+                            "z": 0.009999999776482582
+                        },
+                        "translation": {
+                            "x": 0.0,
+                            "y": 16.943294525146484,
+                            "z": -48.56427001953125
+                        }
+                    },
+                    "ease": "Linear",
+                    "time": 0.1427692323923111
+                },
+                {
+                    "Transform": {
+                        "isCompulsion_": false,
+                        "rotation": {
+                            "w": 1.0,
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 0.009999999776482582,
+                            "y": 0.009999999776482582,
+                            "z": 0.009999999776482582
+                        },
+                        "translation": {
+                            "x": 1.1920928955078125e-07,
+                            "y": 23.818880081176758,
+                            "z": -53.944549560546875
+                        }
+                    },
+                    "ease": "EaseOutSine",
+                    "time": 0.3138461709022522
+                },
+                {
+                    "Transform": {
+                        "isCompulsion_": false,
+                        "rotation": {
+                            "w": 1.0,
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 0.009999999776482582,
+                            "y": 0.009999999776482582,
+                            "z": 0.009999999776482582
+                        },
+                        "translation": {
+                            "x": 1.1920928955078125e-07,
+                            "y": 24.831125259399414,
+                            "z": -55.044219970703125
+                        }
+                    },
+                    "ease": "Linear",
+                    "time": 0.800000011920929
+                },
+                {
+                    "Transform": {
+                        "isCompulsion_": false,
+                        "rotation": {
+                            "w": 1.0,
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 0.009999999776482582,
+                            "y": 0.009999999776482582,
+                            "z": 0.009999999776482582
+                        },
+                        "translation": {
+                            "x": 1.1920928955078125e-07,
+                            "y": -0.800000011920929,
+                            "z": -4.30718994140625
+                        }
+                    },
+                    "ease": "Linear",
+                    "time": 1.0
+                }
+            ],
+            "addKeyTimeStep_": 0.800000011920929,
+            "isConnectEnds_": false,
+            "isUpdateKeyDuringLerp_": false,
+            "lerpType_": "Spline",
+            "parentName_": "playerSkilMoveFrontTransform",
+            "startDuration_": 0.05999999865889549,
+            "startEaseType_": "Linear"
+        },
         "MoveFrontTransform": {
             "isCompulsion_": true,
             "rotation": {
@@ -660,6 +809,7 @@
         "attackPosLerpTime_": 0.4399999976158142,
         "exitTime_": 0.1599999964237213,
         "nextAnimDuration_": 0.029999999329447746,
+        "nextJumpAnimDuration_": 0.10000000149011612,
         "rotationAxis_": {
             "x": 0.0,
             "y": 1.0,

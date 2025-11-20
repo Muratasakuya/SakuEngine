@@ -54,6 +54,8 @@ private:
 
 	// 座標移動のキーフレーム
 	std::unique_ptr<KeyframeObject3D> moveKeyframeObject_;
+	// ジャンプ移動のキーフレーム
+	std::unique_ptr<KeyframeObject3D> jumpKeyframeObject_;
 	// 空の親トランスフォーム、敵が範囲内にいないときに参照する親
 	Transform3D* moveFrontTransform_;
 	// タグ
@@ -64,6 +66,12 @@ private:
 	// 移動の前座標
 	Vector3 preMovePos_;
 
+	// ジャンプ攻撃アニメーションへの遷移時間
+	float nextJumpAnimDuration_;
+
+	// 範囲内にいるかどうか
+	bool isInRange_;
+
 	// 残像表現エフェクト
 	std::unique_ptr<PlayerAfterImageEffect> afterImageEffect_;
 
@@ -72,4 +80,7 @@ private:
 	// 状態毎の更新
 	void UpdateMoveAttack(Player& player);
 	void UpdateJumpAttack(Player& player);
+
+	// 範囲内チェックを行って補間目標を設定する
+	void SetTargetByRange(KeyframeObject3D& keyObject, const std::string& cameraKeyName);
 };

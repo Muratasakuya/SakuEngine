@@ -33,7 +33,7 @@ public:
 	void Init(const std::string& name, const std::string& modelName = "defaultCube");
 
 	// 常に行う更新、キーの位置更新
-	void UpdateKey();
+	void UpdateKey(bool isForcedUpdateMatrix = false);
 
 	// KeyframeObject3Dの時間で更新
 	void SelfUpdate();
