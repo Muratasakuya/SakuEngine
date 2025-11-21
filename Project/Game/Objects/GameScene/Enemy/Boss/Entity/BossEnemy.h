@@ -11,6 +11,7 @@
 #include <Game/Objects/GameScene/Enemy/Boss/Entity/BossEnemyWeapon.h>
 // state
 #include <Game/Objects/GameScene/Enemy/Boss/State/BossEnemyStateController.h>
+#include <Game/Objects/GameScene/Enemy/Boss/State/BossEnemyRequestFalter.h>
 // collision
 #include <Game/Objects/GameScene/Enemy/Boss/Collision/BossEnemyAttackCollision.h>
 // HUD
@@ -58,15 +59,6 @@ public:
 	// パリィ受付時間リセット
 	void ResetParryTiming() { parryTimingTickets_ = 0; }
 
-	/*---------- falter -----------*/
-
-	// 怯み状態の通知
-	void OnFalterState() { ++stats_.currentFalterCount; }
-	// 怯みタイマーリセット
-	void ResetFalterTimer() { stats_.reFalterTimer.Reset(); }
-	// 怯みクールダウン更新
-	void UpdateFalterCooldown();
-
 	//--------- accessor -----------------------------------------------------
 
 	void SetPlayer(Player* player);
@@ -80,7 +72,7 @@ public:
 	BossEnemyHUD* GetHUD() const { return hudSprites_.get(); }
 
 	Vector3 GetWeaponTranslation() const;
-	bool IsCurrentStunState() const;
+	BossEnemyState GetCurrentState() const { return stateController_->GetCurrentState(); }
 
 	int GetDamage() const;
 	bool IsDead() const;
@@ -101,6 +93,7 @@ private:
 
 	// 状態の管理
 	std::unique_ptr<BossEnemyStateController> stateController_;
+	std::unique_ptr<BossEnemyRequestFalter> requestFalter_;
 
 	// 攻撃の衝突
 	std::unique_ptr<BossEnemyAttackCollision>  attackCollision_;

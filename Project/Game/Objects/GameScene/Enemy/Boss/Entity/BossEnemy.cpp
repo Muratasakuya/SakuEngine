@@ -75,6 +75,9 @@ void BossEnemy::InitState() {
 	// 初期化、ここで初期状態も設定
 	stateController_ = std::make_unique<BossEnemyStateController>();
 	stateController_->Init(*this, static_cast<uint32_t>(stats_.hpThresholds.size()));
+
+	requestFalter_ = std::make_unique<BossEnemyRequestFalter>();
+	requestFalter_->Init(this, player_);
 }
 
 void BossEnemy::InitHUD() {
@@ -215,11 +218,6 @@ void BossEnemy::SetDecreaseToughnessProgress(float progress) {
 Vector3 BossEnemy::GetWeaponTranslation() const {
 
 	return weapon_->GetTransform().GetWorldPos();
-}
-
-bool BossEnemy::IsCurrentStunState() const {
-
-	return stateController_->GetCurrentState() == BossEnemyState::Stun;
 }
 
 int  BossEnemy::GetDamage() const {
@@ -371,11 +369,14 @@ void BossEnemy::OnCollisionEnter(const CollisionBody* collisionBody) {
 				hudSprites_->SetDisable();
 			}
 		}
-
-		// 怯ませるように状態管理クラスに通知
-		stateController_->OnDamaged();
 		// HUDに通知
 		hudSprites_->SetDamage(damage);
+
+		// 怯むかどうかチェックしてtrueを返すなら怯ませる
+		if (requestFalter_->Check()) {
+
+			stateController_->StartFalter(*this);
+		}
 	}
 }
 
@@ -387,18 +388,6 @@ bool BossEnemy::ConsumeParryTiming() {
 	}
 	--parryTimingTickets_;
 	return true;
-}
-
-void BossEnemy::UpdateFalterCooldown() {
-
-	// 時間を進める
-	stats_.reFalterTimer.Update();
-	if (stats_.reFalterTimer.IsReached()) {
-
-		// また怯めるようにする
-		stats_.currentFalterCount = 0;
-		stats_.reFalterTimer.Reset();
-	}
 }
 
 void BossEnemy::TellParryTiming() {
@@ -536,64 +525,6 @@ void BossEnemy::DerivedImGui() {
 
 				Collider::ImGui(itemWidth_);
 			}
-
-			if (ImGui::CollapsingHeader("Falter")) {
-
-				ImGui::Text("currentFalterCount: %d", stats_.currentFalterCount);
-				ImGui::DragInt("maxFalterCount", &stats_.maxFalterCount, 1, 0, 256);
-				stats_.reFalterTimer.ImGui("ReFalterTimer");
-
-				ImGui::SeparatorText("BlockFalterStates");
-
-				// 追加候補の選択
-				static BossEnemyState candidate = BossEnemyState::Idle;
-				EnumAdapter<BossEnemyState>::Combo("Add State", &candidate);
-
-				ImGui::SameLine();
-				if (ImGui::Button("Add")) {
-
-					// 重複追加防止
-					auto it = std::find(stats_.blockFalterStates.begin(),
-						stats_.blockFalterStates.end(), candidate);
-					if (it == stats_.blockFalterStates.end()) {
-						stats_.blockFalterStates.push_back(candidate);
-					}
-				}
-
-				ImGui::SameLine();
-				if (ImGui::Button("ClearAll")) {
-					stats_.blockFalterStates.clear();
-				}
-				if (ImGui::BeginTable("##BlockFalterStatesTable", 2, ImGuiTableFlags_BordersInner)) {
-
-					ImGui::TableSetupColumn("State");
-					ImGui::TableSetupColumn("Remove");
-					ImGui::TableHeadersRow();
-					for (size_t i = 0; i < stats_.blockFalterStates.size();) {
-
-						ImGui::TableNextRow();
-
-						// 列0: 名前表示
-						ImGui::TableNextColumn();
-						const auto name = EnumAdapter<BossEnemyState>::ToString(stats_.blockFalterStates[i]);
-						ImGui::TextUnformatted(name);
-
-						// 列1: 削除ボタン
-						ImGui::TableNextColumn();
-						ImGui::PushID(static_cast<int>(i));
-						const bool removed = ImGui::SmallButton("X");
-						ImGui::PopID();
-
-						if (removed) {
-							stats_.blockFalterStates.erase(stats_.blockFalterStates.begin() + static_cast<long>(i));
-							continue;
-						} else {
-							++i;
-						}
-					}
-					ImGui::EndTable();
-				}
-			}
 			ImGui::EndTabItem();
 		}
 
@@ -625,6 +556,13 @@ void BossEnemy::DerivedImGui() {
 
 			// アニメーション
 			startAnimation_->ImGui(*this);
+			ImGui::EndTabItem();
+		}
+
+		if (ImGui::BeginTabItem("RequestFalter")) {
+
+			// 怯み要求
+			requestFalter_->ImGui();
 			ImGui::EndTabItem();
 		}
 
@@ -664,17 +602,6 @@ void BossEnemy::ApplyJson() {
 	}
 	stats_.damageRandomRange = JsonAdapter::GetValue<int>(data, "DamageRandomRange");
 
-	stats_.maxFalterCount = data.value("maxFalterCount", 6);
-	stats_.reFalterTimer.FromJson(data.value("ReFalterTimer", Json()));
-
-	if (data.contains("BlockFalterState")) {
-		for (const auto& stateData : data["BlockFalterState"]) {
-
-			auto state = EnumAdapter<BossEnemyState>::FromString(stateData);
-			stats_.blockFalterStates.push_back(state.value());
-		}
-	}
-
 	if (data.contains("DistanceLevels")) {
 		for (const auto& [key, value] : data["DistanceLevels"].items()) {
 
@@ -705,13 +632,6 @@ void BossEnemy::SaveJson() {
 		data["Damages"][std::to_string(static_cast<int>(state))] = value;
 	}
 	data["DamageRandomRange"] = stats_.damageRandomRange;
-
-	data["maxFalterCount"] = stats_.maxFalterCount;
-	stats_.reFalterTimer.ToJson(data["ReFalterTimer"]);
-	for (const auto& state : stats_.blockFalterStates) {
-
-		data["BlockFalterState"].push_back(EnumAdapter<BossEnemyState>::ToString(state));
-	}
 
 	for (const auto& [level, value] : stats_.distanceLevels) {
 

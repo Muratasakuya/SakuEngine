@@ -1,4 +1,4 @@
- #include "BossEnemyStateController.h"
+#include "BossEnemyStateController.h"
 
 //============================================================================
 //	include
@@ -53,7 +53,6 @@ void BossEnemyStateController::Init(BossEnemy& owner, uint32_t phaseCount) {
 
 	// 遷移不可フラグ
 	disableTransitions_ = false;
-	pendingFalterTickets_ = 0;
 
 	// 攻撃予兆
 	attackSign_ = std::make_unique<BossEnemyAttackSign>();
@@ -87,6 +86,25 @@ void BossEnemyStateController::SetFollowCamera(FollowCamera* followCamera, BossE
 	static_cast<BossEnemyGreatAttackState*>(states_[BossEnemyState::GreatAttack].get())->InitState(owner);
 }
 
+void BossEnemyStateController::StartFalter(BossEnemy& owner) {
+
+	// 現在の状態を終了させる
+	states_.at(current_)->Exit(owner);
+
+	// 怯み状態に遷移させる
+	current_ = BossEnemyState::Falter;
+	states_.at(current_)->Enter(owner);
+
+	// 状態遷移の設定をリセット
+	requested_.reset();
+	forcedState_.reset();
+	currentComboSlot_ = 0;
+	currentComboIndex_ = 0;
+	prevComboIndex_ = 0;
+	currentSequenceIndex_ = 0;
+	stateTimer_.Reset();
+}
+
 void BossEnemyStateController::Update(BossEnemy& owner) {
 
 	if (disableTransitions_) {
@@ -102,9 +120,6 @@ void BossEnemyStateController::Update(BossEnemy& owner) {
 	// 状態切り替えの設定処理
 	UpdatePhase(owner);
 	CheckStunToughness();
-
-	// 怯み依頼処理
-	ProcessFalterRequest(owner);
 
 	UpdateStateTimer();
 
@@ -128,9 +143,6 @@ void BossEnemyStateController::Update(BossEnemy& owner) {
 
 	// 攻撃予兆の更新処理
 	attackSign_->Update();
-
-	// 怯みのクールタイムを更新
-	UpdateReFalterCooldown(owner);
 }
 
 void BossEnemyStateController::UpdatePhase(const BossEnemy& owner) {
@@ -276,80 +288,6 @@ void BossEnemyStateController::UpdateStateTimer() {
 	// 遷移できない状態
 	else {
 		stateTimer_.Reset();
-	}
-}
-
-void BossEnemyStateController::ProcessFalterRequest(BossEnemy& owner) {
-
-	// 怯み回数の保留が0なら処理しない
-	if (pendingFalterTickets_ <= 0) {
-		return;
-	}
-
-	// スタン中、強制状態遷移中は処理しない
-	if (forcedState_.has_value()) {
-
-		// 怯み回数をリセット
-		pendingFalterTickets_ = 0;
-		return;
-	}
-
-	// 現在の状態が怯まない状態なら処理しない
-	const auto blocked = std::find(stats_.blockFalterStates.begin(),
-		stats_.blockFalterStates.end(),
-		current_) != stats_.blockFalterStates.end();
-	if (blocked) {
-
-		// 怯み回数をリセット
-		pendingFalterTickets_ = 0;
-		return;
-	}
-
-	// クールダウン中は怯まない
-	if (stats_.maxFalterCount <= stats_.currentFalterCount) {
-		pendingFalterTickets_ = 0;
-		return;
-	}
-
-	// 怯み回数を進める
-	owner.OnFalterState();
-
-	// コンボをすべてリセット
-	currentComboSlot_ = 0;
-	currentComboIndex_ = 0;
-	prevComboIndex_ = 0;
-	currentSequenceIndex_ = 0;
-	stateTimer_.Reset();
-
-	// 怯み中なら処理を閉じて再度怯ませる
-	if (current_ == BossEnemyState::Falter) {
-		if (BossEnemyIState* current = states_[current_].get()) {
-
-			current->Exit(owner);
-			current->Enter(owner);
-		}
-		owner.GetAttackCollision()->SetEnterState(current_);
-	} else {
-
-		requested_ = BossEnemyState::Falter;
-		ChangeState(owner);
-	}
-
-	// 上限に行ったらクールタイムを進めさせる
-	if (stats_.maxFalterCount <= stats_.currentFalterCount) {
-
-		owner.ResetFalterTimer();
-	}
-	pendingFalterTickets_ = 0;
-}
-
-void BossEnemyStateController::UpdateReFalterCooldown(BossEnemy& owner) {
-
-	// 怯める回数が最大数まで行ったらクールタイムを進める
-	if (stats_.maxFalterCount <= stats_.currentFalterCount) {
-
-		// 時間経過でリセットまで行う
-		owner.UpdateFalterCooldown();
 	}
 }
 

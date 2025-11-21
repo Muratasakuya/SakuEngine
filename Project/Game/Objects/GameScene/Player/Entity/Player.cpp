@@ -280,7 +280,7 @@ void Player::CheckBossEnemyStun() {
 
 	// スタン中に敵がスタン状態じゃなくなったら更新終了
 	if (isStunUpdate_) {
-		if (!bossEnemy_->IsCurrentStunState()) {
+		if (bossEnemy_->GetCurrentState() != BossEnemyState::Stun) {
 
 			isStunUpdate_ = false;
 		}
@@ -288,7 +288,7 @@ void Player::CheckBossEnemyStun() {
 	}
 
 	// 敵がスタン状態かどうか
-	if (!bossEnemy_->IsCurrentStunState()) {
+	if (bossEnemy_->GetCurrentState() != BossEnemyState::Stun) {
 		return;
 	}
 

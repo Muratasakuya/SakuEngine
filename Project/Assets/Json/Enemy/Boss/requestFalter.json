@@ -1,0 +1,34 @@
+{
+    "allowFalterBossStates": {
+        "ChargeAttack": false,
+        "ContinuousAttack": false,
+        "Falter": true,
+        "GreatAttack": false,
+        "Idle": true,
+        "JumpAttack": false,
+        "LightAttack": true,
+        "ProjectileAttack": false,
+        "RushAttack": false,
+        "StrongAttack": false,
+        "Stun": false,
+        "Teleport": false
+    },
+    "forceFalterPlayerStates": {
+        "Attack_1st": false,
+        "Attack_2nd": false,
+        "Attack_3rd": false,
+        "Attack_4th": true,
+        "Avoid": false,
+        "Dash": false,
+        "Falter": false,
+        "Idle": false,
+        "None": false,
+        "Parry": false,
+        "SkilAttack": true,
+        "StunAttack": false,
+        "SwitchAlly": false,
+        "Walk": false
+    },
+    "maxFalterCount": 8,
+    "recoverFalterCount": 4
+}

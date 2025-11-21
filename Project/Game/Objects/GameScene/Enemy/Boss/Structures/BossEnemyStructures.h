@@ -48,12 +48,6 @@ struct BossEnemyStats {
 	int maxDestroyToughness;     // 撃破靭性値
 	int currentDestroyToughness; // 現在の撃破靭性
 
-	int maxFalterCount;       // 怯める最大回数
-	int currentFalterCount;   // 現在の怯んだ回数
-	StateTimer reFalterTimer; // 再度怯むまでの時間
-	// 攻撃をくらっても怯まない状態
-	std::vector<BossEnemyState> blockFalterStates;
-
 	// 閾値リストの条件
 	// indexNはindexN+1の値より必ず大きい(N=80、N+1=85にはならない)
 	std::vector<int> hpThresholds; // HP割合の閾値リスト
