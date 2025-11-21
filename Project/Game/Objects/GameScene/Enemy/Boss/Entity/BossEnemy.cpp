@@ -77,7 +77,6 @@ void BossEnemy::InitState() {
 	stateController_->Init(*this, static_cast<uint32_t>(stats_.hpThresholds.size()));
 
 	requestFalter_ = std::make_unique<BossEnemyRequestFalter>();
-	requestFalter_->Init(this, player_);
 }
 
 void BossEnemy::InitHUD() {
@@ -186,6 +185,7 @@ void BossEnemy::SetPlayer(Player* player) {
 	player_ = player;
 
 	stateController_->SetPlayer(player);
+	requestFalter_->Init(this, player_);
 }
 
 void BossEnemy::SetFollowCamera(FollowCamera* followCamera) {
@@ -301,9 +301,18 @@ void BossEnemy::UpdatePlayGame() {
 	// 状態処理開始前に距離レベルを決定する
 	CalDistanceToTarget();
 
+	// 怯み要求の更新
+	requestFalter_->Update(*stateController_.get());
+
 	// 状態の更新
 	stateController_->SetStatas(stats_);
 	stateController_->Update(*this);
+	// 状態切り替えをチェック
+	if (preState_ != stateController_->GetCurrentState()) {
+
+		// 切り替え回数を増やす
+		requestFalter_->IncrementRecoverCount();
+	}
 
 	// 武器の更新
 	weapon_->Update();
@@ -318,6 +327,9 @@ void BossEnemy::UpdatePlayGame() {
 
 	// デバッグ用コマンド
 	DebugCommand();
+
+	// 前回の状態を保存
+	preState_ = stateController_->GetCurrentState();
 }
 
 void BossEnemy::UpdateEndGame() {
@@ -373,7 +385,7 @@ void BossEnemy::OnCollisionEnter(const CollisionBody* collisionBody) {
 		hudSprites_->SetDamage(damage);
 
 		// 怯むかどうかチェックしてtrueを返すなら怯ませる
-		if (requestFalter_->Check()) {
+		if (requestFalter_->Check(*stateController_.get())) {
 
 			stateController_->StartFalter(*this);
 		}

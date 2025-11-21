@@ -109,6 +109,12 @@ void BossEnemyStateController::Update(BossEnemy& owner) {
 
 	if (disableTransitions_) {
 
+		// 現在の状態を更新
+		if (BossEnemyIState* currentState = states_[current_].get()) {
+
+			currentState->Update(owner);
+		}
+
 		// 常に更新する値
 		for (const auto& state : std::views::values(states_)) {
 

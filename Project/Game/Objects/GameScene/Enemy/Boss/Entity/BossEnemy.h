@@ -94,6 +94,7 @@ private:
 	// 状態の管理
 	std::unique_ptr<BossEnemyStateController> stateController_;
 	std::unique_ptr<BossEnemyRequestFalter> requestFalter_;
+	BossEnemyState preState_;
 
 	// 攻撃の衝突
 	std::unique_ptr<BossEnemyAttackCollision>  attackCollision_;

@@ -8,6 +8,7 @@
 
 // front
 class BossEnemy;
+class BossEnemyStateController;
 class Player;
 
 //============================================================================
@@ -26,11 +27,14 @@ public:
 	// 初期化
 	void Init(const BossEnemy* bossEnemy, const Player* player);
 
+	// 状態更新
+	void Update(BossEnemyStateController& stateController);
+
 	// エディター
 	void ImGui();
 
 	// 怯むかチェックして返す
-	bool Check();
+	bool Check(BossEnemyStateController& stateController);
 
 	//--------- accessor -----------------------------------------------------
 
@@ -44,13 +48,14 @@ private:
 	// ボスの状態リスト
 	struct BossEnemyStateInfo {
 
-		bool isAllow = false; // 怯みを許可するか
+		bool isAllow = false;        // 怯みを許可するか
 	};
 
 	// プレイヤーの状態リスト
 	struct PlayerStateInfo {
 
-		bool isForce = false; // 強制的に怯むか
+		bool isForce = false;        // 強制的に怯むか
+		bool isDisableState = false; // 状態遷移しないようにするか
 	};
 
 	//--------- variables ----------------------------------------------------
@@ -69,10 +74,14 @@ private:
 	// 怯み不可にするまでの回数
 	uint32_t maxFalterCount_;
 
-	// 怯まなくなってからの攻撃回数カウント
+	// 怯まなくなってからの状態遷移回数カウント
 	uint32_t currentRecoverFalterCount_;
-	// 怯まなくなった後、怯めるようにするまでの攻撃回数
+	// 怯まなくなった後、怯めるようにするまでの状態遷移回数
 	uint32_t recoverFalterCount_;
+
+	// 遷移不可フラグ
+	bool disableTransitionActive_ = false;
+	PlayerState disablePlayerState_;
 
 	//--------- functions ----------------------------------------------------
 

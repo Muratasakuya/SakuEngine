@@ -5,6 +5,7 @@
 //============================================================================
 #include <Engine/Utility/Enum/EnumAdapter.h>
 #include <Game/Objects/GameScene/Enemy/Boss/Entity/BossEnemy.h>
+#include <Game/Objects/GameScene/Enemy/Boss/State/BossEnemyStateController.h>
 #include <Game/Objects/GameScene/Player/Entity/Player.h>
 
 //============================================================================
@@ -21,7 +22,7 @@ void BossEnemyRequestFalter::Init(const BossEnemy* bossEnemy, const Player* play
 	// マップ追加
 	for (const auto& state : EnumAdapter<BossEnemyState>::GetEnumArray()) {
 
-		allowFalterBossInfos_.emplace(EnumAdapter<BossEnemyState>::FromString(state).value(), BossEnemyStateInfo{false});
+		allowFalterBossInfos_.emplace(EnumAdapter<BossEnemyState>::FromString(state).value(), BossEnemyStateInfo{ false });
 	}
 	for (const auto& state : EnumAdapter<PlayerState>::GetEnumArray()) {
 
@@ -31,20 +32,54 @@ void BossEnemyRequestFalter::Init(const BossEnemy* bossEnemy, const Player* play
 	// カウント初期化
 	currentFalterCount_ = 0;
 	currentRecoverFalterCount_ = 0;
+	disableTransitionActive_ = false;
+	disablePlayerState_ = PlayerState::None;
 
 	// json適用
 	ApplyJson();
 }
 
-bool BossEnemyRequestFalter::Check() {
+void BossEnemyRequestFalter::Update(BossEnemyStateController& stateController) {
+
+	// 状態遷移可なら処理しない
+	if (!disableTransitionActive_) {
+		return;
+	}
+
+	// 現在のプレイヤー状態を取得
+	PlayerState current = player_->GetCurrentState();
+
+	// ロック元の状態から変わったら解除する
+	if (current != disablePlayerState_) {
+
+		// 遷移を許可する
+		stateController.SetDisableTransitions(false);
+
+		// リセット
+		disableTransitionActive_ = false;
+		disablePlayerState_ = PlayerState::None;
+	}
+}
+
+bool BossEnemyRequestFalter::Check(BossEnemyStateController& stateController) {
 
 	// 敵とプレイヤーの状態を取得
 	BossEnemyState bossState = bossEnemy_->GetCurrentState();
 	PlayerState playerState = player_->GetCurrentState();
 
+	auto& bossInfo = allowFalterBossInfos_.at(bossState);
+	auto& playerInfo = falterPlayerInfos_.at(playerState);
+
+	if (playerInfo.isDisableState && !disableTransitionActive_) {
+
+		// 状態遷移を不可にする
+		stateController.SetDisableTransitions(true);
+		disableTransitionActive_ = true;
+		disablePlayerState_ = playerState;
+	}
+
 	// プレイヤー攻撃が強制的に怯ませるならtrueを返す
-	if (allowFalterBossInfos_.at(bossState).isAllow &&
-		falterPlayerInfos_.at(playerState).isForce) {
+	if (bossInfo.isAllow && playerInfo.isForce) {
 
 		// 攻撃カウントをリセットする
 		currentRecoverFalterCount_ = 0;
@@ -58,7 +93,7 @@ bool BossEnemyRequestFalter::Check() {
 	}
 
 	// ボスの状態が怯み許可ならtrueを返す
-	if (allowFalterBossInfos_.at(bossState).isAllow) {
+	if (bossInfo.isAllow) {
 		++currentFalterCount_;
 		return true;
 	}
@@ -148,10 +183,10 @@ void BossEnemyRequestFalter::ImGui() {
 		for (auto& [state, info] : falterPlayerInfos_) {
 
 			const char* name = EnumAdapter<PlayerState>::ToString(state);
-			bool force = info.isForce;
-			if (ImGui::Checkbox(name, &force)) {
-				info.isForce = force;
-			}
+			std::string label = std::string(name) + " :isForce";
+			ImGui::Checkbox(label.c_str(), &info.isForce);
+			label = std::string(name) + " :isDisableState";
+			ImGui::Checkbox(label.c_str(), &info.isDisableState);
 		}
 		ImGui::TreePop();
 	}
@@ -189,7 +224,10 @@ void BossEnemyRequestFalter::ApplyJson() {
 			if (mapIt == allowFalterBossInfos_.end()) {
 				continue;
 			}
-			mapIt->second.isAllow = it.value().get<bool>();
+
+			const auto& node = it.value();
+
+			mapIt->second.isAllow = node.value("isAllow", false);
 		}
 	}
 
@@ -208,7 +246,11 @@ void BossEnemyRequestFalter::ApplyJson() {
 			if (mapIt == falterPlayerInfos_.end()) {
 				continue;
 			}
-			mapIt->second.isForce = it.value().get<bool>();
+
+			const auto& node = it.value();
+
+			mapIt->second.isForce = node.value("isForce", false);
+			mapIt->second.isDisableState = node.value("isDisableState", false);
 		}
 	}
 }
@@ -226,7 +268,7 @@ void BossEnemyRequestFalter::SaveJson() {
 	for (const auto& [state, info] : allowFalterBossInfos_) {
 
 		const char* name = EnumAdapter<BossEnemyState>::ToString(state);
-		bossStates[name] = info.isAllow;
+		bossStates[name]["isAllow"] = info.isAllow;
 	}
 
 	// プレイヤーの状態ごとの強制怯み
@@ -234,7 +276,8 @@ void BossEnemyRequestFalter::SaveJson() {
 	for (const auto& [state, info] : falterPlayerInfos_) {
 
 		const char* name = EnumAdapter<PlayerState>::ToString(state);
-		playerStates[name] = info.isForce;
+		playerStates[name]["isForce"] = info.isForce;
+		playerStates[name]["isDisableState"] = info.isDisableState;
 	}
 
 	JsonAdapter::Save("Enemy/Boss/requestFalter.json", data);

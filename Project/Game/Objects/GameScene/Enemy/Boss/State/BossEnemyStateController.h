@@ -50,6 +50,7 @@ public:
 	void SetFollowCamera(FollowCamera* followCamera, BossEnemy& owner);
 
 	void SetStatas(const BossEnemyStats& stats) { stats_ = stats; }
+	void SetDisableTransitions(bool disable) { disableTransitions_ = disable; }
 
 	BossEnemyState GetCurrentState() const { return current_; }
 	const ParryParameter& GetParryParam() const { return states_.at(current_)->GetParryParam(); }
