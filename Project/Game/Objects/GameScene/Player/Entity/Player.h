@@ -69,6 +69,7 @@ public:
 	int GetToughness() const { return stats_.toughness; }
 	bool IsDead() const { return stats_.currentHP == 0; }
 	bool IsActiveParry() const { return stateController_->IsActiveParry(); }
+	const Transform3D& GetInitTransform() const { return initTransform_; }
 private:
 	//========================================================================
 	//	private Methods

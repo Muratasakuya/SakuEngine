@@ -48,7 +48,8 @@ private:
 	// ボスの状態リスト
 	struct BossEnemyStateInfo {
 
-		bool isAllow = false;        // 怯みを許可するか
+		bool isAllow = false;    // 怯みを許可するか: lv.1
+		bool isAllowAll = false; // 絶対に怯まない:   lv.2
 	};
 
 	// プレイヤーの状態リスト

@@ -37,6 +37,15 @@ PlayerSkilAttackState::PlayerSkilAttackState(Player* player) {
 	// プレイヤーを親に設定
 	moveFrontTransform_->parent = &player_->GetTransform();
 
+	// 敵のトランスフォーム補正用の生成
+	uint32_t fixedEnemyID = objectManager->BuildEmptyobject("fixedEnemyTransform", "BossEnemy");
+	fixedEnemyTag_ = objectManager->GetData<ObjectTag>(fixedEnemyID);
+	// トランスフォームを追加
+	fixedEnemyTransform_ = objectManager->GetObjectPoolManager()->AddData<Transform3D>(fixedEnemyID);
+	fixedEnemyTransform_->Init();
+	fixedEnemyTransform_->isCompulsion_ = true;
+	fixedEnemyTransform_->SetInstancingName(fixedEnemyTag_->name);
+
 	// 残像表現エフェクト作成
 	afterImageEffect_ = std::make_unique<PlayerAfterImageEffect>();
 	afterImageEffect_->Init("playerAttackSkilMove");
@@ -54,14 +63,6 @@ void PlayerSkilAttackState::Enter(Player& player) {
 
 	// 敵が攻撃可能範囲にいるかチェックして目標を設定
 	SetTargetByRange(*moveKeyframeObject_, "playerSkilMove");
-
-	// 目標に対して回転を設定する
-	Vector3 target = isInRange_ ? GetBossEnemyFixedYPos() : moveFrontTransform_->GetWorldPos();
-	target.y = 0.0f;
-	// target方向
-	Vector3 lookDirection = Vector3::Normalize(target - GetPlayerFixedYPos());
-	Quaternion rotation = Quaternion::LookRotation(lookDirection, Vector3(0.0f, 1.0f, 0.0f));
-	enterTargetRotation_ = Quaternion::Normalize(rotation);
 
 	// キーフレーム補間開始
 	moveKeyframeObject_->StartLerp();
@@ -132,18 +133,33 @@ void PlayerSkilAttackState::UpdateMoveAttack(Player& player) {
 		// ジャンプ攻撃アニメーションに設定
 		player.SetNextAnimation("player_skilAttack_2nd", false, nextJumpAnimDuration_);
 
+		// 敵が攻撃可能範囲にいるかチェックして目標への回転を取得
+		if (CheckInRange(attackPosLerpCircleRange_, PlayerIState::GetDistanceToBossEnemy())) {
+
+			// 範囲内なので敵の方向を向く回転を設定する
+			Vector3 toEnemyDirection = Vector3(GetBossEnemyFixedYPos() - GetPlayerFixedYPos()).Normalize();
+			targetRotation_ = Quaternion::LookRotation(toEnemyDirection, rotationAxis_);
+		} else {
+
+			// 範囲外なので前方を向く回転を設定する
+			// 移動後後ろ向いているのでGetBackで前方を取得
+			Vector3 forward = player.GetTransform().GetBack();
+			targetRotation_ = Quaternion::LookRotation(forward, rotationAxis_);
+		}
+
 		// Enterした瞬間の回転を設定
-		player.SetRotation(enterTargetRotation_);
+		player.SetRotation(Quaternion::Normalize(targetRotation_));
 		// 行列を更新
 		player.UpdateMatrix();
 		moveFrontTransform_->UpdateMatrix();
-		// ジャンプキーフレーム補間開始
-		jumpKeyframeObject_->UpdateKey(true);
-		jumpKeyframeObject_->StartLerp();
 
 		// この時点の位置でまた範囲をチェックする
 		// 敵が攻撃可能範囲にいるかチェックして目標を設定
 		SetTargetByRange(*jumpKeyframeObject_, "playerSkilJump");
+
+		// ジャンプキーフレーム補間開始
+		jumpKeyframeObject_->UpdateKey(true);
+		jumpKeyframeObject_->StartLerp();
 
 		// カメラアニメーション開始
 		followCamera_->StartPlayerActionAnim("playerSkilJump");
@@ -176,12 +192,19 @@ void PlayerSkilAttackState::UpdateJumpAttack(Player& player) {
 void PlayerSkilAttackState::SetTargetByRange(KeyframeObject3D& keyObject, const std::string& cameraKeyName) {
 
 	// 敵が攻撃可能範囲にいるかチェック
-	isInRange_ = CheckInRange(attackLookAtCircleRange_, PlayerIState::GetDistanceToBossEnemy());
+	isInRange_ = CheckInRange(attackPosLerpCircleRange_, PlayerIState::GetDistanceToBossEnemy());
 	if (isInRange_) {
 
+		// 位置補正用トランスフォームを敵の位置に設定
+		fixedEnemyTransform_->translation = bossEnemy_->GetTranslation();
+		fixedEnemyTransform_->translation.y = 0.0f;
+		fixedEnemyTransform_->rotation = bossEnemy_->GetRotation();
+		// 行列を更新
+		fixedEnemyTransform_->UpdateMatrix();
+
 		// 範囲内なので敵を親の位置として設定する
-		keyObject.SetParent(bossEnemy_->GetTag().name, bossEnemy_->GetTransform());
-		followCamera_->SetEditorParentTransform(cameraKeyName, bossEnemy_->GetTransform());
+		keyObject.SetParent(fixedEnemyTag_->name, *fixedEnemyTransform_);
+		followCamera_->SetEditorParentTransform(cameraKeyName, *fixedEnemyTransform_);
 	} else {
 
 		// 範囲外なので空の親トランスフォームを親の位置として設定する
@@ -198,7 +221,7 @@ void PlayerSkilAttackState::UpdateAlways([[maybe_unused]] Player& player) {
 	jumpKeyframeObject_->UpdateKey();
 }
 
-void PlayerSkilAttackState::Exit([[maybe_unused]] Player& player) {
+void PlayerSkilAttackState::Exit(Player& player) {
 
 	// リセット
 	canExit_ = false;
@@ -209,6 +232,19 @@ void PlayerSkilAttackState::Exit([[maybe_unused]] Player& player) {
 
 	// カメラアニメーション終了
 	followCamera_->EndPlayerActionAnim(true);
+
+	// 初期Y座標に戻す
+	Vector3 currentPos = player.GetTranslation();
+	currentPos.y = player.GetInitTransform().translation.y;
+	player.SetTranslation(currentPos);
+
+	// X軸回転を0.0fに戻す
+	Quaternion currentRotation = player.GetRotation();
+	// X軸まわりのツイスト回転を取得
+	Quaternion twistX = Quaternion::ExtractTwistX(currentRotation);
+	Quaternion twistInverse = Quaternion::Inverse(twistX);
+	// X軸まわりのツイストを除去した回転
+	player.SetRotation(Quaternion::Normalize(Quaternion::Multiply(currentRotation, twistInverse)));
 }
 
 void PlayerSkilAttackState::ImGui([[maybe_unused]] const Player& player) {

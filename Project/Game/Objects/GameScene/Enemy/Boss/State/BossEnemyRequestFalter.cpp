@@ -65,11 +65,17 @@ bool BossEnemyRequestFalter::Check(BossEnemyStateController& stateController) {
 
 	// 敵とプレイヤーの状態を取得
 	BossEnemyState bossState = bossEnemy_->GetCurrentState();
-	PlayerState playerState = player_->GetCurrentState();
+	PlayerState    playerState = player_->GetCurrentState();
 
 	auto& bossInfo = allowFalterBossInfos_.at(bossState);
 	auto& playerInfo = falterPlayerInfos_.at(playerState);
 
+	// 絶対に怯まないときはfalseを返す
+	if (bossInfo.isAllowAll) {
+		return false;
+	}
+
+	// 状態遷移不可にするフラグが立っているとき
 	if (playerInfo.isDisableState && !disableTransitionActive_) {
 
 		// 状態遷移を不可にする
@@ -78,8 +84,8 @@ bool BossEnemyRequestFalter::Check(BossEnemyStateController& stateController) {
 		disablePlayerState_ = playerState;
 	}
 
-	// プレイヤー攻撃が強制的に怯ませるならtrueを返す
-	if (bossInfo.isAllow && playerInfo.isForce) {
+	// isForce がtrueのときはボス側isAllowがfalseでも怯ませる
+	if (playerInfo.isForce) {
 
 		// 攻撃カウントをリセットする
 		currentRecoverFalterCount_ = 0;
@@ -92,11 +98,13 @@ bool BossEnemyRequestFalter::Check(BossEnemyStateController& stateController) {
 		return false;
 	}
 
-	// ボスの状態が怯み許可ならtrueを返す
+	// ボスの状態が怯み許可のときだけ通常の攻撃で怯む
 	if (bossInfo.isAllow) {
+
 		++currentFalterCount_;
 		return true;
 	}
+
 	return false;
 }
 
@@ -165,10 +173,10 @@ void BossEnemyRequestFalter::ImGui() {
 		for (auto& [state, info] : allowFalterBossInfos_) {
 
 			const char* name = EnumAdapter<BossEnemyState>::ToString(state);
-			bool allow = info.isAllow;
-			if (ImGui::Checkbox(name, &allow)) {
-				info.isAllow = allow;
-			}
+			std::string label = std::string(name) + " :isAllowAll";
+			ImGui::Checkbox(label.c_str(), &info.isAllowAll);
+			label = std::string(name) + " :isAllow";
+			ImGui::Checkbox(label.c_str(), &info.isAllow);
 		}
 		ImGui::TreePop();
 	}
@@ -228,6 +236,7 @@ void BossEnemyRequestFalter::ApplyJson() {
 			const auto& node = it.value();
 
 			mapIt->second.isAllow = node.value("isAllow", false);
+			mapIt->second.isAllowAll = node.value("isAllowAll", false);
 		}
 	}
 
@@ -269,6 +278,7 @@ void BossEnemyRequestFalter::SaveJson() {
 
 		const char* name = EnumAdapter<BossEnemyState>::ToString(state);
 		bossStates[name]["isAllow"] = info.isAllow;
+		bossStates[name]["isAllowAll"] = info.isAllowAll;
 	}
 
 	// プレイヤーの状態ごとの強制怯み

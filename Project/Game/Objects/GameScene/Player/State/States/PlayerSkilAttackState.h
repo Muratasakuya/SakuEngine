@@ -60,14 +60,18 @@ private:
 	Transform3D* moveFrontTransform_;
 	// タグ
 	ObjectTag* moveFrontTag_;
+	// 敵のトランスフォームの値を補正する用のトランスフォーム
+	Transform3D* fixedEnemyTransform_;
+	// タグ
+	ObjectTag* fixedEnemyTag_;
 
 	// 回転の軸
 	Vector3 rotationAxis_;
 	// 移動の前座標
 	Vector3 preMovePos_;
 
-	// Enterした瞬間の目標への回転
-	Quaternion enterTargetRotation_;
+	// 目標への回転
+	Quaternion targetRotation_;
 
 	// ジャンプ攻撃アニメーションへの遷移時間
 	float nextJumpAnimDuration_;
