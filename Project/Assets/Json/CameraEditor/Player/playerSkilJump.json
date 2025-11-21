@@ -1,0 +1,95 @@
+{
+    "CameraKeyObject": {
+        "Keys": [
+            {
+                "Transform": {
+                    "isCompulsion_": false,
+                    "rotation": {
+                        "w": 0.9739074110984802,
+                        "x": 0.22495484352111816,
+                        "y": -0.029225971549749374,
+                        "z": 0.006750710774213076
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translation": {
+                        "x": 4.5944671630859375,
+                        "y": 36.1682243347168,
+                        "z": -70.64193725585938
+                    }
+                },
+                "anyValues": {
+                    "FovY": 0.5
+                },
+                "ease": "Linear",
+                "time": 0.0
+            },
+            {
+                "Transform": {
+                    "isCompulsion_": false,
+                    "rotation": {
+                        "w": 0.9723122119903564,
+                        "x": 0.22458525002002716,
+                        "y": -0.06292267888784409,
+                        "z": 0.014533871784806252
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translation": {
+                        "x": 5.592063903808594,
+                        "y": 34.60315704345703,
+                        "z": -68.90228271484375
+                    }
+                },
+                "anyValues": {
+                    "FovY": 0.5600000023841858
+                },
+                "ease": "EaseOutQuad",
+                "time": 0.8864231109619141
+            },
+            {
+                "Transform": {
+                    "isCompulsion_": false,
+                    "rotation": {
+                        "w": 0.9923965334892273,
+                        "x": 0.05662795156240463,
+                        "y": -0.10910383611917496,
+                        "z": 0.00622556684538722
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translation": {
+                        "x": 12.171452522277832,
+                        "y": 7.411677360534668,
+                        "z": -40.149322509765625
+                    }
+                },
+                "anyValues": {
+                    "FovY": 0.6800000071525574
+                },
+                "ease": "Linear",
+                "time": 1.2130000591278076
+            }
+        ],
+        "addKeyTimeStep_": 0.800000011920929,
+        "isConnectEnds_": false,
+        "isUpdateKeyDuringLerp_": false,
+        "keyRenderView_": "Scene",
+        "lerpType_": "Spline",
+        "parentName_": "playerSkilJump",
+        "startDuration_": 0.3199999928474426,
+        "startEaseType_": "EaseInSine"
+    },
+    "keyName": "playerSkilJump",
+    "previewLoopSpacing_": 1.0,
+    "previewMode_": "Manual"
+}

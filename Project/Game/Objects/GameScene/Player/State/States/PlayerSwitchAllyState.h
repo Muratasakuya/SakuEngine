@@ -45,11 +45,6 @@ private:
 
 	//--------- variables ----------------------------------------------------
 
-	float deltaTimeScaleTimer_; // スローモーションにするまでの経過時間
-	float deltaTimeScaleTime_;  // スローモーションにするまでの時間
-	EasingType deltaTimeScaleEasingType_;
-	float deltaTimeScale_;      // スローモーション用
-
 	float switchAllyTimer_; // 現在の経過時間
 	float switchAllyTime_;  // 切り替え選択の行える時間
 

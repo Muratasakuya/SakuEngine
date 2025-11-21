@@ -99,6 +99,16 @@ void CameraEditor::LoadJson(const std::string& fileName, bool isInEditor) {
 	LOG_INFO("loaded CameraKeyData: fileName: [{}]", jsonFileName);
 }
 
+void CameraEditor::SetParentTransform(const std::string& keyName, const Transform3D& parent) {
+
+	// 無ければ処理できない
+	auto it = keyObjects_.find(keyName);
+	if (it != keyObjects_.end()) {
+
+		it->second->SetParent(keyName, parent);
+	}
+}
+
 void CameraEditor::StartAnim(const std::string& keyName, bool isAddFirstKey) {
 
 	// 無ければ処理できない

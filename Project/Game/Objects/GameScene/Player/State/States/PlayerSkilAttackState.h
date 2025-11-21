@@ -4,6 +4,7 @@
 //	include
 //============================================================================
 #include <Engine/Object/Base/KeyframeObject3D.h>
+#include <Game/Objects/GameScene/Player/Effect/PlayerAfterImageEffect.h>
 #include <Game/Objects/GameScene/Player/State/Interface/PlayerBaseAttackState.h>
 
 //============================================================================
@@ -23,6 +24,7 @@ public:
 	void Enter(Player& player) override;
 
 	void Update(Player& player) override;
+	void UpdateAlways(Player& player) override;
 
 	void Exit(Player& player) override;
 
@@ -32,20 +34,56 @@ public:
 	// json
 	void ApplyJson(const Json& data) override;
 	void SaveJson(Json& data) override;
-
-	//--------- accessor -----------------------------------------------------
-
-	bool GetCanExit() const override;
 private:
 	//========================================================================
 	//	private Methods
 	//========================================================================
 
+	//--------- structure ----------------------------------------------------
+
+	enum class State {
+
+		MoveAttack, // 移動攻撃
+		JumpAttack, // ジャンプ攻撃
+	};
+
 	//--------- variables ----------------------------------------------------
+
+	// 現在の状態
+	State currentState_;
 
 	// 座標移動のキーフレーム
 	std::unique_ptr<KeyframeObject3D> moveKeyframeObject_;
+	// ジャンプ移動のキーフレーム
+	std::unique_ptr<KeyframeObject3D> jumpKeyframeObject_;
+	// 空の親トランスフォーム、敵が範囲内にいないときに参照する親
+	Transform3D* moveFrontTransform_;
+	// タグ
+	ObjectTag* moveFrontTag_;
+
+	// 回転の軸
+	Vector3 rotationAxis_;
+	// 移動の前座標
+	Vector3 preMovePos_;
+
+	// Enterした瞬間の目標への回転
+	Quaternion enterTargetRotation_;
+
+	// ジャンプ攻撃アニメーションへの遷移時間
+	float nextJumpAnimDuration_;
+
+	// 範囲内にいるかどうか
+	bool isInRange_;
+
+	// 残像表現エフェクト
+	std::unique_ptr<PlayerAfterImageEffect> afterImageEffect_;
 
 	//--------- functions ----------------------------------------------------
 
+	// 状態毎の更新
+	void UpdateMoveAttack(Player& player);
+	void UpdateJumpAttack(Player& player);
+
+	// 範囲内チェックを行って補間目標を設定する
+	void SetTargetByRange(KeyframeObject3D& keyObject, const std::string& cameraKeyName);
 };

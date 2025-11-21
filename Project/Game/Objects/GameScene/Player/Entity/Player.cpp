@@ -53,7 +53,6 @@ void Player::InitAnimations() {
 	animation_->SetAnimationData("player_attack_4th");
 	animation_->SetAnimationData("player_skilAttack_1st");
 	animation_->SetAnimationData("player_skilAttack_2nd");
-	animation_->SetAnimationData("player_skilAttack_3rd");
 	animation_->SetAnimationData("player_stunAttack");
 	animation_->SetAnimationData("player_parry");
 	animation_->SetAnimationData("player_falter");
@@ -113,6 +112,9 @@ void Player::SetInitTransform() {
 	transform_->eulerRotate = initTransform_.eulerRotate;
 	transform_->rotation = initTransform_.rotation;
 	transform_->translation = initTransform_.translation;
+
+	// 常に更新を行わせる
+	transform_->isCompulsion_ = true;
 }
 
 void Player::DerivedInit() {

@@ -41,6 +41,7 @@ public:
 
 	// エディターによるカメラアニメーション
 	void StartPlayerActionAnim(PlayerState state);
+	void StartPlayerActionAnim(const std::string& animName);
 	void EndPlayerActionAnim(bool isWarmStart);
 
 	// 視点を注視点に向ける

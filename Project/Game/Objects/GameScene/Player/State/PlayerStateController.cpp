@@ -332,8 +332,9 @@ void PlayerStateController::UpdateInputState(Player& owner) {
 		return;
 	}
 
-	// パリィの入力判定
-	if (inputMapper_->IsTriggered(PlayerInputAction::Parry)) {
+	// パリィの入力判定、攻撃を受けた、受けているときは無効
+	if (current_ != PlayerState::Falter &&
+		inputMapper_->IsTriggered(PlayerInputAction::Parry)) {
 
 		const ParryParameter& parryParam = bossEnemy_->GetParryParam();
 		if (parryParam.canParry) {

@@ -12,6 +12,11 @@
 //	GameTimer classMethods
 //============================================================================
 
+float GameTimer::deltaTime_ = 0.0f;
+float GameTimer::timeScale_ = 1.0f;
+GameTimer::HitStop GameTimer::hitStop_{};
+GameTimer::SlowMotion GameTimer::slowMotion_{};
+
 std::chrono::steady_clock::time_point GameTimer::startTime_ = std::chrono::steady_clock::now();
 std::chrono::steady_clock::time_point GameTimer::lastFrameTime_ = std::chrono::steady_clock::now();
 GameTimer::Measurement GameTimer::allMeasure_ = {};
@@ -22,45 +27,110 @@ std::vector<float> GameTimer::allTimes_ = {};
 std::vector<float> GameTimer::updateTimes_ = {};
 std::vector<float> GameTimer::drawTimes_ = {};
 
-float GameTimer::deltaTime_ = 0.0f;
-float GameTimer::timeScale_ = 1.0f;
-EasingType GameTimer::easing_ = EasingType::EaseOutExpo;
-float GameTimer::lerpSpeed_ = 32.0f;
-float GameTimer::waitTimer_ = 0.0f;
-float GameTimer::waitTime_ = 0.08f;
-bool GameTimer::returnScaleEnable_ = true;
+void GameTimer::StartHitStop(float duration, float timeScale) {
+
+	// ヒットストップ情報セット
+	hitStop_.active = true;
+	hitStop_.scale = timeScale;
+	hitStop_.remaining = std::max(hitStop_.remaining, duration);
+}
+
+void GameTimer::StartSlowMotion(float timeScale, float duration, float fadeOut, EasingType easingType) {
+
+	// スローモーション情報セット
+	slowMotion_.active = true;
+	slowMotion_.elapsed = 0.0f;
+	slowMotion_.duration = duration;
+	slowMotion_.fadeOut = fadeOut;
+	slowMotion_.startScale = 1.0f;
+	slowMotion_.targetScale = timeScale;
+	slowMotion_.easing = easingType;
+}
 
 void GameTimer::Update() {
 
+	// ΔTime計算
 	auto currentFrameTime = std::chrono::steady_clock::now();
 	std::chrono::duration<float> elapsedTime = currentFrameTime - lastFrameTime_;
 	deltaTime_ = elapsedTime.count();
-
 	lastFrameTime_ = currentFrameTime;
 
-	if (returnScaleEnable_) {
-		// timeScaleを1.0fに戻す処理
-		if (timeScale_ != 1.0f) {
+	// ヒットストップ、スローモーションの更新
+	UpdateTimeScale();
+}
 
-			// 硬直させる
-			waitTimer_ += deltaTime_;
-			if (waitTimer_ >= waitTime_) {
+void GameTimer::UpdateTimeScale() {
 
-				float t = lerpSpeed_ * deltaTime_;
-				float easedT = EasedValue(easing_, t);
+	//============================================================================
+	//	ヒットストップの時間更新
+	//============================================================================
 
-				timeScale_ += (1.0f - timeScale_) * easedT;
-				if (std::fabs(1.0f - timeScale_) < 0.01f) {
+	// アクティブの時
+	if (hitStop_.active) {
 
-					timeScale_ = 1.0f;
-					waitTimer_ = 0.0f;
-					// リセット
-					lerpSpeed_ = 32.0f;
-				}
-			}
+		hitStop_.remaining -= deltaTime_;
+		// 0.0f以下になったら終了
+		if (hitStop_.remaining <= 0.0f) {
+
+			// リセット
+			hitStop_.active = false;
+			hitStop_.remaining = 0.0f;
 		}
 	}
+
+	//============================================================================
+	//	スローモーションの時間更新
+	//============================================================================
+
+	// アクティブの時
+	if (slowMotion_.active) {
+
+		slowMotion_.elapsed += deltaTime_;
+		// 経過時間が持続時間+フェードアウト時間を超えたら終了
+		if (slowMotion_.duration + slowMotion_.fadeOut <= slowMotion_.elapsed) {
+
+			// 終了
+			slowMotion_.active = false;
+			// リセット
+			slowMotion_.elapsed = 0.0f;
+			slowMotion_.easing = EasingType::Linear;
+		}
+	}
+
+	//============================================================================
+	//	スケーリング値の更新
+	//============================================================================
+
+	float scale = 1.0f;
+	if (slowMotion_.active) {
+
+		float lerpScale = 1.0f;
+		if (slowMotion_.elapsed <= slowMotion_.duration) {
+
+			// 1.0fからtargetScaleに補間
+			float lerpT = slowMotion_.elapsed / (std::max)(slowMotion_.duration, 0.0001f);
+			float easedT = EasedValue(slowMotion_.easing, lerpT);
+			lerpScale = std::lerp(slowMotion_.startScale, slowMotion_.targetScale, easedT);
+		} else {
+
+			// targetScaleから1.0fに補間
+			float lerpT = (slowMotion_.elapsed - slowMotion_.duration) / (std::max)(slowMotion_.fadeOut, 0.0001f);
+			float easedT = EasedValue(slowMotion_.easing, std::clamp(lerpT, 0.0f, 1.0f));
+			lerpScale = std::lerp(slowMotion_.targetScale, 1.0f, easedT);
+		}
+		scale = (std::min)(scale, lerpScale);
+	}
+
+	// ヒットストップ有効時はそのスケール値を渡す
+	if (hitStop_.active) {
+
+		scale = (std::min)(scale, hitStop_.scale);
+	}
+
+	// スケールを渡す
+	timeScale_ = scale;
 }
+
 void GameTimer::ImGui() {
 
 	ImGui::SeparatorText("Performance");
@@ -118,18 +188,6 @@ float GameTimer::GetTotalTime() {
 	auto now = std::chrono::steady_clock::now();
 	std::chrono::duration<float> elapsed = now - startTime_;
 	return elapsed.count();
-}
-
-void GameTimer::SetTimeScale(float timeScale, EasingType easing) {
-
-	timeScale_ = timeScale;
-	easing_ = easing;
-}
-
-void GameTimer::SetWaitTime(float waitTime, bool isReset) {
-
-	waitTime_ = waitTime;
-	waitTimer_ = isReset ? 0.0f : waitTimer_;
 }
 
 void GameTimer::AddMeasurement(std::vector<float>& buffer, float value) {

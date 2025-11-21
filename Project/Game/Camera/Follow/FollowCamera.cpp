@@ -26,6 +26,8 @@ void FollowCamera::LoadAnim() {
 	editor->LoadJson("Player/player4thAttack.json");
 	editor->LoadJson("Player/playerParryRight.json");
 	editor->LoadJson("Player/playerParryLeft.json");
+	editor->LoadJson("Player/playerSkilMove.json");
+	editor->LoadJson("Player/playerSkilJump.json");
 
 	// 読み込み済み
 	isLoadedAnim_ = true;
@@ -56,6 +58,17 @@ void FollowCamera::StartPlayerActionAnim(PlayerState state) {
 	if (!name.empty()) {
 
 		editor->StartAnim(name, true);
+	}
+}
+
+void FollowCamera::StartPlayerActionAnim(const std::string& animName) {
+
+	CameraEditor* editor = CameraEditor::GetInstance();
+
+	// 名前が設定されていればアニメーションを再生
+	if (!animName.empty()) {
+
+		editor->StartAnim(animName, true);
 	}
 }
 

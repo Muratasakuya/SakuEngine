@@ -33,7 +33,7 @@ public:
 	void Init(const std::string& name, const std::string& modelName = "defaultCube");
 
 	// 常に行う更新、キーの位置更新
-	void UpdateKey();
+	void UpdateKey(bool isForcedUpdateMatrix = false);
 
 	// KeyframeObject3Dの時間で更新
 	void SelfUpdate();
@@ -57,6 +57,9 @@ public:
 	void AddKeyValue(AnyMold mold, const std::string& name);
 
 	//--------- accessor ----------------------------------------------------
+
+	// 親の設定
+	void SetParent(const std::string& name, const Transform3D& parent);
 
 	// 再生中かどうか
 	bool IsUpdating() const { return currentState_ == State::Updating; }
@@ -128,10 +131,12 @@ private:
 
 	// 表示オブジェクト、シーンにしか表示しない
 	std::vector<std::unique_ptr<GameObject3D>> keyObjects_;
+	// キーオブジェクトの描画するシーン
+	MeshRenderView keyRenderView_ = MeshRenderView::Scene;
 
 	// 親トランスフォーム、回転と座標
 	std::string parentName_;
-	Transform3D* parent_ = nullptr;
+	const Transform3D* parent_ = nullptr;
 
 	// キー情報
 	std::vector<Key> keys_;

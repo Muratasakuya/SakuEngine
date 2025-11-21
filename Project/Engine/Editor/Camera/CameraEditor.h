@@ -45,6 +45,9 @@ public:
 
 	//--------- accessor -----------------------------------------------------
 
+	// 親の設定、特定のキーにのみ設定
+	void SetParentTransform(const std::string& keyName, const Transform3D& parent);
+
 	// singleton
 	static CameraEditor* GetInstance();
 	static void Finalize();

@@ -47,10 +47,8 @@ void PlayerParryState::Enter(Player& player) {
 	// 左手の武器を反転
 	player.SetReverseWeapon(true, PlayerWeaponType::Left);
 
-	// deltaTimeをスケーリングしても元の値に戻らないようにする
-	GameTimer::SetReturnScaleEnable(false);
-	GameTimer::SetTimeScale(0.0f);
-	GameTimer::SetLerpSpeed(deltaLerpSpeed_);
+	// ヒットストップ開始
+	GameTimer::StartHitStop(deltaWaitTime_, 0.0f);
 
 	// パリィ用のカメラアニメーションを設定
 	followCamera_->StartPlayerActionAnim(PlayerState::Parry);
@@ -98,8 +96,7 @@ void PlayerParryState::UpdateDeltaWaitTime(const Player& player) {
 	// 時間経過が過ぎたら元に戻させる
 	if (deltaWaitTime_ < deltaWaitTimer_) {
 
-		GameTimer::SetReturnScaleEnable(true);
-
+		// まだブラーが発生していなければ発生させる
 		if (!isEmitedBlur_) {
 
 			// 左手にエフェクトを発生させる
@@ -267,8 +264,6 @@ Vector3 PlayerParryState::SetLerpValue(Vector3& start, Vector3& target,
 }
 
 void PlayerParryState::Exit([[maybe_unused]] Player& player) {
-
-	GameTimer::SetReturnScaleEnable(true);
 
 	// カメラアニメーションを終了させる
 	followCamera_->EndPlayerActionAnim(false);

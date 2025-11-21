@@ -174,7 +174,22 @@ void KeyframeObject3D::AddKeyValue(AnyMold mold, const std::string& name) {
 	currentAnyValues_.emplace_back(defaultValue);
 }
 
-void KeyframeObject3D::SelfUpdate() {
+void KeyframeObject3D::SetParent(const std::string& name, const Transform3D& parent) {
+
+	// 親を設定
+	parentName_ = name;
+	parent_ = &parent;
+
+	// キーオブジェクトの親も設定
+	for (auto& keyObject : keyObjects_) {
+
+		keyObject->SetParent(*parent_);
+	}
+	// 1度更新させる
+	UpdateKey(true);
+}
+
+void KeyframeObject3D::SelfUpdate() { 
 
 	// 行列の更新は常に行う
 	for (auto& key : keys_) {
@@ -273,7 +288,7 @@ void KeyframeObject3D::ExternalInputTUpdate(float inputT) {
 	UpdateAnyValues(t);
 }
 
-void KeyframeObject3D::UpdateKey() {
+void KeyframeObject3D::UpdateKey(bool isForcedUpdateMatrix) {
 
 	// 補間中でキーの更新を許可していなければ何もしない
 	if (!isUpdateKeyDuringLerp_ && currentState_ == State::Updating) {
@@ -285,6 +300,11 @@ void KeyframeObject3D::UpdateKey() {
 
 	// トランスフォームに変更があれば更新
 	for (size_t i = 0; i < keyObjects_.size(); ++i) {
+
+		if (isForcedUpdateMatrix) {
+
+			keyObjects_[i]->UpdateMatrix();
+		}
 
 		// 座標を比較して変更があれば更新
 		const Transform3D& transform = keyObjects_[i]->GetTransform();
@@ -321,7 +341,7 @@ std::unique_ptr<GameObject3D> KeyframeObject3D::CreateKeyObject(const Transform3
 	}
 
 	// 描画設定、シーンにしか表示しない
-	object->SetMeshRenderView(MeshRenderView::Scene);
+	object->SetMeshRenderView(keyRenderView_);
 	object->SetScale(isDrawKeyframe_ ? Vector3::AnyInit(1.0f) : Vector3::AnyInit(0.01f));
 	object->SetCastShadow(false);
 	object->SetShadowRate(1.0f);
@@ -590,14 +610,14 @@ void KeyframeObject3D::ImGui() {
 
 		// 座標
 		key.transform.translation = keyObjects_.empty() ?
-			Vector3::AnyInit(0.0f) : keyObjects_.back()->GetTransform().GetWorldPos();
+			Vector3::AnyInit(0.0f) : keyObjects_.back()->GetTranslation();
 		key.transform.translation.y += 4.0f;
 		// スケール
 		key.transform.scale = keyObjects_.empty() ?
-			Vector3::AnyInit(1.0f) : keyObjects_.back()->GetTransform().scale;
+			Vector3::AnyInit(1.0f) : keyObjects_.back()->GetScale();
 		// 回転
 		key.transform.rotation = keyObjects_.empty() ?
-			Quaternion::Identity() : keyObjects_.back()->GetTransform().rotation;
+			Quaternion::Identity() : keyObjects_.back()->GetRotation();
 
 		// 任意の型の値があれば
 		if (!anyTracks_.empty()) {
@@ -632,6 +652,15 @@ void KeyframeObject3D::ImGui() {
 	}
 
 	if (ImGui::CollapsingHeader("Parameter")) {
+
+		if (EnumAdapter<MeshRenderView>::Combo("keyMeshRenderView", &keyRenderView_)) {
+
+			// キーオブジェクトの描画設定を更新
+			for (const auto& keyObject : keyObjects_) {
+
+				keyObject->SetMeshRenderView(keyRenderView_);
+			}
+		}
 
 		ImGui::SeparatorText("If Has Start");
 
@@ -722,14 +751,13 @@ void KeyframeObject3D::ImGui() {
 
 			// 親Transformと名前を更新
 			parent_ = objectManager->GetData<Transform3D>(currentId);
-			// 変更があったことにする
-			parent_->SetIsDirty(true);
 			parentName_ = selectName;
 
 			// キーオブジェクトの親を更新
 			for (const auto& keyObject : keyObjects_) {
 
 				keyObject->SetParent(*parent_);
+				keyObject->SetIsDirty(true);
 			}
 		}
 	}
@@ -1058,6 +1086,7 @@ void KeyframeObject3D::FromJson(const Json& data) {
 	}
 
 	addKeyTimeStep_ = data.value("addKeyTimeStep_", 0.8f);
+	keyRenderView_ = EnumAdapter<MeshRenderView>::FromString(data.value("keyRenderView_", "Scene")).value();
 }
 
 void KeyframeObject3D::ToJson(Json& data) {
@@ -1151,4 +1180,5 @@ void KeyframeObject3D::ToJson(Json& data) {
 	data["startEaseType_"] = EnumAdapter<EasingType>::ToString(startEaseType_);
 
 	data["addKeyTimeStep_"] = addKeyTimeStep_;
+	data["keyRenderView_"] = EnumAdapter<MeshRenderView>::ToString(keyRenderView_);
 }

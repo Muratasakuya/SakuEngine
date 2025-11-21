@@ -48,7 +48,7 @@ private:
 	float moveDistance_;
 
 	// デルタタイムの停止時間
-	StateTimer deltaWaitTimer_;
+	float hitStopTime_;
 
 	//--------- functions ----------------------------------------------------
 
