@@ -341,7 +341,7 @@ std::unique_ptr<GameObject3D> KeyframeObject3D::CreateKeyObject(const Transform3
 	}
 
 	// 描画設定、シーンにしか表示しない
-	object->SetMeshRenderView(MeshRenderView::Scene);
+	object->SetMeshRenderView(keyRenderView_);
 	object->SetScale(isDrawKeyframe_ ? Vector3::AnyInit(1.0f) : Vector3::AnyInit(0.01f));
 	object->SetCastShadow(false);
 	object->SetShadowRate(1.0f);
@@ -652,6 +652,15 @@ void KeyframeObject3D::ImGui() {
 	}
 
 	if (ImGui::CollapsingHeader("Parameter")) {
+
+		if (EnumAdapter<MeshRenderView>::Combo("keyMeshRenderView", &keyRenderView_)) {
+
+			// キーオブジェクトの描画設定を更新
+			for (const auto& keyObject : keyObjects_) {
+
+				keyObject->SetMeshRenderView(keyRenderView_);
+			}
+		}
 
 		ImGui::SeparatorText("If Has Start");
 
@@ -1077,6 +1086,7 @@ void KeyframeObject3D::FromJson(const Json& data) {
 	}
 
 	addKeyTimeStep_ = data.value("addKeyTimeStep_", 0.8f);
+	keyRenderView_ = EnumAdapter<MeshRenderView>::FromString(data.value("keyRenderView_", "Scene")).value();
 }
 
 void KeyframeObject3D::ToJson(Json& data) {
@@ -1170,4 +1180,5 @@ void KeyframeObject3D::ToJson(Json& data) {
 	data["startEaseType_"] = EnumAdapter<EasingType>::ToString(startEaseType_);
 
 	data["addKeyTimeStep_"] = addKeyTimeStep_;
+	data["keyRenderView_"] = EnumAdapter<MeshRenderView>::ToString(keyRenderView_);
 }

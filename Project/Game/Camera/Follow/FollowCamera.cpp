@@ -27,6 +27,7 @@ void FollowCamera::LoadAnim() {
 	editor->LoadJson("Player/playerParryRight.json");
 	editor->LoadJson("Player/playerParryLeft.json");
 	editor->LoadJson("Player/playerSkilMove.json");
+	editor->LoadJson("Player/playerSkilJump.json");
 
 	// 読み込み済み
 	isLoadedAnim_ = true;

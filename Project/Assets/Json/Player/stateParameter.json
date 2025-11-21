@@ -438,8 +438,8 @@
                             "z": -55.044219970703125
                         }
                     },
-                    "ease": "Linear",
-                    "time": 0.800000011920929
+                    "ease": "EaseOutExpo",
+                    "time": 1.058538556098938
                 },
                 {
                     "Transform": {
@@ -462,12 +462,13 @@
                         }
                     },
                     "ease": "Linear",
-                    "time": 1.0
+                    "time": 1.1200000047683716
                 }
             ],
             "addKeyTimeStep_": 0.800000011920929,
             "isConnectEnds_": false,
             "isUpdateKeyDuringLerp_": false,
+            "keyRenderView_": "Scene",
             "lerpType_": "Spline",
             "parentName_": "playerSkilMoveFrontTransform",
             "startDuration_": 0.05999999865889549,
@@ -797,6 +798,7 @@
             "addKeyTimeStep_": 0.800000011920929,
             "isConnectEnds_": false,
             "isUpdateKeyDuringLerp_": false,
+            "keyRenderView_": "Scene",
             "lerpType_": "Linear",
             "parentName_": "playerSkilMoveFrontTransform",
             "startDuration_": 0.0,
@@ -807,9 +809,9 @@
         "attackPosEaseType_": 0,
         "attackPosLerpCircleRange_": 31.799999237060547,
         "attackPosLerpTime_": 0.4399999976158142,
-        "exitTime_": 0.1599999964237213,
+        "exitTime_": 0.4000000059604645,
         "nextAnimDuration_": 0.029999999329447746,
-        "nextJumpAnimDuration_": 0.10000000149011612,
+        "nextJumpAnimDuration_": 0.6299999952316284,
         "rotationAxis_": {
             "x": 0.0,
             "y": 1.0,

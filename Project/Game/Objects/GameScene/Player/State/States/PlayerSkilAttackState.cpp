@@ -132,10 +132,6 @@ void PlayerSkilAttackState::UpdateMoveAttack(Player& player) {
 		// ジャンプ攻撃アニメーションに設定
 		player.SetNextAnimation("player_skilAttack_2nd", false, nextJumpAnimDuration_);
 
-		// この時点の位置でまた範囲をチェックする
-		// 敵が攻撃可能範囲にいるかチェックして目標を設定
-		SetTargetByRange(*jumpKeyframeObject_, "cameraPlayerSkilJump");
-
 		// Enterした瞬間の回転を設定
 		player.SetRotation(enterTargetRotation_);
 		// 行列を更新
@@ -144,6 +140,13 @@ void PlayerSkilAttackState::UpdateMoveAttack(Player& player) {
 		// ジャンプキーフレーム補間開始
 		jumpKeyframeObject_->UpdateKey(true);
 		jumpKeyframeObject_->StartLerp();
+
+		// この時点の位置でまた範囲をチェックする
+		// 敵が攻撃可能範囲にいるかチェックして目標を設定
+		SetTargetByRange(*jumpKeyframeObject_, "playerSkilJump");
+
+		// カメラアニメーション開始
+		followCamera_->StartPlayerActionAnim("playerSkilJump");
 	}
 }
 
@@ -203,6 +206,9 @@ void PlayerSkilAttackState::Exit([[maybe_unused]] Player& player) {
 	// 補間を確実に終了させる
 	moveKeyframeObject_->Reset();
 	jumpKeyframeObject_->Reset();
+
+	// カメラアニメーション終了
+	followCamera_->EndPlayerActionAnim(true);
 }
 
 void PlayerSkilAttackState::ImGui([[maybe_unused]] const Player& player) {

@@ -131,6 +131,8 @@ private:
 
 	// 表示オブジェクト、シーンにしか表示しない
 	std::vector<std::unique_ptr<GameObject3D>> keyObjects_;
+	// キーオブジェクトの描画するシーン
+	MeshRenderView keyRenderView_ = MeshRenderView::Scene;
 
 	// 親トランスフォーム、回転と座標
 	std::string parentName_;
