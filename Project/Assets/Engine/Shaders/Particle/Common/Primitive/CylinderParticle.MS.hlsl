@@ -32,8 +32,14 @@ struct Cylinder {
 	
 	float topRadius;
 	float bottomRadius;
+
 	float height;
+	float maxAngle;
+
 	uint divide;
+	
+	float4 topColor;
+	float4 bottomColor;
 };
 
 StructuredBuffer<Cylinder> gCylinders : register(t0);
@@ -67,7 +73,7 @@ out vertices MSOutput verts[CYL_MAX_VERTS], out indices uint3 polys[CYL_MAX_TRIS
 	// 行列計算
 	float4x4 wvp = mul(worldMatrix, gPerView.viewProjection);
 	// 角度ステップ
-	float angleStep = PI2 / (float) divide;
+	float angleStep = cylinder.maxAngle / (float) divide;
 	
 	// cylinderを生成
 	// 頂点
@@ -84,14 +90,21 @@ out vertices MSOutput verts[CYL_MAX_VERTS], out indices uint3 polys[CYL_MAX_TRIS
 		float u = (float) i / (float) divide;
 
 		MSOutput vertex;
+		
+		// 共通
+		vertex.instanceID = instanceIndex;
+		
+		// 上
 		vertex.position = mul(float4(pTop, 1), wvp);
 		vertex.texcoord = float2(-u, 0.0f);
+		vertex.vertexColor = cylinder.topColor;
 		verts[i] = vertex;
 
+		// 下
 		vertex.position = mul(float4(pBot, 1), wvp);
 		vertex.texcoord = float2(-u, 1.0f);
-		verts[divide + 1 + i] = vertex;		vertex.instanceID = instanceIndex;
-		vertex.vertexColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
+		vertex.vertexColor = cylinder.bottomColor;
+		verts[divide + 1 + i] = vertex;
 	}
 
 	// インデックス

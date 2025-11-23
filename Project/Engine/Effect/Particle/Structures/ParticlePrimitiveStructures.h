@@ -65,15 +65,26 @@ struct CylinderForGPU {
 
 	float topRadius;
 	float bottomRadius;
+
 	float height;
+	float maxAngle;
+
 	int divide;
+
+	// 頂点色
+	Color topColor;
+	Color bottomColor;
 
 	void Init() {
 
 		topRadius = 4.0f;
 		bottomRadius = 4.0f;
 		height = 4.0f;
+		maxAngle = pi * 2.0f;
 		divide = 16;
+
+		topColor = Color::White();
+		bottomColor = Color::White();
 	}
 };
 // 三日月
