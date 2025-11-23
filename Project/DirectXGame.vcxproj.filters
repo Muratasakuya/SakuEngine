@@ -2256,6 +2256,8 @@
     <ClCompile Include="Engine\Effect\Particle\Module\Updater\Primitive\Derived\ParticleTestMeshUpdater.cpp" />
     <ClCompile Include="Game\PostEffect\DefaultDistortionUpdater.cpp" />
     <ClCompile Include="Engine\Editor\Camera\CameraEditor.cpp" />
+    <ClCompile Include="Game\Objects\GameScene\Enemy\Boss\State\BossEnemyRequestFalter.cpp" />
+    <ClCompile Include="Engine\Utility\Timer\DelayedHitstop.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\Camera\Follow\State\States\FollowCameraReturnDefaultRotate.h" />
@@ -2298,6 +2300,8 @@
     <ClInclude Include="Game\PostEffect\DefaultDistortionUpdater.h" />
     <ClInclude Include="Engine\Utility\Enum\AnyMoldEnum.h" />
     <ClInclude Include="Engine\Editor\Camera\CameraEditor.h" />
+    <ClInclude Include="Game\Objects\GameScene\Enemy\Boss\State\BossEnemyRequestFalter.h" />
+    <ClInclude Include="Engine\Utility\Timer\DelayedHitstop.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Engine\Shaders\PostProcess\PlayerAfterImage\PlayerAfterImage.CS.hlsl" />

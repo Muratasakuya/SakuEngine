@@ -167,11 +167,15 @@
                 "y": 4.0,
                 "z": 0.0
             },
-            "hitInterval": 0.10000000149011612,
+            "hitInterval": 0.09000000357627869,
             "hitWindows": [
                 {
-                    "offTime": 1.399999976158142,
+                    "offTime": 1.2000000476837158,
                     "onTime": 0.019999999552965164
+                },
+                {
+                    "offTime": 2.4000000953674316,
+                    "onTime": 1.899999976158142
                 }
             ],
             "lerpSpeed": 1.0,
@@ -270,6 +274,7 @@
     },
     "LeftWeapon": {
         "InitTransform": {
+            "isCompulsion_": false,
             "rotation": {
                 "w": 1.0,
                 "x": 0.0,
@@ -553,6 +558,7 @@
     },
     "RightWeapon": {
         "InitTransform": {
+            "isCompulsion_": false,
             "rotation": {
                 "w": 1.0,
                 "x": 0.0,
@@ -792,6 +798,7 @@
         }
     },
     "Transform": {
+        "isCompulsion_": false,
         "rotation": {
             "w": 1.0,
             "x": 0.0,

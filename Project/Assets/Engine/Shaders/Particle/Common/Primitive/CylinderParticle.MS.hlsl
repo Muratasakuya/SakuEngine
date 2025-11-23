@@ -32,12 +32,38 @@ struct Cylinder {
 	
 	float topRadius;
 	float bottomRadius;
+
 	float height;
+	float maxAngle;
+
 	uint divide;
+	uint uvMode;
+	
+	float4 topColor;
+	float4 bottomColor;
 };
 
 StructuredBuffer<Cylinder> gCylinders : register(t0);
 StructuredBuffer<Transform> gTransform : register(t1);
+
+//============================================================================
+//	Functions
+//============================================================================
+
+// UVの計算
+float2 CalRadialUV(float angle, float height) {
+	
+	// 中心の半径
+	float radius = lerp(0.0f, 0.5f, height);
+	
+	float s = sin(angle);
+	float c = cos(angle);
+	
+	// 下向きY軸
+	float2 direction = float2(c, -s);
+	
+	return float2(0.5f, 0.5f) + direction * radius;
+}
 
 //============================================================================
 //	Main
@@ -67,7 +93,7 @@ out vertices MSOutput verts[CYL_MAX_VERTS], out indices uint3 polys[CYL_MAX_TRIS
 	// 行列計算
 	float4x4 wvp = mul(worldMatrix, gPerView.viewProjection);
 	// 角度ステップ
-	float angleStep = PI2 / (float) divide;
+	float angleStep = cylinder.maxAngle / (float) divide;
 	
 	// cylinderを生成
 	// 頂点
@@ -81,17 +107,47 @@ out vertices MSOutput verts[CYL_MAX_VERTS], out indices uint3 polys[CYL_MAX_TRIS
 		float3 pTop = float3(s * cylinder.topRadius, cylinder.height, c0 * cylinder.topRadius);
 		float3 pBot = float3(s * cylinder.bottomRadius, 0.0f, c0 * cylinder.bottomRadius);
 
+		// UV計算
 		float u = (float) i / (float) divide;
 
 		MSOutput vertex;
+		
+		// 共通
+		vertex.instanceID = instanceIndex;
+		
+		// 上
 		vertex.position = mul(float4(pTop, 1), wvp);
-		vertex.texcoord = float2(-u, 0.0f);
+		vertex.vertexColor = cylinder.topColor;
+		
+		// UVモードによる切り替え
+		if (cylinder.uvMode == 0) {
+
+			// 横並びUV
+			vertex.texcoord = float2(-u, 0.0f);
+		} else {
+
+			// 放射状に広げるUV
+			vertex.texcoord = CalRadialUV(a, 1.0f);
+		}
+		
 		verts[i] = vertex;
 
+		// 下
 		vertex.position = mul(float4(pBot, 1), wvp);
-		vertex.texcoord = float2(-u, 1.0f);
-		verts[divide + 1 + i] = vertex;		vertex.instanceID = instanceIndex;
-		vertex.vertexColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
+		vertex.vertexColor = cylinder.bottomColor;
+		
+		// UVモードによる切り替え
+		if (cylinder.uvMode == 0) {
+
+			// 横並びUV
+			vertex.texcoord = float2(-u, 1.0f);
+		} else {
+
+			// 放射状に広げるUV
+			vertex.texcoord = CalRadialUV(a, 0.0f);
+		}
+		
+		verts[divide + 1 + i] = vertex;
 	}
 
 	// インデックス

@@ -37,9 +37,28 @@ PlayerSkilAttackState::PlayerSkilAttackState(Player* player) {
 	// プレイヤーを親に設定
 	moveFrontTransform_->parent = &player_->GetTransform();
 
+	// 敵のトランスフォーム補正用の生成
+	uint32_t fixedEnemyID = objectManager->BuildEmptyobject("fixedEnemyTransform", "BossEnemy");
+	fixedEnemyTag_ = objectManager->GetData<ObjectTag>(fixedEnemyID);
+	// トランスフォームを追加
+	fixedEnemyTransform_ = objectManager->GetObjectPoolManager()->AddData<Transform3D>(fixedEnemyID);
+	fixedEnemyTransform_->Init();
+	fixedEnemyTransform_->isCompulsion_ = true;
+	fixedEnemyTransform_->SetInstancingName(fixedEnemyTag_->name);
+
 	// 残像表現エフェクト作成
 	afterImageEffect_ = std::make_unique<PlayerAfterImageEffect>();
 	afterImageEffect_->Init("playerAttackSkilMove");
+
+	// 移動エフェクト作成
+	moveAtackEffect_ = std::make_unique<EffectGroup>();
+	moveAtackEffect_->Init("skilMoveAtackEffect", "PlayerEffect");
+	moveAtackEffect_->LoadJson("GameEffectGroup/Player/skilMoveAtackEffect.json");
+	// 地割れエフェクト作成
+	groundCrackEffect_ = std::make_unique<EffectGroup>();
+	groundCrackEffect_->Init("skilGroundCrack", "PlayerEffect");
+	groundCrackEffect_->LoadJson("GameEffectGroup/Player/groundCrackEffect.json");
+	groundCrackEmitted_ = false;
 }
 
 void PlayerSkilAttackState::Enter(Player& player) {
@@ -54,14 +73,6 @@ void PlayerSkilAttackState::Enter(Player& player) {
 
 	// 敵が攻撃可能範囲にいるかチェックして目標を設定
 	SetTargetByRange(*moveKeyframeObject_, "playerSkilMove");
-
-	// 目標に対して回転を設定する
-	Vector3 target = isInRange_ ? GetBossEnemyFixedYPos() : moveFrontTransform_->GetWorldPos();
-	target.y = 0.0f;
-	// target方向
-	Vector3 lookDirection = Vector3::Normalize(target - GetPlayerFixedYPos());
-	Quaternion rotation = Quaternion::LookRotation(lookDirection, Vector3(0.0f, 1.0f, 0.0f));
-	enterTargetRotation_ = Quaternion::Normalize(rotation);
 
 	// キーフレーム補間開始
 	moveKeyframeObject_->StartLerp();
@@ -115,6 +126,29 @@ void PlayerSkilAttackState::UpdateMoveAttack(Player& player) {
 	// 移動座標を更新する
 	preMovePos_ = currentTranslation;
 
+	// 進捗をチェックしてヒットストップを発生させる
+	if (!moveAttackHitstop_.isStarted &&
+		moveAttackHitstop_.startProgress <= moveKeyframeObject_->GetProgress()) {
+
+		// ヒットストップ発生
+		moveAttackHitstop_.isStarted = true;
+		moveAttackHitstop_.hitStop.Start();
+	}
+
+	// 次のキーに到達するたんびにエフェクトを発生させる
+	if (moveKeyframeObject_->IsNextKeyReached()) {
+
+		// 向きを基に回転を作成
+		Quaternion effectRotation = Quaternion::LookRotation(direction, rotationAxis_);
+		moveAtackEffect_->SetParentRotation("playerSkilMoveEffect",
+			Quaternion::Normalize(effectRotation), ParticleUpdateModuleID::Rotation);
+
+		// キーの位置からエフェクト発生
+		Vector3 translation = moveKeyframeObject_->GetIndexKeyTransform(
+			moveKeyframeObject_->GetNextKeyIndex() - 1).translation;
+		moveAtackEffect_->Emit(translation);
+	}
+
 	// 補間処理終了後状態を終了
 	if (!moveKeyframeObject_->IsUpdating()) {
 
@@ -132,18 +166,33 @@ void PlayerSkilAttackState::UpdateMoveAttack(Player& player) {
 		// ジャンプ攻撃アニメーションに設定
 		player.SetNextAnimation("player_skilAttack_2nd", false, nextJumpAnimDuration_);
 
+		// 敵が攻撃可能範囲にいるかチェックして目標への回転を取得
+		if (CheckInRange(attackPosLerpCircleRange_, PlayerIState::GetDistanceToBossEnemy())) {
+
+			// 範囲内なので敵の方向を向く回転を設定する
+			Vector3 toEnemyDirection = Vector3(GetBossEnemyFixedYPos() - GetPlayerFixedYPos()).Normalize();
+			targetRotation_ = Quaternion::LookRotation(toEnemyDirection, rotationAxis_);
+		} else {
+
+			// 範囲外なので前方を向く回転を設定する
+			// 移動後後ろ向いているのでGetBackで前方を取得
+			Vector3 forward = player.GetTransform().GetBack();
+			targetRotation_ = Quaternion::LookRotation(forward, rotationAxis_);
+		}
+
 		// Enterした瞬間の回転を設定
-		player.SetRotation(enterTargetRotation_);
+		player.SetRotation(Quaternion::Normalize(targetRotation_));
 		// 行列を更新
 		player.UpdateMatrix();
 		moveFrontTransform_->UpdateMatrix();
-		// ジャンプキーフレーム補間開始
-		jumpKeyframeObject_->UpdateKey(true);
-		jumpKeyframeObject_->StartLerp();
 
 		// この時点の位置でまた範囲をチェックする
 		// 敵が攻撃可能範囲にいるかチェックして目標を設定
 		SetTargetByRange(*jumpKeyframeObject_, "playerSkilJump");
+
+		// ジャンプキーフレーム補間開始
+		jumpKeyframeObject_->UpdateKey(true);
+		jumpKeyframeObject_->StartLerp();
 
 		// カメラアニメーション開始
 		followCamera_->StartPlayerActionAnim("playerSkilJump");
@@ -155,8 +204,57 @@ void PlayerSkilAttackState::UpdateJumpAttack(Player& player) {
 	// トランスフォーム補間更新
 	jumpKeyframeObject_->SelfUpdate();
 
+	// 進捗をチェックしてヒットストップを発生させる
+	if (!jumpAttackHitstop_.isStarted &&
+		jumpAttackHitstop_.startProgress <= jumpKeyframeObject_->GetProgress()) {
+
+		// ヒットストップ発生
+		jumpAttackHitstop_.isStarted = true;
+		jumpAttackHitstop_.hitStop.Start();
+	}
+	// 進捗をチェックしてジャンプエフェクトを発生させる
+	if (!jumpMoveEffectEmitted_ &&
+		jumpEffectEmitProgress_ <= jumpKeyframeObject_->GetProgress()) {
+
+		// 発生済みにする
+		jumpMoveEffectEmitted_ = true;
+		
+		// 目標へ向けた回転
+		Vector3 direction{};
+		const Vector3 playerPos = player.GetTranslation();
+		if (isInRange_) {
+
+			// 敵の方向
+			direction = Vector3(bossEnemy_->GetTranslation() - playerPos).Normalize();
+		} else {
+
+			// 前方の方向
+			Vector3 targetTranslation = jumpKeyframeObject_->GetLastKeyTransform().translation;
+			direction = Vector3(targetTranslation - playerPos).Normalize();
+		}
+		// 向きを基に回転を作成
+		Quaternion effectRotation = Quaternion::LookRotation(direction, rotationAxis_);
+		moveAtackEffect_->SetParentRotation("playerSkilMoveEffect",
+			Quaternion::Normalize(effectRotation), ParticleUpdateModuleID::Rotation);
+		// プレイヤーの右手からエフェクト発生
+		moveAtackEffect_->Emit(player.GetWeapon(PlayerWeaponType::Right)->GetTransform().GetWorldPos());
+	}
+
 	// 補間処理終了後状態を終了
 	if (!jumpKeyframeObject_->IsUpdating()) {
+
+		// 発生していないときのみ
+		if (!groundCrackEmitted_) {
+
+			// 地割れエフェクトの発生
+			// Y座標は固定
+			Vector3 emitPos = player.GetTranslation();
+			// 地面に隠れない位置に調整
+			emitPos.y = 1.0f;
+			groundCrackEffect_->Emit(emitPos);
+			// 発生済みにする
+			groundCrackEmitted_ = true;
+		}
 
 		// 経過時間更新
 		exitTimer_ += GameTimer::GetDeltaTime();
@@ -176,12 +274,19 @@ void PlayerSkilAttackState::UpdateJumpAttack(Player& player) {
 void PlayerSkilAttackState::SetTargetByRange(KeyframeObject3D& keyObject, const std::string& cameraKeyName) {
 
 	// 敵が攻撃可能範囲にいるかチェック
-	isInRange_ = CheckInRange(attackLookAtCircleRange_, PlayerIState::GetDistanceToBossEnemy());
+	isInRange_ = CheckInRange(attackPosLerpCircleRange_, PlayerIState::GetDistanceToBossEnemy());
 	if (isInRange_) {
 
+		// 位置補正用トランスフォームを敵の位置に設定
+		fixedEnemyTransform_->translation = bossEnemy_->GetTranslation();
+		fixedEnemyTransform_->translation.y = 0.0f;
+		fixedEnemyTransform_->rotation = bossEnemy_->GetRotation();
+		// 行列を更新
+		fixedEnemyTransform_->UpdateMatrix();
+
 		// 範囲内なので敵を親の位置として設定する
-		keyObject.SetParent(bossEnemy_->GetTag().name, bossEnemy_->GetTransform());
-		followCamera_->SetEditorParentTransform(cameraKeyName, bossEnemy_->GetTransform());
+		keyObject.SetParent(fixedEnemyTag_->name, *fixedEnemyTransform_);
+		followCamera_->SetEditorParentTransform(cameraKeyName, *fixedEnemyTransform_);
 	} else {
 
 		// 範囲外なので空の親トランスフォームを親の位置として設定する
@@ -190,7 +295,7 @@ void PlayerSkilAttackState::SetTargetByRange(KeyframeObject3D& keyObject, const 
 	}
 }
 
-void PlayerSkilAttackState::UpdateAlways([[maybe_unused]] Player& player) {
+void PlayerSkilAttackState::BeginUpdateAlways([[maybe_unused]] Player& player) {
 
 	// キーフレームオブジェクトの更新
 	moveFrontTransform_->UpdateMatrix();
@@ -198,7 +303,20 @@ void PlayerSkilAttackState::UpdateAlways([[maybe_unused]] Player& player) {
 	jumpKeyframeObject_->UpdateKey();
 }
 
-void PlayerSkilAttackState::Exit([[maybe_unused]] Player& player) {
+void PlayerSkilAttackState::UpdateAlways([[maybe_unused]] Player& player) {
+
+	// ヒットストップの更新
+	moveAttackHitstop_.hitStop.Update();
+	jumpAttackHitstop_.hitStop.Update();
+
+	// エフェクトの更新
+	// 移動攻撃エフェクト
+	moveAtackEffect_->Update();
+	// 地割れ
+	groundCrackEffect_->Update();
+}
+
+void PlayerSkilAttackState::Exit(Player& player) {
 
 	// リセット
 	canExit_ = false;
@@ -206,9 +324,26 @@ void PlayerSkilAttackState::Exit([[maybe_unused]] Player& player) {
 	// 補間を確実に終了させる
 	moveKeyframeObject_->Reset();
 	jumpKeyframeObject_->Reset();
+	moveAttackHitstop_.isStarted = false;
+	jumpAttackHitstop_.isStarted = false;
+	jumpMoveEffectEmitted_ = false;
+	groundCrackEmitted_ = false;
 
 	// カメラアニメーション終了
 	followCamera_->EndPlayerActionAnim(true);
+
+	// 初期Y座標に戻す
+	Vector3 currentPos = player.GetTranslation();
+	currentPos.y = player.GetInitTransform().translation.y;
+	player.SetTranslation(currentPos);
+
+	// X軸回転を0.0fに戻す
+	Quaternion currentRotation = player.GetRotation();
+	// X軸まわりのツイスト回転を取得
+	Quaternion twistX = Quaternion::ExtractTwistX(currentRotation);
+	Quaternion twistInverse = Quaternion::Inverse(twistX);
+	// X軸まわりのツイストを除去した回転
+	player.SetRotation(Quaternion::Normalize(Quaternion::Multiply(currentRotation, twistInverse)));
 }
 
 void PlayerSkilAttackState::ImGui([[maybe_unused]] const Player& player) {
@@ -221,6 +356,7 @@ void PlayerSkilAttackState::ImGui([[maybe_unused]] const Player& player) {
 	ImGui::DragFloat("nextAnimDuration", &nextAnimDuration_, 0.001f);
 	ImGui::DragFloat("nextJumpAnimDuration", &nextJumpAnimDuration_, 0.001f);
 	ImGui::DragFloat("exitTime", &exitTime_, 0.01f);
+	ImGui::DragFloat("jumpEffectEmitProgres", &jumpEffectEmitProgress_, 0.01f);
 
 	ImGui::DragFloat3("rotationAxis", &rotationAxis_.x, 0.01f);
 	PlayerBaseAttackState::ImGui(player);
@@ -246,6 +382,19 @@ void PlayerSkilAttackState::ImGui([[maybe_unused]] const Player& player) {
 
 		jumpKeyframeObject_->ImGui();
 	}
+
+	ImGui::SeparatorText("Hitstop");
+
+	if (ImGui::CollapsingHeader("MoveAttackHitstop")) {
+
+		ImGui::DragFloat("startProgress", &moveAttackHitstop_.startProgress, 0.001f);
+		moveAttackHitstop_.hitStop.ImGui("MoveAttack", false);
+	}
+	if (ImGui::CollapsingHeader("JumpAttackHitstop")) {
+
+		ImGui::DragFloat("startProgress", &jumpAttackHitstop_.startProgress, 0.001f);
+		jumpAttackHitstop_.hitStop.ImGui("JumpAttack", false);
+	}
 }
 
 void PlayerSkilAttackState::ApplyJson(const Json& data) {
@@ -254,6 +403,7 @@ void PlayerSkilAttackState::ApplyJson(const Json& data) {
 	nextJumpAnimDuration_ = JsonAdapter::GetValue<float>(data, "nextJumpAnimDuration_");
 	rotationLerpRate_ = JsonAdapter::GetValue<float>(data, "rotationLerpRate_");
 	exitTime_ = JsonAdapter::GetValue<float>(data, "exitTime_");
+	jumpEffectEmitProgress_ = data.value("jumpEffectEmitProgress_", 0.5f);
 
 	PlayerBaseAttackState::ApplyJson(data);
 
@@ -262,6 +412,11 @@ void PlayerSkilAttackState::ApplyJson(const Json& data) {
 	moveFrontTransform_->FromJson(data.value("MoveFrontTransform", Json()));
 	moveKeyframeObject_->FromJson(data.value("MoveKey", Json()));
 	jumpKeyframeObject_->FromJson(data.value("JumpKey", Json()));
+
+	moveAttackHitstop_.startProgress = data.value("MoveAttackHitstopStartProgress", 0.0f);
+	moveAttackHitstop_.hitStop.FromJson(data.value("MoveAttackHitstop", Json()));
+	jumpAttackHitstop_.startProgress = data.value("JumpAttackHitstopStartProgress", 0.0f);
+	jumpAttackHitstop_.hitStop.FromJson(data.value("JumpAttackHitstop", Json()));
 }
 
 void PlayerSkilAttackState::SaveJson(Json& data) {
@@ -270,6 +425,7 @@ void PlayerSkilAttackState::SaveJson(Json& data) {
 	data["nextJumpAnimDuration_"] = nextJumpAnimDuration_;
 	data["rotationLerpRate_"] = rotationLerpRate_;
 	data["exitTime_"] = exitTime_;
+	data["jumpEffectEmitProgress_"] = jumpEffectEmitProgress_;
 
 	PlayerBaseAttackState::SaveJson(data);
 
@@ -278,4 +434,9 @@ void PlayerSkilAttackState::SaveJson(Json& data) {
 	moveFrontTransform_->ToJson(data["MoveFrontTransform"]);
 	moveKeyframeObject_->ToJson(data["MoveKey"]);
 	jumpKeyframeObject_->ToJson(data["JumpKey"]);
+
+	data["MoveAttackHitstopStartProgress"] = moveAttackHitstop_.startProgress;
+	moveAttackHitstop_.hitStop.ToJson(data["MoveAttackHitstop"]);
+	data["JumpAttackHitstopStartProgress"] = jumpAttackHitstop_.startProgress;
+	jumpAttackHitstop_.hitStop.ToJson(data["JumpAttackHitstop"]);
 }

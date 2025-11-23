@@ -14,6 +14,9 @@
 void BossEnemyFalterState::Enter(BossEnemy& bossEnemy) {
 
 	bossEnemy.SetNextAnimation("bossEnemy_falter", false, nextAnimDuration_);
+
+	// Y座標をリセットする
+	bossEnemy.SetTranslation(Vector3(bossEnemy.GetTranslation().x, 0.0f, bossEnemy.GetTranslation().z));
 }
 
 void BossEnemyFalterState::Update(BossEnemy& bossEnemy) {

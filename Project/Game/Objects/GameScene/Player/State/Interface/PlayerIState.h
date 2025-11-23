@@ -32,6 +32,7 @@ public:
 
 	// 更新処理
 	virtual void Update(Player& player) = 0;
+	virtual void BeginUpdateAlways([[maybe_unused]] Player& player) {}
 	virtual void UpdateAlways([[maybe_unused]] Player& player) {}
 
 	// 状態終了時

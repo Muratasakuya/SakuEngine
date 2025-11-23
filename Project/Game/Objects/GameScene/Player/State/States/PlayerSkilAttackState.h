@@ -4,6 +4,8 @@
 //	include
 //============================================================================
 #include <Engine/Object/Base/KeyframeObject3D.h>
+#include <Engine/Effect/User/EffectGroup.h>
+#include <Engine/Utility/Timer/DelayedHitstop.h>
 #include <Game/Objects/GameScene/Player/Effect/PlayerAfterImageEffect.h>
 #include <Game/Objects/GameScene/Player/State/Interface/PlayerBaseAttackState.h>
 
@@ -24,6 +26,7 @@ public:
 	void Enter(Player& player) override;
 
 	void Update(Player& player) override;
+	void BeginUpdateAlways(Player& player) override;
 	void UpdateAlways(Player& player) override;
 
 	void Exit(Player& player) override;
@@ -41,10 +44,19 @@ private:
 
 	//--------- structure ----------------------------------------------------
 
+	// 状態
 	enum class State {
 
 		MoveAttack, // 移動攻撃
 		JumpAttack, // ジャンプ攻撃
+	};
+
+	// ヒットストップ
+	struct HitStop {
+
+		bool isStarted = false;
+		float startProgress;    // 発生させる攻撃進捗
+		DelayedHitstop hitStop; // ヒットストップ
 	};
 
 	//--------- variables ----------------------------------------------------
@@ -60,14 +72,18 @@ private:
 	Transform3D* moveFrontTransform_;
 	// タグ
 	ObjectTag* moveFrontTag_;
+	// 敵のトランスフォームの値を補正する用のトランスフォーム
+	Transform3D* fixedEnemyTransform_;
+	// タグ
+	ObjectTag* fixedEnemyTag_;
 
 	// 回転の軸
 	Vector3 rotationAxis_;
 	// 移動の前座標
 	Vector3 preMovePos_;
 
-	// Enterした瞬間の目標への回転
-	Quaternion enterTargetRotation_;
+	// 目標への回転
+	Quaternion targetRotation_;
 
 	// ジャンプ攻撃アニメーションへの遷移時間
 	float nextJumpAnimDuration_;
@@ -75,8 +91,20 @@ private:
 	// 範囲内にいるかどうか
 	bool isInRange_;
 
+	// 攻撃ヒットストップ
+	HitStop moveAttackHitstop_;
+	HitStop jumpAttackHitstop_;
+
 	// 残像表現エフェクト
 	std::unique_ptr<PlayerAfterImageEffect> afterImageEffect_;
+
+	// 移動エフェクト
+	std::unique_ptr<EffectGroup> moveAtackEffect_;
+	float jumpEffectEmitProgress_; // ジャンプエフェクトを発生させるタイミング
+	bool jumpMoveEffectEmitted_ = false;
+	// 地割れエフェクト
+	std::unique_ptr<EffectGroup> groundCrackEffect_;
+	bool groundCrackEmitted_ = false;
 
 	//--------- functions ----------------------------------------------------
 
