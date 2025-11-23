@@ -65,7 +65,7 @@ bool BossEnemyRequestFalter::Check(BossEnemyStateController& stateController) {
 
 	// 敵とプレイヤーの状態を取得
 	BossEnemyState bossState = bossEnemy_->GetCurrentState();
-	PlayerState    playerState = player_->GetCurrentState();
+	PlayerState playerState = player_->GetCurrentState();
 
 	auto& bossInfo = allowFalterBossInfos_.at(bossState);
 	auto& playerInfo = falterPlayerInfos_.at(playerState);

@@ -78,6 +78,9 @@ public:
 	std::vector<uint32_t> GetKeyObjectIDs() const;
 	// エンジン内のオブジェクトIDから何番目のキーか取得
 	uint32_t GetKeyIndexFromObjectID(uint32_t index);
+
+	// 処理進捗の取得
+	float GetProgress() const;
 private:
 	//========================================================================
 	//	private Methods

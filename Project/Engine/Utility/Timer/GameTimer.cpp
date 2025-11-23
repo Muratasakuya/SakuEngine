@@ -32,7 +32,7 @@ void GameTimer::StartHitStop(float duration, float timeScale) {
 	// ヒットストップ情報セット
 	hitStop_.active = true;
 	hitStop_.scale = timeScale;
-	hitStop_.remaining = std::max(hitStop_.remaining, duration);
+	hitStop_.remaining = duration;
 }
 
 void GameTimer::StartSlowMotion(float timeScale, float duration, float fadeOut, EasingType easingType) {

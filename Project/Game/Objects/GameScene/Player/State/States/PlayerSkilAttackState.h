@@ -4,6 +4,7 @@
 //	include
 //============================================================================
 #include <Engine/Object/Base/KeyframeObject3D.h>
+#include <Engine/Utility/Timer/DelayedHitstop.h>
 #include <Game/Objects/GameScene/Player/Effect/PlayerAfterImageEffect.h>
 #include <Game/Objects/GameScene/Player/State/Interface/PlayerBaseAttackState.h>
 
@@ -41,10 +42,19 @@ private:
 
 	//--------- structure ----------------------------------------------------
 
+	// 状態
 	enum class State {
 
 		MoveAttack, // 移動攻撃
 		JumpAttack, // ジャンプ攻撃
+	};
+
+	// ヒットストップ
+	struct HitStop {
+
+		bool isStarted = false;
+		float startProgress;    // 発生させる攻撃進捗
+		DelayedHitstop hitStop; // ヒットストップ
 	};
 
 	//--------- variables ----------------------------------------------------
@@ -78,6 +88,10 @@ private:
 
 	// 範囲内にいるかどうか
 	bool isInRange_;
+
+	// 攻撃ヒットストップ
+	HitStop moveAttackHitstop_;
+	HitStop jumpAttackHitstop_;
 
 	// 残像表現エフェクト
 	std::unique_ptr<PlayerAfterImageEffect> afterImageEffect_;

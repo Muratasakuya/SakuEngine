@@ -116,6 +116,15 @@ void PlayerSkilAttackState::UpdateMoveAttack(Player& player) {
 	// 移動座標を更新する
 	preMovePos_ = currentTranslation;
 
+	// 進捗をチェックしてヒットストップを発生させる
+	if (!moveAttackHitstop_.isStarted &&
+		moveAttackHitstop_.startProgress <= moveKeyframeObject_->GetProgress()) {
+
+		// ヒットストップ発生
+		moveAttackHitstop_.isStarted = true;
+		moveAttackHitstop_.hitStop.Start();
+	}
+
 	// 補間処理終了後状態を終了
 	if (!moveKeyframeObject_->IsUpdating()) {
 
@@ -171,6 +180,15 @@ void PlayerSkilAttackState::UpdateJumpAttack(Player& player) {
 	// トランスフォーム補間更新
 	jumpKeyframeObject_->SelfUpdate();
 
+	// 進捗をチェックしてヒットストップを発生させる
+	if (!jumpAttackHitstop_.isStarted &&
+		jumpAttackHitstop_.startProgress <= jumpKeyframeObject_->GetProgress()) {
+
+		// ヒットストップ発生
+		jumpAttackHitstop_.isStarted = true;
+		jumpAttackHitstop_.hitStop.Start();
+	}
+
 	// 補間処理終了後状態を終了
 	if (!jumpKeyframeObject_->IsUpdating()) {
 
@@ -219,6 +237,10 @@ void PlayerSkilAttackState::UpdateAlways([[maybe_unused]] Player& player) {
 	moveFrontTransform_->UpdateMatrix();
 	moveKeyframeObject_->UpdateKey();
 	jumpKeyframeObject_->UpdateKey();
+
+	// ヒットストップの更新
+	moveAttackHitstop_.hitStop.Update();
+	jumpAttackHitstop_.hitStop.Update();
 }
 
 void PlayerSkilAttackState::Exit(Player& player) {
@@ -229,6 +251,8 @@ void PlayerSkilAttackState::Exit(Player& player) {
 	// 補間を確実に終了させる
 	moveKeyframeObject_->Reset();
 	jumpKeyframeObject_->Reset();
+	moveAttackHitstop_.isStarted = false;
+	jumpAttackHitstop_.isStarted = false;
 
 	// カメラアニメーション終了
 	followCamera_->EndPlayerActionAnim(true);
@@ -282,6 +306,19 @@ void PlayerSkilAttackState::ImGui([[maybe_unused]] const Player& player) {
 
 		jumpKeyframeObject_->ImGui();
 	}
+
+	ImGui::SeparatorText("Hitstop");
+
+	if (ImGui::CollapsingHeader("MoveAttackHitstop")) {
+
+		ImGui::DragFloat("startProgress", &moveAttackHitstop_.startProgress, 0.001f);
+		moveAttackHitstop_.hitStop.ImGui("MoveAttack", false);
+	}
+	if (ImGui::CollapsingHeader("JumpAttackHitstop")) {
+
+		ImGui::DragFloat("startProgress", &jumpAttackHitstop_.startProgress, 0.001f);
+		jumpAttackHitstop_.hitStop.ImGui("JumpAttack", false);
+	}
 }
 
 void PlayerSkilAttackState::ApplyJson(const Json& data) {
@@ -298,6 +335,11 @@ void PlayerSkilAttackState::ApplyJson(const Json& data) {
 	moveFrontTransform_->FromJson(data.value("MoveFrontTransform", Json()));
 	moveKeyframeObject_->FromJson(data.value("MoveKey", Json()));
 	jumpKeyframeObject_->FromJson(data.value("JumpKey", Json()));
+
+	moveAttackHitstop_.startProgress = data.value("MoveAttackHitstopStartProgress", 0.0f);
+	moveAttackHitstop_.hitStop.FromJson(data.value("MoveAttackHitstop", Json()));
+	jumpAttackHitstop_.startProgress = data.value("JumpAttackHitstopStartProgress", 0.0f);
+	jumpAttackHitstop_.hitStop.FromJson(data.value("JumpAttackHitstop", Json()));
 }
 
 void PlayerSkilAttackState::SaveJson(Json& data) {
@@ -314,4 +356,9 @@ void PlayerSkilAttackState::SaveJson(Json& data) {
 	moveFrontTransform_->ToJson(data["MoveFrontTransform"]);
 	moveKeyframeObject_->ToJson(data["MoveKey"]);
 	jumpKeyframeObject_->ToJson(data["JumpKey"]);
+
+	data["MoveAttackHitstopStartProgress"] = moveAttackHitstop_.startProgress;
+	moveAttackHitstop_.hitStop.ToJson(data["MoveAttackHitstop"]);
+	data["JumpAttackHitstopStartProgress"] = jumpAttackHitstop_.startProgress;
+	jumpAttackHitstop_.hitStop.ToJson(data["JumpAttackHitstop"]);
 }

@@ -97,6 +97,17 @@ uint32_t KeyframeObject3D::GetKeyIndexFromObjectID(uint32_t index) {
 	return keyIndex;
 }
 
+float KeyframeObject3D::GetProgress() const {
+
+	// keys分の合計時間
+	float baseTotal = (std::max)(keys_.back().time, std::numeric_limits<float>::epsilon());
+	// 追加されてれば最初の区間の長さを加算
+	float startTime = (runtime_.hasStartKey ? startDuration_ : 0.0f);
+	float total = baseTotal + startTime;
+	// 進捗率を返す
+	return (total > 0.0f) ? (timer_ / total) : 1.0f;
+}
+
 void KeyframeObject3D::StartLerp(const std::optional<Transform3D>& transform,
 	const std::optional<std::vector<AnyValue>>& anyValues) {
 
