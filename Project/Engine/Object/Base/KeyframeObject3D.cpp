@@ -29,6 +29,8 @@ void KeyframeObject3D::Init(const std::string& name, const std::string& modelNam
 	addKeyTimeStep_ = 0.8f;
 	currentState_ = State::None;
 	isConnectEnds_ = false;
+	nextKeyIndex_ = 0;
+	reachedKeyThisFrame_ = false;
 	lerpType_ = LerpKeyframe::Type::Linear;
 
 	startDuration_ = 0.0f;
@@ -43,6 +45,11 @@ void KeyframeObject3D::Init(const std::string& name, const std::string& modelNam
 const Transform3D& KeyframeObject3D::GetIndexTransform(uint32_t index) const {
 
 	return keyObjects_[index]->GetTransform();
+}
+
+const Transform3D& KeyframeObject3D::GetIndexKeyTransform(uint32_t index) const {
+
+	return keys_[index].transform;
 }
 
 KeyframeObject3D::AnyValue KeyframeObject3D::GetIndexAnyValue(uint32_t index, const std::string& name) const {
@@ -108,6 +115,12 @@ float KeyframeObject3D::GetProgress() const {
 	return (total > 0.0f) ? (timer_ / total) : 1.0f;
 }
 
+bool KeyframeObject3D::IsNextKeyReached() const {
+
+	// 更新中に次のキーに到達したかどうか
+	return (currentState_ == State::Updating) && reachedKeyThisFrame_;
+}
+
 void KeyframeObject3D::StartLerp(const std::optional<Transform3D>& transform,
 	const std::optional<std::vector<AnyValue>>& anyValues) {
 
@@ -146,6 +159,18 @@ void KeyframeObject3D::StartLerp(const std::optional<Transform3D>& transform,
 			}
 		}
 	}
+
+	// 次のキーインデックスを設定
+	if (runtime_.hasStartKey) {
+
+		// start -> key[0]を次のインデックスとする
+		nextKeyIndex_ = 0;
+	} else {
+
+		// key[0] -> key[1]、もしくはkeyが1つしかなければ終了
+		nextKeyIndex_ = (keys_.size() >= 2) ? 1u : static_cast<uint32_t>(keys_.size());
+	}
+	reachedKeyThisFrame_ = false;
 }
 
 void KeyframeObject3D::Reset() {
@@ -155,6 +180,8 @@ void KeyframeObject3D::Reset() {
 
 	// リセット
 	timer_ = 0.0f;
+	nextKeyIndex_ = 0;
+	reachedKeyThisFrame_ = false;
 	runtime_.hasStartKey = false;
 	runtime_.startAnyValues.clear();
 }
@@ -200,7 +227,10 @@ void KeyframeObject3D::SetParent(const std::string& name, const Transform3D& par
 	UpdateKey(true);
 }
 
-void KeyframeObject3D::SelfUpdate() { 
+void KeyframeObject3D::SelfUpdate() {
+
+	// フレームごとのキー到達フラグリセット
+	reachedKeyThisFrame_ = false;
 
 	// 行列の更新は常に行う
 	for (auto& key : keys_) {
@@ -221,8 +251,40 @@ void KeyframeObject3D::SelfUpdate() {
 	float total = baseTotal + startTime;
 
 	// 時間を更新
+	float prevTime = timer_;
 	timer_ += GameTimer::GetScaledDeltaTime();
 	timer_ = std::clamp(timer_, 0.0f, total);
+
+	//============================================================================
+	//	次のキーへの到達判定
+	//============================================================================
+	if (!keys_.empty() && nextKeyIndex_ < keys_.size()) {
+
+		// 次のキーの時間
+		float nextKeyTime = 0.0f;
+		if (runtime_.hasStartKey) {
+
+			// start -> key[0]が最初の区間の場合
+			if (nextKeyIndex_ == 0) {
+
+				nextKeyTime = startTime;
+			} else {
+
+				// key[i]はstartTime + keys_[i].timeで到達
+				nextKeyTime = startTime + keys_[nextKeyIndex_].time;
+			}
+		} else {
+
+			// keys_[i].time でkey[i]に到達
+			nextKeyTime = keys_[nextKeyIndex_].time;
+		}
+		if (prevTime < nextKeyTime && nextKeyTime <= timer_) {
+
+			reachedKeyThisFrame_ = true;
+			// 次のキーインデックスを進める
+			++nextKeyIndex_;
+		}
+	}
 
 	//============================================================================
 	//	最初の区間の補間、start -> key0

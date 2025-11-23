@@ -66,6 +66,7 @@ public:
 
 	// 指定インデックス番目のトランスフォームを返す
 	const Transform3D& GetIndexTransform(uint32_t index) const;
+	const Transform3D& GetIndexKeyTransform(uint32_t index) const;
 	// 指定インデックス番目の任意の型の現在の値を返す
 	AnyValue GetIndexAnyValue(uint32_t index, const std::string& name) const;
 
@@ -81,6 +82,11 @@ public:
 
 	// 処理進捗の取得
 	float GetProgress() const;
+
+	// 次のキーに到達したか(トリガー判定)
+	bool IsNextKeyReached() const;
+	// 目標のキーインデックスを取得
+	uint32_t GetNextKeyIndex() const { return nextKeyIndex_; }
 private:
 	//========================================================================
 	//	private Methods
@@ -155,6 +161,10 @@ private:
 	LerpKeyframe::Type lerpType_; // 補間タイプ
 	float timer_;        // 現在の経過時間
 	bool isConnectEnds_; // 最初と最後のキーを結ぶかどうか
+
+	// 次のキー到達トリガー用
+	uint32_t nextKeyIndex_;    // 次のキーインデックス
+	bool reachedKeyThisFrame_; // 目標のキーに到達したかどうかのトリガー判定
 
 	// 最初の区間を追加したときの補間用
 	float startDuration_;      // スタート値からキー0までの時間

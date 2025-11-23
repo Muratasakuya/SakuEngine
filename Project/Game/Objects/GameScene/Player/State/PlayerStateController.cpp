@@ -217,6 +217,15 @@ void PlayerStateController::Update(Player& owner) {
 	// 敵がスタン中の状態遷移処理
 	HandleStunTransition(owner);
 
+	// 常に更新する値
+	for (const auto& [state, ptr] : states_) {
+
+		if (state == PlayerState::None) {
+			continue;
+		}
+		ptr->BeginUpdateAlways(owner);
+	}
+
 	// 現在の状態を更新
 	if (PlayerIState* currentState = states_[current_].get()) {
 

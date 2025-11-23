@@ -14,7 +14,7 @@
 
 PlayerAttack_1stState::PlayerAttack_1stState(Player* player) {
 
-	player_ = nullptr;
+	player_ = nullptr;	
 	player_ = player;
 
 	// 剣エフェクト作成

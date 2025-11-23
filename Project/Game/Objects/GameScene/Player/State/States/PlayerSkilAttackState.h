@@ -4,6 +4,7 @@
 //	include
 //============================================================================
 #include <Engine/Object/Base/KeyframeObject3D.h>
+#include <Engine/Effect/User/EffectGroup.h>
 #include <Engine/Utility/Timer/DelayedHitstop.h>
 #include <Game/Objects/GameScene/Player/Effect/PlayerAfterImageEffect.h>
 #include <Game/Objects/GameScene/Player/State/Interface/PlayerBaseAttackState.h>
@@ -25,6 +26,7 @@ public:
 	void Enter(Player& player) override;
 
 	void Update(Player& player) override;
+	void BeginUpdateAlways(Player& player) override;
 	void UpdateAlways(Player& player) override;
 
 	void Exit(Player& player) override;
@@ -95,6 +97,9 @@ private:
 
 	// 残像表現エフェクト
 	std::unique_ptr<PlayerAfterImageEffect> afterImageEffect_;
+
+	// 移動エフェクト
+	std::unique_ptr<EffectGroup> moveAtackEffect_;
 
 	//--------- functions ----------------------------------------------------
 

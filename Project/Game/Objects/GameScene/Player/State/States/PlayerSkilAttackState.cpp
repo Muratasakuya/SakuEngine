@@ -49,6 +49,11 @@ PlayerSkilAttackState::PlayerSkilAttackState(Player* player) {
 	// 残像表現エフェクト作成
 	afterImageEffect_ = std::make_unique<PlayerAfterImageEffect>();
 	afterImageEffect_->Init("playerAttackSkilMove");
+
+	// 移動エフェクト作成
+	moveAtackEffect_ = std::make_unique<EffectGroup>();
+	moveAtackEffect_->Init("skilMoveAtackEffect", "PlayerEffect");
+	moveAtackEffect_->LoadJson("GameEffectGroup/Player/skilMoveAtackEffect.json");
 }
 
 void PlayerSkilAttackState::Enter(Player& player) {
@@ -123,6 +128,20 @@ void PlayerSkilAttackState::UpdateMoveAttack(Player& player) {
 		// ヒットストップ発生
 		moveAttackHitstop_.isStarted = true;
 		moveAttackHitstop_.hitStop.Start();
+	}
+
+	// 次のキーに到達するたんびにエフェクトを発生させる
+	if (moveKeyframeObject_->IsNextKeyReached()) {
+
+		// 向きを基に回転を作成
+		Quaternion effectRotation = Quaternion::LookRotation(direction, rotationAxis_);
+		moveAtackEffect_->SetParentRotation("playerSkilMoveEffect",
+			Quaternion::Normalize(effectRotation), ParticleUpdateModuleID::Rotation);
+
+		// キーの位置からエフェクト発生
+		Vector3 translation = moveKeyframeObject_->GetIndexKeyTransform(
+			moveKeyframeObject_->GetNextKeyIndex() - 1).translation;
+		moveAtackEffect_->Emit(translation);
 	}
 
 	// 補間処理終了後状態を終了
@@ -231,16 +250,22 @@ void PlayerSkilAttackState::SetTargetByRange(KeyframeObject3D& keyObject, const 
 	}
 }
 
-void PlayerSkilAttackState::UpdateAlways([[maybe_unused]] Player& player) {
+void PlayerSkilAttackState::BeginUpdateAlways([[maybe_unused]] Player& player) {
 
 	// キーフレームオブジェクトの更新
 	moveFrontTransform_->UpdateMatrix();
 	moveKeyframeObject_->UpdateKey();
 	jumpKeyframeObject_->UpdateKey();
+}
+
+void PlayerSkilAttackState::UpdateAlways([[maybe_unused]] Player& player) {
 
 	// ヒットストップの更新
 	moveAttackHitstop_.hitStop.Update();
 	jumpAttackHitstop_.hitStop.Update();
+
+	// エフェクトの更新
+	moveAtackEffect_->Update();
 }
 
 void PlayerSkilAttackState::Exit(Player& player) {
