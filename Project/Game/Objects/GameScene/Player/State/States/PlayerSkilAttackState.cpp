@@ -54,6 +54,11 @@ PlayerSkilAttackState::PlayerSkilAttackState(Player* player) {
 	moveAtackEffect_ = std::make_unique<EffectGroup>();
 	moveAtackEffect_->Init("skilMoveAtackEffect", "PlayerEffect");
 	moveAtackEffect_->LoadJson("GameEffectGroup/Player/skilMoveAtackEffect.json");
+	// 地割れエフェクト作成
+	groundCrackEffect_ = std::make_unique<EffectGroup>();
+	groundCrackEffect_->Init("skilGroundCrack", "PlayerEffect");
+	groundCrackEffect_->LoadJson("GameEffectGroup/Player/groundCrackEffect.json");
+	groundCrackEmitted_ = false;
 }
 
 void PlayerSkilAttackState::Enter(Player& player) {
@@ -207,9 +212,49 @@ void PlayerSkilAttackState::UpdateJumpAttack(Player& player) {
 		jumpAttackHitstop_.isStarted = true;
 		jumpAttackHitstop_.hitStop.Start();
 	}
+	// 進捗をチェックしてジャンプエフェクトを発生させる
+	if (!jumpMoveEffectEmitted_ &&
+		jumpEffectEmitProgress_ <= jumpKeyframeObject_->GetProgress()) {
+
+		// 発生済みにする
+		jumpMoveEffectEmitted_ = true;
+		
+		// 目標へ向けた回転
+		Vector3 direction{};
+		const Vector3 playerPos = player.GetTranslation();
+		if (isInRange_) {
+
+			// 敵の方向
+			direction = Vector3(bossEnemy_->GetTranslation() - playerPos).Normalize();
+		} else {
+
+			// 前方の方向
+			Vector3 targetTranslation = jumpKeyframeObject_->GetLastKeyTransform().translation;
+			direction = Vector3(targetTranslation - playerPos).Normalize();
+		}
+		// 向きを基に回転を作成
+		Quaternion effectRotation = Quaternion::LookRotation(direction, rotationAxis_);
+		moveAtackEffect_->SetParentRotation("playerSkilMoveEffect",
+			Quaternion::Normalize(effectRotation), ParticleUpdateModuleID::Rotation);
+		// プレイヤーの右手からエフェクト発生
+		moveAtackEffect_->Emit(player.GetWeapon(PlayerWeaponType::Right)->GetTransform().GetWorldPos());
+	}
 
 	// 補間処理終了後状態を終了
 	if (!jumpKeyframeObject_->IsUpdating()) {
+
+		// 発生していないときのみ
+		if (!groundCrackEmitted_) {
+
+			// 地割れエフェクトの発生
+			// Y座標は固定
+			Vector3 emitPos = player.GetTranslation();
+			// 地面に隠れない位置に調整
+			emitPos.y = 1.0f;
+			groundCrackEffect_->Emit(emitPos);
+			// 発生済みにする
+			groundCrackEmitted_ = true;
+		}
 
 		// 経過時間更新
 		exitTimer_ += GameTimer::GetDeltaTime();
@@ -265,7 +310,10 @@ void PlayerSkilAttackState::UpdateAlways([[maybe_unused]] Player& player) {
 	jumpAttackHitstop_.hitStop.Update();
 
 	// エフェクトの更新
+	// 移動攻撃エフェクト
 	moveAtackEffect_->Update();
+	// 地割れ
+	groundCrackEffect_->Update();
 }
 
 void PlayerSkilAttackState::Exit(Player& player) {
@@ -278,6 +326,8 @@ void PlayerSkilAttackState::Exit(Player& player) {
 	jumpKeyframeObject_->Reset();
 	moveAttackHitstop_.isStarted = false;
 	jumpAttackHitstop_.isStarted = false;
+	jumpMoveEffectEmitted_ = false;
+	groundCrackEmitted_ = false;
 
 	// カメラアニメーション終了
 	followCamera_->EndPlayerActionAnim(true);
@@ -306,6 +356,7 @@ void PlayerSkilAttackState::ImGui([[maybe_unused]] const Player& player) {
 	ImGui::DragFloat("nextAnimDuration", &nextAnimDuration_, 0.001f);
 	ImGui::DragFloat("nextJumpAnimDuration", &nextJumpAnimDuration_, 0.001f);
 	ImGui::DragFloat("exitTime", &exitTime_, 0.01f);
+	ImGui::DragFloat("jumpEffectEmitProgres", &jumpEffectEmitProgress_, 0.01f);
 
 	ImGui::DragFloat3("rotationAxis", &rotationAxis_.x, 0.01f);
 	PlayerBaseAttackState::ImGui(player);
@@ -352,6 +403,7 @@ void PlayerSkilAttackState::ApplyJson(const Json& data) {
 	nextJumpAnimDuration_ = JsonAdapter::GetValue<float>(data, "nextJumpAnimDuration_");
 	rotationLerpRate_ = JsonAdapter::GetValue<float>(data, "rotationLerpRate_");
 	exitTime_ = JsonAdapter::GetValue<float>(data, "exitTime_");
+	jumpEffectEmitProgress_ = data.value("jumpEffectEmitProgress_", 0.5f);
 
 	PlayerBaseAttackState::ApplyJson(data);
 
@@ -373,6 +425,7 @@ void PlayerSkilAttackState::SaveJson(Json& data) {
 	data["nextJumpAnimDuration_"] = nextJumpAnimDuration_;
 	data["rotationLerpRate_"] = rotationLerpRate_;
 	data["exitTime_"] = exitTime_;
+	data["jumpEffectEmitProgress_"] = jumpEffectEmitProgress_;
 
 	PlayerBaseAttackState::SaveJson(data);
 

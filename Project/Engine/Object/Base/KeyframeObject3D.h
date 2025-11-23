@@ -64,6 +64,10 @@ public:
 	// 再生中かどうか
 	bool IsUpdating() const { return currentState_ == State::Updating; }
 
+	// 最初、最後のキーのトランスフォームを返す
+	const Transform3D& GetFirstKeyTransform() const { return keys_.front().transform; }
+	const Transform3D& GetLastKeyTransform() const { return keys_.back().transform; }
+
 	// 指定インデックス番目のトランスフォームを返す
 	const Transform3D& GetIndexTransform(uint32_t index) const;
 	const Transform3D& GetIndexKeyTransform(uint32_t index) const;

@@ -50,7 +50,7 @@
                 "anyValues": {
                     "FovY": 0.5600000023841858
                 },
-                "ease": "EaseOutQuad",
+                "ease": "EaseOutExpo",
                 "time": 0.697475016117096
             },
             {

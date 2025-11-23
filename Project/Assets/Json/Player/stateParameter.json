@@ -850,11 +850,7 @@
         "attackPosLerpCircleRange_": 31.799999237060547,
         "attackPosLerpTime_": 0.4399999976158142,
         "exitTime_": 0.4000000059604645,
-        "moveEffectRotationAxis_": {
-            "x": 1.0,
-            "y": 0.0,
-            "z": -1.0
-        },
+        "jumpEffectEmitProgress_": 0.9100000262260437,
         "nextAnimDuration_": 0.029999999329447746,
         "nextJumpAnimDuration_": 0.6299999952316284,
         "rotationAxis_": {

@@ -100,6 +100,11 @@ private:
 
 	// 移動エフェクト
 	std::unique_ptr<EffectGroup> moveAtackEffect_;
+	float jumpEffectEmitProgress_; // ジャンプエフェクトを発生させるタイミング
+	bool jumpMoveEffectEmitted_ = false;
+	// 地割れエフェクト
+	std::unique_ptr<EffectGroup> groundCrackEffect_;
+	bool groundCrackEmitted_ = false;
 
 	//--------- functions ----------------------------------------------------
 
