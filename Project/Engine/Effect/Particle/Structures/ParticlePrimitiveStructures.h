@@ -60,6 +60,15 @@ struct RingForGPU {
 		divide = 8;
 	}
 };
+
+// 円柱UVモード
+enum class CylinderUVMode :
+	uint32_t {
+
+	None,   // 通常横並び
+	Radial, // 放射状
+};
+
 // 円柱
 struct CylinderForGPU {
 
@@ -70,6 +79,7 @@ struct CylinderForGPU {
 	float maxAngle;
 
 	int divide;
+	uint32_t uvMode;
 
 	// 頂点色
 	Color topColor;
@@ -82,6 +92,7 @@ struct CylinderForGPU {
 		height = 4.0f;
 		maxAngle = pi * 2.0f;
 		divide = 16;
+		uvMode = static_cast<uint32_t>(CylinderUVMode::None);
 
 		topColor = Color::White();
 		bottomColor = Color::White();

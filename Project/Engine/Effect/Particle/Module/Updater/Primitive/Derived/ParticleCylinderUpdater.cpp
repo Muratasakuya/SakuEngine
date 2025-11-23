@@ -4,6 +4,7 @@
 //	include
 //============================================================================
 #include <Engine/Utility/Helper/Algorithm.h>
+#include <Engine/Utility/Enum/EnumAdapter.h>
 
 //============================================================================
 //	ParticleCylinderUpdater classMethods
@@ -14,9 +15,13 @@ void ParticleCylinderUpdater::Init() {
 	// 初期化値
 	start_.Init();
 	target_.Init();
+	uvMode_ = CylinderUVMode::None;
 }
 
 void ParticleCylinderUpdater::Update(CPUParticle::ParticleData& particle, EasingType easingType) {
+
+	// モードは渡すだけ
+	particle.primitive.cylinder.uvMode = static_cast<uint32_t>(uvMode_);
 
 	particle.primitive.cylinder.divide = Algorithm::LerpInt(start_.divide,
 		target_.divide, EasedValue(easingType, particle.progress));
@@ -41,6 +46,8 @@ void ParticleCylinderUpdater::Update(CPUParticle::ParticleData& particle, Easing
 }
 
 void ParticleCylinderUpdater::ImGui() {
+
+	EnumAdapter<CylinderUVMode>::Combo("UVMode", &uvMode_);
 
 	ImGui::DragInt("startDivide", &start_.divide, 1, 3, 32);
 	ImGui::DragInt("targetDivide", &target_.divide, 1, 3, 32);
@@ -76,11 +83,13 @@ void ParticleCylinderUpdater::FromJson(const Json& data) {
 	start_.height = cylinderData.value("startHeight", start_.height);
 	target_.height = cylinderData.value("targetHeight", target_.height);
 	start_.maxAngle = cylinderData.value("startMaxAngle", start_.maxAngle);
-	target_.maxAngle = cylinderData.value("targetMaxAngle", target_.maxAngle);	
+	target_.maxAngle = cylinderData.value("targetMaxAngle", target_.maxAngle);
 	start_.topColor = Color::FromJson(cylinderData.value("startTopColor", Json()));
 	target_.topColor = Color::FromJson(cylinderData.value("targetTopColor", Json()));
 	start_.bottomColor = Color::FromJson(cylinderData.value("startBottomColor", Json()));
 	target_.bottomColor = Color::FromJson(cylinderData.value("targetBottomColor", Json()));
+
+	uvMode_ = EnumAdapter<CylinderUVMode>::FromString(cylinderData.value("uvMode", "None")).value();
 }
 
 void ParticleCylinderUpdater::ToJson(Json& data) const {
@@ -99,4 +108,5 @@ void ParticleCylinderUpdater::ToJson(Json& data) const {
 	data["cylinder"]["targetTopColor"] = target_.topColor.ToJson();
 	data["cylinder"]["startBottomColor"] = start_.bottomColor.ToJson();
 	data["cylinder"]["targetBottomColor"] = target_.bottomColor.ToJson();
+	data["cylinder"]["uvMode"] = EnumAdapter<CylinderUVMode>::ToString(uvMode_);
 }

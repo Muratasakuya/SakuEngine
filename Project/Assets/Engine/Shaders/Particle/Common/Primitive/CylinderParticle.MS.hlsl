@@ -37,6 +37,7 @@ struct Cylinder {
 	float maxAngle;
 
 	uint divide;
+	uint uvMode;
 	
 	float4 topColor;
 	float4 bottomColor;
@@ -44,6 +45,25 @@ struct Cylinder {
 
 StructuredBuffer<Cylinder> gCylinders : register(t0);
 StructuredBuffer<Transform> gTransform : register(t1);
+
+//============================================================================
+//	Functions
+//============================================================================
+
+// UV‚ÌŒvZ
+float2 CalRadialUV(float angle, float height) {
+	
+	// ’†S‚Ì”¼Œa
+	float radius = lerp(0.0f, 0.5f, height);
+	
+	float s = sin(angle);
+	float c = cos(angle);
+	
+	// ‰ºŒü‚«Y²
+	float2 direction = float2(c, -s);
+	
+	return float2(0.5f, 0.5f) + direction * radius;
+}
 
 //============================================================================
 //	Main
@@ -87,6 +107,7 @@ out vertices MSOutput verts[CYL_MAX_VERTS], out indices uint3 polys[CYL_MAX_TRIS
 		float3 pTop = float3(s * cylinder.topRadius, cylinder.height, c0 * cylinder.topRadius);
 		float3 pBot = float3(s * cylinder.bottomRadius, 0.0f, c0 * cylinder.bottomRadius);
 
+		// UVŒvZ
 		float u = (float) i / (float) divide;
 
 		MSOutput vertex;
@@ -96,14 +117,36 @@ out vertices MSOutput verts[CYL_MAX_VERTS], out indices uint3 polys[CYL_MAX_TRIS
 		
 		// ã
 		vertex.position = mul(float4(pTop, 1), wvp);
-		vertex.texcoord = float2(-u, 0.0f);
 		vertex.vertexColor = cylinder.topColor;
+		
+		// UVƒ‚[ƒh‚É‚æ‚éØ‚è‘Ö‚¦
+		if (cylinder.uvMode == 0) {
+
+			// ‰¡•À‚ÑUV
+			vertex.texcoord = float2(-u, 0.0f);
+		} else {
+
+			// •úËó‚ÉL‚°‚éUV
+			vertex.texcoord = CalRadialUV(a, 1.0f);
+		}
+		
 		verts[i] = vertex;
 
 		// ‰º
 		vertex.position = mul(float4(pBot, 1), wvp);
-		vertex.texcoord = float2(-u, 1.0f);
 		vertex.vertexColor = cylinder.bottomColor;
+		
+		// UVƒ‚[ƒh‚É‚æ‚éØ‚è‘Ö‚¦
+		if (cylinder.uvMode == 0) {
+
+			// ‰¡•À‚ÑUV
+			vertex.texcoord = float2(-u, 1.0f);
+		} else {
+
+			// •úËó‚ÉL‚°‚éUV
+			vertex.texcoord = CalRadialUV(a, 0.0f);
+		}
+		
 		verts[divide + 1 + i] = vertex;
 	}
 
