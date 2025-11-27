@@ -30,6 +30,8 @@ public:
 
 	//--------- accessor -----------------------------------------------------
 
+	void SetBossEnemy(const BossEnemy* bossEnemy);
+
 	// 状態をリクエスト
 	void SetRequestState(SubPlayerState state) { requestState_ = state; }
 
@@ -52,6 +54,7 @@ private:
 
 	// エディター
 	SubPlayerState editState_;
+	SubPlayerState editRequestState_;
 
 	//--------- functions ----------------------------------------------------
 
@@ -61,4 +64,6 @@ private:
 
 	// 状態切り替え
 	void ChangeState(bool isForce);
+	// 状態が終了したかチェックする
+	void CheckCanExit();
 };

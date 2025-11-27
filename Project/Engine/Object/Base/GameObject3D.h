@@ -59,6 +59,7 @@ public:
 	void SetTranslation(const Vector3& translation) { transform_->translation = translation; }
 	void SetOffsetTranslation(const Vector3& translation) { transform_->offsetTranslation = translation; }
 	void SetIsDirty(bool isDirty) { transform_->SetIsDirty(isDirty); }
+	void SetSRT(const Transform3D& transform);
 	// 親
 	void SetParent(const Transform3D& parent, bool isNull = false);
 	const Transform3D* GetJointTransform(const std::string& jointName) const;

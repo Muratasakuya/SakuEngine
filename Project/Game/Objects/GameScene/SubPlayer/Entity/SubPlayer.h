@@ -28,6 +28,7 @@ public:
 
 	//--------- accessor -----------------------------------------------------
 
+	void SetBossEnemy(const BossEnemy* bossEnemy) { stateController_->SetBossEnemy(bossEnemy); }
 private:
 	//========================================================================
 	//	private Methods

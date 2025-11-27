@@ -233,6 +233,13 @@ void GameObject3D::UpdateMatrix() {
 	transform_->UpdateMatrix();
 }
 
+void GameObject3D::SetSRT(const Transform3D& transform) {
+
+	transform_->translation = transform.translation;
+	transform_->rotation = transform.rotation;
+	transform_->scale = transform.scale;
+}
+
 void GameObject3D::SetParent(const Transform3D& parent, bool isNull) {
 
 	if (isNull) {

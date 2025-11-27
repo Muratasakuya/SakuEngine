@@ -28,6 +28,15 @@ void SubPlayerStateController::Init() {
 	ChangeState(true);
 }
 
+void SubPlayerStateController::SetBossEnemy(const BossEnemy* bossEnemy) {
+
+	// 各状態にボス敵を設定
+	for (const auto& state : std::views::values(states_)) {
+
+		state->SetBossEnemy(bossEnemy);
+	}
+}
+
 void SubPlayerStateController::SetParts(GameObject3D* body, GameObject3D* rightHand, GameObject3D* leftHand) {
 
 	// 各状態にパーツを設定
@@ -54,6 +63,9 @@ void SubPlayerStateController::Update() {
 
 		state->UpdateAlways();
 	}
+
+	// 状態終了チェック
+	CheckCanExit();
 }
 
 void SubPlayerStateController::ChangeState(bool isForce) {
@@ -80,6 +92,18 @@ void SubPlayerStateController::ChangeState(bool isForce) {
 	states_[current_]->Enter();
 }
 
+void SubPlayerStateController::CheckCanExit() {
+
+	// 現在の状態が終了可能かチェック
+	if (SubPlayerIState* state = states_[current_].get()) {
+		if (state->CanExit()) {
+
+			// 終了可能なら非アクティブ状態に遷移させる
+			requestState_ = SubPlayerState::Inactive;
+		}
+	}
+}
+
 void SubPlayerStateController::ImGui() {
 
 	if (ImGui::Button("Save Json")) {
@@ -87,6 +111,11 @@ void SubPlayerStateController::ImGui() {
 		SaveJson();
 	}
 	EnumAdapter<SubPlayerState>::Combo("Edit State", &editState_);
+	if (EnumAdapter<SubPlayerState>::Combo("Edit Request State", &editRequestState_)) {
+
+		// リクエスト状態を設定
+		ChangeState(true);
+	}
 
 	ImGui::Separator();
 

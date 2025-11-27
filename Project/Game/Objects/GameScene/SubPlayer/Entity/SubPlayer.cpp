@@ -72,7 +72,7 @@ void SubPlayer::ImGui() {
 		SaveJson();
 	}
 
-	if (ImGui::BeginTabBar("Hierarchy")) {
+	if (ImGui::BeginTabBar("SubPlayer")) {
 		if (ImGui::BeginTabItem("Parts")) {
 
 			// 体
@@ -101,7 +101,10 @@ void SubPlayer::ImGui() {
 
 		if (ImGui::BeginTabItem("State")) {
 
+			ImGui::SetWindowFontScale(0.8f);
+
 			stateController_->ImGui();
+			ImGui::SetWindowFontScale(1.0f);
 			ImGui::EndTabItem();
 		}
 		ImGui::EndTabBar();
