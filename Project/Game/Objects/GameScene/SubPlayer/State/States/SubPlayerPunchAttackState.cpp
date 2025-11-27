@@ -20,10 +20,10 @@ void SubPlayerPunchAttackState::ImGui() {
 
 }
 
-void SubPlayerPunchAttackState::ApplyJson(const Json& data) {
+void SubPlayerPunchAttackState::ApplyJson([[maybe_unused]] const Json& data) {
 
 }
 
-void SubPlayerPunchAttackState::SaveJson(Json& data) {
+void SubPlayerPunchAttackState::SaveJson([[maybe_unused]] Json& data) {
 
 }

@@ -43,6 +43,11 @@ private:
 	// 状態管理
 	std::unique_ptr<SubPlayerStateController> stateController_;
 
+	// パーツ別の初期トランスフォーム
+	Transform3D initBodyTransform_;
+	Transform3D initRightHandTransform_;
+	Transform3D initLeftHandTransform_;
+
 	//--------- functions ----------------------------------------------------
 
 	// json
@@ -52,4 +57,7 @@ private:
 	// init
 	void InitParts();
 	void InitState();
+
+	// パーツにトランスフォームをセットする
+	void SetPartsTransform(GameObject3D* parts, const Transform3D& transform);
 };

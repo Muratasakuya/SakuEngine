@@ -11,6 +11,7 @@
 
 // object
 #include <Game/Objects/GameScene/Player/Entity/Player.h>
+#include <Game/Objects/GameScene/SubPlayer/Entity/SubPlayer.h>
 #include <Game/Objects/GameScene/Enemy/Boss/Entity/BossEnemy.h>
 #include <Game/Objects/GameScene/Result/GameResultDisplay.h>
 
@@ -31,6 +32,7 @@ struct GameContext {
 
 	// object
 	Player* player = nullptr;
+	SubPlayer* subPlayer = nullptr;
 	BossEnemy* boss = nullptr;
 	GameResultDisplay* result = nullptr;
 

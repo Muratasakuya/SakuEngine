@@ -32,7 +32,7 @@ public:
 	void UpdateMatrix();
 
 	// エディター
-	void ImGui(float itemSize);
+	bool ImGui(float itemSize);
 
 	// json
 	void ToJson(Json& data);

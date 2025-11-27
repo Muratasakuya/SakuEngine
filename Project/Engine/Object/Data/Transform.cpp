@@ -70,10 +70,14 @@ void BaseTransform::UpdateMatrix() {
 	prevOffsetTranslation = offsetTranslation;
 }
 
-void BaseTransform::ImGui(float itemSize) {
+bool BaseTransform::ImGui(float itemSize) {
+
+	bool edited = false;
 
 	ImGui::PushItemWidth(itemSize);
-	if (ImGui::Button("Reset")) {
+
+	edited = ImGui::Button("Reset");
+	if (edited) {
 
 		scale = Vector3::AnyInit(1.0f);
 		rotation.Init();
@@ -84,16 +88,16 @@ void BaseTransform::ImGui(float itemSize) {
 	ImGui::Separator();
 
 	ImGui::Text(std::format("isDirty: {}", isDirty_).c_str());
-	ImGui::Checkbox("isCompulsion", &isCompulsion_);
+	edited |= ImGui::Checkbox("isCompulsion", &isCompulsion_);
 
-	ImGui::DragFloat3("translation", &translation.x, 0.01f);
+	edited |= ImGui::DragFloat3("translation", &translation.x, 0.01f);
 	if (ImGui::DragFloat3("rotation", &eulerRotate.x, 0.01f)) {
 
 		rotation = Quaternion::EulerToQuaternion(eulerRotate);
 	}
 	ImGui::Text("quaternion(%4.3f, %4.3f, %4.3f, %4.3f)",
 		rotation.x, rotation.y, rotation.z, rotation.w);
-	ImGui::DragFloat3("scale", &scale.x, 0.01f);
+	edited |= ImGui::DragFloat3("scale", &scale.x, 0.01f);
 
 	ImGui::SeparatorText("Offset");
 
@@ -141,6 +145,8 @@ void BaseTransform::ImGui(float itemSize) {
 	}
 
 	ImGui::PopItemWidth();
+
+	return edited;
 }
 
 void BaseTransform::ToJson(Json& data) {

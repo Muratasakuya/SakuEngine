@@ -20,10 +20,10 @@ void SubPlayerInactiveState::ImGui() {
 
 }
 
-void SubPlayerInactiveState::ApplyJson(const Json& data) {
+void SubPlayerInactiveState::ApplyJson([[maybe_unused]] const Json& data) {
 
 }
 
-void SubPlayerInactiveState::SaveJson(Json& data) {
+void SubPlayerInactiveState::SaveJson([[maybe_unused]] Json& data) {
 
 }

@@ -51,6 +51,8 @@ void StartGameState::Init(SceneView* sceneView) {
 
 	// プレイヤー
 	context_->player->Init("player", "player", "Player", "player_idle");
+	// サブプレイヤー
+	context_->subPlayer->Init();
 
 	// プレイヤー、カメラをセット
 	context_->boss->SetPlayer(context_->player);
@@ -102,6 +104,7 @@ void StartGameState::Update([[maybe_unused]] SceneManager* sceneManager) {
 	//========================================================================
 
 	context_->player->Update();
+	context_->subPlayer->Update();
 	context_->boss->Update(currentState);
 
 	//========================================================================

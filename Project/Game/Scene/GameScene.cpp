@@ -26,6 +26,7 @@ void GameScene::InitStates() {
 	context_.fieldBoundary = fieldBoundary_.get();
 	// object
 	context_.player = player_.get();
+	context_.subPlayer = subPlayer_.get();
 	context_.boss = bossEnemy_.get();
 	context_.result = result_.get();
 	// sprite
@@ -69,6 +70,7 @@ void GameScene::Init() {
 	//========================================================================
 
 	player_ = std::make_unique<Player>();
+	subPlayer_ = std::make_unique<SubPlayer>();
 	bossEnemy_ = std::make_unique<BossEnemy>();
 	result_ = std::make_unique<GameResultDisplay>();
 
@@ -146,6 +148,7 @@ void GameScene::Update() {
 			RequestNextState(GameSceneState::Result);
 			// プレイヤーと敵を消す
 			player_.reset();
+			subPlayer_.reset();
 			bossEnemy_.reset();
 		}
 		break;
