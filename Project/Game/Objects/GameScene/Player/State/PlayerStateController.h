@@ -4,7 +4,7 @@
 //	include
 //============================================================================
 #include <Game/Objects/GameScene/Player/State/Interface/PlayerIState.h>
-#include <Game/Objects/GameScene/Player/Structures/PlayerStructures.h>
+#include <Game/Objects/GameScene/Player/Structure/PlayerStructures.h>
 
 // c++
 #include <memory>

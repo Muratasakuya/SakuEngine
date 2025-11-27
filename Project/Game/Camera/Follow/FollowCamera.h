@@ -4,7 +4,7 @@
 //	include
 //============================================================================
 #include <Engine/Scene/Camera/BaseCamera.h>
-#include <Game/Objects/GameScene/Player/Structures/PlayerStructures.h>
+#include <Game/Objects/GameScene/Player/Structure/PlayerStructures.h>
 
 // state
 #include <Game/Camera/Follow/State/FollowCameraStateController.h>

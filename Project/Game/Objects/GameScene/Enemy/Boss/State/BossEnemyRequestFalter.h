@@ -4,7 +4,7 @@
 //	include
 //============================================================================
 #include <Game/Objects/GameScene/Enemy/Boss/Structures/BossEnemyStructures.h>
-#include <Game/Objects/GameScene/Player/Structures/PlayerStructures.h>
+#include <Game/Objects/GameScene/Player/Structure/PlayerStructures.h>
 
 // front
 class BossEnemy;

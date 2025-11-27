@@ -60,7 +60,9 @@
     "player",
     "cube",
     "playerRightWeapon",
-    "playerLeftWeapon"
+    "playerLeftWeapon",
+    "subPlayerBody",
+    "subPlayerHand"
   ],
   "Animations": [
     {

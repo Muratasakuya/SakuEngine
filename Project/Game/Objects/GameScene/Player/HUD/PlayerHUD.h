@@ -7,7 +7,7 @@
 #include <Game/Objects/Base/GameDisplayDamage.h>
 #include <Engine/Input/InputStructures.h>
 #include <Game/Objects/Base/GameCommonStructures.h>
-#include <Game/Objects/GameScene/Player/Structures/PlayerStructures.h>
+#include <Game/Objects/GameScene/Player/Structure/PlayerStructures.h>
 
 // c++
 #include <utility>

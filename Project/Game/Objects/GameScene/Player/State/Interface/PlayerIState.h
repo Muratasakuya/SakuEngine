@@ -4,7 +4,7 @@
 //	include
 //============================================================================
 #include <Engine/Input/Base/InputMapper.h>
-#include <Game/Objects/GameScene/Player/Structures/PlayerStructures.h>
+#include <Game/Objects/GameScene/Player/Structure/PlayerStructures.h>
 #include <Game/Objects/GameScene/Player/Input/PlayerInputAction.h>
 #include <Engine/MathLib/MathUtils.h>
 

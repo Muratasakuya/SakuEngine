@@ -4,7 +4,7 @@
 //	include
 //============================================================================
 #include <Game/Camera/Follow/State/Interface/FollowCameraIState.h>
-#include <Game/Objects/GameScene/Player/Structures/PlayerStructures.h>
+#include <Game/Objects/GameScene/Player/Structure/PlayerStructures.h>
 #include <Engine/Utility/Timer/StateTimer.h>
 
 //============================================================================

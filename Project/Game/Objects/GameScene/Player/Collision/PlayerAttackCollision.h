@@ -5,7 +5,7 @@
 //============================================================================
 #include <Engine/Collision/Collider.h>
 #include <Engine/Effect/User/GameEffect.h>
-#include <Game/Objects/GameScene/Player/Structures/PlayerStructures.h>
+#include <Game/Objects/GameScene/Player/Structure/PlayerStructures.h>
 
 //============================================================================
 //	PlayerAttackCollision class
