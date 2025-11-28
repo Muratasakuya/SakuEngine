@@ -1,6 +1,9 @@
 {
     "Inactive": null,
     "PunchAttack": {
+        "AttackCount": 16,
+        "AttackDuration": 0.800000011920929,
+        "AttackMoveDistance": 10.0,
         "BodyApproachKeyframeObject": {
             "Keys": [
                 {
@@ -377,6 +380,14 @@
             "startDuration_": 0.0,
             "startEaseType_": "Linear"
         },
+        "ChargeAttackTimer": {
+            "easeingType_": "EaseOutQuad",
+            "target_": 0.05000000074505806
+        },
+        "ChargeTimer": {
+            "easeingType_": "EaseOutExpo",
+            "target_": 0.4000000059604645
+        },
         "LeftHandApproachKeyframeObject": {
             "Keys": [
                 {
@@ -741,6 +752,10 @@
             "parentName_": "bossEnemy",
             "startDuration_": 0.0,
             "startEaseType_": "Linear"
+        },
+        "LeftHandAttackDelayTimer": {
+            "easeingType_": "Linear",
+            "target_": 0.07999999821186066
         },
         "LeftHandLeaveKeyframeObject": {
             "addKeyTimeStep_": 0.800000011920929,
@@ -1128,6 +1143,8 @@
             "parentName_": "",
             "startDuration_": 0.0,
             "startEaseType_": "Linear"
-        }
+        },
+        "bodyOffsetAngleY_": 0.4000000059604645,
+        "bossEnemyOffsetY_": 8.0
     }
 }

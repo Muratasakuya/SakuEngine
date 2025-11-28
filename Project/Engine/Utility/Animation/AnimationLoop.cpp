@@ -38,7 +38,11 @@ void AnimationLoop::ImGuiLoopParam(bool isSeparate) {
 		ImGui::SeparatorText("Loop");
 	}
 
-	ImGui::DragInt("loopCount", &loopCount_, 1, 1, 64);
+	int32_t loopCount = static_cast<int32_t>(loopCount_);
+	if (ImGui::DragInt("loopCount", &loopCount, 1, 1)) {
+
+		loopCount_ = static_cast<uint32_t>(loopCount);
+	}
 	EnumAdapter<AnimationLoopType>::Combo("loopType", &loopType_);
 }
 

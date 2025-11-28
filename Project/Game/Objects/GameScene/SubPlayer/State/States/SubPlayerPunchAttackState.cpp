@@ -82,19 +82,98 @@ void SubPlayerPunchAttackState::UpdateApproach() {
 	if (IsAllKeyframeEnd(*bodyApproachKeyframeObject_,
 		*rightHandApproachKeyframeObject_, *leftHandApproachKeyframeObject_)) {
 
-		// 状態終了可能にする
-		canExit_ = true;
+		// 次の状態へ
+		currentState_ = State::Attack;
 
-		//// 次の状態へ
-		//currentState_ = State::Leave;
-		//// 攻撃状態の補間開始
-		//bodyLeaveKeyframeObject_->StartLerp();
-		//rightHandLeaveKeyframeObject_->StartLerp();
-		//leftHandLeaveKeyframeObject_->StartLerp();
+		// 攻撃状態の補間処理を開始
+		// 体
+		Quaternion plusRotation = Quaternion::MakeAxisAngle(Vector3(0.0f, 1.0f, 0.0f), bodyOffsetAngleY_);
+		Quaternion minusRotation = Quaternion::MakeAxisAngle(Vector3(0.0f, 1.0f, 0.0f), -bodyOffsetAngleY_);
+		bodyStartRotation_ = Quaternion::Normalize(Quaternion::Multiply(plusRotation, body_->GetRotation()));
+		bodyTargetRotation_ = Quaternion::Normalize(Quaternion::Multiply(minusRotation, body_->GetRotation()));
+		// 左手
+		SetupAttackInfo(leftHandAttackInfo_, *leftHand_, false);
+		// 右手
+		SetupAttackInfo(rightHandAttackInfo_, *rightHand_, true);
+		rightHandAttackInfo_.isActive = true;
+		leftHandAttackDelayTimer_.Reset();
+		chargeTimer_.Reset();
+		chargeAttackTimer_.Reset();
 	}
 }
 
 void SubPlayerPunchAttackState::UpdateAttack() {
+
+	// 攻撃遅延時間更新
+	leftHandAttackDelayTimer_.Update();
+	// 時間経過で左手の補間を開始
+	if (!leftHandAttackInfo_.isActive &&
+		leftHandAttackDelayTimer_.IsReached()) {
+
+		leftHandAttackInfo_.isActive = true;
+	}
+
+	// アクティブな時のみタイマーで補間
+	LerpAttackHand(rightHandAttackInfo_, *rightHand_);
+	LerpAttackHand(leftHandAttackInfo_, *leftHand_);
+
+	// 左手の攻撃が完了していなければ
+	if (!leftHandAttackInfo_.timer.IsReached()) {
+
+		// 体の回転を補間
+		float currentT = leftHandAttackInfo_.loop.LoopedT(leftHandAttackInfo_.timer.t_);
+		Quaternion rotation = Quaternion::Slerp(bodyStartRotation_,
+			bodyTargetRotation_, EasedValue(leftHandAttackInfo_.timer.easeingType_, currentT));
+
+		// 回転を適応
+		body_->SetRotation(Quaternion::Normalize(rotation));
+		return;
+	}
+	// 補間終了
+	rightHandAttackInfo_.isActive = false;
+	leftHandAttackInfo_.isActive = false;
+
+	// 溜め時間更新
+	chargeTimer_.Update();
+
+	// 溜め補間
+	LerpChargeHand(rightHandAttackInfo_, *rightHand_);
+	LerpChargeHand(leftHandAttackInfo_, *leftHand_);
+
+	// 溜めが終了後殴る
+	if (!chargeTimer_.IsReached()) {
+		return;
+	}
+
+	// 溜め後の攻撃時間更新
+	chargeAttackTimer_.Update();
+
+	// 溜め後の攻撃補間、逆向きに補間する
+	// 右手
+	{
+		Vector3 lerpPos = Vector3::Lerp(rightHandAttackInfo_.chargeTargetPos,
+			rightHandAttackInfo_.chargeStartPos, chargeAttackTimer_.easedT_);
+		rightHand_->SetTranslation(lerpPos);
+	}
+	// 左手
+	{
+		Vector3 lerpPos = Vector3::Lerp(leftHandAttackInfo_.chargeTargetPos,
+			leftHandAttackInfo_.chargeStartPos, chargeAttackTimer_.easedT_);
+		leftHand_->SetTranslation(lerpPos);
+	}
+
+	// 溜め後の攻撃が終了したら次の状態へ
+	if (chargeAttackTimer_.IsReached()) {
+
+		canExit_ = true;
+
+		//// 次の状態へ
+		//currentState_ = State::Leave;
+		//// 離脱の補間処理を開始
+		//bodyLeaveKeyframeObject_->StartLerp();
+		//rightHandLeaveKeyframeObject_->StartLerp();
+		//leftHandLeaveKeyframeObject_->StartLerp();
+	}
 }
 
 void SubPlayerPunchAttackState::UpdateLeave() {
@@ -188,6 +267,75 @@ bool SubPlayerPunchAttackState::IsAllKeyframeEnd(KeyframeObject3D& bodyKeyframe,
 	return false;
 }
 
+void SubPlayerPunchAttackState::LerpAttackHand(AttackInfo& attackInfo, GameObject3D& hand) {
+
+	// アクティブな時のみ補間
+	if (!attackInfo.isActive) {
+		return;
+	}
+
+	// 時間を更新
+	attackInfo.timer.Update(attackDuration_);
+	float currentT = attackInfo.loop.LoopedT(attackInfo.timer.t_);
+
+	// 座標を補間
+	Vector3 lerpPos = Vector3::Lerp(attackInfo.startPos,
+		attackInfo.targetPos, EasedValue(attackInfo.timer.easeingType_, currentT));
+
+	// トランスフォームに適応
+	hand.SetTranslation(lerpPos);
+}
+
+void SubPlayerPunchAttackState::LerpChargeHand(AttackInfo& attackInfo, GameObject3D& hand) {
+
+	// 溜め時間が終了していれば補間しない
+	if (chargeTimer_.IsReached()) {
+		return;
+	}
+
+	// 座標を補間
+	Vector3 lerpPos = Vector3::Lerp(attackInfo.chargeStartPos,
+		attackInfo.chargeTargetPos, chargeTimer_.easedT_);
+
+	// トランスフォームに適応
+	hand.SetTranslation(lerpPos);
+}
+
+void SubPlayerPunchAttackState::SetupAttackInfo(AttackInfo& attackInfo,
+	const GameObject3D& hand, bool isAttackHand) {
+
+	// 敵への向き
+	Vector3 handPos = hand.GetTransform().GetWorldPos();
+	Vector3 bossEnemyPos = bossEnemy_->GetTranslation();
+	bossEnemyPos.y = bossEnemyOffsetY_;
+	Vector3 direction = Vector3(bossEnemyPos - handPos).Normalize();
+
+	// 補間座標を設定する
+	// 開始位置
+	attackInfo.startPos = handPos;
+	// 目標位置
+	attackInfo.targetPos = handPos + direction * attackMoveDistance_;
+
+	// 攻撃する方の手かどうかで分ける
+	if (isAttackHand) {
+
+		// 溜め開始位置、少しだけ手前に下げる
+		attackInfo.chargeStartPos = attackInfo.startPos;
+		// 溜め目標位置
+		attackInfo.chargeTargetPos = attackInfo.targetPos;
+	} else {
+
+		// 目標位置と開始位置を逆にして補間させる
+		attackInfo.chargeStartPos = attackInfo.targetPos;
+		attackInfo.chargeTargetPos = attackInfo.startPos;
+	}
+
+	// ループ回数のセットとタイマーの初期化
+	attackInfo.loop.SetLoopCount(attackCount_);
+	attackInfo.timer.Reset();
+	attackInfo.isActive = false;
+}
+
 void SubPlayerPunchAttackState::ImGui() {
 
 	if (ImGui::BeginTabBar("SubPlayerPunchAttackState")) {
@@ -213,6 +361,20 @@ void SubPlayerPunchAttackState::ImGui() {
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem("Attack")) {
+
+			// 攻撃に関する設定
+			int32_t attackCount = static_cast<int32_t>(attackCount_);
+			if (ImGui::DragInt("attackCount", &attackCount, 1, 0)) {
+
+				attackCount_ = static_cast<uint32_t>(attackCount);
+			}
+			ImGui::DragFloat("attackDuration", &attackDuration_, 0.01f);
+			ImGui::DragFloat("attackMoveDistance", &attackMoveDistance_, 0.1f);
+			ImGui::DragFloat("bossEnemyOffsetY", &bossEnemyOffsetY_, 0.1f);
+			ImGui::DragFloat("bodyOffsetAngleY", &bodyOffsetAngleY_, 0.01f);
+			leftHandAttackDelayTimer_.ImGui("leftHandAttackDelay");
+			chargeTimer_.ImGui("chargeTimer");
+			chargeAttackTimer_.ImGui("chargeAttackTimer");
 
 			ImGui::EndTabItem();
 		}
@@ -251,7 +413,14 @@ void SubPlayerPunchAttackState::ApplyJson([[maybe_unused]] const Json& data) {
 	}
 	// 攻撃
 	{
-
+		attackCount_ = data.value("AttackCount", 3u);
+		attackDuration_ = data.value("AttackDuration", 0.5f);
+		attackMoveDistance_ = data.value("AttackMoveDistance", 2.0f);
+		bossEnemyOffsetY_ = data.value("bossEnemyOffsetY_", 0.5f);
+		bodyOffsetAngleY_ = data.value("bodyOffsetAngleY_", 0.5f);
+		leftHandAttackDelayTimer_.FromJson(data.value("LeftHandAttackDelayTimer", Json()));
+		chargeTimer_.FromJson(data.value("ChargeTimer", Json()));
+		chargeAttackTimer_.FromJson(data.value("ChargeAttackTimer", Json()));
 	}
 	// 離れる
 	{
@@ -271,7 +440,14 @@ void SubPlayerPunchAttackState::SaveJson([[maybe_unused]] Json& data) {
 	}
 	// 攻撃
 	{
-
+		data["AttackCount"] = attackCount_;
+		data["AttackDuration"] = attackDuration_;
+		data["AttackMoveDistance"] = attackMoveDistance_;
+		data["bossEnemyOffsetY_"] = bossEnemyOffsetY_;
+		data["bodyOffsetAngleY_"] = bodyOffsetAngleY_;
+		leftHandAttackDelayTimer_.ToJson(data["LeftHandAttackDelayTimer"]);
+		chargeTimer_.ToJson(data["ChargeTimer"]);
+		chargeAttackTimer_.ToJson(data["ChargeAttackTimer"]);
 	}
 	// 離れる
 	{

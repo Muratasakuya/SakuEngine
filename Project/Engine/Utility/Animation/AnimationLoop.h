@@ -41,8 +41,11 @@ public:
 
 	//--------- accessor -----------------------------------------------------
 
+	// ループ回数の設定
+	void SetLoopCount(uint32_t count) { loopCount_ = count; }
+
 	// ループ回数の取得
-	int GetLoopCount() const { return loopCount_; }
+	uint32_t GetLoopCount() const { return loopCount_; }
 private:
 	//========================================================================
 	//	private Methods
@@ -51,6 +54,6 @@ private:
 	//--------- variables ----------------------------------------------------
 
 	// ループ制御
-	int loopCount_ = 1;          // 回数
+	uint32_t loopCount_ = 1;      // 回数
 	AnimationLoopType loopType_; // 種類
 };
