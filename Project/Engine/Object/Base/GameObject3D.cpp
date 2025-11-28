@@ -316,6 +316,21 @@ void GameObject3D::SetShadowRate(float rate, std::optional<uint32_t> meshIndex) 
 	}
 }
 
+void GameObject3D::SetIsRejection(bool isRejection, std::optional<uint32_t> meshIndex) {
+
+	// meshIndexが設定されている場合のみ指定して設定
+	if (meshIndex.has_value()) {
+
+		(*materials_)[meshIndex.value()].isRejection = static_cast<uint32_t>(isRejection);
+	} else {
+
+		for (auto& material : *materials_) {
+
+			material.isRejection = static_cast<uint32_t>(isRejection);
+		}
+	}
+}
+
 void GameObject3D::SetTextureName(const std::string& textureName, std::optional<uint32_t> meshIndex) {
 
 	// meshIndexが設定されている場合のみ指定して設定

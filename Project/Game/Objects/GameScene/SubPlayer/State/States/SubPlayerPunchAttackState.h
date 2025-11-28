@@ -52,6 +52,9 @@ private:
 
 	//--------- variables ----------------------------------------------------
 
+	// 追加したキーの情報
+	const std::string& addKeyColor = "Color";
+
 	// 現在の状態
 	State currentState_;
 

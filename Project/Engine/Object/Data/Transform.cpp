@@ -61,7 +61,7 @@ void BaseTransform::UpdateMatrix() {
 	isDirty_ = true;
 
 	// 行列を更新
-	matrix.Update(parent, scale, rotation, offsetTranslation + translation);
+	matrix.Update(parent, scale, rotation, offsetTranslation + translation, isIgnoreParentScale);
 
 	// 値を保存
 	prevScale = scale;
@@ -89,6 +89,7 @@ bool BaseTransform::ImGui(float itemSize) {
 
 	ImGui::Text(std::format("isDirty: {}", isDirty_).c_str());
 	edited |= ImGui::Checkbox("isCompulsion", &isCompulsion_);
+	edited |= ImGui::Checkbox("isIgnoreParentScale", &isIgnoreParentScale);
 
 	edited |= ImGui::DragFloat3("translation", &translation.x, 0.01f);
 	if (ImGui::DragFloat3("rotation", &eulerRotate.x, 0.01f)) {
@@ -152,6 +153,7 @@ bool BaseTransform::ImGui(float itemSize) {
 void BaseTransform::ToJson(Json& data) {
 
 	data["isCompulsion_"] = isCompulsion_;
+	data["isIgnoreParentScale"] = isIgnoreParentScale;
 	data["scale"] = scale.ToJson();
 
 	// 正規化してから保存
@@ -167,6 +169,7 @@ void BaseTransform::FromJson(const Json& data) {
 	}
 
 	isCompulsion_ = data.value("isCompulsion_", false);
+	isIgnoreParentScale = data.value("isIgnoreParentScale", false);
 	scale = JsonAdapter::ToObject<Vector3>(data["scale"]);
 	rotation = JsonAdapter::ToObject<Quaternion>(data["rotation"]);
 	translation = JsonAdapter::ToObject<Vector3>(data["translation"]);

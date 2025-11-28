@@ -24,6 +24,7 @@ struct Material {
 	float4x4 uvTransform;
 
 	uint postProcessMask;
+	uint isRejection;
 };
 
 struct Lighting {

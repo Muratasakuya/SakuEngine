@@ -111,6 +111,12 @@ void Material::ImGui(float itemSize) {
 
 	ImGuiHelper::EditPostProcessMask(postProcessMask);
 
+	int32_t isRejectionInt = static_cast<int32_t>(isRejection);
+	if (ImGui::DragInt("isRejection", &isRejectionInt, 1, 0, 1)) {
+
+		isRejection = static_cast<uint32_t>(isRejectionInt);
+	}
+
 	ImGui::PopItemWidth();
 }
 

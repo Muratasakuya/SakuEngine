@@ -114,6 +114,7 @@ void SubPlayerStateController::ImGui() {
 	if (EnumAdapter<SubPlayerState>::Combo("Edit Request State", &editRequestState_)) {
 
 		// リクエスト状態を設定
+		requestState_ = editRequestState_;
 		ChangeState(true);
 	}
 
@@ -128,7 +129,7 @@ void SubPlayerStateController::ImGui() {
 void SubPlayerStateController::ApplyJson() {
 
 	Json data;
-	if (!JsonAdapter::LoadCheck("SubPlayer/stateParameter.json", data)) {
+	if (!JsonAdapter::LoadCheck("SubPlayer/State/stateParameter.json", data)) {
 		return;
 	}
 

@@ -79,6 +79,8 @@ public:
 
 	// 行列強制更新フラグ
 	bool isCompulsion_ = false;
+	// 親のスケールの影響を受けないかどうか
+	bool isIgnoreParentScale = false;
 private:
 	//========================================================================
 	//	private Methods

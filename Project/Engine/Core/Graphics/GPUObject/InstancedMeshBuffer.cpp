@@ -180,7 +180,8 @@ void InstancedMeshBuffer::SetUploadData(const std::string& name,
 			materials[meshIndex].emissiveIntensity,
 			materials[meshIndex].emissionColor,
 			materials[meshIndex].uvMatrix,
-			materials[meshIndex].postProcessMask));
+			materials[meshIndex].postProcessMask,
+			materials[meshIndex].isRejection));
 		// lighting
 		meshGroups_[name].lightingUploadData[meshIndex].emplace_back(LightingForGPU(
 			materials[meshIndex].enableLighting,

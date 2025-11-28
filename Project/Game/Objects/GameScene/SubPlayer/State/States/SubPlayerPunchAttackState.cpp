@@ -14,19 +14,27 @@ SubPlayerPunchAttackState::SubPlayerPunchAttackState() {
 	// 各パーツのキーフレーム移動の生成
 	// 体
 	bodyApproachKeyframeObject_ = std::make_unique<KeyframeObject3D>();
-	bodyApproachKeyframeObject_->Init("subPlayerPunchBodyApproachKey");
+	bodyApproachKeyframeObject_->Init("subPlayerPunchBodyApproachKey", "subPlayerBody");
 	bodyLeaveKeyframeObject_ = std::make_unique<KeyframeObject3D>();
-	bodyLeaveKeyframeObject_->Init("subPlayerPunchBodyLeaveKey");
+	bodyLeaveKeyframeObject_->Init("subPlayerPunchBodyLeaveKey", "subPlayerBody");
 	// 右手
 	rightHandApproachKeyframeObject_ = std::make_unique<KeyframeObject3D>();
-	rightHandApproachKeyframeObject_->Init("subPlayerPunchRightHandApproachKey");
+	rightHandApproachKeyframeObject_->Init("subPlayerPunchRightHandApproachKey", "subPlayerHand");
 	rightHandLeaveKeyframeObject_ = std::make_unique<KeyframeObject3D>();
-	rightHandLeaveKeyframeObject_->Init("subPlayerPunchRightHandLeaveKey");
+	rightHandLeaveKeyframeObject_->Init("subPlayerPunchRightHandLeaveKey", "subPlayerHand");
 	// 左手
 	leftHandApproachKeyframeObject_ = std::make_unique<KeyframeObject3D>();
-	leftHandApproachKeyframeObject_->Init("subPlayerPunchLeftHandApproachKey");
+	leftHandApproachKeyframeObject_->Init("subPlayerPunchLeftHandApproachKey", "subPlayerHand");
 	leftHandLeaveKeyframeObject_ = std::make_unique<KeyframeObject3D>();
-	leftHandLeaveKeyframeObject_->Init("subPlayerPunchLeftHandLeaveKey");
+	leftHandLeaveKeyframeObject_->Init("subPlayerPunchLeftHandLeaveKey", "subPlayerHand");
+
+	// 追加のキー情報を追加
+	bodyApproachKeyframeObject_->AddKeyValue(AnyMold::Color, addKeyColor);
+	bodyLeaveKeyframeObject_->AddKeyValue(AnyMold::Color, addKeyColor);
+	rightHandApproachKeyframeObject_->AddKeyValue(AnyMold::Color, addKeyColor);
+	rightHandLeaveKeyframeObject_->AddKeyValue(AnyMold::Color, addKeyColor);
+	leftHandApproachKeyframeObject_->AddKeyValue(AnyMold::Color, addKeyColor);
+	leftHandLeaveKeyframeObject_->AddKeyValue(AnyMold::Color, addKeyColor);
 }
 
 void SubPlayerPunchAttackState::Enter() {
@@ -39,6 +47,10 @@ void SubPlayerPunchAttackState::Enter() {
 	bodyApproachKeyframeObject_->StartLerp();
 	rightHandApproachKeyframeObject_->StartLerp();
 	leftHandApproachKeyframeObject_->StartLerp();
+
+	// 親子付け解除
+	rightHand_->SetParent(Transform3D(), true);
+	leftHand_->SetParent(Transform3D(), true);
 }
 
 void SubPlayerPunchAttackState::Update() {
@@ -70,12 +82,15 @@ void SubPlayerPunchAttackState::UpdateApproach() {
 	if (IsAllKeyframeEnd(*bodyApproachKeyframeObject_,
 		*rightHandApproachKeyframeObject_, *leftHandApproachKeyframeObject_)) {
 
-		// 次の状態へ
-		currentState_ = State::Leave;
-		// 攻撃状態の補間開始
-		bodyLeaveKeyframeObject_->StartLerp();
-		rightHandLeaveKeyframeObject_->StartLerp();
-		leftHandLeaveKeyframeObject_->StartLerp();
+		// 状態終了可能にする
+		canExit_ = true;
+
+		//// 次の状態へ
+		//currentState_ = State::Leave;
+		//// 攻撃状態の補間開始
+		//bodyLeaveKeyframeObject_->StartLerp();
+		//rightHandLeaveKeyframeObject_->StartLerp();
+		//leftHandLeaveKeyframeObject_->StartLerp();
 	}
 }
 
@@ -108,6 +123,10 @@ void SubPlayerPunchAttackState::Exit() {
 	// リセットして終了
 	canExit_ = false;
 	ResetKeyframeObjects();
+
+	// 親子付けを元に戻す
+	rightHand_->SetParent(body_->GetTransform());
+	leftHand_->SetParent(body_->GetTransform());
 }
 
 void SubPlayerPunchAttackState::UpdateKeyframeObjects() {
@@ -150,6 +169,11 @@ void SubPlayerPunchAttackState::UpdateKeyAndApply(KeyframeObject3D& bodyKeyframe
 	body_->SetSRT(bodyKeyframe.GetCurrentTransform());
 	rightHand_->SetSRT(rightHandKeyframe.GetCurrentTransform());
 	leftHand_->SetSRT(leftHandKeyframe.GetCurrentTransform());
+
+	// 色
+	body_->SetColor(std::get<Color>(bodyKeyframe.GetCurrentAnyValue(addKeyColor)));
+	rightHand_->SetColor(std::get<Color>(rightHandKeyframe.GetCurrentAnyValue(addKeyColor)));
+	leftHand_->SetColor(std::get<Color>(leftHandKeyframe.GetCurrentAnyValue(addKeyColor)));
 }
 
 bool SubPlayerPunchAttackState::IsAllKeyframeEnd(KeyframeObject3D& bodyKeyframe,
@@ -174,11 +198,13 @@ void SubPlayerPunchAttackState::ImGui() {
 
 				bodyApproachKeyframeObject_->ImGui();
 			}
+			ImGui::Spacing();
 			// 右手
 			if (ImGui::CollapsingHeader("RightHand")) {
 
 				rightHandApproachKeyframeObject_->ImGui();
 			}
+			ImGui::Spacing();
 			// 左手
 			if (ImGui::CollapsingHeader("LeftHand")) {
 
@@ -197,11 +223,13 @@ void SubPlayerPunchAttackState::ImGui() {
 
 				bodyLeaveKeyframeObject_->ImGui();
 			}
+			ImGui::Spacing();
 			// 右手
 			if (ImGui::CollapsingHeader("RightHand")) {
 
 				rightHandLeaveKeyframeObject_->ImGui();
 			}
+			ImGui::Spacing();
 			// 左手
 			if (ImGui::CollapsingHeader("LeftHand")) {
 
