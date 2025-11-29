@@ -3,9 +3,10 @@
 //============================================================================
 //	include
 //============================================================================
-#include <Game/Objects/GameScene/Enemy/Boss/Structures/BossEnemyStructures.h>
+#include <Engine/Effect/User/EffectGroup.h>
 #include <Engine/Utility/Enum/Easing.h>
 #include <Engine/MathLib/MathUtils.h>
+#include <Game/Objects/GameScene/Enemy/Boss/Structures/BossEnemyStructures.h>
 
 // front
 class BossEnemy;
@@ -55,6 +56,25 @@ protected:
 	//========================================================================
 	//	protected Methods
 	//========================================================================
+
+	//--------- structure ----------------------------------------------------
+
+	// 剣エフェクト
+	struct SlashEffect {
+
+		// エフェクト本体
+		std::unique_ptr<EffectGroup> effect;
+		// ノードの名前
+		std::string effectNodeName;
+
+		// 発生位置のオフセット
+		Vector3 effectOffset;
+
+		// 発生
+		void Emit(BossEnemy& bossEnemy);
+		// 更新
+		void Update(BossEnemy& bossEnemy);
+	};
 
 	//--------- variables ----------------------------------------------------
 

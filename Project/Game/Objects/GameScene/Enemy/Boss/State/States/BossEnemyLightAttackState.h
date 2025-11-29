@@ -3,7 +3,6 @@
 //============================================================================
 //	include
 //============================================================================
-#include <Engine/Effect/User/EffectGroup.h>
 #include <Game/Objects/GameScene/Enemy/Boss/State/Interface/BossEnemyIState.h>
 
 //============================================================================
@@ -68,8 +67,7 @@ private:
 	bool reachedPlayer_; // 近くまで来たかどうか
 
 	// 剣エフェクト
-	std::unique_ptr<EffectGroup> slashEffect_;
-	Vector3 slashEffectOffset_; // 発生位置のオフセット
+	SlashEffect slash_;
 
 	// debug
 	bool parried_;
