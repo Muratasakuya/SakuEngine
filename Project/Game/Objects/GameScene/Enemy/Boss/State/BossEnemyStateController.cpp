@@ -35,7 +35,7 @@ void BossEnemyStateController::Init(BossEnemy& owner, uint32_t phaseCount) {
 	states_.emplace(BossEnemyState::Teleport, std::make_unique<BossEnemyTeleportationState>());
 	states_.emplace(BossEnemyState::Stun, std::make_unique<BossEnemyStunState>(owner));
 	states_.emplace(BossEnemyState::Falter, std::make_unique<BossEnemyFalterState>());
-	states_.emplace(BossEnemyState::LightAttack, std::make_unique<BossEnemyLightAttackState>());
+	states_.emplace(BossEnemyState::LightAttack, std::make_unique<BossEnemyLightAttackState>(owner));
 	states_.emplace(BossEnemyState::StrongAttack, std::make_unique<BossEnemyStrongAttackState>());
 	states_.emplace(BossEnemyState::ChargeAttack, std::make_unique<BossEnemyChargeAttackState>());
 	states_.emplace(BossEnemyState::RushAttack, std::make_unique<BossEnemyRushAttackState>());

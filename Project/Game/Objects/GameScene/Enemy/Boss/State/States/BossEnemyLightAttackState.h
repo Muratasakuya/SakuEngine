@@ -3,6 +3,7 @@
 //============================================================================
 //	include
 //============================================================================
+#include <Engine/Effect/User/EffectGroup.h>
 #include <Game/Objects/GameScene/Enemy/Boss/State/Interface/BossEnemyIState.h>
 
 //============================================================================
@@ -16,12 +17,13 @@ public:
 	//	public Methods
 	//========================================================================
 
-	BossEnemyLightAttackState() = default;
+	BossEnemyLightAttackState(BossEnemy& bossEnemy);
 	~BossEnemyLightAttackState() = default;
 
 	void Enter(BossEnemy& bossEnemy) override;
 
 	void Update(BossEnemy& bossEnemy) override;
+	void UpdateAlways(BossEnemy& bossEnemy) override;
 
 	void Exit(BossEnemy& bossEnemy) override;
 
@@ -64,6 +66,10 @@ private:
 	float exitTime_;  // 遷移可能にするまでの時間
 
 	bool reachedPlayer_; // 近くまで来たかどうか
+
+	// 剣エフェクト
+	std::unique_ptr<EffectGroup> slashEffect_;
+	Vector3 slashEffectOffset_; // 発生位置のオフセット
 
 	// debug
 	bool parried_;
