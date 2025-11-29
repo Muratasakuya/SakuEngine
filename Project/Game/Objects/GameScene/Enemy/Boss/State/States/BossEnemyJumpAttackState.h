@@ -17,7 +17,7 @@ public:
 	//	public Methods
 	//========================================================================
 
-	BossEnemyJumpAttackState();
+	BossEnemyJumpAttackState(BossEnemy& bossEnemy);
 	~BossEnemyJumpAttackState() = default;
 
 	void Enter(BossEnemy& bossEnemy) override;
@@ -59,6 +59,9 @@ private:
 	const uint32_t jumpKeyframeCount_ = 4;
 	std::vector<Vector3> jumpKeyframes_;
 	EasingType jumpEasing_;
+
+	// 剣エフェクト
+	SlashEffect slash_;
 
 	//--------- functions ----------------------------------------------------
 

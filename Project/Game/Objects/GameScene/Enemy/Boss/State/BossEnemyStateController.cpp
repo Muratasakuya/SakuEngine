@@ -41,7 +41,7 @@ void BossEnemyStateController::Init(BossEnemy& owner, uint32_t phaseCount) {
 	states_.emplace(BossEnemyState::RushAttack, std::make_unique<BossEnemyRushAttackState>());
 	states_.emplace(BossEnemyState::ContinuousAttack, std::make_unique<BossEnemyContinuousAttackState>());
 	states_.emplace(BossEnemyState::GreatAttack, std::make_unique<BossEnemyGreatAttackState>());
-	states_.emplace(BossEnemyState::JumpAttack, std::make_unique<BossEnemyJumpAttackState>());
+	states_.emplace(BossEnemyState::JumpAttack, std::make_unique<BossEnemyJumpAttackState>(owner));
 	states_.emplace(BossEnemyState::ProjectileAttack, std::make_unique<BossEnemyProjectileAttackState>(phaseCount));
 
 	// json適応
