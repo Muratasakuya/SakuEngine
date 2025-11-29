@@ -59,6 +59,8 @@ public:
 	void SetTranslation(const Vector3& translation) { transform_->translation = translation; }
 	void SetOffsetTranslation(const Vector3& translation) { transform_->offsetTranslation = translation; }
 	void SetIsDirty(bool isDirty) { transform_->SetIsDirty(isDirty); }
+	void SetIgnoreParentScale(bool isIgnore) { transform_->isIgnoreParentScale = isIgnore; }
+	void SetSRT(const Transform3D& transform);
 	// 親
 	void SetParent(const Transform3D& parent, bool isNull = false);
 	const Transform3D* GetJointTransform(const std::string& jointName) const;
@@ -69,6 +71,7 @@ public:
 	void SetAlpha(float alpha, std::optional<uint32_t> meshIndex = std::nullopt);
 	void SetCastShadow(bool cast, std::optional<uint32_t> meshIndex = std::nullopt);
 	void SetShadowRate(float rate, std::optional<uint32_t> meshIndex = std::nullopt);
+	void SetIsRejection(bool isRejection, std::optional<uint32_t> meshIndex = std::nullopt);
 	// texture
 	void SetTextureName(const std::string& textureName, std::optional<uint32_t> meshIndex = std::nullopt);
 
@@ -84,6 +87,7 @@ public:
 	void ResetAnimation();
 	Vector3 GetJointWorldPos(const std::string& jointName) const;
 	bool IsAnimationFinished() const { return animation_->IsAnimationFinished(); }
+	bool IsAnimationTransition() const { return animation_->IsTransition(); }
 	int GetAnimationRepeatCount() const { return animation_->GetRepeatCount(); }
 	float GetAnimationDuration(const std::string& animationName) const { return animation_->GetAnimationDuration(animationName); }
 	float GetAnimationProgress() const { return animation_->GetProgress(); }

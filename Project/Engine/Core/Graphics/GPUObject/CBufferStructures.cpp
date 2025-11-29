@@ -13,7 +13,7 @@
 //============================================================================
 
 void TransformationMatrix::Update(const BaseTransform* parent, const Vector3& scale,
-	const Quaternion& rotation, const Vector3& translation,
+	const Quaternion& rotation, const Vector3& translation, bool isIgnoreParentScale,
 	const std::optional<Matrix4x4>& billboardMatrix) {
 
 	// billboardMatrixに値が入っていればbillboardMatrixでrotateを計算する
@@ -56,7 +56,23 @@ void TransformationMatrix::Update(const BaseTransform* parent, const Vector3& sc
 			scale, rotation, translation);
 	}
 	if (parent) {
-		world = world * parent->matrix.world;
+
+		Matrix4x4 parentMatrix = parent->matrix.world;
+
+		// 親のスケールの影響を受けない場合
+		if (isIgnoreParentScale) {
+
+			// 親の回転成分を正規化してスケール成分を打ち消す
+			Vector3 x = Vector3(parentMatrix.m[0][0], parentMatrix.m[1][0], parentMatrix.m[2][0]).Normalize();
+			Vector3 y = Vector3(parentMatrix.m[0][1], parentMatrix.m[1][1], parentMatrix.m[2][1]).Normalize();
+			Vector3 z = Vector3(parentMatrix.m[0][2], parentMatrix.m[1][2], parentMatrix.m[2][2]).Normalize();
+
+			// スケール除去した回転行列を再セット
+			parentMatrix.m[0][0] = x.x; parentMatrix.m[1][0] = x.y; parentMatrix.m[2][0] = x.z;
+			parentMatrix.m[0][1] = y.x; parentMatrix.m[1][1] = y.y; parentMatrix.m[2][1] = y.z;
+			parentMatrix.m[0][2] = z.x; parentMatrix.m[1][2] = z.y; parentMatrix.m[2][2] = z.z;
+		}
+		world = world * parentMatrix;
 	}
 	worldInverseTranspose = Matrix4x4::Transpose(Matrix4x4::Inverse(world));
 }

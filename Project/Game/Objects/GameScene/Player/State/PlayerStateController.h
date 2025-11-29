@@ -36,6 +36,7 @@ public:
 
 	void SetBossEnemy(const BossEnemy* bossEnemy);
 	void SetFollowCamera(FollowCamera* followCamera);
+	void SetSubPlayer(SubPlayer* subPlayer);
 
 	// ステータス設定
 	void SetStatas(const PlayerStats& stats) { stats_ = stats; }

@@ -7,6 +7,7 @@
 
 // front
 class SubPlayer;
+class BossEnemy;
 
 //============================================================================
 //	SubPlayerIState class
@@ -44,17 +45,27 @@ public:
 	void SetBody(GameObject3D* body) { body_ = body; }
 	void SetRightHand(GameObject3D* rightHand) { rightHand_ = rightHand; }
 	void SetLeftHand(GameObject3D* leftHand) { leftHand_ = leftHand; }
-private:
+
+	// ボス敵
+	void SetBossEnemy(const BossEnemy* bossEnemy) { bossEnemy_ = bossEnemy; }
+
+	bool CanExit() const { return canExit_; }
+protected:
 	//========================================================================
-	//	private Methods
+	//	protected Methods
 	//========================================================================
 
 	//--------- variables ----------------------------------------------------
+
+	const BossEnemy* bossEnemy_;
 
 	// 状態遷移先相手の各パーツ
 	GameObject3D* body_;      // 体
 	GameObject3D* rightHand_; // 右手
 	GameObject3D* leftHand_;  // 左手
+
+	// 状態の処理が終了したか
+	bool canExit_ = false;
 
 	//--------- functions ----------------------------------------------------
 

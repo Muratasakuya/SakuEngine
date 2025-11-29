@@ -156,6 +156,7 @@ void Sprite::ImGui(float itemSize) {
 		textureName_ = dragTextureName;
 	}
 
+	ImGui::Checkbox("postProccessEnable", &postProccessEnable_);
 	EnumAdapter<SpriteLayer>::Combo("SpriteLayer", &layer_);
 	ImGui::Separator();
 
@@ -228,6 +229,7 @@ void Sprite::ImGui(float itemSize) {
 void Sprite::ToJson(Json& data) {
 
 	data["textureName"] = textureName_;
+	data["postProccessEnable_"] = postProccessEnable_;
 	data["layer"] = EnumAdapter<SpriteLayer>::ToString(layer_);
 	data["layerIndex"] = layerIndex_;
 	data["blendMode"] = EnumAdapter<BlendMode>::ToString(blendMode_);
@@ -235,6 +237,7 @@ void Sprite::ToJson(Json& data) {
 
 void Sprite::FromJson(const Json& data) {
 
+	postProccessEnable_ = data.value("postProccessEnable_", false);
 	textureName_ = data["textureName"].get<std::string>();
 	layer_ = EnumAdapter<SpriteLayer>::FromString(data["layer"].get<std::string>()).value();
 	layerIndex_ = data["layerIndex"].get<uint16_t>();

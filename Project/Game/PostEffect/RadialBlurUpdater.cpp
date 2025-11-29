@@ -54,6 +54,20 @@ void RadialBlurUpdater::Start() {
 	SetAnimationType(SimpleAnimationType::None);
 }
 
+void RadialBlurUpdater::StartReturnState() {
+
+	currentState_ = State::Return;
+
+	// 処理を開始させる
+	LerpRadialBlur& value = lerpValues_[type_];
+	value.center.Start();
+	value.numSamples.Start();
+	value.width.Start();
+
+	// 通常アニメーションに戻す
+	SetAnimationType(SimpleAnimationType::Return);
+}
+
 void RadialBlurUpdater::Stop() {
 
 	// 値を止める

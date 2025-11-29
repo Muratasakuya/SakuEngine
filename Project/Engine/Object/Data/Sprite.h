@@ -72,12 +72,14 @@ public:
 	void SetLayer(SpriteLayer layer) { layer_ = layer; }
 	void SetLayerIndex(SpriteLayerIndex layerIndex, uint16_t subLayerIndex) { layerIndex_ = static_cast<uint16_t>(layerIndex) + subLayerIndex; }
 	void SetBlendMode(BlendMode blendMode) { blendMode_ = blendMode; }
+	void SetPostProcessEnable(bool enable) { postProccessEnable_ = enable; }
 
 	static uint32_t GetIndexNum() { return kIndexNum_; }
 	SpriteLayer GetLayer() const { return layer_; }
 	uint16_t GetLayerIndex() const { return static_cast<uint16_t>(layerIndex_); }
 	bool UseAlphaTexture() const { return alphaTextureName_.has_value(); }
 	BlendMode GetBlendMode() const { return blendMode_; }
+	bool IsPostProcessEnable() const { return postProccessEnable_; }
 
 	const VertexBuffer<SpriteVertexData>& GetVertexBuffer() const { return vertexBuffer_; }
 	const IndexBuffer& GetIndexBuffer() const { return indexBuffer_; }
@@ -104,6 +106,8 @@ private:
 	// 描画順制御
 	SpriteLayer layer_;
 	uint16_t layerIndex_ = static_cast<uint16_t>(SpriteLayerIndex::None);
+	// ポストエフェクト適用有無(falseの場合renderTextureには描画しない)
+	bool postProccessEnable_ = false;
 
 	// 頂点情報
 	std::vector<SpriteVertexData> vertexData_;

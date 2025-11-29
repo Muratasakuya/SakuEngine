@@ -28,7 +28,7 @@ struct TransformationMatrix {
 	Matrix4x4 worldInverseTranspose;
 
 	void Update(const BaseTransform* parent, const Vector3& scale,
-		const Quaternion& rotation, const Vector3& translation,
+		const Quaternion& rotation, const Vector3& translation, bool isIgnoreParentScale,
 		const std::optional<Matrix4x4>& billboardMatrix = std::nullopt);
 };
 
@@ -51,6 +51,7 @@ struct MaterialForGPU {
 	Matrix4x4 uvTransform;
 
 	uint32_t postProcessMask;
+	uint32_t isRejection;
 };
 
 //----------------------------------------------------------------------------

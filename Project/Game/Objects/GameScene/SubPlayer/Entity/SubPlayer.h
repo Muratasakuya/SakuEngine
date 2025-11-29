@@ -28,6 +28,16 @@ public:
 
 	//--------- accessor -----------------------------------------------------
 
+	void SetBossEnemy(const BossEnemy* bossEnemy) { stateController_->SetBossEnemy(bossEnemy); }
+
+	// 状態をリクエスト
+	void SetRequestState(SubPlayerState state) { stateController_->SetRequestState(state); }
+
+	// 特定の状態かどうか
+	SubPlayerState GetCurrentState() const { return stateController_->GetCurrentState(); }
+
+	// 殴り終わったか
+	bool IsFinishPunchAttack() const;
 private:
 	//========================================================================
 	//	private Methods

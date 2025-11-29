@@ -16,6 +16,9 @@
 #include <Game/Objects/GameScene/Player/HUD/PlayerHUD.h>
 #include <Game/Objects/GameScene/Player/HUD/PlayerStunHUD.h>
 
+// front
+class SubPlayer;
+
 //============================================================================
 //	Player class
 //	プレイヤー
@@ -51,6 +54,7 @@ public:
 
 	void SetBossEnemy(const BossEnemy* bossEnemy);
 	void SetFollowCamera(FollowCamera* followCamera);
+	void SetSubPlayer(SubPlayer* subPlayer);
 
 	// 武器の向きを反転させる
 	void SetReverseWeapon(bool isReverse, PlayerWeaponType type);
@@ -60,7 +64,6 @@ public:
 	PlayerState GetCurrentState() const { return stateController_->GetCurrentState(); }
 
 	PlayerAttackCollision* GetAttackCollision() const { return attackCollision_.get(); }
-	GameObject3D* GetAlly() const { return ally_.get(); }
 	PlayerHUD* GetHUD() const { return hudSprites_.get(); }
 	PlayerStunHUD* GetStunHUD() const { return stunHudSprites_.get(); }
 	PlayerWeapon* GetWeapon(PlayerWeaponType type) const;
@@ -82,8 +85,6 @@ private:
 	// 使用する武器
 	std::unique_ptr<PlayerWeapon> rightWeapon_; // 右手
 	std::unique_ptr<PlayerWeapon> leftWeapon_;  // 左手
-	// 味方
-	std::unique_ptr<GameObject3D> ally_;
 
 	// 状態の管理
 	std::unique_ptr<PlayerStateController> stateController_;

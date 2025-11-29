@@ -74,7 +74,7 @@ public:
 	int32_t enableLighting;
 	int32_t enableHalfLambert;
 	int32_t enableBlinnPhongReflection;
-	
+
 	float phongRefShininess;
 	Vector3 specularColor;
 
@@ -96,6 +96,9 @@ public:
 
 	// 適応するポストエフェクトのビット
 	uint32_t postProcessMask;
+
+	// 描画するかどうか
+	uint32_t isRejection = 0;
 private:
 	//========================================================================
 	//	private Methods

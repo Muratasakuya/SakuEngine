@@ -33,14 +33,29 @@ public:
 	// スプライト用パイプラインを作成し初期化
 	void Init(ID3D12Device8* device, SRVDescriptor* srvDescriptor, DxShaderCompiler* shaderCompiler);
 
-	// 指定レイヤのスプライト群を描画(行列/マテリアル/テクスチャをバインド)
-	void Rendering(SpriteLayer layer, SceneConstBuffer* sceneBuffer, DxCommand* dxCommand);
+	// 指定レイヤのスプライト群を描画
+	// ポストエフェクト有効
+	void ApplyPostProcessRendering(SpriteLayer layer, SceneConstBuffer* sceneBuffer, DxCommand* dxCommand);
+	// ポストエフェクト無効
+	void IrrelevantPostProcessRendering(SceneConstBuffer* sceneBuffer, DxCommand* dxCommand);
 private:
 	//========================================================================
 	//	private Methods
 	//========================================================================
 
+	//--------- structure ----------------------------------------------------
+
+	// 描画モード
+	enum class RenderMode {
+
+		IrrelevantPostProcess, // ポストエフェクト無効
+		ApplyPostProcess,      // ポストエフェクト有効
+
+		Count
+	};
+
+
 	//--------- variables ----------------------------------------------------
 
-	std::unique_ptr<PipelineState> pipeline_;
+	std::unordered_map<RenderMode, std::unique_ptr<PipelineState>> pipelines_;
 };

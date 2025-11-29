@@ -109,7 +109,7 @@ void CameraEditor::SetParentTransform(const std::string& keyName, const Transfor
 	}
 }
 
-void CameraEditor::StartAnim(const std::string& keyName, bool isAddFirstKey) {
+void CameraEditor::StartAnim(const std::string& keyName, bool isAddFirstKey, bool isUpdateKey) {
 
 	// 無ければ処理できない
 	auto it = keyObjects_.find(keyName);
@@ -141,11 +141,23 @@ void CameraEditor::StartAnim(const std::string& keyName, bool isAddFirstKey) {
 		std::vector<KeyframeObject3D::AnyValue> anyValues;
 		anyValues.emplace_back(fovY);
 
+		// キー情報の更新
+		if (isUpdateKey) {
+
+			activeKeyObject_->UpdateKey(true);
+		}
+
 		// 補間開始
 		activeKeyObject_->StartLerp(cameraTransform, anyValues);
 	}
 	// 追加しない場合
 	else {
+
+		// キー情報の更新
+		if (isUpdateKey) {
+
+			activeKeyObject_->UpdateKey(true);
+		}
 
 		// 補間開始
 		activeKeyObject_->StartLerp();

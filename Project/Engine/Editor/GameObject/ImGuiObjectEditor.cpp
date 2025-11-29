@@ -233,7 +233,22 @@ void ImGuiObjectEditor::DrawManipulateGizmo(const GizmoContext& context) {
 			// 親行列
 			Matrix4x4 parentWorld = Matrix4x4::MakeIdentity4x4();
 			if (transform->parent) {
+
 				parentWorld = transform->parent->matrix.world;
+
+				// 子が親スケール無視のときは、親行列のスケールを除去
+				if (transform->isIgnoreParentScale) {
+
+					// 親の回転成分を正規化してスケール成分を打ち消す
+					Vector3 x = Vector3(parentWorld.m[0][0], parentWorld.m[1][0], parentWorld.m[2][0]).Normalize();
+					Vector3 y = Vector3(parentWorld.m[0][1], parentWorld.m[1][1], parentWorld.m[2][1]).Normalize();
+					Vector3 z = Vector3(parentWorld.m[0][2], parentWorld.m[1][2], parentWorld.m[2][2]).Normalize();
+
+					// スケール除去した回転行列を再セット
+					parentWorld.m[0][0] = x.x; parentWorld.m[1][0] = x.y; parentWorld.m[2][0] = x.z;
+					parentWorld.m[0][1] = y.x; parentWorld.m[1][1] = y.y; parentWorld.m[2][1] = y.z;
+					parentWorld.m[0][2] = z.x; parentWorld.m[1][2] = z.y; parentWorld.m[2][2] = z.z;
+				}
 			}
 			Matrix4x4 inverseMatrix = Matrix4x4::Inverse(parentWorld);
 			Matrix4x4 localMatrix = newWorldMatrix * inverseMatrix;

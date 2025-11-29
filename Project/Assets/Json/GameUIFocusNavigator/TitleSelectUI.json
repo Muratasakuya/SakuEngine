@@ -437,6 +437,7 @@
                         "blendMode": "kBlendModeNormal",
                         "layer": "PostModel",
                         "layerIndex": 0,
+                        "postProccessEnable_": true,
                         "textureName": "gameStartText"
                     },
                     "Transform": {
@@ -1093,6 +1094,7 @@
                         "blendMode": "kBlendModeNormal",
                         "layer": "PostModel",
                         "layerIndex": 0,
+                        "postProccessEnable_": true,
                         "textureName": "gameFinishText"
                     },
                     "Transform": {
@@ -1749,6 +1751,7 @@
                         "blendMode": "kBlendModeNormal",
                         "layer": "PostModel",
                         "layerIndex": 0,
+                        "postProccessEnable_": true,
                         "textureName": "optionIcon"
                     },
                     "Transform": {
@@ -2340,6 +2343,7 @@
                         "blendMode": "kBlendModeNormal",
                         "layer": "PostModel",
                         "layerIndex": 0,
+                        "postProccessEnable_": true,
                         "textureName": "optionText"
                     },
                     "Transform": {

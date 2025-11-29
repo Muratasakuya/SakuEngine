@@ -56,7 +56,7 @@ void PlayerStateController::Init(Player& owner) {
 	states_.emplace(PlayerState::SkilAttack, std::make_unique<PlayerSkilAttackState>(&owner));
 	states_.emplace(PlayerState::Parry, std::make_unique<PlayerParryState>());
 	states_.emplace(PlayerState::SwitchAlly, std::make_unique<PlayerSwitchAllyState>());
-	states_.emplace(PlayerState::StunAttack, std::make_unique<PlayerStunAttackState>(owner.GetAlly()));
+	states_.emplace(PlayerState::StunAttack, std::make_unique<PlayerStunAttackState>());
 	states_.emplace(PlayerState::Falter, std::make_unique<PlayerFalterState>(&owner));
 
 	// json適応
@@ -100,6 +100,15 @@ void PlayerStateController::SetFollowCamera(FollowCamera* followCamera) {
 	for (const auto& state : std::views::values(states_)) {
 
 		state->SetFollowCamera(followCamera);
+	}
+}
+
+void PlayerStateController::SetSubPlayer(SubPlayer* subPlayer) {
+
+	// 各状態にsubPlayerをセット
+	for (const auto& state : std::views::values(states_)) {
+
+		state->SetSubPlayer(subPlayer);
 	}
 }
 

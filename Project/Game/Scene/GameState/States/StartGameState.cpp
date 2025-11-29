@@ -57,9 +57,11 @@ void StartGameState::Init(SceneView* sceneView) {
 	// プレイヤー、カメラをセット
 	context_->boss->SetPlayer(context_->player);
 	context_->boss->SetFollowCamera(context_->camera->GetFollowCamera());
-	// ボス、カメラをセット
+	// ボス、カメラ、サブプレイヤーをセット
 	context_->player->SetBossEnemy(context_->boss);
 	context_->player->SetFollowCamera(context_->camera->GetFollowCamera());
+	context_->player->SetSubPlayer(context_->subPlayer);
+	context_->subPlayer->SetBossEnemy(context_->boss);
 
 	// 衝突応答にプレイヤー、ボスをセット
 	context_->fieldBoundary->SetPushBackTarget(context_->player, context_->boss);

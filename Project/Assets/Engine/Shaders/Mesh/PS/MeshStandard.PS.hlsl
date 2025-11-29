@@ -27,7 +27,12 @@ PSOutput main(MSOutput input) {
 	// bufferアクセス
 	Material material = gMaterials[id];
 	Lighting lighting = gLightings[id];
-	
+
+	// 描画しない
+	if (material.isRejection == 1) {
+		discard;
+	}
+
 	// マスク値を出力
 	output.mask = material.postProcessMask;
 	

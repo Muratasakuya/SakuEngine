@@ -38,6 +38,7 @@
                 "blendMode": "kBlendModeNormal",
                 "layer": "PostModel",
                 "layerIndex": 0,
+                "postProccessEnable_": true,
                 "textureName": "white"
             },
             "Transform": {
@@ -125,6 +126,7 @@
                 "blendMode": "kBlendModeNormal",
                 "layer": "PostModel",
                 "layerIndex": 0,
+                "postProccessEnable_": true,
                 "textureName": "titleName"
             },
             "Transform": {

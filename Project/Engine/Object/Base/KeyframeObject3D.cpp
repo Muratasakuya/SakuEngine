@@ -415,9 +415,10 @@ std::unique_ptr<GameObject3D> KeyframeObject3D::CreateKeyObject(const Transform3
 
 	// 描画設定、シーンにしか表示しない
 	object->SetMeshRenderView(keyRenderView_);
-	object->SetScale(isDrawKeyframe_ ? Vector3::AnyInit(1.0f) : Vector3::AnyInit(0.01f));
+	object->SetIsRejection(!isDrawKeyframe_);
 	object->SetCastShadow(false);
 	object->SetShadowRate(1.0f);
+	object->SetIgnoreParentScale(isIgnoreParentScale_);
 
 	return object;
 }
@@ -660,7 +661,7 @@ void KeyframeObject3D::ImGui() {
 		// キーオブジェクトの描画設定を更新
 		for (const auto& keyObject : keyObjects_) {
 
-			keyObject->SetScale(isDrawKeyframe_ ? Vector3::AnyInit(1.0f) : Vector3::AnyInit(0.01f));
+			keyObject->SetIsRejection(!isDrawKeyframe_);
 		}
 	}
 
@@ -683,14 +684,14 @@ void KeyframeObject3D::ImGui() {
 
 		// 座標
 		key.transform.translation = keyObjects_.empty() ?
-			Vector3::AnyInit(0.0f) : keyObjects_.back()->GetTranslation();
+			Vector3::AnyInit(0.0f) : keyObjects_.back()->GetTransform().GetWorldPos();
 		key.transform.translation.y += 4.0f;
 		// スケール
 		key.transform.scale = keyObjects_.empty() ?
-			Vector3::AnyInit(1.0f) : keyObjects_.back()->GetScale();
+			Vector3::AnyInit(1.0f) : keyObjects_.back()->GetTransform().GetWorldScale();
 		// 回転
 		key.transform.rotation = keyObjects_.empty() ?
-			Quaternion::Identity() : keyObjects_.back()->GetRotation();
+			Quaternion::Identity() : keyObjects_.back()->GetTransform().GetWorldRotation();
 
 		// 任意の型の値があれば
 		if (!anyTracks_.empty()) {
@@ -790,6 +791,56 @@ void KeyframeObject3D::ImGui() {
 				}
 			}
 		}
+
+		ImGui::SeparatorText("Edit All Transform");
+
+		static Vector3 sLastEditAllTranslation = Vector3::AnyInit(0.0f);
+		static Vector3 sLastEditAllRotEuler = Vector3::AnyInit(0.0f);
+
+		if (ImGui::Button("Apply All")) {
+
+			editAllTranslation_ = Vector3::AnyInit(0.0f);
+			editAllPosRotation_ = Vector3::AnyInit(0.0f);
+
+			// 差分の基準もリセット
+			sLastEditAllTranslation = editAllTranslation_;
+			sLastEditAllRotEuler = editAllPosRotation_;
+		}
+		if (ImGui::DragFloat3("editAllTranslation", &editAllTranslation_.x, 0.1f)) {
+
+			// 今回フレームで増えた分だけを適用する
+			Vector3 delta = editAllTranslation_ - sLastEditAllTranslation;
+
+			for (const auto& keyObject : keyObjects_) {
+
+				Vector3 newPos = keyObject->GetTranslation() + delta;
+				keyObject->SetTranslation(newPos);
+			}
+			// 今回の値を次フレームの基準にする
+			sLastEditAllTranslation = editAllTranslation_;
+		}
+		if (ImGui::DragFloat3("editAllPosRotation", &editAllPosRotation_.x, 0.01f)) {
+
+			// 今回フレームで増えた回転量だけを適用
+			Vector3 deltaEuler = editAllPosRotation_ - sLastEditAllRotEuler;
+			// 差分回転クォータニオンを作成
+			Quaternion qDelta = Quaternion::EulerToQuaternion(deltaEuler);
+
+			for (const auto& keyObject : keyObjects_) {
+
+				// 原点まわりに回転させる
+				Vector3 pos = keyObject->GetTranslation();
+				pos = qDelta * pos;
+				keyObject->SetTranslation(pos);
+
+				// 見た目に変化が出ないように回転
+				Quaternion rotation = keyObject->GetRotation();
+				rotation = qDelta * rotation;
+				keyObject->SetRotation(Quaternion::Normalize(rotation));
+			}
+			// 今回の回転を次フレームの基準にする
+			sLastEditAllRotEuler = editAllPosRotation_;
+		}
 	}
 
 	if (ImGui::CollapsingHeader("Set Parent")) {
@@ -805,8 +856,15 @@ void KeyframeObject3D::ImGui() {
 				keyObject->SetParent(Transform3D(), true);
 			}
 		}
+		if (ImGui::Checkbox("isIgnoreParentScale", &isIgnoreParentScale_)) {
+			for (const auto& keyObject : keyObjects_) {
+
+				keyObject->SetIgnoreParentScale(isIgnoreParentScale_);
+			}
+		}
 
 		ImGui::Separator();
+		ImGui::Spacing();
 
 		uint32_t currentId = 0;
 		ObjectManager* objectManager = ObjectManager::GetInstance();
@@ -839,7 +897,8 @@ void KeyframeObject3D::ImGui() {
 
 	// Deleteキー入力でエディターで操作中のキーを削除する
 	const std::optional<uint32_t> editObjectId = ImGuiObjectEditor::GetInstance()->GetSelected3D();
-	if (editObjectId.has_value() && Input::GetInstance()->TriggerKey(DIK_DELETE)) {
+	Input* input = Input::GetInstance();
+	if (editObjectId.has_value() && input->TriggerKey(DIK_DELETE)) {
 
 		// 選択IDをチェックする
 		for (uint32_t i = 0; i < keyObjects_.size(); ++i) {
@@ -852,6 +911,64 @@ void KeyframeObject3D::ImGui() {
 				break;
 			}
 		}
+	}
+	// Ctrl + Cキーでエディターで操作中のキーを複製する
+	// 別のキーを選択したらクリップボードはクリア
+	if (editObjectId.has_value() && input->TriggerKey(DIK_C)) {
+
+		// IDを保存
+		copyData_.copyID = editObjectId.value();
+		// キー情報を保存
+		for (uint32_t i = 0; i < keyObjects_.size(); ++i) {
+			if (keyObjects_[i]->GetObjectID() == editObjectId.value()) {
+
+				copyData_.key = keys_[i];
+				break;
+			}
+		}
+	}
+	// 選択切り替えチェック
+	if (copyData_.copyID.has_value() && editObjectId.has_value()) {
+		if (copyData_.copyID.value() != editObjectId.value()) {
+
+			copyData_.copyID = std::nullopt;
+		}
+	}
+
+	// Ctrl + Dキーで複製中のキーを貼り付ける
+	if (copyData_.copyID.has_value() && input->TriggerKey(DIK_V)) {
+
+		// 複製
+		Key newKey = copyData_.key;
+		// 時間の初期化設定
+		if (keys_.empty()) {
+
+			newKey.time = 0.0f;
+		} else {
+
+			// 一番最後の時間から + 設定値
+			newKey.time = keys_.back().time + addKeyTimeStep_;
+		}
+		// キーを追加
+		keys_.emplace_back(newKey);
+		// キーオブジェクトを生成
+		Transform3D initTransform;
+		for (const auto& keyObject : keyObjects_) {
+
+			// 一致するIDでトランスフォームを取得
+			if (keyObject->GetObjectID() == *copyData_.copyID) {
+
+				initTransform.translation = keyObject->GetTranslation();
+				initTransform.translation.y += 4.0f;
+				initTransform.scale = keyObject->GetScale();
+				initTransform.rotation = keyObject->GetRotation();
+				break;
+			}
+		}
+		keyObjects_.emplace_back(std::move(CreateKeyObject(initTransform)));
+
+		// 複製終了後クリップボードをクリア
+		copyData_.copyID = std::nullopt;
 	}
 }
 
@@ -1051,6 +1168,9 @@ void KeyframeObject3D::FromJson(const Json& data) {
 	if (data.empty()) {
 		return;
 	}
+	if (!data.contains("Keys")) {
+		return;
+	}
 
 	// キーをクリア
 	keys_.clear();
@@ -1132,6 +1252,7 @@ void KeyframeObject3D::FromJson(const Json& data) {
 	isUpdateKeyDuringLerp_ = data.value("isUpdateKeyDuringLerp_", true);
 	startDuration_ = data.value("startDuration_", 0.0f);
 	startEaseType_ = EnumAdapter<EasingType>::FromString(data.value("startEaseType_", "Linear")).value();
+	isIgnoreParentScale_ = data.value("isIgnoreParentScale_", false);
 
 	// 親Transformを設定
 	if (!parentName_.empty()) {
@@ -1251,6 +1372,7 @@ void KeyframeObject3D::ToJson(Json& data) {
 	data["isUpdateKeyDuringLerp_"] = isUpdateKeyDuringLerp_;
 	data["startDuration_"] = startDuration_;
 	data["startEaseType_"] = EnumAdapter<EasingType>::ToString(startEaseType_);
+	data["isIgnoreParentScale_"] = isIgnoreParentScale_;
 
 	data["addKeyTimeStep_"] = addKeyTimeStep_;
 	data["keyRenderView_"] = EnumAdapter<MeshRenderView>::ToString(keyRenderView_);

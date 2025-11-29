@@ -5,9 +5,10 @@
 //============================================================================
 #include <Engine/Core/Graphics/PostProcess/Core/PostProcessSystem.h>
 #include <Engine/Utility/Timer/GameTimer.h>
+#include <Engine/Utility/Json/JsonAdapter.h>
 #include <Game/Camera/Follow/FollowCamera.h>
 #include <Game/Objects/GameScene/Player/Entity/Player.h>
-#include <Engine/Utility/Json/JsonAdapter.h>
+#include <Game/PostEffect/RadialBlurUpdater.h>
 
 // imgui
 #include <imgui.h>
@@ -37,9 +38,29 @@ void PlayerSwitchAllyState::Enter(Player& player) {
 	// HPなどの表示を消してスタン用のHUDを出す
 	player.GetHUD()->SetDisable();
 	player.GetStunHUD()->SetVaild();
+
+	// ブラー開始
+	RadialBlurUpdater* blur = postProcess_->GetUpdater<RadialBlurUpdater>(
+		PostProcessType::RadialBlur);
+	// ブラーをかけて戻さないようにする
+	blur->StartState();
+	blur->Start();
+	blur->SetBlurType(RadialBlurType::Parry);
+	blur->SetIsAutoReturn(false);
+
+	// プレイヤーの位置を中心にする
+	Vector2 screenPos = Math::ProjectToScreen(
+		player.GetTranslation(), *followCamera_).Normalize();
+	blur->SetBlurCenter(screenPos);
 }
 
 void PlayerSwitchAllyState::Update(Player& player) {
+
+	// 選択状態に入れるためにdeltaTimeを0.0f近くまで下げる
+	deltaTimeScaleTimer_.Update(std::nullopt, false);
+	float deltaScale = std::lerp(1.0f, deltaTimeScale_, deltaTimeScaleTimer_.easedT_);
+	// スケーリング値を設定
+	GameTimer::SetExternalTimeScale(deltaScale);
 
 	// 入力受付待ち
 	switchAllyTimer_ += GameTimer::GetDeltaTime();
@@ -91,23 +112,39 @@ void PlayerSwitchAllyState::CheckInput(float t) {
 void PlayerSwitchAllyState::Exit([[maybe_unused]] Player& player) {
 
 	// リセット
+	// 時間スケールを元の値に戻す
+	GameTimer::ClearExternalTimeScale();
 	switchAllyTimer_ = 0.0f;
 	canExit_ = false;
+	deltaTimeScaleTimer_.Reset();
+
+	// ブラー終了させる
+	RadialBlurUpdater* blur = postProcess_->GetUpdater<RadialBlurUpdater>(
+		PostProcessType::RadialBlur);
+	blur->StartReturnState();
 }
 
 void PlayerSwitchAllyState::ImGui([[maybe_unused]] const Player& player) {
 
 	ImGui::Text(std::format("canExit: {}", canExit_).c_str());
 	ImGui::DragFloat("switchAllyTime", &switchAllyTime_, 0.01f);
+	ImGui::DragFloat("deltaTimeScale", &deltaTimeScale_, 0.01f);
+
+	deltaTimeScaleTimer_.ImGui("deltaTimeScaleTimer");
 }
 
 void PlayerSwitchAllyState::ApplyJson(const Json& data) {
 
 	switchAllyTime_ = JsonAdapter::GetValue<float>(data, "switchAllyTime_");
 	JsonAdapter::GetValue<int>(data, "deltaTimeScaleEasingType_");
+
+	deltaTimeScale_ = data.value("deltaTimeScale_", 1.0f);
+	deltaTimeScaleTimer_.FromJson(data.value("deltaTimeScaleTimer_", Json()));
 }
 
 void PlayerSwitchAllyState::SaveJson(Json& data) {
 
 	data["switchAllyTime_"] = switchAllyTime_;
+	data["deltaTimeScale_"] = deltaTimeScale_;
+	deltaTimeScaleTimer_.ToJson(data["deltaTimeScaleTimer_"]);
 }

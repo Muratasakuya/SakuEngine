@@ -131,6 +131,13 @@ private:
 		std::vector<AnyValue> startAnyValues;  // スタート時の任意値
 	};
 
+	// コピー、複製データ
+	struct CopyData {
+
+		Key key;                        // キー情報
+		std::optional<uint32_t> copyID; // 複製元のオブジェクトID
+	};
+
 	//--------- variables ----------------------------------------------------
 
 	// 現在の状態
@@ -176,11 +183,16 @@ private:
 
 	// 補間処理中もキーのトランスフォームを更新するかどうか
 	bool isUpdateKeyDuringLerp_;
+	// 親のスケールの影響を受けるかどうか
+	bool isIgnoreParentScale_;
 
 	// エディター
 	float addKeyTimeStep_; // キーを追加するときの時間差分
 	bool isDrawKeyframe_;  // キーフレーム表示
 	bool isEditUpdate_;    // ImGui関数内で更新するかどうか
+	CopyData copyData_;    // コピー、複製データ
+	Vector3 editAllTranslation_; // 全てのキーの位置を移動させる
+	Vector3 editAllPosRotation_; // 全てのキーの位置を回転させる
 
 	//--------- functions ----------------------------------------------------
 

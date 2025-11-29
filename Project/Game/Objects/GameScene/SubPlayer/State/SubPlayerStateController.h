@@ -3,6 +3,7 @@
 //============================================================================
 //	include
 //============================================================================
+#include <Engine/Utility/Timer/StateTimer.h>
 #include <Game/Objects/GameScene/SubPlayer/State/Interface/SubPlayerIState.h>
 #include <Game/Objects/GameScene/SubPlayer/Structure/SubPlayerStructure.h>
 
@@ -30,11 +31,19 @@ public:
 
 	//--------- accessor -----------------------------------------------------
 
+	void SetBossEnemy(const BossEnemy* bossEnemy);
+
 	// 状態をリクエスト
 	void SetRequestState(SubPlayerState state) { requestState_ = state; }
 
 	// 各パーツを状態に設定
 	void SetParts(GameObject3D* body, GameObject3D* rightHand, GameObject3D* leftHand);
+
+	// 現在の状態を取得
+	SubPlayerState GetCurrentState() const { return current_; }
+
+	// 殴り終わったか
+	bool IsFinishPunchAttack() const;
 private:
 	//========================================================================
 	//	private Methods
@@ -52,6 +61,9 @@ private:
 
 	// エディター
 	SubPlayerState editState_;
+	SubPlayerState editRequestState_;
+	bool isAutoPunchAttack_ = false; // 自動でパンチ攻撃を繰り返すか
+	StateTimer autoPunchAttackTimer_;
 
 	//--------- functions ----------------------------------------------------
 
@@ -59,6 +71,11 @@ private:
 	void ApplyJson();
 	void SaveJson();
 
+	// エディター、自動パンチ処理
+	void UpdateEditorAndAutoPunch();
+
 	// 状態切り替え
 	void ChangeState(bool isForce);
+	// 状態が終了したかチェックする
+	void CheckCanExit();
 };

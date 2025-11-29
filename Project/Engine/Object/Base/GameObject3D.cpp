@@ -233,6 +233,13 @@ void GameObject3D::UpdateMatrix() {
 	transform_->UpdateMatrix();
 }
 
+void GameObject3D::SetSRT(const Transform3D& transform) {
+
+	transform_->translation = transform.translation;
+	transform_->rotation = transform.rotation;
+	transform_->scale = transform.scale;
+}
+
 void GameObject3D::SetParent(const Transform3D& parent, bool isNull) {
 
 	if (isNull) {
@@ -305,6 +312,21 @@ void GameObject3D::SetShadowRate(float rate, std::optional<uint32_t> meshIndex) 
 		for (auto& material : *materials_) {
 
 			material.shadowRate = rate;
+		}
+	}
+}
+
+void GameObject3D::SetIsRejection(bool isRejection, std::optional<uint32_t> meshIndex) {
+
+	// meshIndexが設定されている場合のみ指定して設定
+	if (meshIndex.has_value()) {
+
+		(*materials_)[meshIndex.value()].isRejection = static_cast<uint32_t>(isRejection);
+	} else {
+
+		for (auto& material : *materials_) {
+
+			material.isRejection = static_cast<uint32_t>(isRejection);
 		}
 	}
 }

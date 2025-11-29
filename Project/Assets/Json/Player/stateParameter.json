@@ -344,6 +344,7 @@
                 {
                     "Transform": {
                         "isCompulsion_": false,
+                        "isIgnoreParentScale": false,
                         "rotation": {
                             "w": 1.0,
                             "x": 0.0,
@@ -367,6 +368,7 @@
                 {
                     "Transform": {
                         "isCompulsion_": false,
+                        "isIgnoreParentScale": false,
                         "rotation": {
                             "w": 1.0,
                             "x": 0.0,
@@ -390,6 +392,7 @@
                 {
                     "Transform": {
                         "isCompulsion_": false,
+                        "isIgnoreParentScale": false,
                         "rotation": {
                             "w": 1.0,
                             "x": 0.0,
@@ -413,6 +416,7 @@
                 {
                     "Transform": {
                         "isCompulsion_": false,
+                        "isIgnoreParentScale": false,
                         "rotation": {
                             "w": 1.0,
                             "x": 0.0,
@@ -436,6 +440,7 @@
                 {
                     "Transform": {
                         "isCompulsion_": false,
+                        "isIgnoreParentScale": false,
                         "rotation": {
                             "w": 1.0,
                             "x": 0.0,
@@ -459,6 +464,7 @@
                 {
                     "Transform": {
                         "isCompulsion_": false,
+                        "isIgnoreParentScale": false,
                         "rotation": {
                             "w": 1.0,
                             "x": 0.0,
@@ -482,6 +488,7 @@
             ],
             "addKeyTimeStep_": 0.800000011920929,
             "isConnectEnds_": false,
+            "isIgnoreParentScale_": false,
             "isUpdateKeyDuringLerp_": false,
             "keyRenderView_": "Scene",
             "lerpType_": "Spline",
@@ -516,6 +523,7 @@
         "MoveAttackHitstopStartProgress": 0.20000000298023224,
         "MoveFrontTransform": {
             "isCompulsion_": true,
+            "isIgnoreParentScale": false,
             "rotation": {
                 "w": 1.0,
                 "x": 0.0,
@@ -538,6 +546,7 @@
                 {
                     "Transform": {
                         "isCompulsion_": false,
+                        "isIgnoreParentScale": false,
                         "rotation": {
                             "w": 1.0,
                             "x": 0.0,
@@ -561,6 +570,7 @@
                 {
                     "Transform": {
                         "isCompulsion_": false,
+                        "isIgnoreParentScale": false,
                         "rotation": {
                             "w": 1.0,
                             "x": 0.0,
@@ -584,6 +594,7 @@
                 {
                     "Transform": {
                         "isCompulsion_": false,
+                        "isIgnoreParentScale": false,
                         "rotation": {
                             "w": 1.0,
                             "x": 0.0,
@@ -607,6 +618,7 @@
                 {
                     "Transform": {
                         "isCompulsion_": false,
+                        "isIgnoreParentScale": false,
                         "rotation": {
                             "w": 1.0,
                             "x": 0.0,
@@ -630,6 +642,7 @@
                 {
                     "Transform": {
                         "isCompulsion_": false,
+                        "isIgnoreParentScale": false,
                         "rotation": {
                             "w": 1.0,
                             "x": 9.69369536667881e-27,
@@ -653,6 +666,7 @@
                 {
                     "Transform": {
                         "isCompulsion_": false,
+                        "isIgnoreParentScale": false,
                         "rotation": {
                             "w": 1.0,
                             "x": 0.0,
@@ -676,6 +690,7 @@
                 {
                     "Transform": {
                         "isCompulsion_": false,
+                        "isIgnoreParentScale": false,
                         "rotation": {
                             "w": 1.0,
                             "x": 0.0,
@@ -699,6 +714,7 @@
                 {
                     "Transform": {
                         "isCompulsion_": false,
+                        "isIgnoreParentScale": false,
                         "rotation": {
                             "w": 1.0,
                             "x": 0.0,
@@ -722,6 +738,7 @@
                 {
                     "Transform": {
                         "isCompulsion_": false,
+                        "isIgnoreParentScale": false,
                         "rotation": {
                             "w": 1.0,
                             "x": 0.0,
@@ -745,6 +762,7 @@
                 {
                     "Transform": {
                         "isCompulsion_": false,
+                        "isIgnoreParentScale": false,
                         "rotation": {
                             "w": 1.0,
                             "x": 0.0,
@@ -768,6 +786,7 @@
             ],
             "addKeyTimeStep_": 0.800000011920929,
             "isConnectEnds_": false,
+            "isIgnoreParentScale_": false,
             "isUpdateKeyDuringLerp_": false,
             "keyRenderView_": "Scene",
             "lerpType_": "Linear",
@@ -792,15 +811,36 @@
         "rotationLerpRate_": 0.6000000238418579
     },
     "StunAttack": {
-        "enemyDistance_": -48.0,
-        "entryEasingType_": 16,
-        "entryTime_": 0.3199999928474426,
-        "nextAnimDuration_": 0.1599999964237213,
-        "rushEasingType_": 14,
-        "rushTime_": 0.4399999976158142,
-        "targetTranslationY_": 4.0
+        "bossEnemyDistance_": -8.0,
+        "exitTime_": 0.11999999731779099,
+        "hitStop_": {
+            "hitstops": [
+                {
+                    "delay": 0.0,
+                    "duration": 0.25999999046325684,
+                    "timeScale": 0.0
+                },
+                {
+                    "delay": 0.18000000715255737,
+                    "duration": 0.10000000149011612,
+                    "timeScale": 0.0
+                }
+            ]
+        },
+        "moveDistance_": -64.0,
+        "nextAnimDuration_": 0.800000011920929,
+        "playerMoveTimer_": {
+            "easeingType_": "EaseOutQuart",
+            "target_": 0.20000000298023224
+        },
+        "startHitStopProgress_": 0.4699999988079071
     },
     "SwitchAlly": {
+        "deltaTimeScaleTimer_": {
+            "easeingType_": "Linear",
+            "target_": 1.0
+        },
+        "deltaTimeScale_": 0.009999999776482582,
         "switchAllyTime_": 3.0
     },
     "Walk": {

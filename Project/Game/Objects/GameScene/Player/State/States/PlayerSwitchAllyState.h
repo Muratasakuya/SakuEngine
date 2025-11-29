@@ -4,9 +4,10 @@
 //	include
 //============================================================================
 #include <Engine/Core/Graphics/PostProcess/Buffer/PostProcessBufferSize.h>
+#include <Engine/Utility/Enum/Easing.h>
+#include <Engine/Utility/Timer/StateTimer.h>
 #include <Game/Objects/GameScene/Player/State/Interface/PlayerIState.h>
 #include <Game/Objects/GameScene/Player/Structure/PlayerStructures.h>
-#include <Engine/Utility/Enum/Easing.h>
 
 //============================================================================
 //	PlayerSwitchAllyState class
@@ -44,6 +45,10 @@ private:
 	//========================================================================
 
 	//--------- variables ----------------------------------------------------
+
+	// デルタタイムのスケール補間時間
+	StateTimer deltaTimeScaleTimer_;
+	float deltaTimeScale_ = 1.0f; // 目標スケール
 
 	float switchAllyTimer_; // 現在の経過時間
 	float switchAllyTime_;  // 切り替え選択の行える時間

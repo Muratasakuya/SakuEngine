@@ -32,10 +32,6 @@ void Player::InitWeapon() {
 
 		leftWeapon_->SetParent(*hand);
 	}
-
-	// 味方
-	ally_ = std::make_unique<GameObject3D>();
-	ally_->Init("cube", "playerAlly", "Player");
 }
 
 void Player::InitAnimations() {
@@ -160,6 +156,11 @@ void Player::SetFollowCamera(FollowCamera* followCamera) {
 
 	stateController_->SetFollowCamera(followCamera);
 	hudSprites_->SetFollowCamera(followCamera);
+}
+
+void Player::SetSubPlayer(SubPlayer* subPlayer) {
+
+	stateController_->SetSubPlayer(subPlayer);
 }
 
 void Player::SetReverseWeapon(bool isReverse, PlayerWeaponType type) {

@@ -10,6 +10,7 @@
 
 // front
 class Player;
+class SubPlayer;
 class BossEnemy;
 class FollowCamera;
 class PostProcessSystem;
@@ -50,6 +51,7 @@ public:
 	void SetInputMapper(const InputMapper<PlayerInputAction>* inputMapper) { inputMapper_ = inputMapper; }
 	void SetBossEnemy(const BossEnemy* bossEnemy) { bossEnemy_ = bossEnemy; }
 	void SetFollowCamera(FollowCamera* followCamera) { followCamera_ = followCamera; }
+	void SetSubPlayer(SubPlayer* subPlayer) { subPlayer_ = subPlayer; }
 
 	void SetCanExit(bool canExit) { canExit_ = canExit; }
 	void SetPreState(PlayerState preState) { preState_ = preState; }
@@ -67,6 +69,7 @@ protected:
 	const BossEnemy* bossEnemy_;
 	FollowCamera* followCamera_;
 	Player* player_;
+	SubPlayer* subPlayer_;
 	PostProcessSystem* postProcess_;
 
 	// 遷移前の状態
