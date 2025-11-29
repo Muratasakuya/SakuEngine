@@ -14,7 +14,7 @@
 //	PlayerStunAttackState classMethods
 //============================================================================
 
-void PlayerStunAttackState::Enter([[maybe_unused]] Player& player) {
+void PlayerStunAttackState::Enter(Player& player) {
 
 	currentState_ = State::SubPlayerAttack;
 	canExit_ = false;
@@ -46,6 +46,12 @@ void PlayerStunAttackState::Update(Player& player) {
 		break;
 	}
 	}
+}
+
+void PlayerStunAttackState::UpdateAlways([[maybe_unused]] Player& player) {
+
+	// ヒットストップ更新
+	hitStop_.Update();
 }
 
 void PlayerStunAttackState::UpdateSubPlayerAttack(Player& player) {
@@ -108,10 +114,19 @@ void PlayerStunAttackState::UpdatePlayerAttack(Player& player) {
 	// 位置を設定
 	player.SetTranslation(lerpPos);
 
+	// tの値でヒットストップを処理
+	if (!isHitStopStart_ &&
+		startHitStopProgress_ <= playerMoveTimer_.t_) {
+
+		// ヒットストップ開始
+		isHitStopStart_ = true;
+		hitStop_.Start();
+	}
+
 	// 時間経過で状態終了
 	if (playerMoveTimer_.IsReached()) {
 
-		canExit_ = true;
+		exitTimer_ += GameTimer::GetDeltaTime();
 	}
 }
 
@@ -119,7 +134,10 @@ void PlayerStunAttackState::Exit([[maybe_unused]] Player& player) {
 
 	// リセット
 	canExit_ = false;
+	isHitStopStart_ = false;
+	exitTimer_ = 0.0f;
 	playerMoveTimer_.Reset();
+	hitStop_.Reset();
 
 	// カメラアニメーション終了
 	followCamera_->EndPlayerActionAnim(true);
@@ -129,10 +147,14 @@ void PlayerStunAttackState::Exit([[maybe_unused]] Player& player) {
 void PlayerStunAttackState::ImGui([[maybe_unused]] const Player& player) {
 
 	ImGui::DragFloat("nextAnimDuration", &nextAnimDuration_, 0.01f);
+	ImGui::DragFloat("exitTime", &exitTime_, 0.01f);
 	ImGui::DragFloat("bossEnemyDistance", &bossEnemyDistance_, 0.01f);
 	ImGui::DragFloat("moveDistance", &moveDistance_, 0.01f);
+	ImGui::DragFloat("startHitStopProgress", &startHitStopProgress_, 0.01f);
 
 	playerMoveTimer_.ImGui("playerMoveTimer");
+
+	hitStop_.ImGui("hitStop");
 }
 
 void PlayerStunAttackState::ApplyJson(const Json& data) {
@@ -140,8 +162,11 @@ void PlayerStunAttackState::ApplyJson(const Json& data) {
 	nextAnimDuration_ = JsonAdapter::GetValue<float>(data, "nextAnimDuration_");
 	bossEnemyDistance_ = data.value("bossEnemyDistance_", 1.0f);
 	moveDistance_ = data.value("moveDistance_", 1.0f);
+	exitTime_ = data.value("exitTime_", 1.0f);
+	startHitStopProgress_ = data.value("startHitStopProgress_", 1.0f);
 
 	playerMoveTimer_.FromJson(data.value("playerMoveTimer_", Json()));
+	hitStop_.FromJson(data.value("hitStop_", Json()));
 }
 
 void PlayerStunAttackState::SaveJson(Json& data) {
@@ -149,6 +174,14 @@ void PlayerStunAttackState::SaveJson(Json& data) {
 	data["nextAnimDuration_"] = nextAnimDuration_;
 	data["bossEnemyDistance_"] = bossEnemyDistance_;
 	data["moveDistance_"] = moveDistance_;
+	data["exitTime_"] = exitTime_;
+	data["startHitStopProgress_"] = startHitStopProgress_;
 
 	playerMoveTimer_.ToJson(data["playerMoveTimer_"]);
+	hitStop_.ToJson(data["hitStop_"]);
+}
+
+bool PlayerStunAttackState::GetCanExit() const {
+
+	return exitTime_ < exitTimer_;
 }

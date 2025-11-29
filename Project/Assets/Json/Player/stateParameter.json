@@ -812,12 +812,28 @@
     },
     "StunAttack": {
         "bossEnemyDistance_": -8.0,
+        "exitTime_": 0.11999999731779099,
+        "hitStop_": {
+            "hitstops": [
+                {
+                    "delay": 0.0,
+                    "duration": 0.25999999046325684,
+                    "timeScale": 0.0
+                },
+                {
+                    "delay": 0.18000000715255737,
+                    "duration": 0.10000000149011612,
+                    "timeScale": 0.0
+                }
+            ]
+        },
         "moveDistance_": -64.0,
         "nextAnimDuration_": 0.800000011920929,
         "playerMoveTimer_": {
             "easeingType_": "EaseOutQuart",
-            "target_": 0.23999999463558197
-        }
+            "target_": 0.20000000298023224
+        },
+        "startHitStopProgress_": 0.4699999988079071
     },
     "SwitchAlly": {
         "deltaTimeScaleTimer_": {

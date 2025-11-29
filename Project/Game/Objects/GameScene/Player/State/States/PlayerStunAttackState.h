@@ -5,8 +5,9 @@
 //============================================================================
 #include <Engine/Core/Graphics/PostProcess/Buffer/PostProcessBufferSize.h>
 #include <Engine/Object/Base/GameObject3D.h>
-#include <Game/Objects/GameScene/Player/State/Interface/PlayerBaseAttackState.h>
+#include <Engine/Utility/Timer/DelayedHitstop.h>
 #include <Engine/Utility/Enum/Easing.h>
+#include <Game/Objects/GameScene/Player/State/Interface/PlayerBaseAttackState.h>
 
 //============================================================================
 //	PlayerStunAttackState class
@@ -25,6 +26,7 @@ public:
 	void Enter(Player& player) override;
 
 	void Update(Player& player) override;
+	void UpdateAlways(Player& player) override;
 
 	void Exit(Player& player) override;
 
@@ -34,6 +36,10 @@ public:
 	// json
 	void ApplyJson(const Json& data) override;
 	void SaveJson(Json& data) override;
+
+	//--------- accessor -----------------------------------------------------
+
+	bool GetCanExit() const override;
 private:
 	//========================================================================
 	//	private Methods
@@ -58,6 +64,11 @@ private:
 	Vector3 startPlayerPos_;
 	Vector3 targetPlayerPos_;
 	StateTimer playerMoveTimer_;
+
+	// ヒットストップ
+	bool isHitStopStart_ = false;
+	float startHitStopProgress_;
+	DelayedHitstop hitStop_;
 
 	//--------- functions ----------------------------------------------------
 
