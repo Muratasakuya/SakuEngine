@@ -54,6 +54,7 @@ public:
 	// タイプを設定
 	void SetBlurType(RadialBlurType type) { type_ = type; }
 	void StartState() { currentState_ = State::Updating; }
+	void StartReturnState();
 
 	// ブラーの中心を設定
 	void SetBlurCenter(const Vector2& center);

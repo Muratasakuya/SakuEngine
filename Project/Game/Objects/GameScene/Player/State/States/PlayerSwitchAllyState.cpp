@@ -5,9 +5,10 @@
 //============================================================================
 #include <Engine/Core/Graphics/PostProcess/Core/PostProcessSystem.h>
 #include <Engine/Utility/Timer/GameTimer.h>
+#include <Engine/Utility/Json/JsonAdapter.h>
 #include <Game/Camera/Follow/FollowCamera.h>
 #include <Game/Objects/GameScene/Player/Entity/Player.h>
-#include <Engine/Utility/Json/JsonAdapter.h>
+#include <Game/PostEffect/RadialBlurUpdater.h>
 
 // imgui
 #include <imgui.h>
@@ -37,6 +38,21 @@ void PlayerSwitchAllyState::Enter(Player& player) {
 	// HPなどの表示を消してスタン用のHUDを出す
 	player.GetHUD()->SetDisable();
 	player.GetStunHUD()->SetVaild();
+
+	// ブラー開始
+	PostProcessSystem* postProcessSystem = PostProcessSystem::GetInstance();
+	RadialBlurUpdater* blur = postProcess_->GetUpdater<RadialBlurUpdater>(
+		PostProcessType::RadialBlur);
+	// ブラーをかけて戻さないようにする
+	blur->StartState();
+	blur->Start();
+	blur->SetBlurType(RadialBlurType::Parry);
+	blur->SetIsAutoReturn(false);
+
+	// プレイヤーの位置を中心にする
+	Vector2 screenPos = Math::ProjectToScreen(
+		player.GetTranslation(), *followCamera_).Normalize();
+	blur->SetBlurCenter(screenPos);
 }
 
 void PlayerSwitchAllyState::Update(Player& player) {
@@ -93,6 +109,12 @@ void PlayerSwitchAllyState::Exit([[maybe_unused]] Player& player) {
 	// リセット
 	switchAllyTimer_ = 0.0f;
 	canExit_ = false;
+
+	// ブラー終了させる
+	PostProcessSystem* postProcessSystem = PostProcessSystem::GetInstance();
+	RadialBlurUpdater* blur = postProcess_->GetUpdater<RadialBlurUpdater>(
+		PostProcessType::RadialBlur);
+	blur->StartReturnState();
 }
 
 void PlayerSwitchAllyState::ImGui([[maybe_unused]] const Player& player) {

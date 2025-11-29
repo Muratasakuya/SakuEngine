@@ -14,6 +14,7 @@ void FadeTransition::Init() {
 
 	fadeSprite_ = std::make_unique<GameObject2D>();
 	fadeSprite_->Init("white", "transitionSprite", "Scene");
+	fadeSprite_->SetPostProcessEnable(true);
 	fadeSprite_->SetPostProcessMask(Bit_CRTDisplay);
 	// シーンが切り替わっても破棄しない
 	fadeSprite_->SetDestroyOnLoad(false);
