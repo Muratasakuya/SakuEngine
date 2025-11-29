@@ -48,7 +48,23 @@ void SubPlayerStateController::SetParts(GameObject3D* body, GameObject3D* rightH
 	}
 }
 
+bool SubPlayerStateController::IsFinishPunchAttack() const {
+
+	// 現在の状態がパンチ攻撃状態かチェック
+	if (current_ != SubPlayerState::PunchAttack) {
+		return false;
+	}
+	// パンチ攻撃状態の殴り終わりをチェック
+	if (const auto& state = static_cast<SubPlayerPunchAttackState*>(states_.at(current_).get())) {
+		return state->IsFinishPunchAttack();
+	}
+	return false;
+}
+
 void SubPlayerStateController::Update() {
+
+	// エディター、自動パンチ攻撃処理
+	UpdateEditorAndAutoPunch();
 
 	// 状態の切り替え処理
 	ChangeState(false);
@@ -66,6 +82,31 @@ void SubPlayerStateController::Update() {
 
 	// 状態終了チェック
 	CheckCanExit();
+}
+
+void SubPlayerStateController::UpdateEditorAndAutoPunch() {
+
+	// 自動パンチ攻撃処理
+	if (!isAutoPunchAttack_) {
+		return;
+	}
+
+	// 現在の状態がInactiveの時に時間加算
+	if (current_ == SubPlayerState::Inactive) {
+
+		// 0.4秒経過したらパンチ攻撃状態に遷移
+		autoPunchAttackTimer_.Update(0.4f);
+		if (autoPunchAttackTimer_.IsReached()) {
+
+			// 経過したらパンチ攻撃状態に遷移
+			requestState_ = SubPlayerState::PunchAttack;
+			autoPunchAttackTimer_.Reset();
+		}
+	} else {
+
+		// 他の状態ならタイマーリセット
+		autoPunchAttackTimer_.Reset();
+	}
 }
 
 void SubPlayerStateController::ChangeState(bool isForce) {
@@ -117,6 +158,8 @@ void SubPlayerStateController::ImGui() {
 		requestState_ = editRequestState_;
 		ChangeState(true);
 	}
+
+	ImGui::Checkbox("Auto Punch Attack", &isAutoPunchAttack_);
 
 	ImGui::Separator();
 

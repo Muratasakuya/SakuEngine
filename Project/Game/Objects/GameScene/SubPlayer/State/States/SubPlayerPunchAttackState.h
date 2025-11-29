@@ -36,6 +36,11 @@ public:
 	// json
 	void ApplyJson(const Json& data) override;
 	void SaveJson(Json& data) override;
+
+	//--------- accessor -----------------------------------------------------
+
+	// 最後の殴りまで行ったか
+	bool IsFinishPunchAttack() const { return currentState_ == State::Leave; }
 private:
 	//========================================================================
 	//	private Methods

@@ -28,6 +28,8 @@ void FollowCamera::LoadAnim() {
 	editor->LoadJson("Player/playerParryLeft.json");
 	editor->LoadJson("Player/playerSkilMove.json");
 	editor->LoadJson("Player/playerSkilJump.json");
+	editor->LoadJson("Player/playerStunAttack.json");
+	editor->LoadJson("SubPlayer/subPlayerAttack.json");
 
 	// 読み込み済み
 	isLoadedAnim_ = true;
@@ -42,6 +44,7 @@ void FollowCamera::StartPlayerActionAnim(PlayerState state) {
 	switch (state) {
 	case PlayerState::Attack_3rd: name = "player3rdAttack"; break;
 	case PlayerState::Attack_4th: name = "player4thAttack"; break;
+	case PlayerState::StunAttack: name = "playerStunAttack"; break;
 	case PlayerState::Parry:
 
 		// 目標回転

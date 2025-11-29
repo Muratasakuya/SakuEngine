@@ -111,6 +111,11 @@ void SubPlayer::ImGui() {
 	}
 }
 
+bool SubPlayer::IsFinishPunchAttack() const {
+
+	return stateController_->IsFinishPunchAttack();
+}
+
 void SubPlayer::ApplyJson() {
 
 	Json data;

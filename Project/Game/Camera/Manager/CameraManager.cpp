@@ -46,7 +46,6 @@ void CameraManager::SetTarget(const Player* player, const BossEnemy* bossEnemy) 
 	followCamera_->SetPlayer(player);
 	// 追従先を設定する: player
 	followCamera_->SetTarget(FollowCameraTargetType::Player, player_->GetTransform());
-	followCamera_->SetTarget(FollowCameraTargetType::PlayerAlly, player_->GetAlly()->GetTransform());
 	// bossEnemy
 	followCamera_->SetTarget(FollowCameraTargetType::BossEnemy, bossEnemy->GetTransform());
 }

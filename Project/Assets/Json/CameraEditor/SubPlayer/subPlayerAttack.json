@@ -1,0 +1,99 @@
+{
+    "CameraKeyObject": {
+        "Keys": [
+            {
+                "Transform": {
+                    "isCompulsion_": false,
+                    "isIgnoreParentScale": true,
+                    "rotation": {
+                        "w": 0.9764379262924194,
+                        "x": 0.014647667296230793,
+                        "y": -0.21527674794197083,
+                        "z": 0.003229393158107996
+                    },
+                    "scale": {
+                        "x": 1.0000016689300537,
+                        "y": 1.000049114227295,
+                        "z": 1.0000014305114746
+                    },
+                    "translation": {
+                        "x": 29.200000762939453,
+                        "y": 9.576000213623047,
+                        "z": -61.5890007019043
+                    }
+                },
+                "anyValues": {
+                    "FovY": 0.7200000286102295
+                },
+                "ease": "EaseInOutSine",
+                "time": 0.0
+            },
+            {
+                "Transform": {
+                    "isCompulsion_": false,
+                    "isIgnoreParentScale": true,
+                    "rotation": {
+                        "w": 0.9712081551551819,
+                        "x": 0.13438911736011505,
+                        "y": -0.19485221803188324,
+                        "z": 0.026962285861372948
+                    },
+                    "scale": {
+                        "x": 1.0000019073486328,
+                        "y": 1.0000284910202026,
+                        "z": 1.0000025033950806
+                    },
+                    "translation": {
+                        "x": 17.1299991607666,
+                        "y": 19.770000457763672,
+                        "z": -50.1879997253418
+                    }
+                },
+                "anyValues": {
+                    "FovY": 0.7200000286102295
+                },
+                "ease": "Linear",
+                "time": 0.949999988079071
+            },
+            {
+                "Transform": {
+                    "isCompulsion_": false,
+                    "isIgnoreParentScale": true,
+                    "rotation": {
+                        "w": 0.9712081551551819,
+                        "x": 0.13438908755779266,
+                        "y": -0.19485215842723846,
+                        "z": 0.026962226256728172
+                    },
+                    "scale": {
+                        "x": 1.0000027418136597,
+                        "y": 1.000029444694519,
+                        "z": 1.0000025033950806
+                    },
+                    "translation": {
+                        "x": 17.1299991607666,
+                        "y": 19.769481658935547,
+                        "z": -50.15894317626953
+                    }
+                },
+                "anyValues": {
+                    "FovY": 0.7200000286102295
+                },
+                "ease": "Linear",
+                "time": 2.5999999046325684
+            }
+        ],
+        "addKeyTimeStep_": 0.800000011920929,
+        "isConnectEnds_": false,
+        "isIgnoreParentScale_": true,
+        "isUpdateKeyDuringLerp_": false,
+        "keyRenderView_": "Scene",
+        "lerpType_": "Spline",
+        "parentName_": "bossEnemy",
+        "startDuration_": 0.30000001192092896,
+        "startEaseType_": "Linear"
+    },
+    "keyName": "subPlayerAttack",
+    "previewLoopSpacing_": 1.0,
+    "previewMode_": "Play"
+}

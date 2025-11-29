@@ -14,19 +14,19 @@ SubPlayerPunchAttackState::SubPlayerPunchAttackState() {
 	// 各パーツのキーフレーム移動の生成
 	// 体
 	bodyApproachKeyframeObject_ = std::make_unique<KeyframeObject3D>();
-	bodyApproachKeyframeObject_->Init("subPlayerPunchBodyApproachKey", "subPlayerBody");
+	bodyApproachKeyframeObject_->Init("subPlayerPunchBodyApproachKey");
 	bodyLeaveKeyframeObject_ = std::make_unique<KeyframeObject3D>();
-	bodyLeaveKeyframeObject_->Init("subPlayerPunchBodyLeaveKey", "subPlayerBody");
+	bodyLeaveKeyframeObject_->Init("subPlayerPunchBodyLeaveKey");
 	// 右手
 	rightHandApproachKeyframeObject_ = std::make_unique<KeyframeObject3D>();
-	rightHandApproachKeyframeObject_->Init("subPlayerPunchRightHandApproachKey", "subPlayerHand");
+	rightHandApproachKeyframeObject_->Init("subPlayerPunchRightHandApproachKey");
 	rightHandLeaveKeyframeObject_ = std::make_unique<KeyframeObject3D>();
-	rightHandLeaveKeyframeObject_->Init("subPlayerPunchRightHandLeaveKey", "subPlayerHand");
+	rightHandLeaveKeyframeObject_->Init("subPlayerPunchRightHandLeaveKey");
 	// 左手
 	leftHandApproachKeyframeObject_ = std::make_unique<KeyframeObject3D>();
-	leftHandApproachKeyframeObject_->Init("subPlayerPunchLeftHandApproachKey", "subPlayerHand");
+	leftHandApproachKeyframeObject_->Init("subPlayerPunchLeftHandApproachKey");
 	leftHandLeaveKeyframeObject_ = std::make_unique<KeyframeObject3D>();
-	leftHandLeaveKeyframeObject_->Init("subPlayerPunchLeftHandLeaveKey", "subPlayerHand");
+	leftHandLeaveKeyframeObject_->Init("subPlayerPunchLeftHandLeaveKey");
 
 	// 追加のキー情報を追加
 	bodyApproachKeyframeObject_->AddKeyValue(AnyMold::Color, addKeyColor);

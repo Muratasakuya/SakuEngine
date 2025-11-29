@@ -1,0 +1,99 @@
+{
+    "CameraKeyObject": {
+        "Keys": [
+            {
+                "Transform": {
+                    "isCompulsion_": false,
+                    "isIgnoreParentScale": true,
+                    "rotation": {
+                        "w": 0.9963896870613098,
+                        "x": 0.08489768207073212,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translation": {
+                        "x": 0.0,
+                        "y": 13.048999786376953,
+                        "z": -31.007999420166016
+                    }
+                },
+                "anyValues": {
+                    "FovY": 0.7200000286102295
+                },
+                "ease": "EaseOutSine",
+                "time": 0.0
+            },
+            {
+                "Transform": {
+                    "isCompulsion_": false,
+                    "isIgnoreParentScale": true,
+                    "rotation": {
+                        "w": 0.9993875622749329,
+                        "x": 0.03499285504221916,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translation": {
+                        "x": 0.0,
+                        "y": 11.782999992370605,
+                        "z": -37.46504592895508
+                    }
+                },
+                "anyValues": {
+                    "FovY": 0.7300000190734863
+                },
+                "ease": "Linear",
+                "time": 0.41353848576545715
+            },
+            {
+                "Transform": {
+                    "isCompulsion_": false,
+                    "isIgnoreParentScale": true,
+                    "rotation": {
+                        "w": 0.9944925904273987,
+                        "x": 0.10480716824531555,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.000013828277588,
+                        "y": 0.9999933838844299,
+                        "z": 0.9999933838844299
+                    },
+                    "translation": {
+                        "x": 0.0,
+                        "y": 19.511798858642578,
+                        "z": -0.7670001983642578
+                    }
+                },
+                "anyValues": {
+                    "FovY": 0.7300000190734863
+                },
+                "ease": "Linear",
+                "time": 0.5699999928474426
+            }
+        ],
+        "addKeyTimeStep_": 0.800000011920929,
+        "isConnectEnds_": false,
+        "isIgnoreParentScale_": true,
+        "isUpdateKeyDuringLerp_": false,
+        "keyRenderView_": "Scene",
+        "lerpType_": "Linear",
+        "parentName_": "player",
+        "startDuration_": 0.0,
+        "startEaseType_": "Linear"
+    },
+    "keyName": "playerStunAttack",
+    "previewLoopSpacing_": 1.0,
+    "previewMode_": "Play"
+}
