@@ -813,6 +813,7 @@
     "StunAttack": {
         "bossEnemyDistance_": -8.0,
         "exitTime_": 0.11999999731779099,
+        "hitEffectOffsetY_": 3.809999942779541,
         "hitStop_": {
             "hitstops": [
                 {

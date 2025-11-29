@@ -5,6 +5,7 @@
 //============================================================================
 #include <Engine/Core/Graphics/PostProcess/Buffer/PostProcessBufferSize.h>
 #include <Engine/Object/Base/GameObject3D.h>
+#include <Engine/Effect/User/EffectGroup.h>
 #include <Engine/Utility/Timer/DelayedHitstop.h>
 #include <Engine/Utility/Enum/Easing.h>
 #include <Game/Objects/GameScene/Player/State/Interface/PlayerBaseAttackState.h>
@@ -20,7 +21,7 @@ public:
 	//	public Methods
 	//========================================================================
 
-	PlayerStunAttackState() = default;
+	PlayerStunAttackState();
 	~PlayerStunAttackState() = default;
 
 	void Enter(Player& player) override;
@@ -69,6 +70,10 @@ private:
 	bool isHitStopStart_ = false;
 	float startHitStopProgress_;
 	DelayedHitstop hitStop_;
+
+	// ヒットエフェクト
+	std::unique_ptr<EffectGroup> hitEffect_;
+	float hitEffectOffsetY_;
 
 	//--------- functions ----------------------------------------------------
 
