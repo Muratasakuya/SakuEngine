@@ -52,6 +52,13 @@ private:
 	// 現在の状態
 	State currentState_;
 
+	// プレイヤーの攻撃補間
+	float bossEnemyDistance_; // ボスとの距離
+	float moveDistance_;      // 移動距離
+	Vector3 startPlayerPos_;
+	Vector3 targetPlayerPos_;
+	StateTimer playerMoveTimer_;
+
 	//--------- functions ----------------------------------------------------
 
 	// update

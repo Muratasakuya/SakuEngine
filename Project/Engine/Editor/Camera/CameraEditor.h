@@ -36,7 +36,7 @@ public:
 
 	// アニメーション処理
 	// 開始呼び出し
-	void StartAnim(const std::string& keyName, bool isAddFirstKey = true);
+	void StartAnim(const std::string& keyName, bool isAddFirstKey = true, bool isUpdateKey = false);
 	// 現在アクティブなアニメーションの終了呼び出し
 	void EndAnim();
 

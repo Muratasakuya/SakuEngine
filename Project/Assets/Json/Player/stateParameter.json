@@ -811,7 +811,13 @@
         "rotationLerpRate_": 0.6000000238418579
     },
     "StunAttack": {
-        "nextAnimDuration_": 0.1599999964237213
+        "bossEnemyDistance_": -8.0,
+        "moveDistance_": -64.0,
+        "nextAnimDuration_": 0.800000011920929,
+        "playerMoveTimer_": {
+            "easeingType_": "EaseOutQuart",
+            "target_": 0.23999999463558197
+        }
     },
     "SwitchAlly": {
         "deltaTimeScaleTimer_": {

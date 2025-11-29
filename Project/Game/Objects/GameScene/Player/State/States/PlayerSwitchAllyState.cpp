@@ -40,7 +40,6 @@ void PlayerSwitchAllyState::Enter(Player& player) {
 	player.GetStunHUD()->SetVaild();
 
 	// ブラー開始
-	PostProcessSystem* postProcessSystem = PostProcessSystem::GetInstance();
 	RadialBlurUpdater* blur = postProcess_->GetUpdater<RadialBlurUpdater>(
 		PostProcessType::RadialBlur);
 	// ブラーをかけて戻さないようにする
@@ -120,7 +119,6 @@ void PlayerSwitchAllyState::Exit([[maybe_unused]] Player& player) {
 	deltaTimeScaleTimer_.Reset();
 
 	// ブラー終了させる
-	PostProcessSystem* postProcessSystem = PostProcessSystem::GetInstance();
 	RadialBlurUpdater* blur = postProcess_->GetUpdater<RadialBlurUpdater>(
 		PostProcessType::RadialBlur);
 	blur->StartReturnState();

@@ -60,7 +60,7 @@ void FollowCamera::StartPlayerActionAnim(PlayerState state) {
 	// 名前が設定されていればアニメーションを再生
 	if (!name.empty()) {
 
-		editor->StartAnim(name, true);
+		editor->StartAnim(name, true, true);
 	}
 }
 
@@ -71,7 +71,7 @@ void FollowCamera::StartPlayerActionAnim(const std::string& animName) {
 	// 名前が設定されていればアニメーションを再生
 	if (!animName.empty()) {
 
-		editor->StartAnim(animName, true);
+		editor->StartAnim(animName, true, true);
 	}
 }
 

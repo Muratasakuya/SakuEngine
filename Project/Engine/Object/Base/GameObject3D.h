@@ -87,6 +87,7 @@ public:
 	void ResetAnimation();
 	Vector3 GetJointWorldPos(const std::string& jointName) const;
 	bool IsAnimationFinished() const { return animation_->IsAnimationFinished(); }
+	bool IsAnimationTransition() const { return animation_->IsTransition(); }
 	int GetAnimationRepeatCount() const { return animation_->GetRepeatCount(); }
 	float GetAnimationDuration(const std::string& animationName) const { return animation_->GetAnimationDuration(animationName); }
 	float GetAnimationProgress() const { return animation_->GetProgress(); }
