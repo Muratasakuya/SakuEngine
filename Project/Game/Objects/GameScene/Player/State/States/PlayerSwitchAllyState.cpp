@@ -57,6 +57,12 @@ void PlayerSwitchAllyState::Enter(Player& player) {
 
 void PlayerSwitchAllyState::Update(Player& player) {
 
+	// 選択状態に入れるためにdeltaTimeを0.0f近くまで下げる
+	deltaTimeScaleTimer_.Update(std::nullopt, false);
+	float deltaScale = std::lerp(1.0f, deltaTimeScale_, deltaTimeScaleTimer_.easedT_);
+	// スケーリング値を設定
+	GameTimer::SetExternalTimeScale(deltaScale);
+
 	// 入力受付待ち
 	switchAllyTimer_ += GameTimer::GetDeltaTime();
 	float t = switchAllyTimer_ / switchAllyTime_;
@@ -107,8 +113,11 @@ void PlayerSwitchAllyState::CheckInput(float t) {
 void PlayerSwitchAllyState::Exit([[maybe_unused]] Player& player) {
 
 	// リセット
+	// 時間スケールを元の値に戻す
+	GameTimer::ClearExternalTimeScale();
 	switchAllyTimer_ = 0.0f;
 	canExit_ = false;
+	deltaTimeScaleTimer_.Reset();
 
 	// ブラー終了させる
 	PostProcessSystem* postProcessSystem = PostProcessSystem::GetInstance();
@@ -121,15 +130,23 @@ void PlayerSwitchAllyState::ImGui([[maybe_unused]] const Player& player) {
 
 	ImGui::Text(std::format("canExit: {}", canExit_).c_str());
 	ImGui::DragFloat("switchAllyTime", &switchAllyTime_, 0.01f);
+	ImGui::DragFloat("deltaTimeScale", &deltaTimeScale_, 0.01f);
+
+	deltaTimeScaleTimer_.ImGui("deltaTimeScaleTimer");
 }
 
 void PlayerSwitchAllyState::ApplyJson(const Json& data) {
 
 	switchAllyTime_ = JsonAdapter::GetValue<float>(data, "switchAllyTime_");
 	JsonAdapter::GetValue<int>(data, "deltaTimeScaleEasingType_");
+
+	deltaTimeScale_ = data.value("deltaTimeScale_", 1.0f);
+	deltaTimeScaleTimer_.FromJson(data.value("deltaTimeScaleTimer_", Json()));
 }
 
 void PlayerSwitchAllyState::SaveJson(Json& data) {
 
 	data["switchAllyTime_"] = switchAllyTime_;
+	data["deltaTimeScale_"] = deltaTimeScale_;
+	deltaTimeScaleTimer_.ToJson(data["deltaTimeScaleTimer_"]);
 }

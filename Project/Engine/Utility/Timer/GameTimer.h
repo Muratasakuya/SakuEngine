@@ -49,6 +49,9 @@ public:
 
 	//--------- accessor -----------------------------------------------------
 
+	static void SetExternalTimeScale(float scale);
+	static void ClearExternalTimeScale();
+
 	// スケーリングされていないdeltaTimeを取得
 	static float GetDeltaTime() { return deltaTime_; }
 	// スケーリングされたdeltaTimeを取得
@@ -103,6 +106,10 @@ private:
 	static HitStop hitStop_;
 	// スローモーション情報
 	static SlowMotion slowMotion_;
+
+	// 外部から設定された時間スケール
+	static bool externalScaleActive_;
+	static float externalScale_;
 
 	static std::chrono::steady_clock::time_point startTime_;
 	static std::chrono::steady_clock::time_point lastFrameTime_;

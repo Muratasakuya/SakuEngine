@@ -16,6 +16,8 @@ float GameTimer::deltaTime_ = 0.0f;
 float GameTimer::timeScale_ = 1.0f;
 GameTimer::HitStop GameTimer::hitStop_{};
 GameTimer::SlowMotion GameTimer::slowMotion_{};
+bool  GameTimer::externalScaleActive_ = false;
+float GameTimer::externalScale_ = 1.0f;
 
 std::chrono::steady_clock::time_point GameTimer::startTime_ = std::chrono::steady_clock::now();
 std::chrono::steady_clock::time_point GameTimer::lastFrameTime_ = std::chrono::steady_clock::now();
@@ -45,6 +47,18 @@ void GameTimer::StartSlowMotion(float timeScale, float duration, float fadeOut, 
 	slowMotion_.startScale = 1.0f;
 	slowMotion_.targetScale = timeScale;
 	slowMotion_.easing = easingType;
+}
+
+void GameTimer::SetExternalTimeScale(float scale) {
+
+	externalScale_ = scale;
+	externalScaleActive_ = true;
+}
+
+void GameTimer::ClearExternalTimeScale() {
+
+	externalScaleActive_ = false;
+	externalScale_ = 1.0f;
 }
 
 void GameTimer::Update() {
@@ -125,6 +139,11 @@ void GameTimer::UpdateTimeScale() {
 	if (hitStop_.active) {
 
 		scale = (std::min)(scale, hitStop_.scale);
+	}
+
+	if (externalScaleActive_) {
+
+		scale = (std::min)(scale, externalScale_);
 	}
 
 	// スケールを渡す
