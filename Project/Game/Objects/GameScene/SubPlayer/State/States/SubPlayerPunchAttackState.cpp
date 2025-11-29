@@ -89,8 +89,9 @@ void SubPlayerPunchAttackState::UpdateApproach() {
 		// 体
 		Quaternion plusRotation = Quaternion::MakeAxisAngle(Vector3(0.0f, 1.0f, 0.0f), bodyOffsetAngleY_);
 		Quaternion minusRotation = Quaternion::MakeAxisAngle(Vector3(0.0f, 1.0f, 0.0f), -bodyOffsetAngleY_);
-		bodyStartRotation_ = Quaternion::Normalize(Quaternion::Multiply(plusRotation, body_->GetRotation()));
-		bodyTargetRotation_ = Quaternion::Normalize(Quaternion::Multiply(minusRotation, body_->GetRotation()));
+		enterBodyRotation_ = body_->GetRotation();
+		bodyStartRotation_ = Quaternion::Normalize(Quaternion::Multiply(plusRotation, enterBodyRotation_));
+		bodyTargetRotation_ = Quaternion::Normalize(Quaternion::Multiply(minusRotation, enterBodyRotation_));
 		// 左手
 		SetupAttackInfo(leftHandAttackInfo_, *leftHand_, false);
 		// 右手
@@ -132,6 +133,7 @@ void SubPlayerPunchAttackState::UpdateAttack() {
 	// 補間終了
 	rightHandAttackInfo_.isActive = false;
 	leftHandAttackInfo_.isActive = false;
+	body_->SetRotation(enterBodyRotation_);
 
 	// 溜め時間更新
 	chargeTimer_.Update();
@@ -165,14 +167,12 @@ void SubPlayerPunchAttackState::UpdateAttack() {
 	// 溜め後の攻撃が終了したら次の状態へ
 	if (chargeAttackTimer_.IsReached()) {
 
-		canExit_ = true;
-
-		//// 次の状態へ
-		//currentState_ = State::Leave;
-		//// 離脱の補間処理を開始
-		//bodyLeaveKeyframeObject_->StartLerp();
-		//rightHandLeaveKeyframeObject_->StartLerp();
-		//leftHandLeaveKeyframeObject_->StartLerp();
+		// 次の状態へ
+		currentState_ = State::Leave;
+		// 離脱の補間処理を開始
+		bodyLeaveKeyframeObject_->StartLerp();
+		rightHandLeaveKeyframeObject_->StartLerp();
+		leftHandLeaveKeyframeObject_->StartLerp();
 	}
 }
 

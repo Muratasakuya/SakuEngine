@@ -96,6 +96,7 @@ private:
 
 	// 体
 	float bodyOffsetAngleY_;        // 体の向き補正角度Y
+	Quaternion enterBodyRotation_;  // 侵入時の回転
 	Quaternion bodyStartRotation_;  // 開始回転
 	Quaternion bodyTargetRotation_; // 目標回転
 	// 手
