@@ -29,7 +29,7 @@ BossEnemyJumpAttackState::BossEnemyJumpAttackState(BossEnemy& bossEnemy) {
 	// 剣エフェクト作成
 	slash_.effect = std::make_unique<EffectGroup>();
 	slash_.effect->Init("jumpAttackSlash", "BossEnemyEffect");
-	slash_.effect->LoadJson("GameEffectGroup/BossEnemy/bossEnemyJumpAttackEffect.json");
+	slash_.effect->LoadJson("GameEffectGroup/BossEnemy/bossEnemyJumpAttackEffect_0.json");
 
 	// 親の設定
 	slash_.effect->SetParent("bossSlash_2", bossEnemy.GetTransform());
