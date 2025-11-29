@@ -177,6 +177,10 @@ void BossEnemy::DerivedInit() {
 	// HUDの更新
 	hudSprites_->SetStatas(stats_);
 	hudSprites_->Update(*this);
+
+	// ポストエフェクトの設定
+	SetPostProcessMask(Bit_RadialBlur);
+	weapon_->SetPostProcessMask(Bit_RadialBlur);
 }
 
 void BossEnemy::SetPlayer(Player* player) {
