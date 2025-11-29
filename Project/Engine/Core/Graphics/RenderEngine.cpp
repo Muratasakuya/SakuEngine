@@ -248,8 +248,8 @@ void RenderEngine::Renderers(ViewType type, bool enableMesh) {
 	dxCommand_->SetDescriptorHeaps({ srvDescriptor_->GetDescriptorHeap() });
 
 	// sprite描画
-	// model描画前
-	spriteRenderer_->Rendering(SpriteLayer::PreModel, sceneBuffer_.get(), dxCommand_);
+	// model描画前、ポストエフェクト適応
+	spriteRenderer_->ApplyPostProcessRendering(SpriteLayer::PreModel, sceneBuffer_.get(), dxCommand_);
 
 	if (isDebugEnable) {
 
@@ -273,8 +273,8 @@ void RenderEngine::Renderers(ViewType type, bool enableMesh) {
 	}
 
 	// sprite描画
-	// model描画後
-	spriteRenderer_->Rendering(SpriteLayer::PostModel, sceneBuffer_.get(), dxCommand_);
+	// model描画後、ポストエフェクト適応
+	spriteRenderer_->ApplyPostProcessRendering(SpriteLayer::PostModel, sceneBuffer_.get(), dxCommand_);
 
 #if defined(_DEBUG) || defined(_DEVELOPBUILD)
 
@@ -301,6 +301,9 @@ void RenderEngine::BeginRenderFrameBuffer() {
 }
 
 void RenderEngine::EndRenderFrameBuffer() {
+
+	// sprite描画、ポストエフェクト適応を適用しない
+	spriteRenderer_->IrrelevantPostProcessRendering(sceneBuffer_.get(), dxCommand_);
 
 #if defined(_DEBUG) || defined(_DEVELOPBUILD)
 
