@@ -22,6 +22,11 @@ struct Plane {
 	float2 size;
 	float2 pivot;
 	uint mode;
+	
+	float4 leftTopVertexColor;
+	float4 rightTopVertexColor;
+	float4 leftBottomVertexColor;
+	float4 rightBottomVertexColor;
 };
 
 StructuredBuffer<Plane> gPlanes : register(t0);
@@ -59,30 +64,35 @@ out vertices MSOutput verts[4], out indices uint3 polys[2]) {
 
 		float3 localPos;
 		float2 uv = float2(0.0f, 0.0f);
+		float4 vertexColor;
 		switch (groupThreadId) {
 			// â∫ç∂
 			case 0:
 
 				localPos = float3(-halfSize.x, -halfSize.y, 0.0f);
 				uv = float2(0.0f, 1.0f);
+				vertexColor = plane.leftBottomVertexColor;
 				break;
 			// â∫âE
 			case 1:
 
 				localPos = float3(halfSize.x, -halfSize.y, 0.0f);
 				uv = float2(1.0f, 1.0f);
+				vertexColor = plane.rightBottomVertexColor;
 				break;
 			// è„ç∂
 			case 2:
 
 				localPos = float3(-halfSize.x, halfSize.y, 0.0f);
 				uv = float2(0.0f, 0.0f);
+				vertexColor = plane.leftTopVertexColor;
 				break;
 			// è„âE
 			default:
 
 				localPos = float3(halfSize.x, halfSize.y, 0.0f);
 				uv = float2(1.0f, 0.0f);
+				vertexColor = plane.rightTopVertexColor;
 				break;
 		}
 		
@@ -117,7 +127,7 @@ out vertices MSOutput verts[4], out indices uint3 polys[2]) {
 		vertex.position = pos;
 		vertex.texcoord = uv;
 		vertex.instanceID = instanceIndex;
-		vertex.vertexColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
+		vertex.vertexColor = vertexColor;
 		
 		verts[groupThreadId] = vertex;
 	}

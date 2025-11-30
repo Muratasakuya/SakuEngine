@@ -10,9 +10,24 @@
         "attackOffsetTranslation_": -8.100000381469727,
         "easingType_": 15,
         "exitTime_": 0.07999999821186066,
+        "firstSlashEffectOffset": {
+            "x": 0.0,
+            "y": 8.0,
+            "z": 0.0
+        },
         "lerpTime_": 0.07999999821186066,
         "nextAnimDuration_": 0.0,
-        "rotationLerpRate_": 14.0
+        "rotationLerpRate_": 14.0,
+        "secondSlashEffectOffset": {
+            "x": 0.0,
+            "y": 5.599999904632568,
+            "z": 0.0
+        },
+        "thirdSlashEffectOffset": {
+            "x": 0.0,
+            "y": 8.100000381469727,
+            "z": 0.0
+        }
     },
     "Falter": {
         "backStepSpeed_": 0.0,
@@ -76,24 +91,24 @@
     "JumpAttack": {
         "JumpKeyframes": [
             {
-                "x": 155.31805419921875,
+                "x": 9.610511779785156,
                 "y": 0.0,
-                "z": 21.69054412841797
+                "z": -158.76087951660156
             },
             {
-                "x": 155.59312438964844,
+                "x": 9.664010047912598,
                 "y": 20.0,
-                "z": 21.79408073425293
+                "z": -158.98828125
             },
             {
-                "x": 155.86817932128906,
+                "x": 9.717508316040039,
                 "y": 18.299999237060547,
-                "z": 21.897619247436523
+                "z": -159.21568298339844
             },
             {
-                "x": 156.14324951171875,
+                "x": 9.77100658416748,
                 "y": 0.0,
-                "z": 22.001155853271484
+                "z": -159.44308471679688
             }
         ],
         "LerpTranslationXZ": {
@@ -112,20 +127,25 @@
                 "target_": 0.5699999928474426
             },
             "move_.end": {
-                "x": 156.14324951171875,
-                "y": 0.04182785749435425,
-                "z": 22.001155853271484
+                "x": 9.77100658416748,
+                "y": 0.03360790014266968,
+                "z": -159.44308471679688
             },
             "move_.start": {
-                "x": 155.31805419921875,
+                "x": 9.610511779785156,
                 "y": 0.0,
-                "z": 21.69054412841797
+                "z": -158.76087951660156
             },
             "useReturnTimer_": false
         },
         "jumpEasing_": "EaseInQuad",
         "nextAnimDuration_": 0.1599999964237213,
         "rotationLerpRate_": 8.0,
+        "slashEffectOffset_": {
+            "x": 0.0,
+            "y": 8.899999618530273,
+            "z": 0.0
+        },
         "targetDistance_": 16.0
     },
     "LightAttack": {
@@ -134,7 +154,12 @@
         "exitTime_": 0.07999999821186066,
         "lerpTime_": 0.20000000298023224,
         "nextAnimDuration_": 0.03200000151991844,
-        "rotationLerpRate_": 14.0
+        "rotationLerpRate_": 14.0,
+        "slashEffectOffset_": {
+            "x": 3.200000047683716,
+            "y": 4.599999904632568,
+            "z": 0.0
+        }
     },
     "ProjectileAttack": {
         "LaunchTimer": {
@@ -177,8 +202,18 @@
         "attackOffsetTranslation_": -9.0,
         "easingType_": 4,
         "exitTime_": 0.07999999821186066,
+        "lightSlashOffset": {
+            "x": 0.0,
+            "y": 6.400000095367432,
+            "z": 0.0
+        },
         "nextAnimDuration_": 0.0020000000949949026,
-        "rotationLerpRate_": 14.0
+        "rotationLerpRate_": 14.0,
+        "strongSlashOffset": {
+            "x": 0.0,
+            "y": 6.0,
+            "z": 0.0
+        }
     },
     "Stun": {
         "maxAnimationCount_": 3,

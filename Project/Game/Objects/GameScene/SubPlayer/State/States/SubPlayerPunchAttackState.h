@@ -4,6 +4,7 @@
 //	include
 //============================================================================
 #include <Engine/Object/Base/KeyframeObject3D.h>
+#include <Engine/Effect/User/EffectGroup.h>
 #include <Engine/Utility/Animation/AnimationLoop.h>
 #include <Game/Objects/GameScene/SubPlayer/State/Interface/SubPlayerIState.h>
 
@@ -68,6 +69,7 @@ private:
 		bool isActive = false;
 		StateTimer timer;   // 攻撃タイマー
 		AnimationLoop loop; // ループ
+		float prevRawT = 0.0f;
 	};
 
 	//--------- variables ----------------------------------------------------
@@ -107,6 +109,9 @@ private:
 	// 手
 	AttackInfo rightHandAttackInfo_;  // 右手攻撃情報
 	AttackInfo leftHandAttackInfo_;   // 左手攻撃情報
+
+	// ヒットエフェクト
+	std::unique_ptr<EffectGroup> hitEffect_;
 
 	//--------- functions ----------------------------------------------------
 

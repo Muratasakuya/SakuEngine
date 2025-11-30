@@ -13,6 +13,31 @@
 //	BossEnemyContinuousAttackState classMethods
 //============================================================================
 
+BossEnemyContinuousAttackState::BossEnemyContinuousAttackState(BossEnemy& bossEnemy) {
+
+	// 剣エフェクト作成
+	// 1回目
+	firstSlash_.effect = std::make_unique<EffectGroup>();
+	firstSlash_.effect->Init("continuousAttackFirstSlash", "BossEnemyEffect");
+	firstSlash_.effect->LoadJson("GameEffectGroup/BossEnemy/bossEnemyContinuousAttackFirstSlashEffect.json");
+	// 2回目
+	secondSlash_.effect = std::make_unique<EffectGroup>();
+	secondSlash_.effect->Init("continuousAttackSecondSlash", "BossEnemyEffect");
+	secondSlash_.effect->LoadJson("GameEffectGroup/BossEnemy/bossEnemyJumpAttackEffect_1.json");
+	// 3回目
+	thirdSlash_.effect = std::make_unique<EffectGroup>();
+	thirdSlash_.effect->Init("continuousAttackThirdSlash", "BossEnemyEffect");
+	thirdSlash_.effect->LoadJson("GameEffectGroup/BossEnemy/bossEnemyLightAttackEffect_2.json");
+
+	// 親の設定
+	firstSlash_.effect->SetParent("bossSlash_3", bossEnemy.GetTransform());
+	firstSlash_.effectNodeName = "bossSlash_3";
+	secondSlash_.effect->SetParent("bossSlash_2", bossEnemy.GetTransform());
+	secondSlash_.effectNodeName = "bossSlash_2";
+	thirdSlash_.effect->SetParent("bossSlash_0", bossEnemy.GetTransform());
+	thirdSlash_.effectNodeName = "bossSlash_0";
+}
+
 void BossEnemyContinuousAttackState::Enter(BossEnemy& bossEnemy) {
 
 	// 攻撃予兆アニメーションを設定
@@ -40,6 +65,8 @@ void BossEnemyContinuousAttackState::Update(BossEnemy& bossEnemy) {
 
 	// パリィ攻撃のタイミングを更新
 	UpdateParryTiming(bossEnemy);
+	// エフェクトイベント更新
+	UpdateEffectEvent(bossEnemy);
 
 	// 状態に応じて更新
 	switch (currentState_) {
@@ -56,6 +83,14 @@ void BossEnemyContinuousAttackState::Update(BossEnemy& bossEnemy) {
 		break;
 	}
 	}
+}
+
+void BossEnemyContinuousAttackState::UpdateAlways(BossEnemy& bossEnemy) {
+
+	// エフェクト更新
+	firstSlash_.Update(bossEnemy);
+	secondSlash_.Update(bossEnemy);
+	thirdSlash_.Update(bossEnemy);
 }
 
 void BossEnemyContinuousAttackState::UpdateParrySign(BossEnemy& bossEnemy) {
@@ -152,6 +187,25 @@ void BossEnemyContinuousAttackState::UpdateParryTiming(BossEnemy& bossEnemy) {
 	}
 }
 
+void BossEnemyContinuousAttackState::UpdateEffectEvent(BossEnemy& bossEnemy) {
+
+	// 剣エフェクト発生
+	// エフェクトイベントに応じて発生0,1,2は順番
+	if (emitCount_ == 0 && bossEnemy.IsEventKey("Effect", 0)) {
+
+		firstSlash_.Emit(bossEnemy);
+		++emitCount_;
+	}
+	if (bossEnemy.IsEventKey("Effect", 1)) {
+
+		secondSlash_.Emit(bossEnemy);
+	}
+	if (bossEnemy.IsEventKey("Effect", 2)) {
+
+		thirdSlash_.Emit(bossEnemy);
+	}
+}
+
 void BossEnemyContinuousAttackState::Exit(BossEnemy& bossEnemy) {
 
 	// リセット
@@ -163,11 +217,13 @@ void BossEnemyContinuousAttackState::Exit(BossEnemy& bossEnemy) {
 	keyEventIndex_ = 0;
 	currentState_ = State::ParrySign;
 	bossEnemy.ResetParryTiming();
+	emitCount_ = 0;
 }
 
 void BossEnemyContinuousAttackState::ImGui(const BossEnemy& bossEnemy) {
 
 	ImGui::Text(std::format("reachedPlayer: {}", reachedPlayer_).c_str());
+	ImGui::Text(std::format("emitCount: {}", emitCount_).c_str());
 
 	ImGui::DragFloat("nextAnimDuration", &nextAnimDuration_, 0.001f);
 	ImGui::DragFloat("rotationLerpRate", &rotationLerpRate_, 0.001f);
@@ -180,6 +236,10 @@ void BossEnemyContinuousAttackState::ImGui(const BossEnemy& bossEnemy) {
 	ImGui::Text(std::format("keyEventIndex: {}", keyEventIndex_).c_str());
 	ImGui::Text("exitTimer: %.3f", exitTimer_);
 	Easing::SelectEasingType(easingType_);
+
+	ImGui::DragFloat3("firstSlashOffset", &firstSlash_.effectOffset.x, 0.1f);
+	ImGui::DragFloat3("secondSlashOffset", &secondSlash_.effectOffset.x, 0.1f);
+	ImGui::DragFloat3("thirdSlashOffset", &thirdSlash_.effectOffset.x, 0.1f);
 
 	// 座標を設定
 	// 座標を設定
@@ -202,6 +262,10 @@ void BossEnemyContinuousAttackState::ApplyJson(const Json& data) {
 	attackOffsetTranslation_ = JsonAdapter::GetValue<float>(data, "attackOffsetTranslation_");
 	exitTime_ = JsonAdapter::GetValue<float>(data, "exitTime_");
 	easingType_ = static_cast<EasingType>(JsonAdapter::GetValue<int>(data, "easingType_"));
+
+	firstSlash_.effectOffset = Vector3::FromJson(data.value("firstSlashEffectOffset", Json()));
+	secondSlash_.effectOffset = Vector3::FromJson(data.value("secondSlashEffectOffset", Json()));
+	thirdSlash_.effectOffset = Vector3::FromJson(data.value("thirdSlashEffectOffset", Json()));
 }
 
 void BossEnemyContinuousAttackState::SaveJson(Json& data) {
@@ -213,4 +277,8 @@ void BossEnemyContinuousAttackState::SaveJson(Json& data) {
 	data["attackOffsetTranslation_"] = attackOffsetTranslation_;
 	data["exitTime_"] = exitTime_;
 	data["easingType_"] = static_cast<int>(easingType_);
+
+	data["firstSlashEffectOffset"] = firstSlash_.effectOffset.ToJson();
+	data["secondSlashEffectOffset"] = secondSlash_.effectOffset.ToJson();
+	data["thirdSlashEffectOffset"] = thirdSlash_.effectOffset.ToJson();
 }

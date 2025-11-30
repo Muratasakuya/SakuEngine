@@ -16,12 +16,13 @@ public:
 	//	public Methods
 	//========================================================================
 
-	BossEnemyLightAttackState() = default;
+	BossEnemyLightAttackState(BossEnemy& bossEnemy);
 	~BossEnemyLightAttackState() = default;
 
 	void Enter(BossEnemy& bossEnemy) override;
 
 	void Update(BossEnemy& bossEnemy) override;
+	void UpdateAlways(BossEnemy& bossEnemy) override;
 
 	void Exit(BossEnemy& bossEnemy) override;
 
@@ -64,6 +65,9 @@ private:
 	float exitTime_;  // 遷移可能にするまでの時間
 
 	bool reachedPlayer_; // 近くまで来たかどうか
+
+	// 剣エフェクト
+	SlashEffect slash_;
 
 	// debug
 	bool parried_;

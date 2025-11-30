@@ -26,3 +26,17 @@ void BossEnemyIState::LookTarget(BossEnemy& bossEnemy, const Vector3& target) {
 		Vector3(0.0f, 1.0f, 0.0f), bossEnemy.GetRotation(), rotationLerpRate_ * deltaTime);
 	bossEnemy.SetRotation(bossRotation);
 }
+
+void BossEnemyIState::SlashEffect::Emit(BossEnemy& bossEnemy) {
+
+	// エフェクト発生
+	effect->Emit(bossEnemy.GetRotation() * effectOffset);
+}
+
+void BossEnemyIState::SlashEffect::Update(BossEnemy& bossEnemy) {
+
+	// 剣エフェクトの更新、親の回転を設定する
+	effect->SetParentRotation(effectNodeName,
+		Quaternion::Normalize(bossEnemy.GetRotation()), ParticleUpdateModuleID::Rotation);
+	effect->Update();
+}

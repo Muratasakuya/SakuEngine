@@ -14,6 +14,18 @@
 //	BossEnemyLightAttackState classMethods
 //============================================================================
 
+BossEnemyLightAttackState::BossEnemyLightAttackState(BossEnemy& bossEnemy) {
+
+	// 剣エフェクト作成
+	slash_.effect = std::make_unique<EffectGroup>();
+	slash_.effect->Init("lightAttackSlash", "BossEnemyEffect");
+	slash_.effect->LoadJson("GameEffectGroup/BossEnemy/bossEnemyLightAttackEffect_0.json");
+
+	// 親の設定
+	slash_.effect->SetParent("bossSlash_0", bossEnemy.GetTransform());
+	slash_.effectNodeName = "bossSlash_0";
+}
+
 void BossEnemyLightAttackState::Enter(BossEnemy& bossEnemy) {
 
 	// 攻撃予兆アニメーションを設定
@@ -56,6 +68,12 @@ void BossEnemyLightAttackState::Update(BossEnemy& bossEnemy) {
 		break;
 	}
 	}
+}
+
+void BossEnemyLightAttackState::UpdateAlways(BossEnemy& bossEnemy) {
+
+	// 剣エフェクトの更新、親の回転を設定する
+	slash_.Update(bossEnemy);
 }
 
 void BossEnemyLightAttackState::UpdateParrySign(BossEnemy& bossEnemy) {
@@ -143,6 +161,9 @@ void BossEnemyLightAttackState::LerpTranslation(BossEnemy& bossEnemy) {
 
 			reachedPlayer_ = true;
 			bossEnemy.SetTranslation(target);
+
+			// 剣エフェクトの発生
+			slash_.Emit(bossEnemy);
 		}
 	}
 }
@@ -168,6 +189,7 @@ void BossEnemyLightAttackState::ImGui(const BossEnemy& bossEnemy) {
 
 	ImGui::DragFloat("attackOffsetTranslation", &attackOffsetTranslation_, 0.1f);
 	ImGui::DragFloat("exitTime", &exitTime_, 0.01f);
+	ImGui::DragFloat3("slashEffectOffset", &slash_.effectOffset.x, 0.1f);
 
 	ImGui::Text(std::format("canExit: {}", canExit_).c_str());
 	ImGui::Text("exitTimer: %.3f", exitTimer_);
@@ -191,6 +213,8 @@ void BossEnemyLightAttackState::ApplyJson(const Json& data) {
 	attackOffsetTranslation_ = JsonAdapter::GetValue<float>(data, "attackOffsetTranslation_");
 	exitTime_ = JsonAdapter::GetValue<float>(data, "exitTime_");
 	easingType_ = static_cast<EasingType>(JsonAdapter::GetValue<int>(data, "easingType_"));
+
+	slash_.effectOffset = Vector3::FromJson(data.value("slashEffectOffset_", Json()));
 }
 
 void BossEnemyLightAttackState::SaveJson(Json& data) {
@@ -202,4 +226,6 @@ void BossEnemyLightAttackState::SaveJson(Json& data) {
 	data["attackOffsetTranslation_"] = attackOffsetTranslation_;
 	data["exitTime_"] = exitTime_;
 	data["easingType_"] = static_cast<int>(easingType_);
+
+	data["slashEffectOffset_"] = slash_.effectOffset.ToJson();
 }

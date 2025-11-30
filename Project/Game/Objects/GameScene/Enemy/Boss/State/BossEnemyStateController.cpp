@@ -35,13 +35,13 @@ void BossEnemyStateController::Init(BossEnemy& owner, uint32_t phaseCount) {
 	states_.emplace(BossEnemyState::Teleport, std::make_unique<BossEnemyTeleportationState>());
 	states_.emplace(BossEnemyState::Stun, std::make_unique<BossEnemyStunState>(owner));
 	states_.emplace(BossEnemyState::Falter, std::make_unique<BossEnemyFalterState>());
-	states_.emplace(BossEnemyState::LightAttack, std::make_unique<BossEnemyLightAttackState>());
-	states_.emplace(BossEnemyState::StrongAttack, std::make_unique<BossEnemyStrongAttackState>());
+	states_.emplace(BossEnemyState::LightAttack, std::make_unique<BossEnemyLightAttackState>(owner));
+	states_.emplace(BossEnemyState::StrongAttack, std::make_unique<BossEnemyStrongAttackState>(owner));
 	states_.emplace(BossEnemyState::ChargeAttack, std::make_unique<BossEnemyChargeAttackState>());
 	states_.emplace(BossEnemyState::RushAttack, std::make_unique<BossEnemyRushAttackState>());
-	states_.emplace(BossEnemyState::ContinuousAttack, std::make_unique<BossEnemyContinuousAttackState>());
+	states_.emplace(BossEnemyState::ContinuousAttack, std::make_unique<BossEnemyContinuousAttackState>(owner));
 	states_.emplace(BossEnemyState::GreatAttack, std::make_unique<BossEnemyGreatAttackState>());
-	states_.emplace(BossEnemyState::JumpAttack, std::make_unique<BossEnemyJumpAttackState>());
+	states_.emplace(BossEnemyState::JumpAttack, std::make_unique<BossEnemyJumpAttackState>(owner));
 	states_.emplace(BossEnemyState::ProjectileAttack, std::make_unique<BossEnemyProjectileAttackState>(phaseCount));
 
 	// json適応

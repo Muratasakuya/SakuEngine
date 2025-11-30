@@ -3,6 +3,7 @@
 //============================================================================
 //	include
 //============================================================================
+#include <Engine/Effect/User/EffectGroup.h>
 #include <Game/Objects/GameScene/Enemy/Boss/State/Interface/BossEnemyIState.h>
 
 //============================================================================
@@ -16,12 +17,13 @@ public:
 	//	public Methods
 	//========================================================================
 
-	BossEnemyStrongAttackState();
+	BossEnemyStrongAttackState(BossEnemy& bossEnemy);
 	~BossEnemyStrongAttackState() = default;
 
 	void Enter(BossEnemy& bossEnemy) override;
 
 	void Update(BossEnemy& bossEnemy) override;
+	void UpdateAlways(BossEnemy& bossEnemy) override;
 
 	void Exit(BossEnemy& bossEnemy) override;
 
@@ -66,6 +68,10 @@ private:
 	float attack2ndAnimDuration_; // 2回目のアニメーション補間時間
 	float attack2ndLerpTime_;     // 座標補間時間
 	bool reachedPlayer_; // 近くまで来たかどうか
+
+	// 剣エフェクト
+	SlashEffect strongSlash_; // 強攻撃エフェクト
+	SlashEffect lightSlash_;  // 軽攻撃エフェクト
 
 	// debug
 	std::unordered_map<State, bool> parriedMaps_;

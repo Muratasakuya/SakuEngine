@@ -14,7 +14,7 @@
 //	BossEnemyJumpAttackState classMethods
 //============================================================================
 
-BossEnemyJumpAttackState::BossEnemyJumpAttackState() {
+BossEnemyJumpAttackState::BossEnemyJumpAttackState(BossEnemy& bossEnemy) {
 
 	// サイズ分確保
 	float offsetY = 2.0f;
@@ -25,6 +25,15 @@ BossEnemyJumpAttackState::BossEnemyJumpAttackState() {
 		jumpKeyframes_.emplace_back(Vector3(0.0f, posY, 0.0f));
 	}
 	canExit_ = false;
+
+	// 剣エフェクト作成
+	slash_.effect = std::make_unique<EffectGroup>();
+	slash_.effect->Init("jumpAttackSlash", "BossEnemyEffect");
+	slash_.effect->LoadJson("GameEffectGroup/BossEnemy/bossEnemyJumpAttackEffect_0.json");
+
+	// 親の設定
+	slash_.effect->SetParent("bossSlash_2", bossEnemy.GetTransform());
+	slash_.effectNodeName = "bossSlash_2";
 }
 
 void BossEnemyJumpAttackState::Enter(BossEnemy& bossEnemy) {
@@ -81,6 +90,9 @@ void BossEnemyJumpAttackState::UpdatePre(BossEnemy& bossEnemy) {
 		SetLerpTranslation(bossEnemy);
 		// 補間開始
 		lerpTranslationXZ_.Start();
+
+		// 剣エフェクト発生
+		slash_.Emit(bossEnemy);
 	}
 }
 
@@ -110,7 +122,10 @@ void BossEnemyJumpAttackState::UpdateJump(BossEnemy& bossEnemy) {
 	}
 }
 
-void BossEnemyJumpAttackState::UpdateAlways([[maybe_unused]] BossEnemy& bossEnemy) {
+void BossEnemyJumpAttackState::UpdateAlways(BossEnemy& bossEnemy) {
+
+	// 剣エフェクト更新
+	slash_.Update(bossEnemy);
 }
 
 void BossEnemyJumpAttackState::Exit([[maybe_unused]] BossEnemy& bossEnemy) {
@@ -149,6 +164,7 @@ void BossEnemyJumpAttackState::ImGui([[maybe_unused]] const BossEnemy& bossEnemy
 	ImGui::DragFloat("nextAnimDuration", &nextAnimDuration_, 0.01f);
 	ImGui::DragFloat("rotationLerpRate", &rotationLerpRate_, 0.01f);
 	ImGui::DragFloat("targetDistance", &targetDistance_, 0.01f);
+	ImGui::DragFloat3("slashEffectOffset", &slash_.effectOffset.x, 0.1f);
 
 	lerpTranslationXZ_.ImGui("LerpTranslationXZ");
 
@@ -186,6 +202,8 @@ void BossEnemyJumpAttackState::ApplyJson(const Json& data) {
 
 		jumpKeyframes_[i] = Vector3::FromJson(data["JumpKeyframes"][i]);
 	}
+
+	slash_.effectOffset = Vector3::FromJson(data.value("slashEffectOffset_", Json()));
 }
 
 void BossEnemyJumpAttackState::SaveJson(Json& data) {
@@ -200,4 +218,6 @@ void BossEnemyJumpAttackState::SaveJson(Json& data) {
 
 		data["JumpKeyframes"][i] = jumpKeyframes_[i].ToJson();
 	}
+
+	data["slashEffectOffset_"] = slash_.effectOffset.ToJson();
 }

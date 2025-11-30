@@ -14,6 +14,14 @@
 //	PlayerStunAttackState classMethods
 //============================================================================
 
+PlayerStunAttackState::PlayerStunAttackState() {
+
+	// ヒットエフェクト作成
+	hitEffect_ = std::make_unique<EffectGroup>();
+	hitEffect_->Init("stunAttackHit", "PlayerEffect");
+	hitEffect_->LoadJson("GameEffectGroup/Player/playerHitEffect_0.json");
+}
+
 void PlayerStunAttackState::Enter(Player& player) {
 
 	currentState_ = State::SubPlayerAttack;
@@ -52,6 +60,9 @@ void PlayerStunAttackState::UpdateAlways([[maybe_unused]] Player& player) {
 
 	// ヒットストップ更新
 	hitStop_.Update();
+
+	// ヒットエフェクト更新
+	hitEffect_->Update();
 }
 
 void PlayerStunAttackState::UpdateSubPlayerAttack(Player& player) {
@@ -121,6 +132,11 @@ void PlayerStunAttackState::UpdatePlayerAttack(Player& player) {
 		// ヒットストップ開始
 		isHitStopStart_ = true;
 		hitStop_.Start();
+
+		// ヒットエフェクト発生
+		Vector3 hitEffectPos = targetPlayerPos_;
+		hitEffectPos.y = hitEffectOffsetY_;
+		hitEffect_->Emit(hitEffectPos);
 	}
 
 	// 時間経過で状態終了
@@ -151,6 +167,7 @@ void PlayerStunAttackState::ImGui([[maybe_unused]] const Player& player) {
 	ImGui::DragFloat("bossEnemyDistance", &bossEnemyDistance_, 0.01f);
 	ImGui::DragFloat("moveDistance", &moveDistance_, 0.01f);
 	ImGui::DragFloat("startHitStopProgress", &startHitStopProgress_, 0.01f);
+	ImGui::DragFloat("hitEffectOffsetY", &hitEffectOffsetY_, 0.01f);
 
 	playerMoveTimer_.ImGui("playerMoveTimer");
 
@@ -164,6 +181,7 @@ void PlayerStunAttackState::ApplyJson(const Json& data) {
 	moveDistance_ = data.value("moveDistance_", 1.0f);
 	exitTime_ = data.value("exitTime_", 1.0f);
 	startHitStopProgress_ = data.value("startHitStopProgress_", 1.0f);
+	hitEffectOffsetY_ = data.value("hitEffectOffsetY_", 1.0f);
 
 	playerMoveTimer_.FromJson(data.value("playerMoveTimer_", Json()));
 	hitStop_.FromJson(data.value("hitStop_", Json()));
@@ -176,6 +194,7 @@ void PlayerStunAttackState::SaveJson(Json& data) {
 	data["moveDistance_"] = moveDistance_;
 	data["exitTime_"] = exitTime_;
 	data["startHitStopProgress_"] = startHitStopProgress_;
+	data["hitEffectOffsetY_"] = hitEffectOffsetY_;
 
 	playerMoveTimer_.ToJson(data["playerMoveTimer_"]);
 	hitStop_.ToJson(data["hitStop_"]);

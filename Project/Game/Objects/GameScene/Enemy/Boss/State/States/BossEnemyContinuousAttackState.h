@@ -16,12 +16,13 @@ public:
 	//	public Methods
 	//========================================================================
 
-	BossEnemyContinuousAttackState() = default;
+	BossEnemyContinuousAttackState(BossEnemy& bossEnemy);
 	~BossEnemyContinuousAttackState() = default;
 
 	void Enter(BossEnemy& bossEnemy) override;
 
 	void Update(BossEnemy& bossEnemy) override;
+	void UpdateAlways(BossEnemy& bossEnemy) override;
 
 	void Exit(BossEnemy& bossEnemy) override;
 
@@ -64,8 +65,14 @@ private:
 	float exitTime_;  // 遷移可能にするまでの時間
 	bool reachedPlayer_; // 近くまで来たかどうか
 
+	// 剣エフェクト
+	SlashEffect firstSlash_;  // 1回目
+	SlashEffect secondSlash_; // 2回目
+	SlashEffect thirdSlash_;  // 3回目
+
 	// debug
 	bool parried_;
+	uint32_t emitCount_;
 
 	//--------- functions ----------------------------------------------------
 
@@ -73,4 +80,5 @@ private:
 	void UpdateParrySign(BossEnemy& bossEnemy);
 	void UpdateAttack(BossEnemy& bossEnemy);
 	void UpdateParryTiming(BossEnemy& bossEnemy);
+	void UpdateEffectEvent(BossEnemy& bossEnemy);
 };

@@ -13,10 +13,26 @@
 //	BossEnemyStrongAttackState classMethods
 //============================================================================
 
-BossEnemyStrongAttackState::BossEnemyStrongAttackState() {
+BossEnemyStrongAttackState::BossEnemyStrongAttackState(BossEnemy& bossEnemy) {
 
 	parriedMaps_[State::Attack1st] = false;
 	parriedMaps_[State::Attack2nd] = false;
+
+	// 剣エフェクト作成
+	// 強攻撃エフェクト
+	strongSlash_.effect = std::make_unique<EffectGroup>();
+	strongSlash_.effect->Init("strongAttackSlash", "BossEnemyEffect");
+	strongSlash_.effect->LoadJson("GameEffectGroup/BossEnemy/bossEnemyStrongAttackEffect.json");
+	// 弱攻撃エフェクト
+	lightSlash_.effect = std::make_unique<EffectGroup>();
+	lightSlash_.effect->Init("lightAttackSlash", "BossEnemyEffect");
+	lightSlash_.effect->LoadJson("GameEffectGroup/BossEnemy/bossEnemyLightAttackEffect_1.json");
+
+	// 親の設定
+	strongSlash_.effect->SetParent("bossSlash_1", bossEnemy.GetTransform());
+	strongSlash_.effectNodeName = "bossSlash_1";
+	lightSlash_.effect->SetParent("bossSlash_0", bossEnemy.GetTransform());
+	lightSlash_.effectNodeName = "bossSlash_0";
 }
 
 void BossEnemyStrongAttackState::Enter(BossEnemy& bossEnemy) {
@@ -70,6 +86,13 @@ void BossEnemyStrongAttackState::Update(BossEnemy& bossEnemy) {
 	}
 }
 
+void BossEnemyStrongAttackState::UpdateAlways(BossEnemy& bossEnemy) {
+
+	// エフェクト更新
+	strongSlash_.Update(bossEnemy);
+	lightSlash_.Update(bossEnemy);
+}
+
 void BossEnemyStrongAttackState::UpdateParrySign(BossEnemy& bossEnemy) {
 
 	// 目標座標を常に更新する
@@ -89,6 +112,9 @@ void BossEnemyStrongAttackState::UpdateParrySign(BossEnemy& bossEnemy) {
 
 		// 座標を設定
 		startPos_ = bossEnemy.GetTranslation();
+
+		// 剣エフェクト発生
+		strongSlash_.Emit(bossEnemy);
 	}
 }
 
@@ -109,6 +135,9 @@ void BossEnemyStrongAttackState::UpdateAttack1st(BossEnemy& bossEnemy) {
 		lerpTimer_ = 0.0f;
 		startPos_ = bossEnemy.GetTranslation();
 		reachedPlayer_ = false;
+
+		// 剣エフェクト発生
+		lightSlash_.Emit(bossEnemy);
 	}
 }
 
@@ -217,6 +246,9 @@ void BossEnemyStrongAttackState::ImGui([[maybe_unused]] const BossEnemy& bossEne
 	ImGui::Text("exitTimer: %.3f", exitTimer_);
 	Easing::SelectEasingType(easingType_);
 
+	ImGui::DragFloat3("strongSlashOffset", &strongSlash_.effectOffset.x, 0.1f);
+	ImGui::DragFloat3("lightSlashOffset", &lightSlash_.effectOffset.x, 0.1f);
+
 	// 座標を設定
 	// 座標を設定
 	Vector3 start = bossEnemy.GetTranslation();
@@ -239,6 +271,9 @@ void BossEnemyStrongAttackState::ApplyJson(const Json& data) {
 	attackOffsetTranslation_ = JsonAdapter::GetValue<float>(data, "attackOffsetTranslation_");
 	exitTime_ = JsonAdapter::GetValue<float>(data, "exitTime_");
 	easingType_ = static_cast<EasingType>(JsonAdapter::GetValue<int>(data, "easingType_"));
+
+	strongSlash_.effectOffset = Vector3::FromJson(data.value("strongSlashOffset", Json()));
+	lightSlash_.effectOffset = Vector3::FromJson(data.value("lightSlashOffset", Json()));
 }
 
 void BossEnemyStrongAttackState::SaveJson(Json& data) {
@@ -251,4 +286,7 @@ void BossEnemyStrongAttackState::SaveJson(Json& data) {
 	data["attackOffsetTranslation_"] = attackOffsetTranslation_;
 	data["exitTime_"] = exitTime_;
 	data["easingType_"] = static_cast<int>(easingType_);
+
+	data["strongSlashOffset"] = strongSlash_.effectOffset.ToJson();
+	data["lightSlashOffset"] = lightSlash_.effectOffset.ToJson();
 }
