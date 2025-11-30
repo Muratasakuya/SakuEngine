@@ -69,3 +69,30 @@ void AnimationLoop::FromLoopJson(const Json& data) {
 		loopType_ = AnimationLoopType::Repeat;
 	}
 }
+
+bool AnimationLoop::IsReachedEnd(float prevRawT, float currentRawT, float start, float end) const {
+
+	auto normalize = [start, end](float t) -> float {
+		float len = end - start;
+		if (len <= 0.0f) { return 0.0f; }
+		return std::clamp((t - start) / len, 0.0f, 1.0f);
+		};
+
+	float prevNorm = normalize(prevRawT);
+	float curNorm = normalize(currentRawT);
+
+	if (loopCount_ <= 1) {
+		return (prevNorm < 1.0f && curNorm >= 1.0f);
+	}
+
+	// 0~loopCount_の周回フェーズを計算
+	float prevPhase = prevNorm * static_cast<float>(loopCount_);
+	float curPhase = curNorm * static_cast<float>(loopCount_);
+
+	uint32_t prevIndex = static_cast<uint32_t>(prevPhase); // 前フレームの何周目か
+	uint32_t curIndex = static_cast<uint32_t>(curPhase);   // 今フレームの何周目か
+
+	// 周インデックスが増えた瞬間＝前のループのendを通過した瞬間
+	return prevIndex < curIndex;
+
+}

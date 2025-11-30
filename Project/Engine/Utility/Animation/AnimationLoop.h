@@ -44,6 +44,10 @@ public:
 	// ループ回数の設定
 	void SetLoopCount(uint32_t count) { loopCount_ = count; }
 
+	// ループが1回終了したか
+	bool IsReachedEnd(float prevRawT, float currentRawT,
+		float start = 0.0f, float end = 1.0f) const;
+
 	// ループ回数の取得
 	uint32_t GetLoopCount() const { return loopCount_; }
 private:

@@ -35,6 +35,11 @@ SubPlayerPunchAttackState::SubPlayerPunchAttackState() {
 	rightHandLeaveKeyframeObject_->AddKeyValue(AnyMold::Color, addKeyColor);
 	leftHandApproachKeyframeObject_->AddKeyValue(AnyMold::Color, addKeyColor);
 	leftHandLeaveKeyframeObject_->AddKeyValue(AnyMold::Color, addKeyColor);
+
+	// ヒットエフェクトの生成
+	hitEffect_ = std::make_unique<EffectGroup>();
+	hitEffect_->Init("punchHitEffect", "SubPlayerEffect");
+	hitEffect_->LoadJson("GameEffectGroup/SubPlayer/subPlayerPunchHitEffect.json");
 }
 
 void SubPlayerPunchAttackState::Enter() {
@@ -167,6 +172,9 @@ void SubPlayerPunchAttackState::UpdateAttack() {
 	// 溜め後の攻撃が終了したら次の状態へ
 	if (chargeAttackTimer_.IsReached()) {
 
+		// ヒットエフェクト発生
+		hitEffect_->Emit(leftHand_->GetTransform().GetWorldPos());
+
 		// 次の状態へ
 		currentState_ = State::Leave;
 		// 離脱の補間処理を開始
@@ -195,6 +203,9 @@ void SubPlayerPunchAttackState::UpdateAlways() {
 
 	// 常にキーフレームオブジェクトを更新
 	UpdateKeyframeObjects();
+
+	// ヒットエフェクトの更新
+	hitEffect_->Update();
 }
 
 void SubPlayerPunchAttackState::Exit() {
@@ -274,6 +285,9 @@ void SubPlayerPunchAttackState::LerpAttackHand(AttackInfo& attackInfo, GameObjec
 		return;
 	}
 
+	// 前フレームのrawTを保存
+	float prevRawT = attackInfo.timer.t_;
+
 	// 時間を更新
 	attackInfo.timer.Update(attackDuration_);
 	float currentT = attackInfo.loop.LoopedT(attackInfo.timer.t_);
@@ -284,6 +298,13 @@ void SubPlayerPunchAttackState::LerpAttackHand(AttackInfo& attackInfo, GameObjec
 
 	// トランスフォームに適応
 	hand.SetTranslation(lerpPos);
+
+	// 攻撃終了時にヒットエフェクトを再生
+	if (attackInfo.loop.IsReachedEnd(prevRawT, attackInfo.timer.t_, 0.0f, 1.0f)) {
+
+		hitEffect_->Emit(hand.GetTransform().GetWorldPos());
+	}
+	attackInfo.prevRawT = attackInfo.timer.t_;
 }
 
 void SubPlayerPunchAttackState::LerpChargeHand(AttackInfo& attackInfo, GameObject3D& hand) {
@@ -334,6 +355,7 @@ void SubPlayerPunchAttackState::SetupAttackInfo(AttackInfo& attackInfo,
 	attackInfo.loop.SetLoopCount(attackCount_);
 	attackInfo.timer.Reset();
 	attackInfo.isActive = false;
+	attackInfo.prevRawT = 0.0f;
 }
 
 void SubPlayerPunchAttackState::ImGui() {

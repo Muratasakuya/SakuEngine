@@ -38,12 +38,22 @@ struct PlaneForGPU {
 	// 1: XZ
 	uint32_t mode;
 
+	Color leftTopVertexColor;
+	Color rightTopVertexColor;
+	Color leftBottomVertexColor;
+	Color rightBottomVertexColor;
+
 	void Init() {
 
 		size = Vector2::AnyInit(1.0f);
 		pivot = Vector2::AnyInit(0.5f);
 
 		mode = 0;
+
+		leftTopVertexColor = Color::White();
+		rightTopVertexColor = Color::White();
+		leftBottomVertexColor = Color::White();
+		rightBottomVertexColor = Color::White();
 	}
 };
 // リング
