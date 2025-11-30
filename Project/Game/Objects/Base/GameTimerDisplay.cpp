@@ -171,6 +171,14 @@ void GameTimerDisplay::SetPostProcessMask(uint32_t mask) {
 	}
 }
 
+void GameTimerDisplay::SetPostProcessEnable(bool enable) {
+
+	for (size_t i = 0; i < elements_.size(); ++i) {
+
+		elements_[i].sprite->SetPostProcessEnable(enable);
+	}
+}
+
 void GameTimerDisplay::GetDigitSize(const std::string& name) {
 
 	// 仮作成して画像サイズを取得して破棄する

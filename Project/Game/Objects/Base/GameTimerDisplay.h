@@ -45,6 +45,7 @@ public:
 
 	void SetAlpha(float alpha);
 	void SetPostProcessMask(uint32_t mask);
+	void SetPostProcessEnable(bool enable);
 private:
 	//========================================================================
 	//	private Methods
